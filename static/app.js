@@ -1231,3 +1231,32 @@ enterpriseReportCenter=function(){
   return packageReportCenter()
 }
 
+function latestMetadataAuditReports(){
+  return (data.generated_reports||[]).filter(x=>x.kind==='元数据校验').slice(0,5)
+}
+
+async function runMetadataHallucinationAudit(){
+  let box=$('#metadataAuditStatus'),pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
+  try{
+    if(box)box.innerHTML='<div class="summary-panel"><b>正在校验AI输出</b><p>平台会把需求包、测试用例、脚本资产里出现的表、字段和Redis Key，与已保存元数据做比对。</p></div>';
+    toast('正在做元数据幻觉校验…');
+    let result=await api(`/api/projects/${current}/metadata-hallucination-audit`,{method:'POST',body:JSON.stringify({package_id:pid})});
+    let s=result.summary||{},msg=`校验完成：${result.status}，已证实${(s.db_references_verified||0)+(s.redis_references_verified||0)}项，提醒${s.attention_items||0}项`;
+    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>扫描 ${esc(s.sources_scanned||0)} 处资产；报告已进入当前需求包的报告中心。</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    toast(msg,result.status==='PASSED'?'success':result.status==='ATTENTION'?'warning':'error');
+    await openProject(current);
+    switchTab('dataquality')
+  }catch(e){
+    if(box)box.innerHTML=`<div class="summary-panel"><b>校验失败</b><p>${esc(e.message)}</p></div>`;
+    toast(e.message,'error')
+  }
+}
+
+const dataQualityClosureBeforeMetadataAudit=dataQualityClosure;
+dataQualityClosure=function(){
+  let html=dataQualityClosureBeforeMetadataAudit?dataQualityClosureBeforeMetadataAudit():'';
+  let reports=latestMetadataAuditReports();
+  let audit=`<div class="card"><div class="diagnosis-head"><div><h2>AI输出校验</h2><p>用已保存的数据库表、字段和Redis Key核查AI生成内容，避免脚本和用例里出现查无依据的数据位置。</p></div><button class="primary" onclick="runMetadataHallucinationAudit()">元数据幻觉校验</button></div><div id="metadataAuditStatus">${reports.length?reports.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无AI输出校验报告</b></div>'}</div></div>`;
+  return html + audit
+}
+

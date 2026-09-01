@@ -7346,10 +7346,164 @@ def platform_storage_policy():
     return {"boundaries": [x.__dict__ for x in storage_boundaries()]}
 
 
+def _metadata_column_names(columns_json):
+    try:
+        payload = json.loads(columns_json or "[]")
+    except Exception:
+        payload = []
+    if isinstance(payload, dict):
+        payload = payload.get("columns") or payload.get("items") or []
+    names = set()
+    for item in payload if isinstance(payload, list) else []:
+        if isinstance(item, dict):
+            value = item.get("column_name") or item.get("COLUMN_NAME") or item.get("name") or item.get("field")
+        else:
+            value = item
+        value = str(value or "").strip()
+        if value:
+            names.add(value)
+    return names
+
+
+def _metadata_text_sources(project_id, package_id=""):
+    items = []
+    for table, fields in (
+        ("sources", ("name", "kind", "content")),
+        ("requirement_items", ("title", "description", "acceptance_criteria")),
+        ("test_points", ("module", "title", "category", "rationale")),
+        ("test_cases", ("title", "method", "path", "headers", "payload", "steps", "expected")),
+        ("api_endpoints", ("method", "path", "summary", "tags", "parameters", "request_body", "responses", "example_request", "required_fields")),
+        ("workflows", ("name", "module", "description")),
+        ("workflow_steps", ("name", "request_template", "assertion_template", "extractors")),
+    ):
+        try:
+            for record in rows(f"SELECT {','.join(fields)} FROM {table} WHERE project_id=?", (project_id,)):
+                text = "\n".join(str(record.get(field) or "") for field in fields)
+                if text.strip():
+                    items.append({"source": f"平台资产/{table}", "text": text[:60000]})
+        except Exception:
+            continue
+    roots = []
+    if package_id:
+        roots.append(REQUIREMENT_PACKAGE_ROOT / package_id)
+    else:
+        roots += [REQUIREMENT_PACKAGE_ROOT, ROOT / "outputs"]
+    roots.append(ROOT / "skills")
+    seen = set()
+    allowed = {".json", ".yaml", ".yml", ".md", ".txt", ".py", ".js", ".ps1"}
+    for root_path in roots:
+        if not root_path.exists():
+            continue
+        for file in root_path.rglob("*"):
+            if file in seen or not file.is_file() or file.suffix.lower() not in allowed:
+                continue
+            seen.add(file)
+            try:
+                content = file.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                continue
+            if content.strip():
+                try:
+                    source_name = str(file.relative_to(ROOT))
+                except ValueError:
+                    source_name = str(file)
+                items.append({"source": source_name, "text": content[:120000]})
+    return items
+
+
+def _metadata_candidates(text):
+    snake = set(re.findall(r"\b[a-z][a-z0-9]*(?:_[a-z0-9]+){1,}\b", text))
+    db_like = {
+        token for token in snake
+        if token.startswith(("anchor_", "salary_trade_", "user_login_info_"))
+        or token in {"order_no", "country_code", "support_currencies", "agent_uid", "appeal_uid", "operator_id"}
+    }
+    redis_like = set(re.findall(r"\b[a-zA-Z0-9_.-]+(?::[a-zA-Z0-9_.${}_-]+){1,}\b", text))
+    return db_like, redis_like
+
+
+def metadata_hallucination_audit(project_id, payload=None):
+    payload = payload or {}
+    package_id = str(payload.get("package_id") or "").strip()
+    db_items = rows("SELECT table_name,table_comment,columns_json FROM db_tables WHERE project_id=?", (project_id,))
+    table_names = {x["table_name"] for x in db_items if x.get("table_name")}
+    column_names = set()
+    for item in db_items:
+        column_names.update(_metadata_column_names(item.get("columns_json")))
+    redis_keys = {x["key_name"] for x in rows("SELECT key_name FROM redis_key_snapshots WHERE project_id=?", (project_id,)) if x.get("key_name")}
+    redis_patterns = set()
+    try:
+        redis_patterns.update(x.get("key_pattern") or "" for x in rows("SELECT key_pattern FROM api_redis_mappings WHERE project_id=?", (project_id,)))
+    except Exception:
+        pass
+    redis_patterns = {x for x in redis_patterns if x}
+    sources = _metadata_text_sources(project_id, package_id)
+    found_tables, found_columns, found_redis, unknown_db, unknown_redis = {}, {}, {}, {}, {}
+    for item in sources:
+        db_like, redis_like = _metadata_candidates(item["text"])
+        for token in db_like:
+            if token in table_names:
+                found_tables.setdefault(token, item["source"])
+            elif token in column_names:
+                found_columns.setdefault(token, item["source"])
+            elif token.startswith(("anchor_", "salary_trade_")):
+                unknown_db.setdefault(token, item["source"])
+        for token in redis_like:
+            if token in redis_keys or any(pattern and pattern.replace("*", "") in token for pattern in redis_patterns):
+                found_redis.setdefault(token, item["source"])
+            elif token.startswith(("user_login_info:", "salary:", "anchor:", "trade:", "order:", "wallet:", "wealth:")):
+                unknown_redis.setdefault(token, item["source"])
+    metadata_ready = bool(table_names or column_names or redis_keys or redis_patterns)
+    findings = []
+    for name, source in sorted(unknown_db.items())[:80]:
+        findings.append({"level": "P1", "type": "DB_REFERENCE_NOT_IN_METADATA", "name": name, "source": source, "recommendation": "确认这是业务表/字段后，重新导入数据库元数据；如果只是变量名，可忽略。"})
+    for name, source in sorted(unknown_redis.items())[:80]:
+        findings.append({"level": "P1", "type": "REDIS_REFERENCE_NOT_IN_METADATA", "name": name, "source": source, "recommendation": "确认Redis快照或Key映射是否已导入；如果只是示例占位，可忽略。"})
+    status = "UNCONFIGURED" if not metadata_ready else "ATTENTION" if findings else "PASSED"
+    report = {
+        "report_type": "METADATA_HALLUCINATION_AUDIT",
+        "project_id": project_id,
+        "package_id": package_id or "general",
+        "status": status,
+        "created_at": now(),
+        "summary": {
+            "sources_scanned": len(sources),
+            "db_tables_known": len(table_names),
+            "db_columns_known": len(column_names),
+            "redis_keys_known": len(redis_keys),
+            "redis_patterns_known": len(redis_patterns),
+            "db_references_verified": len(found_tables) + len(found_columns),
+            "redis_references_verified": len(found_redis),
+            "attention_items": len(findings),
+        },
+        "verified": {
+            "tables": sorted(found_tables)[:100],
+            "columns": sorted(found_columns)[:100],
+            "redis": sorted(found_redis)[:100],
+        },
+        "findings": findings,
+        "note": "本报告只使用平台已保存的数据库/Redis元数据校验AI输出，不直连或修改业务数据源。",
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out = ROOT / "reports" / f"metadata-hallucination-audit-{project_id}-{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report["json_url"] = "/reports/" + out.name
+    report["file_name"] = out.name
+    return report
+
+
 def list_generated_reports(project_id):
     report_dir=ROOT/"reports"
     if not report_dir.exists(): return []
     result=[]
+    for file in report_dir.glob("metadata-hallucination-audit-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        result.append({"name":"AI输出元数据幻觉校验报告","kind":"元数据校验","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"扫描{summary.get('sources_scanned',0)}处资产 · 已证实{summary.get('db_references_verified',0)+summary.get('redis_references_verified',0)}项 · 提醒{summary.get('attention_items',0)}项","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -8505,6 +8659,8 @@ class Handler(BaseHTTPRequestHandler):
                 body=self.body(); return self.send_json(run_ready_consistency_rules(m.group(1), body.get("limit", 5), body.get("scope", "core")))
             m = re.fullmatch(r"/api/projects/([^/]+)/evidence-check", path)
             if m: return self.send_json(run_manual_evidence_check(m.group(1), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/metadata-hallucination-audit", path)
+            if m: return self.send_json(metadata_hallucination_audit(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/assistant", path)
             if m:
                 x=self.body(); return self.send_json(assistant_reply(m.group(1),x.get("message","")))
