@@ -1174,6 +1174,7 @@ function selectedPackageAssetLine(pkg){
   let jmeter=artifacts.jmeter||{},account=artifacts.account_model||{},manifest=artifacts.manifest||{};
   return [
     ['账号模型',account.exists],
+    ['证据规则',artifacts.evidence_rules?.exists],
     ['JMeter脚本',jmeter.exists],
     ['需求清单',manifest.exists]
   ].map(x=>`<span class="asset-chip ${x[1]?'ready':'pending'}">${esc(x[0])}</span>`).join('')
@@ -1235,6 +1236,10 @@ function latestMetadataAuditReports(){
   return (data.generated_reports||[]).filter(x=>x.kind==='元数据校验').slice(0,5)
 }
 
+function latestBusinessEvidencePlanReports(){
+  return (data.generated_reports||[]).filter(x=>x.kind==='业务证据规则').slice(0,5)
+}
+
 async function runMetadataHallucinationAudit(){
   let box=$('#metadataAuditStatus'),pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
   try{
@@ -1255,8 +1260,26 @@ async function runMetadataHallucinationAudit(){
 const dataQualityClosureBeforeMetadataAudit=dataQualityClosure;
 dataQualityClosure=function(){
   let html=dataQualityClosureBeforeMetadataAudit?dataQualityClosureBeforeMetadataAudit():'';
-  let reports=latestMetadataAuditReports();
+  let reports=latestMetadataAuditReports(),plans=latestBusinessEvidencePlanReports();
   let audit=`<div class="card"><div class="diagnosis-head"><div><h2>AI输出校验</h2><p>用已保存的数据库表、字段和Redis Key核查AI生成内容，避免脚本和用例里出现查无依据的数据位置。</p></div><button class="primary" onclick="runMetadataHallucinationAudit()">元数据幻觉校验</button></div><div id="metadataAuditStatus">${reports.length?reports.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无AI输出校验报告</b></div>'}</div></div>`;
-  return html + audit
+  let evidencePlan=`<div class="card"><div class="diagnosis-head"><div><h2>执行后业务证据</h2><p>把当前需求包的证据规则整理成计划：接口跑完后去哪张表或哪个Key查、用什么变量定位、期望什么结果。</p></div><button class="primary" onclick="generateBusinessEvidencePlan()">生成证据计划</button></div><div id="businessEvidencePlanStatus">${plans.length?plans.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无业务证据规则报告</b></div>'}</div></div>`;
+  return html + audit + evidencePlan
+}
+
+async function generateBusinessEvidencePlan(){
+  let box=$('#businessEvidencePlanStatus'),pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
+  try{
+    if(box)box.innerHTML='<div class="summary-panel"><b>正在生成证据计划</b><p>平台会读取当前需求包的 evidence_rules.yaml，并检查规则能否被已保存元数据支撑。</p></div>';
+    toast('正在生成执行后业务证据计划…');
+    let result=await api(`/api/projects/${current}/business-evidence-plan`,{method:'POST',body:JSON.stringify({package_id:pid})});
+    let s=result.summary||{},msg=`证据计划完成：${result.status}，规则${s.ready||0}/${s.rules||0}可用`;
+    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>MySQL ${esc(s.mysql_rules||0)} 条，Redis ${esc(s.redis_rules||0)} 条，提醒 ${esc(s.attention||0)} 项。</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    toast(msg,result.status==='READY'?'success':'warning');
+    await openProject(current);
+    switchTab('dataquality')
+  }catch(e){
+    if(box)box.innerHTML=`<div class="summary-panel"><b>生成失败</b><p>${esc(e.message)}</p></div>`;
+    toast(e.message,'error')
+  }
 }
 

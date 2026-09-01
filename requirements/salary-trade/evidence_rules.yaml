@@ -1,0 +1,113 @@
+schema_version: "1.0"
+package_id: salary-trade
+package_name: 工资代理快速结算
+purpose: 执行后用只读 MySQL/Redis 证据证明接口产生的业务结果真实落库、状态正确、流水可追溯。
+runtime_variables:
+  order_no: JMeter/Newman/pytest 从创建订单响应或订单列表提取
+  applicant_uid: 当前流程申请人账号
+  proxy_uid: 按申请人国家和收款币种匹配到的代理账号
+  country_code: 申请人收款国家
+  currency: 申请人收款币种
+rules:
+  - id: salary_trade_order_created
+    name: 创建订单后主表存在
+    trigger: POST /userserv/salary/trade/order/create
+    business_object: salary_trade_order
+    query:
+      source: mysql
+      table: anchor_salary_trade_order
+      where: order_no = ${order_no}
+    assertions:
+      - field: order_no
+        operator: equals
+        expected: ${order_no}
+      - field: uid
+        operator: equals
+        expected: ${applicant_uid}
+      - field: agent_uid
+        operator: equals
+        expected: ${proxy_uid}
+      - field: status
+        operator: equals
+        expected: 10
+  - id: salary_trade_agent_whitelist_matched
+    name: 代理必须符合国家和币种白名单
+    trigger: 代理匹配完成后
+    business_object: salary_trade_agent
+    query:
+      source: mysql
+      table: anchor_salary_trade_agent_whitelist
+      where: uid = ${proxy_uid}
+    assertions:
+      - field: status
+        operator: equals
+        expected: 1
+      - field: country_code
+        operator: equals
+        expected: ${country_code}
+      - field: support_currencies
+        operator: contains
+        expected: ${currency}
+  - id: salary_trade_status_log_traceable
+    name: 订单状态流转必须有日志
+    trigger: 每次订单状态变化后
+    business_object: salary_trade_order_log
+    query:
+      source: mysql
+      table: anchor_salary_trade_order_log
+      where: order_no = ${order_no}
+    assertions:
+      - field: to_status
+        operator: contains_any
+        expected: ${expected_log_statuses}
+      - field: op_uid
+        operator: not_empty
+  - id: salary_trade_cancelled
+    name: 申请人取消后订单状态为50
+    trigger: POST /userserv/salary/trade/order/cancel
+    business_object: salary_trade_order
+    query:
+      source: mysql
+      table: anchor_salary_trade_order
+      where: order_no = ${order_no}
+    assertions:
+      - field: status
+        operator: equals
+        expected: 50
+      - field: cancel_reason
+        operator: not_empty
+  - id: salary_trade_finished
+    name: 申请人确认收款后订单完成
+    trigger: POST /userserv/salary/trade/order/confirm
+    business_object: salary_trade_order
+    query:
+      source: mysql
+      table: anchor_salary_trade_order
+      where: order_no = ${order_no}
+    assertions:
+      - field: status
+        operator: equals
+        expected: 100
+      - field: confirmed_time
+        operator: greater_than
+        expected: 0
+      - field: finished_time
+        operator: greater_than
+        expected: 0
+  - id: salary_trade_appeal_evidence_created
+    name: 投诉流程必须产生凭证记录
+    trigger: POST /userserv/salary/trade/order/appeal
+    business_object: salary_trade_evidence
+    query:
+      source: mysql
+      table: anchor_salary_trade_evidence
+      where: order_no = ${order_no}
+    assertions:
+      - field: order_no
+        operator: equals
+        expected: ${order_no}
+      - field: uid
+        operator: equals
+        expected: ${applicant_uid}
+      - field: evidence_type
+        operator: not_empty

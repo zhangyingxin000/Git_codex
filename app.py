@@ -1093,6 +1093,7 @@ def _custom_requirement_package_template(project_id, manifest):
         "artifacts": {
             "manifest": REQUIREMENT_PACKAGE_ROOT / package_id / "manifest.json",
             "account_model": REQUIREMENT_PACKAGE_ROOT / package_id / "account_model.yaml",
+            "evidence_rules": REQUIREMENT_PACKAGE_ROOT / package_id / "evidence_rules.yaml",
             "newman": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "newman" / "postman-collection.json",
             "jmeter": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "jmeter" / "jmeter-plan.jmx",
             "pytest": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "pytest" / "pytest_api_cases.py",
@@ -1179,6 +1180,98 @@ def requirement_package_by_id(project_id, package_id):
         if package.get("package_id") == package_id or package.get("id") == package_id:
             return package
     raise ValueError("没有找到这个需求包")
+
+
+def requirement_evidence_rules(project_id, package_id):
+    package = requirement_package_by_id(project_id, package_id)
+    path = Path(package["root"]) / "evidence_rules.yaml"
+    payload = _load_yaml_file(path)
+    rules = payload.get("rules") if isinstance(payload, dict) else []
+    if not isinstance(rules, list):
+        rules = []
+    known_tables = {x["table_name"] for x in rows("SELECT table_name FROM db_tables WHERE project_id=?", (project_id,)) if x.get("table_name")}
+    known_redis = {x["key_name"] for x in rows("SELECT key_name FROM redis_key_snapshots WHERE project_id=?", (project_id,)) if x.get("key_name")}
+    items = []
+    for rule in rules:
+        if not isinstance(rule, dict):
+            continue
+        query = rule.get("query") or {}
+        source = str(query.get("source") or "").strip().lower()
+        table_name = str(query.get("table") or "").strip()
+        redis_key = str(query.get("key") or query.get("pattern") or "").strip()
+        blockers = []
+        if source == "mysql" and table_name and table_name not in known_tables:
+            blockers.append(f"表 {table_name} 未在平台数据库元数据中找到")
+        if source == "redis" and redis_key and known_redis and redis_key not in known_redis:
+            blockers.append(f"Redis Key {redis_key} 未在平台快照中找到")
+        if source not in {"mysql", "redis", "api", ""}:
+            blockers.append(f"暂不支持的数据源 {source}")
+        items.append({
+            "id": rule.get("id") or uid("evidence_rule"),
+            "name": rule.get("name") or "未命名证据规则",
+            "trigger": rule.get("trigger") or "",
+            "business_object": rule.get("business_object") or "",
+            "source": source or "manual",
+            "table": table_name,
+            "redis_key": redis_key,
+            "where": query.get("where") or "",
+            "assertions": rule.get("assertions") if isinstance(rule.get("assertions"), list) else [],
+            "status": "READY" if not blockers else "ATTENTION",
+            "blockers": blockers,
+        })
+    summary = {
+        "rules": len(items),
+        "ready": sum(1 for x in items if x["status"] == "READY"),
+        "attention": sum(1 for x in items if x["status"] != "READY"),
+        "mysql_rules": sum(1 for x in items if x["source"] == "mysql"),
+        "redis_rules": sum(1 for x in items if x["source"] == "redis"),
+        "known_db_tables": len(known_tables),
+        "known_redis_keys": len(known_redis),
+    }
+    status = "READY" if items and not summary["attention"] else "READY_WITH_WARNINGS" if items else "MISSING"
+    return {
+        "status": status,
+        "project_id": project_id,
+        "package_id": package.get("package_id"),
+        "package_name": package.get("name"),
+        "rules_path": str(path),
+        "rules_exists": path.is_file(),
+        "summary": summary,
+        "rules": items,
+        "runtime_order": [
+            "接口/JMeter/Newman/pytest先执行并产生业务对象编号",
+            "平台读取证据规则中的查询目标和运行变量",
+            "只读查询MySQL/Redis并计算断言结果",
+            "将查询位置、断言、失败原因和原始摘要写入报告中心",
+        ],
+    }
+
+
+def generate_business_evidence_plan(project_id, payload=None):
+    payload = payload or {}
+    package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
+    plan = requirement_evidence_rules(project_id, package_id)
+    summary = plan["summary"]
+    report = {
+        "report_type": "BUSINESS_EVIDENCE_RULE_PLAN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": plan.get("package_name"),
+        "status": plan["status"],
+        "created_at": now(),
+        "summary": summary,
+        "rules_path": plan["rules_path"],
+        "rules": plan["rules"],
+        "runtime_order": plan["runtime_order"],
+        "conclusion": "已生成执行后业务数据证据计划。它定义接口执行后去哪查、查什么、如何断言；真实业务写入由接口执行产生，平台只读取证。",
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out = ROOT / "reports" / f"business-evidence-plan-{project_id}-{package_id}-{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report["json_url"] = "/reports/" + out.name
+    report["file_name"] = out.name
+    return report
 
 
 def _requirement_package_keywords(package_id):
@@ -7504,6 +7597,13 @@ def list_generated_reports(project_id):
             continue
         summary = payload.get("summary") or {}
         result.append({"name":"AI输出元数据幻觉校验报告","kind":"元数据校验","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"扫描{summary.get('sources_scanned',0)}处资产 · 已证实{summary.get('db_references_verified',0)+summary.get('redis_references_verified',0)}项 · 提醒{summary.get('attention_items',0)}项","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+    for file in report_dir.glob("business-evidence-plan-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        result.append({"name":"执行后业务数据证据规则报告","kind":"业务证据规则","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"规则{summary.get('ready',0)}/{summary.get('rules',0)}可用 · MySQL{summary.get('mysql_rules',0)}条 · Redis{summary.get('redis_rules',0)}条 · 提醒{summary.get('attention',0)}项","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -8516,6 +8616,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(requirement_package_catalog(m.group(1)))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/account-model", path)
             if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/evidence-rules", path)
+            if m: return self.send_json(requirement_evidence_rules(m.group(1), m.group(2)))
             m = re.fullmatch(r"/api/projects/([^/]+)/wealth-latest-report", path)
             if m:
                 report_dir=ROOT/"reports"
@@ -8661,6 +8763,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(run_manual_evidence_check(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/metadata-hallucination-audit", path)
             if m: return self.send_json(metadata_hallucination_audit(m.group(1), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/business-evidence-plan", path)
+            if m: return self.send_json(generate_business_evidence_plan(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/assistant", path)
             if m:
                 x=self.body(); return self.send_json(assistant_reply(m.group(1),x.get("message","")))
