@@ -3,7 +3,7 @@
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
   "package_name": "工资代理快速结算",
-  "generated_at": "2026-09-01T16:40:30+08:00",
+  "generated_at": "2026-09-01T16:47:29+08:00",
   "summary": {
     "cases": 170,
     "with_db_checks": 143,
@@ -32,6 +32,236 @@
     "official_rules": 6,
     "candidate_rules": 21
   },
+  "coverage_dashboard": {
+    "total_cases": 170,
+    "script_generation_ready": 38,
+    "script_generation_ready_rate": 22.4,
+    "evidence_pending": 118,
+    "evidence_pending_rate": 69.4,
+    "manual_only": 14,
+    "manual_only_rate": 8.2,
+    "db_evidence_rate": 84.1,
+    "redis_evidence_rate": 0.0,
+    "headline": "当前需求包 170 条用例，38 条脚本生成就绪，118 条待证据确认，14 条人工验证，脚本生成就绪率 22.4%。"
+  },
+  "gap_list": [
+    {
+      "quality_status": "NEEDS_EVIDENCE_REVIEW",
+      "title": "候选证据待采纳",
+      "count": 110,
+      "next_action": "复核并采纳候选证据规则",
+      "examples": [
+        {
+          "id": "tc_586b91c352",
+          "title": "进入入口时查询可结算额度：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/quota",
+          "coverage_tool": "jmeter",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        },
+        {
+          "id": "tc_cb0f14e257",
+          "title": "按国家和币种选择代理用户：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/agents",
+          "coverage_tool": "jmeter",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        },
+        {
+          "id": "tc_2c8302c8bf",
+          "title": "查看本人快速结算订单列表：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/page",
+          "coverage_tool": "newman",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        },
+        {
+          "id": "tc_ed495e60ee",
+          "title": "查看本人订单详情：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/detail",
+          "coverage_tool": "newman",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        },
+        {
+          "id": "tc_8ea08e4145",
+          "title": "补充上传本人订单凭证：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/evidence/upload",
+          "coverage_tool": "jmeter",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        },
+        {
+          "id": "tc_3b931425b2",
+          "title": "查看本人订单凭证：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/evidence/list",
+          "coverage_tool": "newman",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        },
+        {
+          "id": "tc_634b8077e8",
+          "title": "查看本人订单流转记录：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/logs",
+          "coverage_tool": "newman",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        },
+        {
+          "id": "tc_8038c2a2f7",
+          "title": "查看自己的交易公告编辑页信息：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/agent/notice",
+          "coverage_tool": "newman",
+          "reason": "仅命中候选证据规则，需要采纳后再作为正式校验。"
+        }
+      ]
+    },
+    {
+      "quality_status": "NEEDS_EVIDENCE",
+      "title": "缺少正式证据规则",
+      "count": 8,
+      "next_action": "生成候选证据规则或手工补 evidence_rules.yaml",
+      "examples": [
+        {
+          "id": "tc_c4f56bbedb",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        },
+        {
+          "id": "tc_6e7337e6e9",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        },
+        {
+          "id": "tc_4186d63f07",
+          "title": "返回工资快速结算创建入口开关：缺失必填参数",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        },
+        {
+          "id": "tc_25bb4b4110",
+          "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        },
+        {
+          "id": "tc_ffe359e00e",
+          "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        },
+        {
+          "id": "tc_bac78ca4b2",
+          "title": "返回工资快速结算创建入口开关：缺失必填参数",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        },
+        {
+          "id": "tc_e50c04090a",
+          "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        },
+        {
+          "id": "tc_fee04cee2e",
+          "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "reason": "写操作/状态变更用例缺少DB或Redis证据规则。"
+        }
+      ]
+    },
+    {
+      "quality_status": "MANUAL_ONLY",
+      "title": "人工验证或长等待",
+      "count": 14,
+      "next_action": "导出人工测试清单，必要时拆成后台/定时任务专项",
+      "examples": [
+        {
+          "id": "tc_3c912c730e",
+          "title": "业务规则验证：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        },
+        {
+          "id": "tc_99096c5c8a",
+          "title": "业务规则验证：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        },
+        {
+          "id": "tc_d7e443d8f1",
+          "title": "业务规则验证：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        },
+        {
+          "id": "tc_a17fdba77c",
+          "title": "业务规则验证：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | da",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        },
+        {
+          "id": "tc_46f8c0108e",
+          "title": "业务规则验证：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | da",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        },
+        {
+          "id": "tc_b7ac4c24e1",
+          "title": "业务规则验证：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data.",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        },
+        {
+          "id": "tc_ee9a73677e",
+          "title": "业务规则验证：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        },
+        {
+          "id": "tc_9215032b30",
+          "title": "业务规则验证：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "reason": "缺少可直接执行的接口 method/path。"
+        }
+      ]
+    }
+  ],
   "cases": [
     {
       "id": "tc_3c2aa3f293",
@@ -67,6 +297,11 @@
       "traceability": {
         "requirement_ref": "根据接口资料样例验证核心成功路径",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 newman 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -103,6 +338,11 @@
       "traceability": {
         "requirement_ref": "根据接口资料样例验证核心成功路径",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -186,6 +426,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -269,6 +514,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -384,6 +634,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -446,6 +701,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -508,6 +768,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -610,6 +875,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -722,6 +992,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -832,6 +1107,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -899,6 +1179,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -966,6 +1251,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1046,6 +1336,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1126,6 +1421,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1206,6 +1506,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1286,6 +1591,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1366,6 +1676,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1446,6 +1761,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1526,6 +1846,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1609,6 +1934,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1692,6 +2022,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1762,6 +2097,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -1798,6 +2138,11 @@
       "traceability": {
         "requirement_ref": "根据接口资料样例验证核心成功路径",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 newman 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -1834,6 +2179,11 @@
       "traceability": {
         "requirement_ref": "根据接口资料样例验证核心成功路径",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -1917,6 +2267,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2000,6 +2355,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2115,6 +2475,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -2177,6 +2542,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2239,6 +2609,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2341,6 +2716,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -2453,6 +2833,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -2563,6 +2948,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -2630,6 +3020,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2697,6 +3092,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2777,6 +3177,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2857,6 +3262,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -2937,6 +3347,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3017,6 +3432,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3097,6 +3517,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3177,6 +3602,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3257,6 +3687,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3340,6 +3775,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3423,6 +3863,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3493,6 +3938,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3532,6 +3982,11 @@
       "traceability": {
         "requirement_ref": "验证必填字段校验：",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 newman 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -3571,6 +4026,11 @@
       "traceability": {
         "requirement_ref": "验证长度、数值、类型和空值边界",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 newman 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -3610,6 +4070,11 @@
       "traceability": {
         "requirement_ref": "验证必填字段校验：",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -3649,6 +4114,11 @@
       "traceability": {
         "requirement_ref": "验证长度、数值、类型和空值边界",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -3685,6 +4155,11 @@
       "traceability": {
         "requirement_ref": "验证重复操作不会破坏数据一致性",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -3769,6 +4244,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3853,6 +4333,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -3937,6 +4422,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -4021,6 +4511,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -4139,6 +4634,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -4257,6 +4757,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -4372,6 +4877,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -4437,6 +4947,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -4502,6 +5017,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -4567,6 +5087,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -4632,6 +5157,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -4737,6 +5267,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -4842,6 +5377,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -4944,6 +5484,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -5057,6 +5602,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -5170,6 +5720,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -5282,6 +5837,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -5393,6 +5953,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -5504,6 +6069,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -5614,6 +6184,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -5684,6 +6259,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -5754,6 +6334,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -5821,6 +6406,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -5891,6 +6481,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -5961,6 +6556,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6044,6 +6644,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6127,6 +6732,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6210,6 +6820,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6293,6 +6908,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6376,6 +6996,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6459,6 +7084,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6539,6 +7169,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6622,6 +7257,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6705,6 +7345,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6788,6 +7433,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6871,6 +7521,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -6954,6 +7609,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7037,6 +7697,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7117,6 +7782,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7200,6 +7870,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7283,6 +7958,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7363,6 +8043,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7447,6 +8132,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7531,6 +8221,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7614,6 +8309,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7698,6 +8398,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7782,6 +8487,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7865,6 +8575,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -7936,6 +8651,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -8007,6 +8727,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -8077,6 +8802,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -8115,6 +8845,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -8197,6 +8932,11 @@
         "evidence_rules": [
           "salary_trade_case_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -8235,6 +8975,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及服务端按国家汇总的可收款币种。",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -8270,6 +9015,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -8305,6 +9055,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -8340,6 +9095,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -8375,6 +9135,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -8414,6 +9179,11 @@
       "traceability": {
         "requirement_ref": "验证必填字段校验：",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 newman 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -8453,6 +9223,11 @@
       "traceability": {
         "requirement_ref": "验证长度、数值、类型和空值边界",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 newman 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -8492,6 +9267,11 @@
       "traceability": {
         "requirement_ref": "验证必填字段校验：",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -8531,6 +9311,11 @@
       "traceability": {
         "requirement_ref": "验证长度、数值、类型和空值边界",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -8567,6 +9352,11 @@
       "traceability": {
         "requirement_ref": "验证重复操作不会破坏数据一致性",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "generate_candidate_evidence",
+        "label": "补充或生成证据规则",
+        "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。"
       }
     },
     {
@@ -8651,6 +9441,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -8735,6 +9530,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -8819,6 +9619,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -8903,6 +9708,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -9021,6 +9831,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -9139,6 +9954,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -9254,6 +10074,11 @@
           "salary_trade_order_created",
           "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -9319,6 +10144,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -9384,6 +10214,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -9449,6 +10284,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -9514,6 +10354,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -9619,6 +10464,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -9724,6 +10574,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -9826,6 +10681,11 @@
           "salary_trade_cancelled",
           "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -9939,6 +10799,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -10052,6 +10917,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -10164,6 +11034,11 @@
           "salary_trade_finished",
           "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -10275,6 +11150,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -10386,6 +11266,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -10496,6 +11381,11 @@
           "salary_trade_appeal_evidence_created",
           "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
         ]
+      },
+      "next_action": {
+        "action": "generate_script",
+        "label": "进入 jmeter 脚本生成",
+        "reason": "用例已经具备脚本生成条件。"
       }
     },
     {
@@ -10566,6 +11456,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -10636,6 +11531,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -10703,6 +11603,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -10773,6 +11678,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -10843,6 +11753,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -10926,6 +11841,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11009,6 +11929,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11092,6 +12017,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11175,6 +12105,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11258,6 +12193,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11341,6 +12281,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11421,6 +12366,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11504,6 +12454,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11587,6 +12542,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11670,6 +12630,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11753,6 +12718,11 @@
         "evidence_rules": [
           "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11836,6 +12806,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11919,6 +12894,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -11999,6 +12979,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12082,6 +13067,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12165,6 +13155,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12245,6 +13240,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12329,6 +13329,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12413,6 +13418,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12496,6 +13506,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12580,6 +13595,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12664,6 +13684,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12747,6 +13772,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12818,6 +13848,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12889,6 +13924,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12959,6 +13999,11 @@
         "evidence_rules": [
           "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
         ]
+      },
+      "next_action": {
+        "action": "accept_candidate_evidence",
+        "label": "复核并采纳候选证据规则",
+        "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。"
       }
     },
     {
@@ -12997,6 +14042,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -13035,6 +14085,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -13073,6 +14128,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及服务端按国家汇总的可收款币种。",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -13108,6 +14168,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -13143,6 +14208,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -13178,6 +14248,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     },
     {
@@ -13213,6 +14288,11 @@
       "traceability": {
         "requirement_ref": "系统行为与规则一致：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data.",
         "evidence_rules": []
+      },
+      "next_action": {
+        "action": "export_manual_case",
+        "label": "纳入人工测试清单",
+        "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。"
       }
     }
   ]

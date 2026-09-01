@@ -1910,6 +1910,118 @@ def _classify_structured_case(case, required_variables, db_checks, redis_checks)
     }
 
 
+def _pct(part, total):
+    if not total:
+        return 0.0
+    return round(part * 100 / total, 1)
+
+
+def _structured_case_next_action(item):
+    quality = item.get("quality_status")
+    readiness = item.get("automation_readiness")
+    tool = item.get("coverage_tool")
+    if quality == "READY" and readiness == "SCRIPT_GENERATION_READY":
+        return {
+            "action": "generate_script",
+            "label": f"进入 {tool} 脚本生成",
+            "reason": "用例已经具备脚本生成条件。",
+        }
+    if quality == "NEEDS_EVIDENCE_REVIEW":
+        return {
+            "action": "accept_candidate_evidence",
+            "label": "复核并采纳候选证据规则",
+            "reason": "当前用例已命中候选 DB/Redis 证据，但尚未成为正式规则。",
+        }
+    if quality == "NEEDS_EVIDENCE":
+        return {
+            "action": "generate_candidate_evidence",
+            "label": "补充或生成证据规则",
+            "reason": "当前用例可脚本化，但缺少执行后 DB/Redis 校验点。",
+        }
+    if quality == "NEEDS_DATA" or readiness == "BLOCKED_NEEDS_DATA":
+        return {
+            "action": "prepare_runtime_data",
+            "label": "补齐账号、变量或运行数据",
+            "reason": "当前用例依赖运行变量，数据未准备完整。",
+        }
+    if quality == "MANUAL_ONLY":
+        return {
+            "action": "export_manual_case",
+            "label": "纳入人工测试清单",
+            "reason": "当前用例涉及人工处理、运营后台、定时任务或长时间等待。",
+        }
+    return {
+        "action": "review_case",
+        "label": "人工复核用例",
+        "reason": "当前分级未命中明确处理路径。",
+    }
+
+
+def _structured_case_gap_list(enhanced):
+    gap_defs = {
+        "NEEDS_EVIDENCE_REVIEW": {
+            "title": "候选证据待采纳",
+            "next_action": "复核并采纳候选证据规则",
+        },
+        "NEEDS_EVIDENCE": {
+            "title": "缺少正式证据规则",
+            "next_action": "生成候选证据规则或手工补 evidence_rules.yaml",
+        },
+        "NEEDS_DATA": {
+            "title": "缺少运行数据",
+            "next_action": "补齐账号、ticket、订单号、国家币种或其他运行变量",
+        },
+        "MANUAL_ONLY": {
+            "title": "人工验证或长等待",
+            "next_action": "导出人工测试清单，必要时拆成后台/定时任务专项",
+        },
+    }
+    groups = []
+    for status, meta in gap_defs.items():
+        cases = [item for item in enhanced if item.get("quality_status") == status]
+        if not cases:
+            continue
+        groups.append({
+            "quality_status": status,
+            "title": meta["title"],
+            "count": len(cases),
+            "next_action": meta["next_action"],
+            "examples": [
+                {
+                    "id": item.get("id"),
+                    "title": item.get("title"),
+                    "method": item.get("method"),
+                    "path": item.get("path"),
+                    "coverage_tool": item.get("coverage_tool"),
+                    "reason": (item.get("blocking_reasons") or [""])[0],
+                }
+                for item in cases[:8]
+            ],
+        })
+    return groups
+
+
+def _structured_case_dashboard(enhanced, summary):
+    total = summary.get("cases", 0)
+    readiness = summary.get("readiness_counts") or {}
+    quality = summary.get("quality_counts") or {}
+    script_ready = readiness.get("SCRIPT_GENERATION_READY", 0)
+    evidence_pending = readiness.get("SCRIPTABLE_EVIDENCE_PENDING", 0)
+    manual = quality.get("MANUAL_ONLY", 0)
+    return {
+        "total_cases": total,
+        "script_generation_ready": script_ready,
+        "script_generation_ready_rate": _pct(script_ready, total),
+        "evidence_pending": evidence_pending,
+        "evidence_pending_rate": _pct(evidence_pending, total),
+        "manual_only": manual,
+        "manual_only_rate": _pct(manual, total),
+        "db_evidence_rate": _pct(summary.get("with_db_checks", 0), total),
+        "redis_evidence_rate": _pct(summary.get("with_redis_checks", 0), total),
+        "headline": f"当前需求包 {total} 条用例，{script_ready} 条脚本生成就绪，{evidence_pending} 条待证据确认，{manual} 条人工验证，脚本生成就绪率 {_pct(script_ready, total)}%。",
+    }
+
+
 def generate_structured_test_cases(project_id, payload=None):
     payload = payload or {}
     package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
@@ -2006,6 +2118,7 @@ def generate_structured_test_cases(project_id, payload=None):
         tool_counts[item["coverage_tool"]] = tool_counts.get(item["coverage_tool"], 0) + 1
         for source in item.get("exception_sources") or []:
             exception_counts[source] = exception_counts.get(source, 0) + 1
+        item["next_action"] = _structured_case_next_action(item)
     summary = {
         "cases": len(enhanced),
         "with_db_checks": sum(1 for x in enhanced if x["db_checks"]),
@@ -2017,6 +2130,8 @@ def generate_structured_test_cases(project_id, payload=None):
         "official_rules": len(official_rules),
         "candidate_rules": len(candidate_rules),
     }
+    coverage_dashboard = _structured_case_dashboard(enhanced, summary)
+    gap_list = _structured_case_gap_list(enhanced)
     out_dir = package_root / "outputs"
     out_dir.mkdir(parents=True, exist_ok=True)
     json_path = out_dir / "structured-test-cases.json"
@@ -2028,6 +2143,8 @@ def generate_structured_test_cases(project_id, payload=None):
         "package_name": package.get("name"),
         "generated_at": now(),
         "summary": summary,
+        "coverage_dashboard": coverage_dashboard,
+        "gap_list": gap_list,
         "cases": enhanced,
     }
     json_path.write_text(json.dumps(payload_out, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -2040,6 +2157,27 @@ def generate_structured_test_cases(project_id, payload=None):
         f"- 带Redis校验：{summary['with_redis_checks']}",
         f"- 质量分级：{json.dumps(summary['quality_counts'], ensure_ascii=False)}",
         f"- 脚本生成就绪：{json.dumps(summary['readiness_counts'], ensure_ascii=False)}",
+        f"- 总览：{coverage_dashboard['headline']}",
+        "",
+        "## 缺口清单",
+        "",
+    ]
+    if gap_list:
+        for gap in gap_list:
+            lines += [
+                f"### {gap['title']}",
+                "",
+                f"- 数量：{gap['count']}",
+                f"- 下一步：{gap['next_action']}",
+                "",
+            ]
+            for example in gap["examples"]:
+                lines.append(f"- {example.get('title') or example.get('id')}：{example.get('method') or '-'} {example.get('path') or ''}；建议工具 {example.get('coverage_tool') or '-'}；原因 {example.get('reason') or '-'}")
+            lines.append("")
+    else:
+        lines += ["- 暂无明显缺口。", ""]
+    lines += [
+        "## 用例明细",
         "",
     ]
     for item in enhanced:
@@ -2053,6 +2191,7 @@ def generate_structured_test_cases(project_id, payload=None):
             f"- 质量分级：{item.get('quality_status')}",
             f"- 脚本生成就绪：{item.get('automation_readiness')} / {item.get('coverage_tool')}",
             f"- 异常来源：{', '.join(item.get('exception_sources') or []) or '-'}",
+            f"- 下一步：{(item.get('next_action') or {}).get('label') or '-'}",
             "",
             "### 前置条件",
             *[f"- {x}" for x in item["preconditions"]],
@@ -2076,6 +2215,8 @@ def generate_structured_test_cases(project_id, payload=None):
         "status": "READY" if enhanced else "ATTENTION",
         "created_at": now(),
         "summary": summary,
+        "coverage_dashboard": coverage_dashboard,
+        "gap_list": gap_list,
         "json_path": str(json_path),
         "markdown_path": str(md_path),
         "conclusion": "已生成自带接口字段、DB/Redis证据校验点、用例质量分级和脚本生成就绪状态的结构化测试用例。",
@@ -8449,7 +8590,10 @@ def list_generated_reports(project_id):
         quality = summary.get("quality_counts") or {}
         readiness = summary.get("readiness_counts") or summary.get("automation_counts") or {}
         ready_count = readiness.get("SCRIPT_GENERATION_READY", readiness.get("AUTO_READY", 0))
-        result.append({"name":"结构化测试用例增强报告","kind":"结构化用例","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"用例{summary.get('cases',0)}条 · READY{quality.get('READY',0)} · 脚本就绪{ready_count} · 待证据{quality.get('NEEDS_EVIDENCE',0)+quality.get('NEEDS_EVIDENCE_REVIEW',0)} · 人工{quality.get('MANUAL_ONLY',0)}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+        dashboard = payload.get("coverage_dashboard") or {}
+        ready_rate = dashboard.get("script_generation_ready_rate")
+        rate_text = f" · 就绪率{ready_rate}%" if ready_rate is not None else ""
+        result.append({"name":"结构化测试用例增强报告","kind":"结构化用例","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"用例{summary.get('cases',0)}条 · READY{quality.get('READY',0)} · 脚本就绪{ready_count}{rate_text} · 待证据{quality.get('NEEDS_EVIDENCE',0)+quality.get('NEEDS_EVIDENCE_REVIEW',0)} · 人工{quality.get('MANUAL_ONLY',0)}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}

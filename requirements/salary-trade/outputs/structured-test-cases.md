@@ -1,11 +1,58 @@
 # 工资代理快速结算 - 结构化测试用例
 
-- 生成时间：2026-09-01T16:40:30+08:00
+- 生成时间：2026-09-01T16:47:29+08:00
 - 用例数：170
 - 带DB校验：143
 - 带Redis校验：0
 - 质量分级：{"READY": 38, "NEEDS_EVIDENCE": 8, "NEEDS_EVIDENCE_REVIEW": 110, "MANUAL_ONLY": 14}
 - 脚本生成就绪：{"SCRIPT_GENERATION_READY": 38, "SCRIPTABLE_EVIDENCE_PENDING": 118, "MANUAL_ONLY": 14}
+- 总览：当前需求包 170 条用例，38 条脚本生成就绪，118 条待证据确认，14 条人工验证，脚本生成就绪率 22.4%。
+
+## 缺口清单
+
+### 候选证据待采纳
+
+- 数量：110
+- 下一步：复核并采纳候选证据规则
+
+- 进入入口时查询可结算额度：正常请求：GET /userserv/salary/trade/quota；建议工具 jmeter；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+- 按国家和币种选择代理用户：正常请求：GET /userserv/salary/trade/agents；建议工具 jmeter；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+- 查看本人快速结算订单列表：正常请求：GET /userserv/salary/trade/order/page；建议工具 newman；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+- 查看本人订单详情：正常请求：GET /userserv/salary/trade/order/detail；建议工具 newman；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+- 补充上传本人订单凭证：正常请求：POST /userserv/salary/trade/evidence/upload；建议工具 jmeter；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+- 查看本人订单凭证：正常请求：GET /userserv/salary/trade/evidence/list；建议工具 newman；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+- 查看本人订单流转记录：正常请求：GET /userserv/salary/trade/logs；建议工具 newman；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+- 查看自己的交易公告编辑页信息：正常请求：GET /userserv/salary/trade/agent/notice；建议工具 newman；原因 仅命中候选证据规则，需要采纳后再作为正式校验。
+
+### 缺少正式证据规则
+
+- 数量：8
+- 下一步：生成候选证据规则或手工补 evidence_rules.yaml
+
+- 返回工资快速结算创建入口开关：正常请求：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+- 返回工资快速结算创建入口开关：正常请求：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+- 返回工资快速结算创建入口开关：缺失必填参数：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+- 返回工资快速结算创建入口开关：字段边界与类型错误：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+- 返回工资快速结算创建入口开关：重复提交与幂等性：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+- 返回工资快速结算创建入口开关：缺失必填参数：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+- 返回工资快速结算创建入口开关：字段边界与类型错误：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+- 返回工资快速结算创建入口开关：重复提交与幂等性：POST /union/getAnchorApplyRecord；建议工具 jmeter；原因 写操作/状态变更用例缺少DB或Redis证据规则。
+
+### 人工验证或长等待
+
+- 数量：14
+- 下一步：导出人工测试清单，必要时拆成后台/定时任务专项
+
+- 业务规则验证：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+- 业务规则验证：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+- 业务规则验证：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+- 业务规则验证：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | da：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+- 业务规则验证：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | da：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+- 业务规则验证：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data.：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+- 业务规则验证：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+- 业务规则验证：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.：- ；建议工具 manual；原因 缺少可直接执行的接口 method/path。
+
+## 用例明细
 
 ## 返回工资快速结算创建入口开关：正常请求
 
@@ -16,6 +63,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：-
+- 下一步：进入 newman 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -43,6 +91,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -70,6 +119,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -101,6 +151,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -132,6 +183,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -164,6 +216,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -194,6 +247,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -224,6 +278,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -256,6 +311,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -289,6 +345,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -322,6 +379,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -352,6 +410,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -382,6 +441,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -412,6 +472,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -442,6 +503,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -472,6 +534,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -502,6 +565,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -532,6 +596,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -562,6 +627,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -592,6 +658,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -623,6 +690,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -654,6 +722,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -685,6 +754,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：-
+- 下一步：进入 newman 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -712,6 +782,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -739,6 +810,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -770,6 +842,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -801,6 +874,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -833,6 +907,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -863,6 +938,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -893,6 +969,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -925,6 +1002,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -958,6 +1036,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -991,6 +1070,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1021,6 +1101,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1051,6 +1132,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1081,6 +1163,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1111,6 +1194,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1141,6 +1225,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1171,6 +1256,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1201,6 +1287,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1231,6 +1318,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1261,6 +1349,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1292,6 +1381,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1323,6 +1413,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1354,6 +1445,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
+- 下一步：进入 newman 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1382,6 +1474,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
+- 下一步：进入 newman 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1410,6 +1503,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1438,6 +1532,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1466,6 +1561,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1493,6 +1589,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1524,6 +1621,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1555,6 +1653,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1586,6 +1685,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1617,6 +1717,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1650,6 +1751,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1683,6 +1785,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1715,6 +1818,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1746,6 +1850,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1777,6 +1882,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1808,6 +1914,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1839,6 +1946,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1872,6 +1980,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1905,6 +2014,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1937,6 +2047,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -1970,6 +2081,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2003,6 +2115,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2036,6 +2149,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2069,6 +2183,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2102,6 +2217,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2135,6 +2251,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2166,6 +2283,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2197,6 +2315,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2227,6 +2346,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2258,6 +2378,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2289,6 +2410,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2320,6 +2442,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2351,6 +2474,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2382,6 +2506,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2413,6 +2538,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2444,6 +2570,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2475,6 +2602,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2505,6 +2633,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2536,6 +2665,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2567,6 +2697,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2598,6 +2729,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2629,6 +2761,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2660,6 +2793,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2691,6 +2825,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2721,6 +2856,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2752,6 +2888,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2783,6 +2920,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2813,6 +2951,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2844,6 +2983,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2875,6 +3015,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2906,6 +3047,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2937,6 +3079,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2968,6 +3111,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -2999,6 +3143,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3030,6 +3175,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3061,6 +3207,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3092,6 +3239,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：state_machine_exception
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3119,6 +3267,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3149,6 +3298,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3176,6 +3326,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3202,6 +3353,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3228,6 +3380,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3254,6 +3407,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3280,6 +3434,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
+- 下一步：进入 newman 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3308,6 +3463,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
+- 下一步：进入 newman 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3336,6 +3492,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3364,6 +3521,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3392,6 +3550,7 @@
 - 质量分级：NEEDS_EVIDENCE
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：补充或生成证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3419,6 +3578,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3450,6 +3610,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3481,6 +3642,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3512,6 +3674,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3543,6 +3706,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3576,6 +3740,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3609,6 +3774,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3641,6 +3807,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3672,6 +3839,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3703,6 +3871,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3734,6 +3903,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3765,6 +3935,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3798,6 +3969,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3831,6 +4003,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3863,6 +4036,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3896,6 +4070,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3929,6 +4104,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3962,6 +4138,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -3995,6 +4172,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4028,6 +4206,7 @@
 - 质量分级：READY
 - 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
+- 下一步：进入 jmeter 脚本生成
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4061,6 +4240,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4092,6 +4272,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4123,6 +4304,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4153,6 +4335,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4184,6 +4367,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4215,6 +4399,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4246,6 +4431,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4277,6 +4463,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4308,6 +4495,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4339,6 +4527,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4370,6 +4559,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4401,6 +4591,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4431,6 +4622,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4462,6 +4654,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4493,6 +4686,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4524,6 +4718,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4555,6 +4750,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4586,6 +4782,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4617,6 +4814,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4647,6 +4845,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4678,6 +4877,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4709,6 +4909,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4739,6 +4940,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4770,6 +4972,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4801,6 +5004,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4832,6 +5036,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4863,6 +5068,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4894,6 +5100,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4925,6 +5132,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4956,6 +5164,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -4987,6 +5196,7 @@
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
+- 下一步：复核并采纳候选证据规则
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -5018,6 +5228,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：state_machine_exception
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -5045,6 +5256,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -5072,6 +5284,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -5099,6 +5312,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -5125,6 +5339,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -5151,6 +5366,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
@@ -5177,6 +5393,7 @@
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
+- 下一步：纳入人工测试清单
 
 ### 前置条件
 - 需求包：工资代理快速结算
