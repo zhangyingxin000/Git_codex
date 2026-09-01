@@ -2923,7 +2923,8 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
     needs_refresh = True
     if pytest_file.is_file():
         try:
-            needs_refresh = "PYTEST_DEEP_EVIDENCE_REVIEW" not in pytest_file.read_text(encoding="utf-8", errors="replace")
+            existing_pytest = pytest_file.read_text(encoding="utf-8", errors="replace")
+            needs_refresh = "PYTEST_DEEP_EVIDENCE_REVIEW" not in existing_pytest or "ensure_common_query_params" not in existing_pytest or "update_runtime_from_response" not in existing_pytest or 'headers["t"]' not in existing_pytest
         except Exception:
             needs_refresh = True
     if needs_refresh:
@@ -2941,7 +2942,12 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
     summary_path = run_dir / "summary.json"
     env = os.environ.copy()
     project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
-    runtime = _runtime_context(project_id, _merge_execution_profile_options(project_id, options))
+    credential = load_runtime_credential(project_id)
+    runtime_options = _merge_execution_profile_options(project_id, options)
+    if credential.get("encrypted_password") and not runtime_options.get("login_password_encrypted"):
+        runtime_options["login_password_encrypted"] = credential.get("encrypted_password")
+        runtime_options["login_strategy"] = "force"
+    runtime = _login_runtime_context(project_id, runtime_options) if runtime_options.get("login_password_encrypted") else _runtime_context(project_id, runtime_options)
     env["AUTOTEST_BASE_URL"] = project.get("base_url") or env.get("AUTOTEST_BASE_URL", "")
     env["AUTOTEST_RUNTIME_PARAMS_JSON"] = json.dumps(runtime, ensure_ascii=False, default=str)
     env["AUTOTEST_PYTEST_EVIDENCE_OUT"] = str(summary_path)
@@ -6334,6 +6340,7 @@ import os
 import re
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -6342,6 +6349,7 @@ BASE_URL = os.getenv("AUTOTEST_BASE_URL", {json.dumps(project.get("base_url") or
 PACKAGE_ID = {json.dumps(package_id or "", ensure_ascii=False)}
 PACKAGE_ROOT_HINT = {json.dumps(str(package_root or ""), ensure_ascii=False)}
 CASES = {json.dumps(serializable, ensure_ascii=False, indent=2)}
+RUNTIME_STATE = {{}}
 
 
 def package_root():
@@ -6420,6 +6428,7 @@ def runtime_variables():
         value = os.getenv(env_key, "")
         if value:
             runtime[name] = value
+    runtime.update({{key: value for key, value in RUNTIME_STATE.items() if value not in (None, "")}})
     if "orderNo" in runtime and "order_no" not in runtime:
         runtime["order_no"] = runtime["orderNo"]
     if "salary_order_no" in runtime and "order_no" not in runtime:
@@ -6443,15 +6452,92 @@ def fill_runtime(value):
     return text
 
 
+def ensure_common_query_params(path):
+    runtime = runtime_variables()
+    parsed = urllib.parse.urlsplit(path)
+    query_pairs = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+    current = {{key: value for key, value in query_pairs}}
+    additions = []
+    mapping = {{
+        "ticket": runtime.get("ticket"),
+        "uid": runtime.get("uid") or runtime.get("applicant_uid"),
+        "countryCode": runtime.get("countryCode") or runtime.get("country_code"),
+        "currency": runtime.get("currency"),
+        "agentUid": runtime.get("agentUid") or runtime.get("proxy_uid"),
+        "proxyUid": runtime.get("proxyUid") or runtime.get("proxy_uid"),
+        "orderNo": runtime.get("orderNo") or runtime.get("order_no"),
+        "orderId": runtime.get("orderId") or runtime.get("order_id"),
+    }}
+    for key in ("deviceType", "systemLanguage", "appVersion", "os", "netType", "channel", "appsflyerId", "language", "appCode", "deviceId", "version", "osVersion", "isVpnConnected", "appid", "model", "packageName", "ispType", "organic"):
+        if runtime.get(key):
+            mapping[key] = runtime.get(key)
+    for key, value in mapping.items():
+        existing = current.get(key)
+        if value not in (None, "") and (existing in (None, "", "***REDACTED***")):
+            additions.append((key, str(value)))
+    if not additions:
+        return path
+    query = urllib.parse.urlencode(query_pairs + additions, safe="{{}}")
+    return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
+
+
+def update_runtime_from_response(case, body):
+    try:
+        payload = json.loads(body[body.find("{{"):]) if "{{" in body else json.loads(body)
+    except Exception:
+        return
+    data = payload.get("data") if isinstance(payload, dict) else None
+    if not isinstance(data, (dict, list)):
+        return
+    path = str(case.get("path") or "")
+    if isinstance(data, dict):
+        if data.get("countryCode") not in (None, ""):
+            RUNTIME_STATE["country_code"] = data.get("countryCode")
+            RUNTIME_STATE["countryCode"] = data.get("countryCode")
+        if isinstance(data.get("supportCurrencies"), list) and data.get("supportCurrencies") and not RUNTIME_STATE.get("currency"):
+            RUNTIME_STATE["currency"] = data["supportCurrencies"][0]
+        for key, target in (("orderNo", "order_no"), ("order_no", "order_no"), ("orderId", "order_id"), ("id", "order_id")):
+            if data.get(key) not in (None, "") and ("order" in path or "salary/trade" in path):
+                RUNTIME_STATE[target] = data.get(key)
+                if target == "order_no":
+                    RUNTIME_STATE["orderNo"] = data.get(key)
+        if isinstance(data.get("list"), list) and data.get("list"):
+            first = data["list"][0]
+            if isinstance(first, dict):
+                if "agents" in path and first.get("uid") not in (None, ""):
+                    RUNTIME_STATE["proxy_uid"] = first.get("uid")
+                    RUNTIME_STATE["agentUid"] = first.get("uid")
+                if first.get("countryCode") not in (None, "") and not RUNTIME_STATE.get("country_code"):
+                    RUNTIME_STATE["country_code"] = first.get("countryCode")
+                    RUNTIME_STATE["countryCode"] = first.get("countryCode")
+                if isinstance(first.get("supportCurrencies"), list) and first.get("supportCurrencies") and not RUNTIME_STATE.get("currency"):
+                    RUNTIME_STATE["currency"] = first["supportCurrencies"][0]
+                if first.get("orderNo") not in (None, ""):
+                    RUNTIME_STATE["order_no"] = first.get("orderNo")
+                    RUNTIME_STATE["orderNo"] = first.get("orderNo")
+                if first.get("id") not in (None, ""):
+                    RUNTIME_STATE["order_id"] = first.get("id")
+    elif isinstance(data, list) and data:
+        first = data[0]
+        if isinstance(first, dict) and first.get("orderNo") not in (None, ""):
+            RUNTIME_STATE["order_no"] = first.get("orderNo")
+            RUNTIME_STATE["orderNo"] = first.get("orderNo")
+
+
 def run_case(case):
     case = dict(case)
-    case["path"] = fill_runtime(case.get("path", ""))
+    case["path"] = ensure_common_query_params(fill_runtime(case.get("path", "")))
     case["headers"] = fill_runtime(case.get("headers") or {{}})
     case["payload"] = fill_runtime(case.get("payload"))
     url = case["path"] if case["path"].startswith("http") else BASE_URL.rstrip("/") + "/" + case["path"].lstrip("/")
     body = case.get("payload")
     data = None if body in ("", None) else (body.encode("utf-8") if isinstance(body, str) else json.dumps(body, ensure_ascii=False).encode("utf-8"))
     headers = dict(case.get("headers") or {{}})
+    runtime = runtime_variables()
+    if runtime.get("t"):
+        headers["t"] = str(runtime.get("t"))
+    if runtime.get("sn") and "sn" not in headers:
+        headers["sn"] = str(runtime.get("sn"))
     if data and "Content-Type" not in headers:
         headers["Content-Type"] = "application/json"
     request = urllib.request.Request(url, data=data, headers=headers, method=case["method"])
@@ -6675,7 +6761,7 @@ def build_evidence_report(http_results):
     jtl = parse_jtl(os.getenv("AUTOTEST_JTL_PATH", ""))
     newman = load_newman(os.getenv("AUTOTEST_NEWMAN_JSON", ""))
     evidence = run_evidence_rules()
-    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status"))
+    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status") or str(x.get("business_code") or "200") != "200")
     failed = sum(1 for x in evidence if x["status"] == "FAILED")
     blocked = sum(1 for x in evidence if x["status"] == "BLOCKED")
     report = {{
@@ -6715,7 +6801,17 @@ def test_api_cases():
     http_results = []
     for case in CASES:
         status, body = run_case(case)
-        http_results.append({{"id": case.get("id"), "title": case["title"], "method": case["method"], "path": redact_text(fill_runtime(case.get("path", ""))), "status": status, "expected_status": case["expected_status"], "response_preview": redact_text(body[:800])}})
+        update_runtime_from_response(case, body)
+        business_code = ""
+        business_message = ""
+        try:
+            parsed_body = json.loads(body[body.find("{{"):]) if "{{" in body else json.loads(body)
+            if isinstance(parsed_body, dict):
+                business_code = parsed_body.get("code", "")
+                business_message = parsed_body.get("message", "")
+        except Exception:
+            pass
+        http_results.append({{"id": case.get("id"), "title": case["title"], "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}})
     report = build_evidence_report(http_results)
     strict = os.getenv("AUTOTEST_STRICT_EVIDENCE", "true").lower() not in ("0", "false", "no")
     if strict:
