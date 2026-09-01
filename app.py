@@ -2708,6 +2708,38 @@ def _jmeter_skill_contract():
     }
 
 
+def _pytest_evidence_skill_contract():
+    path = SKILL_DIR / "pytest-evidence-review" / "SKILL.md"
+    if path.is_file():
+        body = path.read_text(encoding="utf-8", errors="replace")
+    else:
+        body = ""
+    return {
+        "path": str(path),
+        "skill": "pytest-evidence-review",
+        "purpose": "从需求包场景计划、运行变量、HTTP结果和DB/Redis证据规则生成pytest深度复核资产",
+        "inputs": [
+            "outputs/execution-plan.json",
+            "outputs/structured-test-cases.json",
+            "evidence_rules.yaml",
+            "account_model.yaml",
+            "runtime_aliases.yaml",
+            "JMeter JTL / Newman JSON运行结果",
+        ],
+        "outputs": [
+            "outputs/pytest/pytest_api_cases.py",
+            "reports/pytest-evidence-*/summary.json",
+        ],
+        "principles": [
+            "pytest负责执行后深度证据复核，不替代JMeter状态机主流程",
+            "运行变量从环境、场景计划、账号模型和前序响应中提取",
+            "DB/Redis证据只读校验，缺变量标记BLOCKED，不编造字段",
+            "报告按需求包和场景归档，方便人工复核和维护",
+        ],
+        "source_preview": body[:3000],
+    }
+
+
 def generate_requirement_package_tool_assets(project_id, package_id, options=None):
     options = options or {}
     package = requirement_package_by_id(project_id, package_id)
@@ -2736,6 +2768,20 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
         "usage": "JMeter脚本生成必须遵守本契约；如需求出现新组件或新账号模式，先扩展Skill规则，再生成脚本。",
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     generated.append({"tool": "JMeter Skill Contract", "path": str(skill_contract_path), "source": jmeter_skill["path"]})
+
+    pytest_skill = _pytest_evidence_skill_contract()
+    pytest_skill_contract_path = package_root / "outputs" / "pytest" / "pytest-evidence-skill-contract.json"
+    pytest_skill_contract_path.parent.mkdir(parents=True, exist_ok=True)
+    pytest_skill_contract_path.write_text(json.dumps({
+        "schema_version": "1.0",
+        "project_id": project_id,
+        "package_id": package_id,
+        "generated_at": now(),
+        "source": pytest_skill["path"],
+        "contract": pytest_skill,
+        "usage": "pytest证据复盘必须遵守本契约；复杂需求优先消费场景计划、账号模型、运行别名和证据规则，不把业务流程写死在全局代码。",
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    generated.append({"tool": "pytest Evidence Skill Contract", "path": str(pytest_skill_contract_path), "source": pytest_skill["path"]})
 
     if executable_cases:
         tool_cases = _external_tool_cases(executable_cases, False)
@@ -2810,6 +2856,12 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
             "source": jmeter_skill["path"],
             "rule_count": sum(len(value) for value in jmeter_skill["rules"].values() if isinstance(value, list)),
             "principle": "测试用例决定要测什么，JMeter Skill 决定如何稳定生成线程组、请求、CSV、断言、监听器和报告。",
+        },
+        "pytest_evidence_skill_contract": {
+            "path": str(pytest_skill_contract_path),
+            "source": pytest_skill["path"],
+            "input_count": len(pytest_skill.get("inputs") or []),
+            "principle": "pytest Skill 决定如何把HTTP、JMeter/Newman结果、DB/Redis证据和运行变量收敛成可复核JSON。",
         },
         "generated": generated,
         "warnings": warnings,
@@ -6333,7 +6385,17 @@ def build_pytest_script(project, cases, runtime_context=None, redact_runtime=Tru
     serializable = []
     for case in cases:
         case_path, headers, payload = _case_request_with_runtime_context(case, runtime_context)
-        serializable.append({"id": case.get("id", ""), "title": case["title"], "method": case["method"], "path": _replace_runtime_placeholders(case_path, runtime_context, redact_runtime), "headers": _replace_runtime_placeholders(headers, runtime_context, redact_runtime), "payload": _replace_runtime_placeholders(payload, runtime_context, redact_runtime), "expected_status": _tool_expected_status(case)})
+        serializable.append({
+            "id": case.get("id", ""),
+            "title": case["title"],
+            "scenario_type": case.get("scenario_type", ""),
+            "coverage_tool": case.get("coverage_tool", ""),
+            "method": case["method"],
+            "path": _replace_runtime_placeholders(case_path, runtime_context, redact_runtime),
+            "headers": _replace_runtime_placeholders(headers, runtime_context, redact_runtime),
+            "payload": _replace_runtime_placeholders(payload, runtime_context, redact_runtime),
+            "expected_status": _tool_expected_status(case),
+        })
     return f'''import csv
 import json
 import os
@@ -6829,6 +6891,90 @@ def redact_obj(value):
     return value
 
 
+def load_execution_plan():
+    root = package_root()
+    payload = load_json(root / "outputs" / "execution-plan.json", {{}})
+    scenarios = payload.get("scenarios") if isinstance(payload, dict) else None
+    return scenarios if isinstance(scenarios, list) else []
+
+
+def case_scenario_index():
+    mapping = {{}}
+    for scenario in load_execution_plan():
+        scenario_id = scenario.get("scenario_id") or scenario.get("id") or scenario.get("name") or "unassigned"
+        scenario_name = scenario.get("name") or scenario_id
+        for case in scenario.get("cases") or []:
+            case_id = case.get("id") if isinstance(case, dict) else case
+            if case_id:
+                mapping[str(case_id)] = {{"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": scenario.get("status")}}
+        for task in scenario.get("tool_tasks") or []:
+            for case_id in task.get("cases") or []:
+                if case_id:
+                    mapping[str(case_id)] = {{"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": scenario.get("status")}}
+    return mapping
+
+
+def scenario_for_case(case, index=None):
+    index = index or case_scenario_index()
+    item = index.get(str(case.get("id") or ""))
+    if item:
+        return item
+    scenario_name = case.get("scenario_type") or "未分组场景"
+    scenario_id = snake_case(scenario_name) or "unassigned"
+    return {{"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": ""}}
+
+
+def build_scenario_results(http_results, evidence, jtl, newman):
+    scenario_map = {{}}
+    for item in http_results:
+        scenario_id = item.get("scenario_id") or "unassigned"
+        scenario = scenario_map.setdefault(scenario_id, {{
+            "scenario_id": scenario_id,
+            "name": item.get("scenario_name") or scenario_id,
+            "status": "PASSED",
+            "http_cases": 0,
+            "http_failed": 0,
+            "evidence_rules": [],
+            "jmeter_failed_labels": [],
+            "newman_failures": 0,
+        }})
+        scenario["http_cases"] += 1
+        failed = item.get("status") != item.get("expected_status") or str(item.get("business_code") or "200") != "200"
+        if failed:
+            scenario["http_failed"] += 1
+    if not scenario_map:
+        scenario_map["package_review"] = {{
+            "scenario_id": "package_review",
+            "name": "需求包证据复核",
+            "status": "PASSED",
+            "http_cases": 0,
+            "http_failed": 0,
+            "evidence_rules": [],
+            "jmeter_failed_labels": [],
+            "newman_failures": 0,
+        }}
+    all_rule_statuses = [x.get("status") for x in evidence]
+    package_scenario = scenario_map.setdefault("package_evidence", {{
+        "scenario_id": "package_evidence",
+        "name": "需求包公共数据证据",
+        "status": "PASSED",
+        "http_cases": 0,
+        "http_failed": 0,
+        "evidence_rules": [],
+        "jmeter_failed_labels": [],
+        "newman_failures": 0,
+    }})
+    package_scenario["evidence_rules"] = [{{"id": x.get("id"), "name": x.get("name"), "status": x.get("status"), "source": x.get("source")}} for x in evidence]
+    package_scenario["jmeter_failed_labels"] = jtl.get("failed_labels") or []
+    package_scenario["newman_failures"] = newman.get("failures", 0)
+    for scenario in scenario_map.values():
+        if scenario["http_failed"] or scenario["newman_failures"] or scenario["jmeter_failed_labels"] or "FAILED" in all_rule_statuses:
+            scenario["status"] = "FAILED"
+        if "BLOCKED" in all_rule_statuses:
+            scenario["status"] = "BLOCKED"
+    return list(scenario_map.values())
+
+
 def build_evidence_report(http_results):
     root = package_root()
     jtl = parse_jtl(os.getenv("AUTOTEST_JTL_PATH", ""))
@@ -6853,6 +6999,7 @@ def build_evidence_report(http_results):
             "newman_failures": newman.get("failures", 0),
         }},
         "runtime_variables": {{k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v) for k, v in runtime_variables().items()}},
+        "scenarios": build_scenario_results(http_results, evidence, jtl, newman),
         "http_results": http_results,
         "jmeter": jtl,
         "newman": newman,
@@ -6872,7 +7019,9 @@ def test_api_cases():
     assert BASE_URL, "缺少 AUTOTEST_BASE_URL"
     bootstrap_env()
     http_results = []
+    scenario_index = case_scenario_index()
     for case in CASES:
+        scenario = scenario_for_case(case, scenario_index)
         status, body = run_case(case)
         update_runtime_from_response(case, body)
         business_code = ""
@@ -6884,7 +7033,7 @@ def test_api_cases():
                 business_message = parsed_body.get("message", "")
         except Exception:
             pass
-        http_results.append({{"id": case.get("id"), "title": case["title"], "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}})
+        http_results.append({{"id": case.get("id"), "title": case["title"], "scenario_id": scenario.get("scenario_id"), "scenario_name": scenario.get("scenario_name"), "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}})
     report = build_evidence_report(http_results)
     strict = os.getenv("AUTOTEST_STRICT_EVIDENCE", "true").lower() not in ("0", "false", "no")
     if strict:

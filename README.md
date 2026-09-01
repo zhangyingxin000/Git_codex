@@ -221,6 +221,10 @@ pytest 在这套体系里负责执行后的深度校验。它会读取当前需�
 
 pytest 复盘层按通用规则运行，不绑定某个业务需求。它会从接口响应 JSON 中自动提取常见业务标识字段，并把这些变量补给后续请求和证据规则。遇到新项目的新字段时，可以在 `requirements/<package_id>/runtime_aliases.yaml` 增加别名映射，模板见 `data/templates/runtime-aliases.example.yaml`，不需要改 pytest 主逻辑。
 
+pytest 证据复盘规则已沉淀为 `skills/pytest-evidence-review/SKILL.md`。生成当前需求包工具资产时，平台会同步输出 `outputs/pytest/pytest-evidence-skill-contract.json`，用于说明本次 pytest 应该消费哪些需求包资产、如何处理运行变量、如何读取 DB/Redis 证据，以及报告必须如何归档。
+
+pytest 报告会优先读取 `outputs/execution-plan.json`，按业务场景汇总 HTTP、JMeter/Newman 和 DB/Redis 证据结果；没有正式场景计划时，才退回结构化用例里的 `scenario_type`。这样复杂需求不会变成一坨接口结果，而是能按“创建-取消”“创建-拒绝”“完整成交”等场景复核。
+
 ## 执行结果回灌复盘
 
 每个需求包可以生成独立 AI 复盘报告，输入包括：
