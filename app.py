@@ -1775,6 +1775,209 @@ def accept_candidate_evidence_rules(project_id, payload=None):
     return report
 
 
+def _path_variables(text):
+    return sorted(set(re.findall(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", str(text or ""))))
+
+
+def _case_interface_fields(case):
+    fields = set()
+    for source in (case.get("path"), case.get("payload"), case.get("headers")):
+        text = str(source or "")
+        fields.update(re.findall(r"[?&]([A-Za-z_][A-Za-z0-9_]*)=", text))
+        fields.update(re.findall(r'"([A-Za-z_][A-Za-z0-9_]*)"\s*:', text))
+        fields.update(_path_variables(text))
+    return sorted(fields)
+
+
+def _clean_case_step(text):
+    return re.sub(r"^\s*\d+[\.\)、)]\s*", "", str(text or "")).strip()
+
+
+def _case_related_evidence_rules(case, official_rules, candidate_rules):
+    method = str(case.get("method") or "").upper()
+    path = str(case.get("path") or "").split("?", 1)[0]
+    related = []
+    for rule in official_rules:
+        trigger = str(rule.get("trigger") or "")
+        if path and path in trigger and (not method or method in trigger.upper()):
+            item = dict(rule)
+            item["rule_origin"] = "official"
+            related.append(item)
+    case_id = case.get("id")
+    for rule in candidate_rules:
+        source_case = rule.get("source_case") or {}
+        trigger = str(rule.get("trigger") or "")
+        if source_case.get("id") == case_id or (path and path in trigger and (not method or method in trigger.upper())):
+            item = dict(rule)
+            item["rule_origin"] = "candidate"
+            related.append(item)
+    return related
+
+
+def _evidence_rule_query(rule):
+    query = rule.get("query") if isinstance(rule.get("query"), dict) else {}
+    return {
+        "source": query.get("source") or rule.get("source") or "mysql",
+        "table": query.get("table") or rule.get("table"),
+        "where": query.get("where") or rule.get("where"),
+        "key": query.get("key") or rule.get("redis_key"),
+    }
+
+
+def generate_structured_test_cases(project_id, payload=None):
+    payload = payload or {}
+    package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    cases = _requirement_package_cases(project_id, package_id)
+    evidence = requirement_evidence_rules(project_id, package_id)
+    official_rules = evidence.get("rules") or []
+    candidates_path = package_root / "evidence_rules.candidates.yaml"
+    candidates_payload = _load_yaml_file(candidates_path)
+    candidate_rules = candidates_payload.get("rules") if isinstance(candidates_payload, dict) else []
+    candidate_rules = candidate_rules if isinstance(candidate_rules, list) else []
+    data_scope = package.get("data_scope") or {}
+    enhanced = []
+    for case in cases:
+        related_rules = _case_related_evidence_rules(case, official_rules, candidate_rules)
+        interface_fields = _case_interface_fields(case)
+        db_checks, redis_checks = [], []
+        required_variables = set(interface_fields)
+        for rule in related_rules:
+            query = _evidence_rule_query(rule)
+            rule_origin = rule.get("rule_origin") or "official"
+            check = {
+                "rule_id": rule.get("id"),
+                "rule_source": rule_origin,
+                "data_source": query.get("source"),
+                "name": rule.get("name"),
+                "table": query.get("table"),
+                "where": query.get("where"),
+                "key": query.get("key"),
+                "fields": sorted({x.get("field") for x in (rule.get("assertions") or []) if isinstance(x, dict) and x.get("field")}),
+                "assertions": rule.get("assertions") or [],
+                "review_status": rule.get("review_status", "CONFIRMED" if rule_origin == "official" else "READY_FOR_REVIEW"),
+            }
+            required_variables.update(_path_variables(query.get("where")))
+            required_variables.update(_path_variables(query.get("key")))
+            for assertion in rule.get("assertions") or []:
+                if isinstance(assertion, dict):
+                    required_variables.update(_path_variables(assertion.get("expected")))
+            if str(query.get("source") or "").lower() == "redis":
+                redis_checks.append(check)
+            else:
+                db_checks.append(check)
+        preconditions = [
+            f"需求包：{package.get('name') or package_id}",
+            "已准备当前用例所需账号、ticket、设备参数和运行变量。",
+        ]
+        if required_variables:
+            preconditions.append("运行变量：" + ", ".join(sorted(required_variables)))
+        if data_scope:
+            preconditions.append("数据范围：" + ", ".join(data_scope.get("mysql_tables") or []))
+        steps = []
+        if case.get("steps"):
+            steps.extend(_clean_case_step(x) for x in str(case.get("steps")).splitlines())
+        if case.get("method") and case.get("path"):
+            steps.append(f"调用接口：{case.get('method')} {case.get('path')}")
+        if db_checks:
+            steps.append("执行后按证据规则只读查询数据库。")
+        if redis_checks:
+            steps.append("执行后按证据规则只读读取Redis。")
+        expected = [str(case.get("expected") or "").strip() or f"HTTP状态码符合预期：{case.get('expected_status') or 200}"]
+        for check in db_checks:
+            expected.append(f"DB校验：{check['table']} WHERE {check['where']}，字段 {', '.join(check['fields']) or '存在性'} 符合规则 {check['rule_id']}。")
+        for check in redis_checks:
+            expected.append(f"Redis校验：{check.get('key') or 'Key'} 的字段符合规则 {check['rule_id']}。")
+        enhanced.append({
+            "id": case.get("id"),
+            "title": case.get("title"),
+            "priority": case.get("priority"),
+            "scenario_type": case.get("scenario_type"),
+            "method": case.get("method"),
+            "path": case.get("path"),
+            "interface_fields": interface_fields,
+            "preconditions": preconditions,
+            "steps": [x for x in steps if str(x).strip()],
+            "expected_results": [x for x in expected if str(x).strip()],
+            "db_checks": db_checks,
+            "redis_checks": redis_checks,
+            "traceability": {
+                "requirement_ref": case.get("requirement_ref"),
+                "evidence_rules": [x.get("rule_id") for x in db_checks + redis_checks],
+            },
+        })
+    summary = {
+        "cases": len(enhanced),
+        "with_db_checks": sum(1 for x in enhanced if x["db_checks"]),
+        "with_redis_checks": sum(1 for x in enhanced if x["redis_checks"]),
+        "official_rules": len(official_rules),
+        "candidate_rules": len(candidate_rules),
+    }
+    out_dir = package_root / "outputs"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    json_path = out_dir / "structured-test-cases.json"
+    md_path = out_dir / "structured-test-cases.md"
+    payload_out = {
+        "schema_version": "1.0",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "generated_at": now(),
+        "summary": summary,
+        "cases": enhanced,
+    }
+    json_path.write_text(json.dumps(payload_out, ensure_ascii=False, indent=2), encoding="utf-8")
+    lines = [
+        f"# {package.get('name') or package_id} - 结构化测试用例",
+        "",
+        f"- 生成时间：{payload_out['generated_at']}",
+        f"- 用例数：{summary['cases']}",
+        f"- 带DB校验：{summary['with_db_checks']}",
+        f"- 带Redis校验：{summary['with_redis_checks']}",
+        "",
+    ]
+    for item in enhanced:
+        lines += [
+            f"## {item.get('title') or item.get('id')}",
+            "",
+            f"- 优先级：{item.get('priority') or '-'}",
+            f"- 场景类型：{item.get('scenario_type') or '-'}",
+            f"- 接口：{(item.get('method') or '-')} {(item.get('path') or '')}",
+            f"- 接口字段：{', '.join(item['interface_fields']) or '-'}",
+            "",
+            "### 前置条件",
+            *[f"- {x}" for x in item["preconditions"]],
+            "",
+            "### 操作步骤",
+            *[f"{idx + 1}. {step}" for idx, step in enumerate(item["steps"])],
+            "",
+            "### 预期结果",
+            *[f"- {x}" for x in item["expected_results"]],
+            "",
+        ]
+    md_path.write_text("\n".join(lines), encoding="utf-8")
+    report = {
+        "report_type": "STRUCTURED_TEST_CASES",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": "READY" if enhanced else "ATTENTION",
+        "created_at": now(),
+        "summary": summary,
+        "json_path": str(json_path),
+        "markdown_path": str(md_path),
+        "conclusion": "已生成自带接口字段、DB/Redis证据校验点的结构化测试用例。",
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out = ROOT / "reports" / f"structured-test-cases-{project_id}-{package_id}-{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report["json_url"] = "/reports/" + out.name
+    report["file_name"] = out.name
+    return report
+
+
 def _requirement_package_keywords(package_id):
     if package_id == "salary-trade":
         return ("工资", "代理", "交易", "订单", "结算", "投诉", "salary", "trade")
@@ -8126,6 +8329,13 @@ def list_generated_reports(project_id):
             continue
         summary = payload.get("summary") or {}
         result.append({"name":"候选证据规则采纳报告","kind":"证据规则采纳","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"采纳{summary.get('accepted',0)}条 · 跳过{summary.get('skipped',0)}条 · 正式规则{summary.get('official_rules',0)}条","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+    for file in report_dir.glob("structured-test-cases-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        result.append({"name":"结构化测试用例增强报告","kind":"结构化用例","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"用例{summary.get('cases',0)}条 · DB校验{summary.get('with_db_checks',0)}条 · Redis校验{summary.get('with_redis_checks',0)}条","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -9293,6 +9503,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_candidate_evidence_rules(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/accept-candidate-evidence-rules", path)
             if m: return self.send_json(accept_candidate_evidence_rules(m.group(1), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/structured-test-cases", path)
+            if m: return self.send_json(generate_structured_test_cases(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/assistant", path)
             if m:
                 x=self.body(); return self.send_json(assistant_reply(m.group(1),x.get("message","")))

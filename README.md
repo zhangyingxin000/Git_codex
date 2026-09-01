@@ -104,6 +104,7 @@ AutoTest AI 的定位是 AI 自动化质量中枢，不是替代 JMeter、Postma
 - 多账号场景：支持单账号需求和多角色需求分离，例如财富等级使用 `wealth_user`，工资交易使用 `applicant`、`proxy`、`operator`。
 - 配置驱动迁移：环境地址、JMeter目录、Redis/MySQL只读策略、账号文件和报告目录放在 `config/env.test.yaml`，迁移时优先改配置。
 - AI 幻觉校验：AI 生成测试点、用例和数据断言时，应被真实接口文档、DB元数据、Redis Key规则约束，避免乱编字段和状态。
+- 结构化测试用例：把接口字段、运行变量、DB表字段、Redis Key证据自动写入用例前置条件、步骤和预期结果，减少人工梳理映射关系。
 - 企业工具编排：接口链路交给 Postman/Newman，性能和复杂链路交给 JMeter，结果回收到报告中心。
 - 报告复盘：执行结果结合接口响应、JMeter指标、DB/Redis只读证据做复盘分析，而不是只展示图表。
 
@@ -138,6 +139,18 @@ JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md`。它定义
 
 JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生成当前需求包的 `account_model.yaml`，再由 JMeter Skill 决定是否启用单账号、双角色、多流程槽位、CSV、登录接口、Redis 登录态或 MySQL 只读证据。
 
+## 结构化测试用例输出
+
+平台支持把同一份需求包输出为三类执行资产：
+
+- Postman/Newman 集合：适合轻量接口回归和快速冒烟。
+- JMeter 脚本：适合复杂业务流、状态流、并发、持续压测和性能指标采集。
+- 结构化测试用例：适合评审、手工测试、缺陷定位和 AI 复盘输入。
+
+结构化测试用例不会覆盖原始用例，会写入当前需求包自己的 `outputs/structured-test-cases.json` 和 `outputs/structured-test-cases.md`。生成时会读取当前需求包的测试用例、正式 `evidence_rules.yaml` 和候选 `evidence_rules.candidates.yaml`，把接口字段、 `${变量}`、数据库只读校验、Redis 证据校验补进前置条件、操作步骤和预期结果。
+
+这个能力的业务价值是：测试人员不用手工从接口文档、数据库表结构、Redis Key 之间反复找映射，平台会先生成可审阅的证据规则，再把已确认或候选证据注入测试用例。AI 输出仍然需要元数据校验和人工确认，不做无限自动修正。
+
 ## 需求包执行链路
 
 当前工作台按需求包组织执行资产，目录位于 `requirements/<package_id>`。例如：
@@ -155,6 +168,7 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/newman/run`：运行当前需求包的 Newman 轻量接口回归。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/ai-review`：汇总当前需求包报告、外部工具结果和数据证据，生成 AI 复盘报告。
 - `POST /api/projects/{project_id}/jmeter/open-gui`：传入 `package_id` 或 `script_key` 后打开对应 JMeter 脚本。
+- `POST /api/projects/{project_id}/structured-test-cases`：按当前需求包生成结构化测试用例增强版。
 
 这个设计的目的不是把所有需求塞到一个执行中心里，而是让同一份需求和接口资产可以生成不同工具脚本：Newman 跑轻量接口回归，JMeter 跑复杂流程和性能，pytest 做深度校验和复盘。新增需求时应新增或识别独立需求包，避免覆盖已有需求的 JMX、CSV 或报告。
 
