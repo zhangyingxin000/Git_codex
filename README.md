@@ -108,6 +108,19 @@ AutoTest AI 的定位是 AI 自动化质量中枢，不是替代 JMeter、Postma
 - 企业工具编排：接口链路交给 Postman/Newman，性能和复杂链路交给 JMeter，结果回收到报告中心。
 - 报告复盘：执行结果结合接口响应、JMeter指标、DB/Redis只读证据做复盘分析，而不是只展示图表。
 
+## 主线工作流
+
+平台按需求包收口一条可迁移流程：
+
+1. 选择或新建需求包，导入需求资料和接口文档。
+2. 生成测试点、测试用例和结构化测试用例。
+3. 生成当前需求包的 `account_model.yaml`，判断单账号、多角色、多流程槽位和 CSV/运行参数策略。
+4. 按 JMeter Skill 规则生成 Newman、JMeter、pytest 执行资产。
+5. 执行 Newman/JMeter，并把原始报告回收到当前需求包。
+6. 用接口响应、DB/Redis证据、JMeter/Newman结果生成 AI 复盘。
+
+这条链路的原则是：测试用例决定“测什么”，账号模型决定“用谁测”，JMeter/Newman/pytest 负责“怎么执行”，DB/Redis 元数据负责“证据是否真实存在”，AI 复盘负责“把失败原因讲清楚”。
+
 ## YAML 环境配置
 
 配置文件位于：
@@ -121,7 +134,7 @@ YAML 通过 Python 的 `PyYAML` 库加载，代码里使用 `import yaml` 和 `y
 
 ## JMeter 脚本生成 Skill
 
-JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md`。它定义了从测试用例生成 JMX 的最低标准：
+JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md` 和 `skills/jmeter-script-generation/rules.yaml`。它定义了从测试用例生成 JMX 的最低标准：
 
 - 读取当前需求包 `account_model.yaml`
 - 线程组
@@ -135,9 +148,11 @@ JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md`。它定义
 - JTL/HTML 报告回收
 - 用例到脚本的 manifest 映射
 
-后续演进到 Agent 时，这个 Skill 会作为工具调用契约，而不是把脚本生成逻辑散落在页面或临时脚本里。
+后续演进到 Agent 时，这个 Skill 会作为工具调用契约，而不是把脚本生成逻辑散落在页面或临时脚本里。每次生成需求包脚本时，平台会把机器可读规则写入 `outputs/jmeter/jmeter-skill-contract.json`，用于说明线程组、请求、CSV、断言、监听器、报告和证据规则的生成依据。
 
 JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生成当前需求包的 `account_model.yaml`，再由 JMeter Skill 决定是否启用单账号、双角色、多流程槽位、CSV、登录接口、Redis 登录态或 MySQL 只读证据。
+
+多账号预检会输出申请人槽位、国家/币种组合、代理匹配情况和凭证来源摘要，用于执行前排查 401、50017、代理白名单缺失和账号复用问题。
 
 ## 结构化测试用例输出
 

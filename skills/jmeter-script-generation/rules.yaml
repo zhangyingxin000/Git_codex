@@ -1,0 +1,60 @@
+schema_version: "1.0"
+skill: jmeter-script-generation
+purpose: "从需求包和结构化测试用例生成可维护的 JMeter 执行资产"
+input_contract:
+  required:
+    - requirement_package_id
+    - account_model.yaml
+    - structured_test_cases
+    - interface_contract
+    - runtime_data_strategy
+  optional:
+    - evidence_rules.yaml
+    - evidence_rules.candidates.yaml
+    - data-preflight-check.json
+    - performance_profile
+account_rules:
+  - "生成前必须读取当前需求包 account_model.yaml"
+  - "单账号需求不默认生成 CSV Data Set Config"
+  - "多角色需求必须拆分 role-specific uid/ticket 变量"
+  - "多流程槽位需求必须隔离 flow_code、applicant_slot、order_no"
+  - "ticket 必须能与当前角色 uid 对应，否则阻断"
+  - "DB 只提供候选用户和证据，不作为 ticket 来源"
+runtime_data_rules:
+  yaml: "稳定环境配置、工具路径、只读DB/Redis连接元数据、报告目录"
+  csv: "多账号、多角色、多流程或数据矩阵运行数据"
+  runtime_properties: "本次运行临时 ticket、uid、线程数、循环数和阈值"
+jmeter_components:
+  thread_group: "一个业务流或场景族一个线程组"
+  csv_data_set: "仅在 account_model 或测试用例要求多账号/数据矩阵时生成"
+  http_sampler: "每个接口步骤一个可维护采样器"
+  json_extractor: "在产生业务变量的响应后提取 orderNo、status、amount 等"
+  jsr223_assertion: "做严格业务断言、状态流转和变量归属校验"
+  jdbc_sampler: "只读查询 DB 证据，禁止写业务库"
+  listener: "GUI脚本包含查看树、汇总、聚合、JTL写入"
+assertion_rules:
+  - "HTTP 状态码"
+  - "业务 code/message"
+  - "必填响应字段"
+  - "状态流转"
+  - "角色权限"
+  - "DB/Redis 证据一致性"
+performance_metrics:
+  - samples
+  - success
+  - errors
+  - error_rate
+  - average_ms
+  - p50_ms
+  - p90_ms
+  - p95_ms
+  - p99_ms
+  - throughput_rps
+  - response_codes
+output_contract:
+  - "JMX 脚本"
+  - "启动脚本或启动命令"
+  - "case -> thread group -> sampler -> assertion -> evidence 映射"
+  - "运行参数说明"
+  - "JTL 和 HTML 报告归档位置"
+  - "已知阻断和人工待确认项"

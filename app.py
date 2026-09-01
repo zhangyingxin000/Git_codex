@@ -917,6 +917,88 @@ def _file_status(path):
     }
 
 
+def _package_latest_report_status(package_root):
+    root = Path(package_root) / "reports"
+    if not root.exists():
+        return {"exists": False, "status": "PENDING", "latest": "", "count": 0}
+    summaries = sorted(root.glob("*/summary.json"), key=lambda x: x.stat().st_mtime, reverse=True)
+    if not summaries:
+        return {"exists": False, "status": "PENDING", "latest": "", "count": 0}
+    try:
+        latest_payload = json.loads(summaries[0].read_text(encoding="utf-8"))
+    except Exception:
+        latest_payload = {}
+    return {
+        "exists": True,
+        "status": latest_payload.get("status") or "READY",
+        "latest": str(summaries[0]),
+        "count": len(summaries),
+    }
+
+
+def _requirement_package_workflow_status(package_root, counts, artifacts):
+    root = Path(package_root)
+    output_root = root / "outputs"
+    structured = _file_status(output_root / "structured-test-cases.json")
+    mapping = _file_status(output_root / "case-jmeter-mapping.json")
+    preflight = _read_json_asset(output_root / "data-preflight-check.json")
+    tool_manifest = _read_json_asset(output_root / "tool-assets-manifest.json")
+    report_status = _package_latest_report_status(root)
+    evidence_ready = artifacts.get("evidence_rules", {}).get("exists") or (root / "evidence_rules.candidates.yaml").is_file()
+    stages = [
+        {
+            "code": "01",
+            "name": "需求资料",
+            "status": "READY" if counts.get("sources") else "PENDING",
+            "summary": f"{counts.get('sources', 0)}份资料",
+            "next_action": "导入需求文档和接口文档" if not counts.get("sources") else "继续生成测试用例",
+        },
+        {
+            "code": "02",
+            "name": "测试用例",
+            "status": "READY" if counts.get("test_cases") else "PENDING",
+            "summary": f"{counts.get('test_cases', 0)}条用例 · {counts.get('test_points', 0)}个测试点",
+            "next_action": "生成结构化测试用例" if not counts.get("test_cases") else "检查结构化用例和覆盖状态",
+        },
+        {
+            "code": "03",
+            "name": "数据准备",
+            "status": preflight.get("status") or ("READY" if structured.get("exists") else "PENDING"),
+            "summary": f"结构化用例{'已生成' if structured.get('exists') else '待生成'} · 证据规则{'已就绪' if evidence_ready else '待确认'}",
+            "next_action": "处理账号、CSV、DB/Redis证据或预检阻断",
+        },
+        {
+            "code": "04",
+            "name": "工具脚本",
+            "status": tool_manifest.get("status") or ("READY" if any((artifacts.get(name) or {}).get("exists") for name in ("newman", "jmeter", "pytest")) else "PENDING"),
+            "summary": f"Newman/JMeter/pytest 资产{len(tool_manifest.get('generated') or [])}份",
+            "next_action": "生成本包脚本资产",
+        },
+        {
+            "code": "05",
+            "name": "执行报告",
+            "status": report_status.get("status"),
+            "summary": f"{report_status.get('count', 0)}份需求包报告",
+            "next_action": "运行 Newman/JMeter 并回收报告",
+        },
+        {
+            "code": "06",
+            "name": "AI复盘",
+            "status": "READY" if list((root / "reports").glob("ai-review-*/summary.json")) else "PENDING",
+            "summary": "结合接口、DB/Redis证据做复盘",
+            "next_action": "生成当前需求包 AI 复盘",
+        },
+    ]
+    blockers = [stage for stage in stages if stage["status"] in {"PENDING", "BLOCKED", "NEEDS_DATA", "UNCONFIGURED"}]
+    return {
+        "stages": stages,
+        "next_step": blockers[0] if blockers else {"code": "DONE", "name": "持续优化", "status": "READY", "next_action": "补异常场景、性能阈值和证据规则"},
+        "structured_cases": structured,
+        "jmeter_mapping": mapping,
+        "preflight_status": preflight.get("status") or "NOT_GENERATED",
+    }
+
+
 def _requirement_package_template(project_id, key):
     config = load_environment_config()
     salary = deep_get(config, "requirement_datasets.salary_trade", {}) or {}
@@ -1066,6 +1148,7 @@ def ensure_requirement_package_manifest(project_id, package):
         )
     manifest["root"] = str(root)
     manifest["manifest_path"] = str(manifest_path)
+    manifest["workflow_status"] = _requirement_package_workflow_status(root, counts, artifacts)
     return manifest
 
 
@@ -2087,6 +2170,12 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
     salary_dataset = deep_get(config, "requirement_datasets.salary_trade", {}) or {}
     checks = []
     runtime_sql_checks = []
+    details = {
+        "applicants": [],
+        "country_currency_pairs": [],
+        "proxy_matches": [],
+        "credential_sources": {},
+    }
     status = "READY"
 
     def add_check(name, state, detail, next_action=""):
@@ -2113,6 +2202,19 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         applicants = applicant_rows + account_applicants
         applicant_uids = {str(x.get("applicant_uid") or x.get("uid") or "").strip() for x in applicants if str(x.get("applicant_uid") or x.get("uid") or "").strip()}
         applicant_ready = [x for x in applicants if _ticket_source_ready(x, "applicant_")]
+        details["applicants"] = [
+            {
+                "uid": str(x.get("applicant_uid") or x.get("uid") or "").strip(),
+                "countryCode": str(x.get("countryCode") or x.get("country_code") or "").strip(),
+                "currency": str(x.get("currency") or "").strip(),
+                "credential_ready": _ticket_source_ready(x, "applicant_"),
+                "source": "applicant_csv" if x in applicant_rows else "account_csv",
+            }
+            for x in applicants
+            if str(x.get("applicant_uid") or x.get("uid") or "").strip()
+        ][:50]
+        details["credential_sources"]["applicant_ready"] = len(applicant_ready)
+        details["credential_sources"]["applicant_total"] = len(applicant_uids)
         if len(applicant_uids) >= 8 and len(applicant_ready) >= 8:
             add_check("8个申请人账号", "READY", f"已识别 {len(applicant_uids)} 个申请人，具备登录态来源 {len(applicant_ready)} 个。")
         else:
@@ -2131,12 +2233,17 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
                 and str(x.get("enabled", "true")).strip().lower() not in ("0", "false", "no", "off")
             ]
             proxy_matches.append({"countryCode": country_code, "currency": currency, "matched": len(matched), "proxy_uids": [x.get("proxy_uid") or x.get("uid") for x in matched[:5]]})
+        details["country_currency_pairs"] = [{"countryCode": x[0], "currency": x[1]} for x in applicant_pairs]
+        details["proxy_matches"] = proxy_matches
         missing_pairs = [x for x in proxy_matches if not x["matched"]]
         if missing_pairs:
             add_check("代理国家币种匹配", "NEEDS_DATA", f"存在 {len(missing_pairs)} 组申请人国家/币种未在代理CSV命中。", "同步数据库白名单到代理CSV，或补齐对应代理")
         else:
             add_check("代理国家币种匹配", "READY", f"申请人国家/币种组合 {len(applicant_pairs)} 组均能在代理CSV匹配。")
         proxy_ready = [x for x in proxy_rows if _ticket_source_ready(x, "proxy_")]
+        details["credential_sources"]["proxy_ready"] = len(proxy_ready)
+        details["credential_sources"]["proxy_total"] = len(proxy_rows)
+        details["credential_sources"]["proxy_ready_uids"] = [str(x.get("proxy_uid") or x.get("uid") or "").strip() for x in proxy_ready[:20]]
         if proxy_ready:
             add_check("代理登录态来源", "READY", f"代理CSV中 {len(proxy_ready)} 个代理具备 ticket/password/redis_uid 来源。")
         else:
@@ -2164,6 +2271,7 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         "status": status,
         "checks": checks,
         "runtime_sql_checks": runtime_sql_checks,
+        "details": details,
     }
 
 
@@ -2584,6 +2692,22 @@ def _write_package_file(package_root, relative_path, content):
     return str(path)
 
 
+def _jmeter_skill_contract():
+    path = SKILL_DIR / "jmeter-script-generation" / "rules.yaml"
+    payload = _load_yaml_file(path)
+    if not payload:
+        payload = {
+            "schema_version": "1.0",
+            "skill": "jmeter-script-generation",
+            "purpose": "从需求包和结构化测试用例生成 JMeter 执行资产",
+            "output_contract": ["JMX脚本", "映射清单", "运行参数说明", "报告归档位置"],
+        }
+    return {
+        "path": str(path),
+        "rules": payload,
+    }
+
+
 def generate_requirement_package_tool_assets(project_id, package_id, options=None):
     options = options or {}
     package = requirement_package_by_id(project_id, package_id)
@@ -2599,6 +2723,19 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
     warnings = []
     account_model = generate_requirement_account_model(project_id, package_id, True)
     generated.append({"tool": "Account Model", "path": account_model.get("path", "")})
+    jmeter_skill = _jmeter_skill_contract()
+    skill_contract_path = package_root / "outputs" / "jmeter" / "jmeter-skill-contract.json"
+    skill_contract_path.parent.mkdir(parents=True, exist_ok=True)
+    skill_contract_path.write_text(json.dumps({
+        "schema_version": "1.0",
+        "project_id": project_id,
+        "package_id": package_id,
+        "generated_at": now(),
+        "source": jmeter_skill["path"],
+        "contract": jmeter_skill["rules"],
+        "usage": "JMeter脚本生成必须遵守本契约；如需求出现新组件或新账号模式，先扩展Skill规则，再生成脚本。",
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    generated.append({"tool": "JMeter Skill Contract", "path": str(skill_contract_path), "source": jmeter_skill["path"]})
 
     if executable_cases:
         tool_cases = _external_tool_cases(executable_cases, False)
@@ -2668,6 +2805,12 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
             "roles": [role.get("name") for role in account_model.get("roles", [])],
             "rule": "先由需求包 account_model.yaml 决定账号模式，再生成 Newman/JMeter/pytest 资产。",
         },
+        "jmeter_skill_contract": {
+            "path": str(skill_contract_path),
+            "source": jmeter_skill["path"],
+            "rule_count": sum(len(value) for value in jmeter_skill["rules"].values() if isinstance(value, list)),
+            "principle": "测试用例决定要测什么，JMeter Skill 决定如何稳定生成线程组、请求、CSV、断言、监听器和报告。",
+        },
         "generated": generated,
         "warnings": warnings,
         "rule": "同一需求包独立生成 Newman、JMeter、pytest 资产；报告也按需求包回收。",
@@ -2724,10 +2867,12 @@ def run_requirement_package_newman(project_id, package_id, options=None):
     result = _sanitize_tool_result(_run_command_capture(command, ROOT, int(options.get("timeout", 180) or 180), env), _runtime_context(project_id, options))
     status = "PASSED" if result.get("exit_code") == 0 else "FAILED"
     failures = []
+    newman_stats = {}
     if json_report.is_file():
         try:
             payload = json.loads(json_report.read_text(encoding="utf-8"))
             failures = payload.get("run", {}).get("failures", [])[:20]
+            newman_stats = payload.get("run", {}).get("stats") or {}
         except Exception:
             failures = []
     summary = {
@@ -2738,9 +2883,18 @@ def run_requirement_package_newman(project_id, package_id, options=None):
         "status": status,
         "created_at": now(),
         "collection": str(collection),
+        "command": " ".join(command),
         "json_report": str(json_report) if json_report.is_file() else "",
         "exit_code": result.get("exit_code"),
         "duration_ms": result.get("duration_ms"),
+        "stats": newman_stats,
+        "summary": {
+            "iterations": deep_get(newman_stats, "iterations.total", 0),
+            "requests": deep_get(newman_stats, "requests.total", 0),
+            "assertions": deep_get(newman_stats, "assertions.total", 0),
+            "failed_assertions": deep_get(newman_stats, "assertions.failed", 0),
+            "failures": len(failures),
+        },
         "failures": [
             {
                 "source": deep_get(item, "source.name", ""),
@@ -2756,7 +2910,7 @@ def run_requirement_package_newman(project_id, package_id, options=None):
     return {
         **summary,
         "summary_path": str(summary_path),
-        "json_url": "/reports/" + str(summary_path.relative_to(ROOT / "reports")).replace("\\", "/") if (ROOT / "reports") in summary_path.parents else "",
+        "json_url": "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
     }
 
 
