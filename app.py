@@ -35,7 +35,7 @@ from urllib.parse import parse_qs, urlparse
 
 
 ROOT = Path(__file__).resolve().parent
-BUILD_ID = "20260831.10"
+BUILD_ID = "20260901.01"
 STATIC = ROOT / "static"
 DATA = ROOT / "data"
 DB_PATH = DATA / "autotest_ai.db"
@@ -2966,6 +2966,272 @@ def _package_output_context(package_root):
             "generated": tool_assets.get("generated") or [],
         },
     }
+
+
+def _case_brief(case):
+    return {
+        "id": case.get("id"),
+        "title": case.get("title") or case.get("case_title") or "",
+        "method": case.get("method") or "",
+        "path": case.get("path") or "",
+        "coverage_tool": case.get("coverage_tool") or "",
+        "readiness": case.get("automation_readiness") or case.get("readiness") or "",
+        "quality_status": case.get("quality_status") or "",
+    }
+
+
+def _execution_plan_status(cases, blockers=None, manual_only=False):
+    blockers = blockers or []
+    if blockers:
+        return "BLOCKED"
+    if manual_only or not cases:
+        return "NEEDS_REVIEW"
+    statuses = {str((case.get("quality_status") or case.get("readiness") or "")).upper() for case in cases}
+    if statuses and statuses <= {"READY", "SCRIPT_GENERATION_READY", ""}:
+        return "READY"
+    if any(status in {"MANUAL_ONLY", "BLOCKED_NEEDS_DATA", "NEEDS_DATA"} for status in statuses):
+        return "NEEDS_REVIEW"
+    return "READY_WITH_WARNINGS"
+
+
+def _case_matches_salary_flow(case, flow):
+    text = _case_text(case)
+    keywords = {
+        "A": ["取消", "cancel", "状态50"],
+        "B": ["拒绝", "reject"],
+        "C": ["确认收款", "交易完成", "完整成交", "完成"],
+        "D": ["投诉失败", "申诉失败"],
+        "E": ["投诉成功", "申诉成功"],
+        "F": ["待接单超时", "创建后代理不处理", "订单过期", "自然过期"],
+        "G": ["12小时", "已接受未转账", "接受后不转账"],
+        "H": ["24小时", "已转账未确认", "自动完成"],
+    }.get(str(flow.get("code") or ""), [])
+    return bool(
+        (flow.get("id") and flow.get("id") in text)
+        or (flow.get("name") and flow.get("name") in text)
+        or any(word.lower() in text.lower() for word in keywords)
+    )
+
+
+def _scenario_tool_task(tool, purpose, cases=None, asset="", evidence_rules=None, thread_group="", blockers=None):
+    return {
+        "tool": tool,
+        "purpose": purpose,
+        "cases": [case.get("id") for case in (cases or []) if case.get("id")],
+        "case_count": len(cases or []),
+        "asset": asset,
+        "thread_group": thread_group,
+        "evidence_rules": sorted(set(evidence_rules or [])),
+        "blockers": blockers or [],
+    }
+
+
+def _scenario_report_targets(package_root, scenario_id):
+    root = Path(package_root)
+    return {
+        "newman": str(root / "reports" / "newman-*"),
+        "jmeter": str(root / "reports" / "jmeter-*"),
+        "pytest": str(root / "reports" / "pytest-*"),
+        "ai_review": str(root / "reports" / "ai-review-*"),
+        "scenario_trace": f"scenario_id={scenario_id}",
+    }
+
+
+def _salary_trade_execution_scenarios(package_root, structured_cases, mapping):
+    mappings = mapping.get("mappings") or []
+    mapping_by_case = {item.get("case_id"): item for item in mappings if item.get("case_id")}
+    scenarios = []
+    base_order_cases = [
+        case for case in structured_cases
+        if any(word in _case_text(case) for word in ("创建", "订单", "代理", "工资"))
+    ]
+    for flow in SALARY_TRADE_CASE_FLOWS:
+        matched = [case for case in structured_cases if _case_matches_salary_flow(case, flow)]
+        if not matched:
+            matched = base_order_cases[:8]
+        evidence = []
+        for case in matched:
+            map_item = mapping_by_case.get(case.get("id")) or {}
+            evidence.extend(map_item.get("db_evidence_rules") or [])
+            evidence.extend(map_item.get("redis_evidence_rules") or [])
+        blockers = []
+        if flow.get("automation_status") == "blocked":
+            blockers.append(flow.get("blocker") or "需要人工或测试环境配合。")
+        if not matched:
+            blockers.append("未在结构化用例中匹配到该业务流程，需要补充或确认用例归属。")
+        manual = flow.get("type") == "timeout" or flow.get("automation_status") == "blocked"
+        scenarios.append({
+            "scenario_id": flow.get("id"),
+            "name": flow.get("name"),
+            "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+            "priority": flow.get("priority"),
+            "status": _execution_plan_status(matched, blockers, manual),
+            "account_slot": flow.get("account_slot"),
+            "order_variable": flow.get("order_var"),
+            "cases": [_case_brief(case) for case in matched[:30]],
+            "tool_tasks": [
+                _scenario_tool_task("newman", "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。", [case for case in matched if case.get("coverage_tool") == "newman"][:20], str(Path(package_root) / "outputs" / "newman" / "postman-collection.json")),
+                _scenario_tool_task("jmeter", "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。", matched[:30], str(Path(package_root) / "outputs" / "jmeter" / "jmeter-plan.jmx"), evidence, flow.get("thread_group"), blockers),
+                _scenario_tool_task("pytest", "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。", matched[:30], str(Path(package_root) / "outputs" / "pytest" / "pytest_api_cases.py"), evidence),
+            ] + ([_scenario_tool_task("manual", "人工复核运营处理、后台定时任务或长等待结果。", matched[:30], blockers=blockers)] if manual else []),
+            "human_review": {
+                "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+                "human_actions": [
+                    "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+                    "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+                    "核对 anchor_salary_trade_order_log 是否记录完整流转。",
+                ] + (["确认测试环境是否支持缩短或触发定时任务。"] if manual else []),
+                "maintenance_targets": [
+                    str(Path(package_root) / "outputs" / "structured-test-cases.json"),
+                    str(Path(package_root) / "outputs" / "case-jmeter-mapping.json"),
+                    str(Path(package_root) / "evidence_rules.yaml"),
+                    str(Path(package_root) / "account_model.yaml"),
+                ],
+            },
+            "reports": _scenario_report_targets(package_root, flow.get("id")),
+        })
+    return scenarios
+
+
+def _generic_execution_scenarios(package_root, structured_cases, mapping):
+    groups = {}
+    for case in structured_cases:
+        key = case.get("scenario_type") or case.get("path") or "默认场景"
+        groups.setdefault(key, []).append(case)
+    mappings = {item.get("case_id"): item for item in (mapping.get("mappings") or []) if item.get("case_id")}
+    scenarios = []
+    for index, (name, cases) in enumerate(groups.items(), start=1):
+        slug = re.sub(r"[^a-zA-Z0-9_]+", "_", str(name).lower()).strip("_")[:40] or str(index)
+        evidence = []
+        blockers = []
+        manual = any(case.get("quality_status") == "MANUAL_ONLY" for case in cases)
+        for case in cases:
+            item = mappings.get(case.get("id")) or {}
+            evidence.extend(item.get("db_evidence_rules") or [])
+            evidence.extend(item.get("redis_evidence_rules") or [])
+            if case.get("quality_status") in {"NEEDS_DATA", "MANUAL_ONLY"}:
+                blockers.extend(case.get("blocking_reasons") or [])
+        newman_cases = [case for case in cases if case.get("coverage_tool") == "newman"]
+        jmeter_cases = [case for case in cases if case.get("coverage_tool") == "jmeter"]
+        pytest_cases = [case for case in cases if case.get("coverage_tool") == "pytest" or case.get("db_checks") or case.get("redis_checks")]
+        tasks = []
+        if newman_cases:
+            tasks.append(_scenario_tool_task("newman", "轻量接口回归、冒烟和契约检查。", newman_cases, str(Path(package_root) / "outputs" / "newman" / "postman-collection.json")))
+        if jmeter_cases:
+            tasks.append(_scenario_tool_task("jmeter", "多步骤、变量传递、状态流转或性能执行。", jmeter_cases, str(Path(package_root) / "outputs" / "jmeter" / "jmeter-plan.jmx"), evidence))
+        if pytest_cases or evidence:
+            tasks.append(_scenario_tool_task("pytest", "执行后结合 HTTP、DB、Redis 证据做深度校验。", pytest_cases or cases, str(Path(package_root) / "outputs" / "pytest" / "pytest_api_cases.py"), evidence))
+        if manual:
+            tasks.append(_scenario_tool_task("manual", "人工复核长等待、后台处理或不可自动化条件。", cases, blockers=blockers))
+        if not tasks:
+            tasks.append(_scenario_tool_task("manual", "缺少足够信息时先人工复核用例可执行性。", cases))
+        scenarios.append({
+            "scenario_id": f"scenario_{slug}",
+            "name": str(name),
+            "business_goal": "按该场景归拢测试用例、工具脚本、数据证据和人工复核动作。",
+            "priority": min([case.get("priority") or "P2" for case in cases] or ["P2"]),
+            "status": _execution_plan_status(cases, blockers, manual),
+            "cases": [_case_brief(case) for case in cases[:40]],
+            "tool_tasks": tasks,
+            "human_review": {
+                "review_question": "该场景的接口结果和数据证据是否共同支持需求预期？",
+                "human_actions": ["按场景查看报告，不按工具分散排查。", "优先处理阻断数据和候选证据规则。"],
+                "maintenance_targets": [str(Path(package_root) / "outputs" / "structured-test-cases.json"), str(Path(package_root) / "evidence_rules.yaml")],
+            },
+            "reports": _scenario_report_targets(package_root, f"scenario_{slug}"),
+        })
+    return scenarios
+
+
+def _write_execution_plan_markdown(path, plan):
+    lines = [
+        f"# {plan.get('package_name') or plan.get('package_id')} - 场景级执行计划",
+        "",
+        f"- 状态：{plan.get('status')}",
+        f"- 生成时间：{plan.get('generated_at')}",
+        f"- 场景数：{plan.get('summary', {}).get('scenarios', 0)}",
+        f"- 业务价值：{plan.get('business_value')}",
+        "",
+        "## 场景清单",
+        "",
+    ]
+    for item in plan.get("scenarios") or []:
+        tools = "、".join(task.get("tool") for task in item.get("tool_tasks") or [])
+        lines += [
+            f"### {item.get('name')}",
+            "",
+            f"- 状态：{item.get('status')}",
+            f"- 用例：{len(item.get('cases') or [])} 条",
+            f"- 工具任务：{tools or '-'}",
+            f"- 人工复核：{item.get('human_review', {}).get('review_question') or '-'}",
+            "",
+        ]
+        for task in item.get("tool_tasks") or []:
+            lines.append(f"- {task.get('tool')}：{task.get('purpose')}")
+        lines.append("")
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def generate_requirement_execution_plan(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    output_context = _package_output_context(package_root)
+    structured_payload = _read_json_asset(package_root / "outputs" / "structured-test-cases.json")
+    mapping = _read_json_asset(package_root / "outputs" / "case-jmeter-mapping.json")
+    structured_cases = structured_payload.get("cases") or _requirement_package_cases(project_id, package_id)
+    scenarios = _salary_trade_execution_scenarios(package_root, structured_cases, mapping) if package_id == "salary-trade" else _generic_execution_scenarios(package_root, structured_cases, mapping)
+    tool_counts = {}
+    status_counts = {}
+    for scenario in scenarios:
+        status_value = scenario.get("status") or "UNKNOWN"
+        status_counts[status_value] = status_counts.get(status_value, 0) + 1
+        for task in scenario.get("tool_tasks") or []:
+            tool = task.get("tool") or "unknown"
+            tool_counts[tool] = tool_counts.get(tool, 0) + 1
+    status = "BLOCKED" if status_counts.get("BLOCKED") else "READY_WITH_WARNINGS" if (status_counts.get("NEEDS_REVIEW") or status_counts.get("READY_WITH_WARNINGS")) else "READY"
+    plan = {
+        "schema_version": "1.0",
+        "report_type": "REQUIREMENT_PACKAGE_SCENARIO_EXECUTION_PLAN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": status,
+        "generated_at": now(),
+        "source": {"skill": str(SKILL_DIR / "test-tool-routing" / "SKILL.md"), "basis": "结构化测试用例、JMeter映射、账号模型、证据规则和需求包资产"},
+        "summary": {
+            "scenarios": len(scenarios),
+            "cases": len(structured_cases),
+            "status_counts": status_counts,
+            "tool_counts": tool_counts,
+            "structured_case_status": output_context["structured_cases"]["summary"],
+            "data_preflight_status": output_context["data_preflight"]["status"],
+        },
+        "scenarios": scenarios,
+        "business_value": "以业务场景为维护单位，把 Newman、JMeter、pytest 和人工复核收在同一个场景下，避免报告按工具散落。",
+        "next_actions": [
+            "先按场景查看 READY/BLOCKED/NEEDS_REVIEW，确认哪些能自动跑。",
+            "脚本生成器优先消费本计划里的 JMeter 场景和 pytest 证据任务。",
+            "人工维护时只改当前场景关联的用例、账号模型、证据规则和脚本资产。",
+        ],
+    }
+    out_dir = package_root / "outputs"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    json_path = out_dir / "execution-plan.json"
+    md_path = out_dir / "execution-plan.md"
+    json_path.write_text(json.dumps(plan, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    _write_execution_plan_markdown(md_path, plan)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    report_path = ROOT / "reports" / f"requirement-execution-plan-{project_id}-{package_id}-{stamp}.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_payload = {**plan, "output_json": str(json_path), "output_markdown": str(md_path)}
+    report_path.write_text(json.dumps(report_payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    plan["output_json"] = str(json_path)
+    plan["output_markdown"] = str(md_path)
+    plan["json_url"] = "/reports/" + report_path.name
+    plan["file_name"] = report_path.name
+    return plan
 
 
 def _requirement_package_http_runs(project_id, package_id, limit=80):
@@ -9473,6 +9739,15 @@ def list_generated_reports(project_id):
             continue
         summary = payload.get("summary") or {}
         result.append({"name":"AI输出一次修正版报告","kind":"元数据修正","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"未证实引用{summary.get('unverified_references',0)}项 · 生成修正版{summary.get('assets_generated',0)}份 · 调整{summary.get('changes',0)}处","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+    for file in report_dir.glob("requirement-execution-plan-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        status_counts = summary.get("status_counts") or {}
+        tool_counts = summary.get("tool_counts") or {}
+        result.append({"name":"需求包场景级执行计划","kind":"场景执行计划","status":payload.get("status","UNKNOWN"),"created_at":payload.get("generated_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"场景{summary.get('scenarios',0)}个 · 用例{summary.get('cases',0)}条 · READY{status_counts.get('READY',0)} · 待复核{status_counts.get('NEEDS_REVIEW',0)+status_counts.get('READY_WITH_WARNINGS',0)} · Newman/JMeter/pytest {tool_counts.get('newman',0)}/{tool_counts.get('jmeter',0)}/{tool_counts.get('pytest',0)}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("business-evidence-plan-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -10546,6 +10821,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/evidence-rules", path)
             if m: return self.send_json(requirement_evidence_rules(m.group(1), m.group(2)))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/execution-plan", path)
+            if m: return self.send_json(generate_requirement_execution_plan(m.group(1), m.group(2), {}))
             m = re.fullmatch(r"/api/projects/([^/]+)/wealth-latest-report", path)
             if m:
                 report_dir=ROOT/"reports"
@@ -10750,6 +11027,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_requirement_package_tool_assets(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/account-model", path)
             if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/execution-plan", path)
+            if m: return self.send_json(generate_requirement_execution_plan(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/newman/run", path)
             if m: return self.send_json(run_requirement_package_newman(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/ai-review", path)
