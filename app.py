@@ -2763,6 +2763,8 @@ def run_requirement_package_newman(project_id, package_id, options=None):
 def _package_report_summaries(package_root):
     result = []
     for file in sorted(Path(package_root).glob("reports/*/summary.json"), key=lambda x: x.stat().st_mtime, reverse=True):
+        if file.parent.name.startswith("ai-review-"):
+            continue
         try:
             payload = json.loads(file.read_text(encoding="utf-8"))
         except Exception:
@@ -2771,10 +2773,125 @@ def _package_report_summaries(package_root):
     return result
 
 
+def _read_json_asset(path):
+    path = Path(path)
+    if not path.is_file():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _package_output_context(package_root):
+    root = Path(package_root) / "outputs"
+    structured = _read_json_asset(root / "structured-test-cases.json")
+    jmeter_mapping = _read_json_asset(root / "case-jmeter-mapping.json")
+    data_preflight = _read_json_asset(root / "data-preflight-check.json")
+    tool_assets = _read_json_asset(root / "tool-assets-manifest.json")
+    return {
+        "structured_cases": {
+            "path": str(root / "structured-test-cases.json") if (root / "structured-test-cases.json").is_file() else "",
+            "summary": structured.get("summary") or {},
+            "coverage_dashboard": structured.get("coverage_dashboard") or {},
+            "gap_list": structured.get("gap_list") or [],
+        },
+        "jmeter_mapping": {
+            "path": str(root / "case-jmeter-mapping.json") if (root / "case-jmeter-mapping.json").is_file() else "",
+            "summary": jmeter_mapping.get("summary") or {},
+        },
+        "data_preflight": {
+            "path": str(root / "data-preflight-check.json") if (root / "data-preflight-check.json").is_file() else "",
+            "status": data_preflight.get("status") or "NOT_GENERATED",
+            "checks": data_preflight.get("checks") or [],
+            "runtime_sql_checks": data_preflight.get("runtime_sql_checks") or [],
+        },
+        "tool_assets": {
+            "path": str(root / "tool-assets-manifest.json") if (root / "tool-assets-manifest.json").is_file() else "",
+            "summary": tool_assets.get("summary") or {},
+            "generated": tool_assets.get("generated") or [],
+        },
+    }
+
+
+def _requirement_package_http_runs(project_id, package_id, limit=80):
+    keywords = _requirement_package_keywords(package_id)
+    candidates = rows(
+        """SELECT r.*, c.title AS case_title, c.path, c.method, c.scenario_type
+           FROM runs r JOIN test_cases c ON c.id=r.case_id
+           WHERE r.project_id=?
+           ORDER BY r.created_at DESC LIMIT 300""",
+        (project_id,),
+    )
+    result = []
+    for item in candidates:
+        text = "\n".join(str(item.get(key) or "") for key in ("case_title", "path", "scenario_type", "request_data", "analysis"))
+        if any(word.lower() in text.lower() for word in keywords):
+            result.append(item)
+        if len(result) >= limit:
+            break
+    return result
+
+
+def _review_category(text, status=""):
+    merged = f"{status} {text}".lower()
+    if any(word in merged for word in ("401", "403", "authentication", "ticket", "token", "鉴权", "认证", "登录态")):
+        return "authentication"
+    if any(word in merged for word in ("50017", "ongoing", "processing", "处理中", "一个未处理", "未匹配", "白名单", "国家", "币种", "账号", "ticket/password/redis_uid")):
+        return "test_data"
+    if any(word in merged for word in ("400", "404", "405", "422", "参数", "必填", "类型", "格式", "request contract")):
+        return "request_contract"
+    if any(word in merged for word in ("人工", "手工", "长等待", "等待12小时", "等待24小时", "12小时", "24小时", "过期", "定时任务", "运营处理")):
+        return "manual_or_timing"
+    if any(word in merged for word in ("阻断", "规则0/", "场景0/", "rules_blocked", "scenarios_passed", "rules_passed")):
+        return "data_evidence"
+    if any(word in merged for word in ("assert", "断言", "expected", "状态流转", "业务", "code")):
+        return "business_assertion"
+    if any(word in merged for word in ("db", "mysql", "redis", "数据", "缓存", "订单", "日志", "证据")):
+        return "data_evidence"
+    if any(word in merged for word in ("p95", "p99", "平均", "slow", "latency", "性能", "超时率")):
+        return "performance"
+    if any(word in merged for word in ("timeout", "econn", "connection", "网络", "连接", "refused", "no module", "未安装")):
+        return "environment"
+    if any(word in merged for word in ("500", "502", "503", "504", "exception")):
+        return "server"
+    return "unknown"
+
+
+def _review_recommendation_for_category(category):
+    return {
+        "authentication": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。",
+        "test_data": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。",
+        "business_assertion": "拿失败用例的接口响应、订单状态和需求状态机一起核对，确认是断言口径还是后端业务逻辑。",
+        "data_evidence": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "manual_or_timing": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "performance": "优先看 JMeter 聚合报告、P95/P99、最慢标签和错误率，区分慢请求和失败请求。",
+        "environment": "先确认本机网络、代理/VPN、工具安装、JMeter/Newman路径和测试环境连通性。",
+        "request_contract": "核对接口文档的必填、类型、枚举、uid/ticket匹配和请求体格式。",
+        "server": "保留请求样本、时间点、订单号和响应码，交给后端查服务日志。",
+        "unknown": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。",
+    }.get(category, "补齐证据后复盘。")
+
+
+def _review_add_finding(findings, level, title, evidence, source="", status=""):
+    category = _review_category(evidence or title, status)
+    findings.append({
+        "level": level,
+        "category": category,
+        "title": title,
+        "evidence": _redact_runtime_text(str(evidence or ""))[:1200],
+        "recommendation": _review_recommendation_for_category(category),
+        "owner": _review_owner_for_failure(evidence, status),
+        "source": source,
+    })
+
+
 def _review_owner_for_failure(text, status=""):
     merged = f"{status} {text}".lower()
     if any(word in merged for word in ("401", "403", "authentication", "ticket", "token", "鉴权", "登录态")):
         return "测试/客户端先确认账号登录态、ticket归属和请求公共参数；后端协助确认鉴权规则。"
+    if any(word in merged for word in ("400", "404", "405", "422", "参数", "必填", "类型", "格式", "request_contract")):
+        return "测试先核对接口文档和请求参数，后端确认接口契约与错误码口径。"
     if any(word in merged for word in ("timeout", "econn", "连接", "超时", "network")):
         return "测试先确认本机网络、代理/VPN和测试环境可用性；环境负责人协助排查。"
     if any(word in merged for word in ("assert", "断言", "expected", "预期", "business", "状态流转")):
@@ -2792,6 +2909,8 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
     report_items = _package_report_summaries(package_root)
+    output_context = _package_output_context(package_root)
+    http_runs = _requirement_package_http_runs(project_id, package_id)
     generated_manifest = package_root / "outputs" / "tool-assets-manifest.json"
     tool_manifest = {}
     if generated_manifest.is_file():
@@ -2800,47 +2919,90 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
         except Exception:
             tool_manifest = {}
     related_global = []
+    seen_global_kinds = set()
     for item in list_generated_reports(project_id):
+        if item.get("kind") == "AI复盘":
+            continue
         text = " ".join(str(item.get(key) or "") for key in ("name", "kind", "summary", "package_id"))
         if package_id in text or str(package.get("name") or "") in text:
+            kind_key = item.get("kind") or item.get("name") or ""
+            if kind_key in seen_global_kinds:
+                continue
+            seen_global_kinds.add(kind_key)
             related_global.append(item)
     statuses = []
     findings = []
+    execution_signals = {
+        "http_runs": len(http_runs),
+        "http_failed": sum(1 for item in http_runs if item.get("status") in {"FAILED", "ERROR"}),
+        "package_reports": len(report_items),
+        "related_reports": len(related_global),
+        "newman_reports": 0,
+        "jmeter_reports": 0,
+        "business_evidence_reports": 0,
+        "structured_case_reports": 0,
+    }
+    for run_item in http_runs[:30]:
+        if run_item.get("status") in {"FAILED", "ERROR"} or str(run_item.get("http_status") or "") in {"401", "403", "500", "502", "503", "504"}:
+            detail = f"{run_item.get('method')} {run_item.get('path')} HTTP {run_item.get('http_status')} {run_item.get('error') or run_item.get('analysis') or ''}"
+            _review_add_finding(findings, "P0" if str(run_item.get("http_status") or "").startswith("5") else "P1", "接口执行异常", detail, f"run:{run_item.get('id')}", run_item.get("status"))
     for item in report_items:
         payload = item["payload"]
         status = str(payload.get("status") or "UNKNOWN")
         statuses.append(status)
+        if payload.get("report_type") == "REQUIREMENT_PACKAGE_NEWMAN_RUN":
+            execution_signals["newman_reports"] += 1
+        if "jmeter" in str(payload.get("report_type") or "").lower() or any((x.get("tool") == "JMeter") for x in payload.get("results") or [] if isinstance(x, dict)):
+            execution_signals["jmeter_reports"] += 1
         failures = payload.get("failures") or []
         if failures:
             for failure in failures[:10]:
                 detail = f"{failure.get('source','')} {failure.get('error','')}".strip()
-                findings.append({
-                    "level": "P0" if status == "FAILED" else "P1",
-                    "title": "外部工具执行失败",
-                    "evidence": detail or payload.get("stderr") or payload.get("stdout", "")[-500:],
-                    "owner": _review_owner_for_failure(detail, status),
-                    "source": item["path"],
-                })
+                _review_add_finding(findings, "P0" if status == "FAILED" else "P1", "外部工具执行失败", detail or payload.get("stderr") or payload.get("stdout", "")[-500:], item["path"], status)
         elif status in {"FAILED", "BLOCKED", "ERROR"}:
             detail = payload.get("message") or payload.get("stderr") or payload.get("stdout", "")[-500:] or status
-            findings.append({
-                "level": "P0" if status == "FAILED" else "P1",
-                "title": "需求包执行未通过",
-                "evidence": detail,
-                "owner": _review_owner_for_failure(detail, status),
-                "source": item["path"],
-            })
+            _review_add_finding(findings, "P0" if status == "FAILED" else "P1", "需求包执行未通过", detail, item["path"], status)
+        for result in payload.get("results") or []:
+            if not isinstance(result, dict):
+                continue
+            if result.get("tool") == "JMeter":
+                execution_signals["jmeter_reports"] += 1
+            if result.get("status") in {"FAILED", "BLOCKED", "ERROR"}:
+                detail = result.get("reason") or result.get("stderr") or result.get("stdout") or result.get("status")
+                _review_add_finding(findings, "P0" if result.get("status") == "FAILED" else "P1", f"{result.get('tool','外部工具')}执行异常", detail, item["path"], result.get("status"))
     for item in related_global[:20]:
         status = str(item.get("status") or "UNKNOWN")
+        if item.get("kind") == "业务证据执行":
+            execution_signals["business_evidence_reports"] += 1
+        if item.get("kind") == "结构化用例":
+            execution_signals["structured_case_reports"] += 1
+        if item.get("kind") == "JMeter":
+            execution_signals["jmeter_reports"] += 1
         if status in {"FAILED", "BLOCKED", "ERROR", "P1"}:
             detail = item.get("summary") or item.get("name") or status
-            findings.append({
-                "level": "P0" if status == "FAILED" else "P1",
-                "title": item.get("name") or "全局报告异常",
-                "evidence": detail,
-                "owner": _review_owner_for_failure(detail, status),
-                "source": item.get("file_name") or item.get("json_url") or "",
-            })
+            _review_add_finding(findings, "P0" if status == "FAILED" else "P1", item.get("name") or "全局报告异常", detail, item.get("file_name") or item.get("json_url") or "", status)
+    structured_summary = output_context["structured_cases"]["summary"]
+    data_preflight = output_context["data_preflight"]
+    jmeter_mapping = output_context["jmeter_mapping"]["summary"]
+    if structured_summary:
+        execution_signals["structured_case_reports"] += 1
+        quality = structured_summary.get("quality_counts") or {}
+        pending = quality.get("NEEDS_EVIDENCE", 0) + quality.get("NEEDS_EVIDENCE_REVIEW", 0)
+        if pending:
+            _review_add_finding(findings, "P1", "结构化用例仍有证据缺口", f"待证据确认 {pending} 条；缺少正式证据 {quality.get('NEEDS_EVIDENCE',0)} 条，候选待采纳 {quality.get('NEEDS_EVIDENCE_REVIEW',0)} 条。", output_context["structured_cases"]["path"], "ATTENTION")
+        if quality.get("MANUAL_ONLY", 0):
+            _review_add_finding(findings, "P1", "存在人工或长等待用例", f"人工/长等待用例 {quality.get('MANUAL_ONLY',0)} 条，需要拆出人工清单或测试环境时间加速。", output_context["structured_cases"]["path"], "ATTENTION")
+    if data_preflight.get("status") in {"BLOCKED", "READY_WITH_WARNINGS"}:
+        for check in data_preflight.get("checks") or []:
+            if check.get("status") not in {"READY"}:
+                detail = f"{check.get('name')}：{check.get('status')}；{check.get('detail')}；{check.get('next_action','')}"
+                _review_add_finding(findings, "P0" if check.get("status") in {"BLOCKED", "NEEDS_DATA"} else "P1", "生成前数据准备检查未完全通过", detail, data_preflight.get("path", ""), check.get("status"))
+    if jmeter_mapping and jmeter_mapping.get("evidence_pending", 0):
+        _review_add_finding(findings, "P1", "JMeter目标用例存在证据待补", f"JMeter目标 {jmeter_mapping.get('jmeter_targets',0)} 条，其中待证据 {jmeter_mapping.get('evidence_pending',0)} 条，脚本就绪 {jmeter_mapping.get('script_ready',0)} 条。", output_context["jmeter_mapping"]["path"], "ATTENTION")
+    category_counts = {}
+    for finding in findings:
+        category = finding.get("category") or "unknown"
+        category_counts[category] = category_counts.get(category, 0) + 1
     p0 = sum(1 for item in findings if item["level"] == "P0")
     p1 = sum(1 for item in findings if item["level"] == "P1")
     status = "FAILED" if p0 else "READY_WITH_WARNINGS" if p1 else "PASSED" if report_items or related_global else "NO_RUN_DATA"
@@ -2850,9 +3012,13 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
     if not report_items and not related_global:
         next_actions.append("先运行当前需求包的 Newman 或 JMeter，并回收报告。")
     if findings:
-        next_actions.extend(dict.fromkeys(item["owner"] for item in findings[:5]))
+        next_actions.extend(dict.fromkeys(item.get("recommendation") or item["owner"] for item in findings[:8]))
     if not next_actions:
         next_actions.append("当前需求包可进入下一轮覆盖增强：补异常场景、性能阈值和数据证据。")
+    if category_counts.get("test_data"):
+        next_actions.insert(0, "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。")
+    if category_counts.get("authentication"):
+        next_actions.insert(0, "先用最小读接口验证 applicant/proxy ticket 与 uid 归属，确认公共参数完整。")
     review = {
         "report_type": "REQUIREMENT_PACKAGE_AI_REVIEW",
         "project_id": project_id,
@@ -2867,14 +3033,28 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
             "related_reports": len(related_global),
             "p0": p0,
             "p1": p1,
+            "http_runs": execution_signals["http_runs"],
+            "http_failed": execution_signals["http_failed"],
+            "root_cause_categories": category_counts,
         },
         "conclusion": "暂无执行数据，无法复盘。" if status == "NO_RUN_DATA" else "存在阻断失败，先处理P0。" if p0 else "有待确认项，但不阻断继续演示。" if p1 else "当前需求包执行证据暂未发现阻断问题。",
         "findings": findings[:50],
+        "root_cause_categories": category_counts,
+        "execution_signals": execution_signals,
         "next_actions": next_actions,
         "evidence_sources": {
             "package_reports": [item["path"] for item in report_items[:20]],
             "related_global_reports": related_global[:20],
             "tool_assets_manifest": str(generated_manifest) if generated_manifest.is_file() else "",
+            "structured_cases": output_context["structured_cases"]["path"],
+            "jmeter_mapping": output_context["jmeter_mapping"]["path"],
+            "data_preflight": output_context["data_preflight"]["path"],
+            "runtime_sql_checks": data_preflight.get("runtime_sql_checks") or [],
+        },
+        "review_context": {
+            "structured_cases": output_context["structured_cases"],
+            "jmeter_mapping": output_context["jmeter_mapping"],
+            "data_preflight": data_preflight,
         },
         "business_value": "把同一需求包的接口执行、JMeter/Newman结果和数据证据收束成测试可读结论，减少只看原始日志和图表的成本。",
     }
@@ -2883,7 +3063,51 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / "summary.json"
     out.write_text(json.dumps(review, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    md = out_dir / "review.md"
+    lines = [
+        f"# {package.get('name') or package_id} - 执行结果回灌复盘",
+        "",
+        f"- 状态：{status}",
+        f"- 生成时间：{review['created_at']}",
+        f"- HTTP执行记录：{execution_signals['http_runs']}，失败/异常：{execution_signals['http_failed']}",
+        f"- P0：{p0}，P1：{p1}",
+        f"- 根因分布：{json.dumps(category_counts, ensure_ascii=False)}",
+        "",
+        "## 结论",
+        "",
+        review["conclusion"],
+        "",
+        "## 重点问题",
+        "",
+    ]
+    if findings:
+        for item in findings[:30]:
+            lines += [
+                f"### {item['level']} · {item['title']}",
+                "",
+                f"- 分类：{item.get('category')}",
+                f"- 证据：{item.get('evidence') or '-'}",
+                f"- 建议：{item.get('recommendation') or item.get('owner')}",
+                f"- 来源：{item.get('source') or '-'}",
+                "",
+            ]
+    else:
+        lines += ["- 暂无阻断问题。", ""]
+    lines += [
+        "## 下一步动作",
+        "",
+        *[f"{idx + 1}. {action}" for idx, action in enumerate(dict.fromkeys(next_actions))],
+        "",
+        "## 复盘输入",
+        "",
+        f"- 结构化用例：{output_context['structured_cases']['path'] or '-'}",
+        f"- JMeter映射：{output_context['jmeter_mapping']['path'] or '-'}",
+        f"- 数据预检：{output_context['data_preflight']['path'] or '-'}",
+        f"- 工具资产：{output_context['tool_assets']['path'] or '-'}",
+    ]
+    md.write_text("\n".join(lines), encoding="utf-8")
     review["summary_path"] = str(out)
+    review["markdown_path"] = str(md)
     review["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     return review
 
@@ -9035,6 +9259,22 @@ def list_generated_reports(project_id):
             package_id = payload.get("package_id") or summary_file.parents[2].name
             package_name = payload.get("package_name") or package_id
             failures = payload.get("failures") or []
+            if payload.get("report_type") == "REQUIREMENT_PACKAGE_AI_REVIEW":
+                summary = payload.get("summary") or {}
+                cats = payload.get("root_cause_categories") or {}
+                cat_text = " · ".join(f"{key}:{value}" for key, value in cats.items()) or "暂无"
+                result.append({
+                    "name": f"{package_name}AI复盘报告",
+                    "kind": "AI复盘",
+                    "status": payload.get("status", "UNKNOWN"),
+                    "created_at": payload.get("created_at") or datetime.fromtimestamp(summary_file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+                    "summary": f"P0 {summary.get('p0',0)} · P1 {summary.get('p1',0)} · HTTP失败{summary.get('http_failed',0)} · 根因 {cat_text}",
+                    "json_url": "/requirement-reports/" + summary_file.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
+                    "html_url": "",
+                    "file_name": str(summary_file),
+                    "package_id": package_id,
+                })
+                continue
             tool = "Newman" if payload.get("report_type") == "REQUIREMENT_PACKAGE_NEWMAN_RUN" else "需求包执行"
             result.append({
                 "name": f"{package_name}{tool}报告",

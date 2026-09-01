@@ -194,6 +194,18 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 
 AI 复盘不是替代测试判断，而是把原始执行结果变成可读结论：识别鉴权、参数契约、业务断言、数据证据、环境网络和服务异常，并给出下一步应由测试、产品、后端、DBA 或环境负责人确认的方向。
 
+## 执行结果回灌复盘
+
+每个需求包可以生成独立 AI 复盘报告，输入包括：
+
+- 当前需求包的 Newman/JMeter/pytest 执行摘要。
+- 平台最近保存的接口执行记录。
+- 结构化测试用例、质量分级、脚本生成就绪状态和缺口清单。
+- 用例到 JMeter 映射表。
+- 数据准备检查、执行前只读 SQL 模板、DB/Redis 证据执行报告。
+
+复盘报告会输出 `summary.json` 和 `review.md`，归档在 `requirements/<package_id>/reports/ai-review-*`。复盘只给结论、根因分类和修改建议，不自动修改脚本或业务数据。根因分类包括鉴权、请求契约、业务断言、测试数据、数据证据、性能、环境和服务异常。
+
 ## 多账号标准化
 
 多账号规则见 `docs/multi-account-standard.md`，生成规则见 `skills/account-model-generation/SKILL.md`。每个需求包会生成自己的 `account_model.yaml`，例如 `requirements/salary-trade/account_model.yaml`。
