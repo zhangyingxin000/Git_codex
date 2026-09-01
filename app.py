@@ -1175,6 +1175,134 @@ def run_requirement_package_newman(project_id, package_id, options=None):
     }
 
 
+def _package_report_summaries(package_root):
+    result = []
+    for file in sorted(Path(package_root).glob("reports/*/summary.json"), key=lambda x: x.stat().st_mtime, reverse=True):
+        try:
+            payload = json.loads(file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        result.append({"path": str(file), "payload": payload})
+    return result
+
+
+def _review_owner_for_failure(text, status=""):
+    merged = f"{status} {text}".lower()
+    if any(word in merged for word in ("401", "403", "authentication", "ticket", "token", "鉴权", "登录态")):
+        return "测试/客户端先确认账号登录态、ticket归属和请求公共参数；后端协助确认鉴权规则。"
+    if any(word in merged for word in ("timeout", "econn", "连接", "超时", "network")):
+        return "测试先确认本机网络、代理/VPN和测试环境可用性；环境负责人协助排查。"
+    if any(word in merged for word in ("assert", "断言", "expected", "预期", "business", "状态流转")):
+        return "测试和产品先确认预期口径；后端确认接口实际业务逻辑。"
+    if any(word in merged for word in ("db", "mysql", "redis", "数据", "缓存", "订单", "金额", "流水")):
+        return "测试先提供业务对象和期望，后端/DBA确认表字段、状态枚举和缓存Key。"
+    if any(word in merged for word in ("500", "502", "503", "server", "exception")):
+        return "后端优先排查接口异常和服务日志，测试提供请求样本与时间点。"
+    return "测试先复现并补齐请求、响应和数据证据，再按失败类型分派。"
+
+
+def generate_requirement_package_ai_review(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    report_items = _package_report_summaries(package_root)
+    generated_manifest = package_root / "outputs" / "tool-assets-manifest.json"
+    tool_manifest = {}
+    if generated_manifest.is_file():
+        try:
+            tool_manifest = json.loads(generated_manifest.read_text(encoding="utf-8"))
+        except Exception:
+            tool_manifest = {}
+    related_global = []
+    for item in list_generated_reports(project_id):
+        text = " ".join(str(item.get(key) or "") for key in ("name", "kind", "summary", "package_id"))
+        if package_id in text or str(package.get("name") or "") in text:
+            related_global.append(item)
+    statuses = []
+    findings = []
+    for item in report_items:
+        payload = item["payload"]
+        status = str(payload.get("status") or "UNKNOWN")
+        statuses.append(status)
+        failures = payload.get("failures") or []
+        if failures:
+            for failure in failures[:10]:
+                detail = f"{failure.get('source','')} {failure.get('error','')}".strip()
+                findings.append({
+                    "level": "P0" if status == "FAILED" else "P1",
+                    "title": "外部工具执行失败",
+                    "evidence": detail or payload.get("stderr") or payload.get("stdout", "")[-500:],
+                    "owner": _review_owner_for_failure(detail, status),
+                    "source": item["path"],
+                })
+        elif status in {"FAILED", "BLOCKED", "ERROR"}:
+            detail = payload.get("message") or payload.get("stderr") or payload.get("stdout", "")[-500:] or status
+            findings.append({
+                "level": "P0" if status == "FAILED" else "P1",
+                "title": "需求包执行未通过",
+                "evidence": detail,
+                "owner": _review_owner_for_failure(detail, status),
+                "source": item["path"],
+            })
+    for item in related_global[:20]:
+        status = str(item.get("status") or "UNKNOWN")
+        if status in {"FAILED", "BLOCKED", "ERROR", "P1"}:
+            detail = item.get("summary") or item.get("name") or status
+            findings.append({
+                "level": "P0" if status == "FAILED" else "P1",
+                "title": item.get("name") or "全局报告异常",
+                "evidence": detail,
+                "owner": _review_owner_for_failure(detail, status),
+                "source": item.get("file_name") or item.get("json_url") or "",
+            })
+    p0 = sum(1 for item in findings if item["level"] == "P0")
+    p1 = sum(1 for item in findings if item["level"] == "P1")
+    status = "FAILED" if p0 else "READY_WITH_WARNINGS" if p1 else "PASSED" if report_items or related_global else "NO_RUN_DATA"
+    next_actions = []
+    if not tool_manifest.get("generated"):
+        next_actions.append("先为当前需求包生成 Newman/JMeter/pytest 工具资产。")
+    if not report_items and not related_global:
+        next_actions.append("先运行当前需求包的 Newman 或 JMeter，并回收报告。")
+    if findings:
+        next_actions.extend(dict.fromkeys(item["owner"] for item in findings[:5]))
+    if not next_actions:
+        next_actions.append("当前需求包可进入下一轮覆盖增强：补异常场景、性能阈值和数据证据。")
+    review = {
+        "report_type": "REQUIREMENT_PACKAGE_AI_REVIEW",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": status,
+        "created_at": now(),
+        "summary": {
+            "package_status": package.get("status"),
+            "tool_assets": len(tool_manifest.get("generated") or []),
+            "package_reports": len(report_items),
+            "related_reports": len(related_global),
+            "p0": p0,
+            "p1": p1,
+        },
+        "conclusion": "暂无执行数据，无法复盘。" if status == "NO_RUN_DATA" else "存在阻断失败，先处理P0。" if p0 else "有待确认项，但不阻断继续演示。" if p1 else "当前需求包执行证据暂未发现阻断问题。",
+        "findings": findings[:50],
+        "next_actions": next_actions,
+        "evidence_sources": {
+            "package_reports": [item["path"] for item in report_items[:20]],
+            "related_global_reports": related_global[:20],
+            "tool_assets_manifest": str(generated_manifest) if generated_manifest.is_file() else "",
+        },
+        "business_value": "把同一需求包的接口执行、JMeter/Newman结果和数据证据收束成测试可读结论，减少只看原始日志和图表的成本。",
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out_dir = package_root / "reports" / f"ai-review-{stamp}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / "summary.json"
+    out.write_text(json.dumps(review, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    review["summary_path"] = str(out)
+    review["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    return review
+
+
 def db():
     conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
@@ -8147,6 +8275,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_requirement_package_tool_assets(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/newman/run", path)
             if m: return self.send_json(run_requirement_package_newman(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/ai-review", path)
+            if m: return self.send_json(generate_requirement_package_ai_review(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/jmeter/open-gui", path)
             if m: return self.send_json(open_jmeter_gui(m.group(1),self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/jmeter/harvest-gui-report", path)

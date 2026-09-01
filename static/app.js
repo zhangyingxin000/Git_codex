@@ -1105,6 +1105,20 @@ async function runSelectedRequirementPackageNewman(){
   }catch(e){toast(e.message,'error')}
 }
 
+async function generateSelectedRequirementPackageAiReview(){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!packageId)return toast('当前没有可复盘的需求包','warning');
+  try{
+    toast(`正在复盘 ${pkg.name} 的执行证据…`);
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/ai-review`,{method:'POST',body:'{}'});
+    let s=x.summary||{},findings=x.findings||[],actions=x.next_actions||[];
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · AI复盘</h2><p class="policy-note">${esc(x.business_value||'')}</p><div class="metrics"><div class="metric"><span>结论</span><b style="font-size:20px">${esc(x.status)}</b></div><div class="metric"><span>P0</span><b>${esc(s.p0||0)}</b></div><div class="metric"><span>P1</span><b>${esc(s.p1||0)}</b></div><div class="metric"><span>报告</span><b>${esc((s.package_reports||0)+(s.related_reports||0))}</b></div></div><div class="summary-panel"><b>复盘结论</b><p>${esc(x.conclusion||'')}</p></div>${findings.length?`<h3>问题归纳</h3><div class="gap-list">${findings.map(f=>`<div class="gap-item ${f.level==='P0'?'P0':'P1'}"><span class="tag ${f.level==='P0'?'FAILED':'P1'}">${esc(f.level)}</span><div><b>${esc(f.title)}</b><p>${esc(f.evidence||'')}</p><small>${esc(f.owner||'')}</small></div></div>`).join('')}</div>`:'<div class="card empty"><b>暂无阻断问题</b></div>'}<h3>下一步</h3><ol>${actions.map(a=>`<li>${esc(a)}</li>`).join('')}</ol><label>复盘报告</label><code>${esc(x.summary_path||'')}</code>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开JSON</button>`:''}`;
+    $('#modal').classList.remove('hidden');
+    toast(`${pkg.name} AI复盘：${x.status}`,x.status==='FAILED'?'error':x.status==='NO_RUN_DATA'?'warning':'success');
+    await openProject(current)
+  }catch(e){toast(e.message,'error')}
+}
+
 const requirementPackageFlowCardWithCreate=typeof requirementPackageFlowCard==='function'?requirementPackageFlowCard:null;
 requirementPackageFlowCard=function(){
   let html=requirementPackageFlowCardWithCreate?requirementPackageFlowCardWithCreate():'';
@@ -1120,6 +1134,6 @@ requirementPackageSelectorHtml=function(){
 const unifiedExecutionFlowWithNewman=typeof unifiedExecutionFlow==='function'?unifiedExecutionFlow:null;
 unifiedExecutionFlow=function(){
   let html=unifiedExecutionFlowWithNewman?unifiedExecutionFlowWithNewman():'';
-  return html.replace('<button class="small" onclick="switchTab(\'reports\')">查看报告</button>', '<button class="small" onclick="runSelectedRequirementPackageNewman()">运行本包Newman</button><button class="small" onclick="switchTab(\'reports\')">查看报告</button>')
+  return html.replace('<button class="small" onclick="switchTab(\'reports\')">查看报告</button>', '<button class="small" onclick="runSelectedRequirementPackageNewman()">运行本包Newman</button><button class="small" onclick="generateSelectedRequirementPackageAiReview()">AI复盘</button><button class="small" onclick="switchTab(\'reports\')">查看报告</button>')
 }
 

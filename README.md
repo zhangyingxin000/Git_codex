@@ -147,10 +147,15 @@ JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md`。它定义
 后端接口约定：
 
 - `GET /api/projects/{project_id}/requirement-packages`：读取需求包目录和资产状态。
+- `POST /api/projects/{project_id}/requirement-packages`：新建独立需求包并生成可迁移目录。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/tool-assets`：按需求包生成 Newman、JMeter、pytest 资产。
+- `POST /api/projects/{project_id}/requirement-packages/{package_id}/newman/run`：运行当前需求包的 Newman 轻量接口回归。
+- `POST /api/projects/{project_id}/requirement-packages/{package_id}/ai-review`：汇总当前需求包报告、外部工具结果和数据证据，生成 AI 复盘报告。
 - `POST /api/projects/{project_id}/jmeter/open-gui`：传入 `package_id` 或 `script_key` 后打开对应 JMeter 脚本。
 
 这个设计的目的不是把所有需求塞到一个执行中心里，而是让同一份需求和接口资产可以生成不同工具脚本：Newman 跑轻量接口回归，JMeter 跑复杂流程和性能，pytest 做深度校验和复盘。新增需求时应新增或识别独立需求包，避免覆盖已有需求的 JMX、CSV 或报告。
+
+AI 复盘不是替代测试判断，而是把原始执行结果变成可读结论：识别鉴权、参数契约、业务断言、数据证据、环境网络和服务异常，并给出下一步应由测试、产品、后端、DBA 或环境负责人确认的方向。
 
 ## Git 版本管理
 
