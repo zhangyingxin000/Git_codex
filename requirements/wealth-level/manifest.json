@@ -50,7 +50,7 @@
     "skill": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\SKILL.md",
       "exists": true,
-      "updated_at": "2026-08-31T12:20:38+08:00"
+      "updated_at": "2026-09-01T12:32:05+08:00"
     }
   },
   "portable_layout": {
@@ -60,5 +60,5 @@
     "outputs": "Newman/JMeter/pytest生成物",
     "reports": "执行报告和AI复盘"
   },
-  "updated_at": "2026-09-01T12:22:16+08:00"
+  "updated_at": "2026-09-01T12:35:06+08:00"
 }

@@ -589,6 +589,7 @@ def jmeter_generation_skill_status(project_id=None):
     path = SKILL_DIR / "jmeter-script-generation" / "SKILL.md"
     text = path.read_text(encoding="utf-8") if path.is_file() else ""
     checks = [
+        ("账号模型优先", "Account Model First"),
         ("线程组", "Thread Group Standards"),
         ("请求参数", "Request Generation"),
         ("CSV参数化", "CSV Parameterization"),
@@ -609,6 +610,7 @@ def jmeter_generation_skill_status(project_id=None):
         "coverage": coverage,
         "output_contract": [
             "独立JMX脚本",
+            "需求包账号模型 account_model.yaml",
             "用例到线程组映射Manifest",
             "可读说明文档",
             "JMeter GUI启动命令",
@@ -1282,6 +1284,13 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
         "package_name": package.get("name"),
         "generated_at": now(),
         "status": "READY_WITH_WARNINGS" if warnings else "READY",
+        "account_model": {
+            "path": account_model.get("path", ""),
+            "mode": account_model.get("mode", ""),
+            "csv_required": bool(account_model.get("csv_required")),
+            "roles": [role.get("name") for role in account_model.get("roles", [])],
+            "rule": "先由需求包 account_model.yaml 决定账号模式，再生成 Newman/JMeter/pytest 资产。",
+        },
         "generated": generated,
         "warnings": warnings,
         "rule": "同一需求包独立生成 Newman、JMeter、pytest 资产；报告也按需求包回收。",
@@ -6112,6 +6121,7 @@ def salary_trade_case_to_jmeter_model(project_id):
     account_csv = ROOT / str(salary_dataset.get("account_csv_path") or "data/salary-trade-accounts.csv")
     applicant_csv = ROOT / str(salary_dataset.get("applicant_csv_path") or "data/salary-trade-applicants.csv")
     flow_slots_csv = ROOT / str(salary_dataset.get("flow_slots_csv_path") or "data/salary-trade-flow-slots.csv")
+    account_model = REQUIREMENT_PACKAGE_ROOT / "salary-trade" / "account_model.yaml"
     runtime_decision = infer_jmeter_runtime_data_strategy(salary_cases, SALARY_TRADE_CASE_FLOWS)
     return {
         "requirement": "工资代理快速结算",
@@ -6149,6 +6159,7 @@ def salary_trade_case_to_jmeter_model(project_id):
             "launcher": str(ROOT / "outputs" / "open-salary-trade-state-machine.ps1"),
             "manifest": str(ROOT / "outputs" / "salary-trade-case-jmeter-manifest.json"),
             "runtime_parameters": str(ROOT / "outputs" / "salary-trade-runtime-parameters.md"),
+            "account_model": str(account_model),
             "account_csv": str(account_csv),
             "applicant_csv": str(applicant_csv),
             "flow_slots_csv": str(flow_slots_csv),
@@ -6300,6 +6311,11 @@ def _normalize_jmeter_empty_script_filenames(text):
     return re.sub(r'<stringProp name="filename">\s+</stringProp>', '<stringProp name="filename"></stringProp>', text)
 
 
+def _set_salary_trade_applicant_csv_property(text, value):
+    pattern = r'(<CSVDataSet\b[^>]*testname="工资交易账号数据集：申请人CSV"[^>]*>.*?<stringProp name="filename">).*?(</stringProp>)'
+    return re.sub(pattern, lambda match: match.group(1) + value + match.group(2), text, flags=re.S)
+
+
 def _write_jmx_preserving_manual_edits(path, text):
     path = Path(path)
     old = path.read_text(encoding="utf-8") if path.is_file() else ""
@@ -6339,7 +6355,7 @@ def generate_salary_trade_jmeter_from_cases(project_id):
     default_applicant_csv = _jmeter_property_path(applicant_csv)
     default_account_csv = _jmeter_property_path(account_csv)
     default_flow_slots_csv = _jmeter_property_path(flow_slots_csv)
-    text = text.replace(default_applicant_csv, "${__P(salary_applicants_csv," + default_applicant_csv + ")}")
+    text = _set_salary_trade_applicant_csv_property(text, "${__P(salary_applicants_csv," + default_applicant_csv + ")}")
     default_result_jtl = _jmeter_property_path(result_jtl)
     text = text.replace(str(result_jtl), "${__P(salary_result_jtl," + default_result_jtl + ")}")
     text = _normalize_jmeter_empty_script_filenames(text)
@@ -6350,6 +6366,11 @@ def generate_salary_trade_jmeter_from_cases(project_id):
         "requirement": model["requirement"],
         "source": "test_cases_to_jmeter_model",
         "skill": str(SKILL_DIR / "jmeter-script-generation" / "SKILL.md"),
+        "account_model": {
+            "path": model["artifacts"]["account_model"],
+            "status": "READY" if Path(model["artifacts"]["account_model"]).is_file() else "MISSING",
+            "rule": "JMeter生成必须先读取需求包 account_model.yaml，再决定单账号、多角色、多流程槽位、CSV、DB/Redis证据和阻断规则。",
+        },
         "yaml_config": environment_config_status(project_id),
         "csv_contract": model["csv_contract"],
         "jmx_path": str(target),
@@ -6402,10 +6423,12 @@ def generate_salary_trade_jmeter_from_cases(project_id):
         "- YAML：环境、工具路径、只读数据源、报告路径、CSV路径。",
         "- 单账号需求：可直接使用运行参数、本机凭证、登录接口或Redis只读缓存。",
         "- 多账号/多流程需求：使用CSV承载账号、角色、国家币种、流程槽位、金额、循环次数等执行数据。",
+        "- account_model.yaml：每个需求包自己的账号规则，JMeter生成前必须先读取它。",
         "",
         "## 生成产物",
         f"- JMX：{target}",
         f"- Manifest：{manifest_path}",
+        f"- 账号模型：{model['artifacts']['account_model']}",
         f"- 账号CSV：{account_csv}",
         f"- 申请人CSV：{applicant_csv}",
         f"- 流程槽位CSV：{flow_slots_csv}",
@@ -6430,6 +6453,7 @@ def generate_salary_trade_jmeter_from_cases(project_id):
         "## 规则",
         "- 不同需求包使用独立 JMX 和独立报告。",
         "- 平台先读取测试用例，再决定是否需要CSV参数化。",
+        "- 平台再读取 account_model.yaml，决定账号角色、凭证来源和DB/Redis证据。",
         "- YAML 不保存真实 ticket、密码或公司密钥。",
     ]) + "\n", encoding="utf-8")
     model = salary_trade_case_to_jmeter_model(project_id)

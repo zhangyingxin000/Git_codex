@@ -122,6 +122,7 @@ YAML 通过 Python 的 `PyYAML` 库加载，代码里使用 `import yaml` 和 `y
 
 JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md`。它定义了从测试用例生成 JMX 的最低标准：
 
+- 读取当前需求包 `account_model.yaml`
 - 线程组
 - 请求参数
 - CSV 参数化
@@ -134,6 +135,8 @@ JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md`。它定义
 - 用例到脚本的 manifest 映射
 
 后续演进到 Agent 时，这个 Skill 会作为工具调用契约，而不是把脚本生成逻辑散落在页面或临时脚本里。
+
+JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生成当前需求包的 `account_model.yaml`，再由 JMeter Skill 决定是否启用单账号、双角色、多流程槽位、CSV、登录接口、Redis 登录态或 MySQL 只读证据。
 
 ## 需求包执行链路
 

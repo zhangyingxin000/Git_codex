@@ -31,7 +31,7 @@
     "account_model": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
       "exists": true,
-      "updated_at": "2026-09-01T12:20:11+08:00"
+      "updated_at": "2026-09-01T12:35:06+08:00"
     },
     "test_cases": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-manual-test-cases.md",
@@ -51,7 +51,7 @@
     "manifest": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-jmeter-manifest.json",
       "exists": true,
-      "updated_at": "2026-08-31T20:04:10+08:00"
+      "updated_at": "2026-09-01T12:35:06+08:00"
     },
     "applicant_csv": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
@@ -76,5 +76,5 @@
     "outputs": "Newman/JMeter/pytest生成物",
     "reports": "执行报告和AI复盘"
   },
-  "updated_at": "2026-09-01T12:22:16+08:00"
+  "updated_at": "2026-09-01T12:35:06+08:00"
 }

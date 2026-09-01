@@ -3,9 +3,24 @@
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
   "package_name": "工资代理快速结算",
-  "generated_at": "2026-08-31T20:04:11+08:00",
+  "generated_at": "2026-09-01T12:35:06+08:00",
   "status": "READY",
+  "account_model": {
+    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
+    "mode": "multi_flow_slots",
+    "csv_required": true,
+    "roles": [
+      "applicant",
+      "proxy",
+      "operator"
+    ],
+    "rule": "先由需求包 account_model.yaml 决定账号模式，再生成 Newman/JMeter/pytest 资产。"
+  },
   "generated": [
+    {
+      "tool": "Account Model",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+    },
     {
       "tool": "Newman",
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json"

@@ -20,10 +20,12 @@
 - YAML：环境、工具路径、只读数据源、报告路径、CSV路径。
 - 单账号需求：可直接使用运行参数、本机凭证、登录接口或Redis只读缓存。
 - 多账号/多流程需求：使用CSV承载账号、角色、国家币种、流程槽位、金额、循环次数等执行数据。
+- account_model.yaml：每个需求包自己的账号规则，JMeter生成前必须先读取它。
 
 ## 生成产物
 - JMX：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\outputs\salary-trade-case-driven.jmx
 - Manifest：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\outputs\salary-trade-case-jmeter-manifest.json
+- 账号模型：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\requirements\salary-trade\account_model.yaml
 - 账号CSV：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-accounts.csv
 - 申请人CSV：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-applicants.csv
 - 流程槽位CSV：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-flow-slots.csv

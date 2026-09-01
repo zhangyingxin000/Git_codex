@@ -8,9 +8,9 @@ CASES = [
   {
     "title": "返回工资快速结算创建入口开关：正常请求",
     "method": "GET",
-    "path": "/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -18,9 +18,9 @@ CASES = [
   {
     "title": "返回工资快速结算创建入口开关：正常请求",
     "method": "POST",
-    "path": "/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -28,9 +28,9 @@ CASES = [
   {
     "title": "进入入口时查询可结算额度：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/quota?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/quota?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -38,9 +38,9 @@ CASES = [
   {
     "title": "按国家和币种选择代理用户：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agents?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agents?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -48,9 +48,9 @@ CASES = [
   {
     "title": "提交收款信息并创建待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/create?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -58,9 +58,9 @@ CASES = [
   {
     "title": "查看本人快速结算订单列表：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/page?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -68,9 +68,9 @@ CASES = [
   {
     "title": "查看本人订单详情：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/detail?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -78,9 +78,9 @@ CASES = [
   {
     "title": "取消待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/cancel?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -88,9 +88,9 @@ CASES = [
   {
     "title": "确认已收到代理转账：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/confirm?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -98,9 +98,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -108,9 +108,9 @@ CASES = [
   {
     "title": "补充上传本人订单凭证：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -118,9 +118,9 @@ CASES = [
   {
     "title": "查看本人订单凭证：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/evidence/list?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -128,9 +128,9 @@ CASES = [
   {
     "title": "查看本人订单流转记录：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/logs?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/logs?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -138,9 +138,9 @@ CASES = [
   {
     "title": "查看自己的交易公告编辑页信息：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/notice?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -148,9 +148,9 @@ CASES = [
   {
     "title": "保存自己的交易公告：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/notice/save?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -158,9 +158,9 @@ CASES = [
   {
     "title": "查看可处理或已承接的订单列表：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/page?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -168,9 +168,9 @@ CASES = [
   {
     "title": "查看代理侧订单详情：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/detail?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -178,9 +178,9 @@ CASES = [
   {
     "title": "接受待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/accept?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -188,9 +188,9 @@ CASES = [
   {
     "title": "拒绝待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/reject?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -198,9 +198,9 @@ CASES = [
   {
     "title": "标记已完成线下转账：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/paid?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -208,9 +208,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -218,9 +218,9 @@ CASES = [
   {
     "title": "补充上传付款或投诉凭证：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -228,9 +228,9 @@ CASES = [
   {
     "title": "返回工资快速结算创建入口开关：正常请求",
     "method": "GET",
-    "path": "/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -238,9 +238,9 @@ CASES = [
   {
     "title": "返回工资快速结算创建入口开关：正常请求",
     "method": "POST",
-    "path": "/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -248,9 +248,9 @@ CASES = [
   {
     "title": "进入入口时查询可结算额度：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/quota?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/quota?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -258,9 +258,9 @@ CASES = [
   {
     "title": "按国家和币种选择代理用户：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agents?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agents?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -268,9 +268,9 @@ CASES = [
   {
     "title": "提交收款信息并创建待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/create?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -278,9 +278,9 @@ CASES = [
   {
     "title": "查看本人快速结算订单列表：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/page?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -288,9 +288,9 @@ CASES = [
   {
     "title": "查看本人订单详情：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/detail?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -298,9 +298,9 @@ CASES = [
   {
     "title": "取消待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/cancel?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -308,9 +308,9 @@ CASES = [
   {
     "title": "确认已收到代理转账：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/confirm?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -318,9 +318,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -328,9 +328,9 @@ CASES = [
   {
     "title": "补充上传本人订单凭证：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -338,9 +338,9 @@ CASES = [
   {
     "title": "查看本人订单凭证：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/evidence/list?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -348,9 +348,9 @@ CASES = [
   {
     "title": "查看本人订单流转记录：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/logs?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/logs?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -358,9 +358,9 @@ CASES = [
   {
     "title": "查看自己的交易公告编辑页信息：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/notice?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -368,9 +368,9 @@ CASES = [
   {
     "title": "保存自己的交易公告：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/notice/save?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -378,9 +378,9 @@ CASES = [
   {
     "title": "查看可处理或已承接的订单列表：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/page?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -388,9 +388,9 @@ CASES = [
   {
     "title": "查看代理侧订单详情：正常请求",
     "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/detail?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -398,9 +398,9 @@ CASES = [
   {
     "title": "接受待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/accept?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -408,9 +408,9 @@ CASES = [
   {
     "title": "拒绝待代理处理订单：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/reject?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -418,9 +418,9 @@ CASES = [
   {
     "title": "标记已完成线下转账：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/paid?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -428,9 +428,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -438,9 +438,9 @@ CASES = [
   {
     "title": "补充上传付款或投诉凭证：正常请求",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -480,9 +480,9 @@ CASES = [
   {
     "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
     "method": "POST",
-    "path": "/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -538,9 +538,9 @@ CASES = [
   {
     "title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/create?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -596,9 +596,9 @@ CASES = [
   {
     "title": "取消待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/cancel?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -622,9 +622,9 @@ CASES = [
   {
     "title": "确认已收到代理转账：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/confirm?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -648,9 +648,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -674,9 +674,9 @@ CASES = [
   {
     "title": "补充上传本人订单凭证：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -748,9 +748,9 @@ CASES = [
   {
     "title": "保存自己的交易公告：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/notice/save?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -806,9 +806,9 @@ CASES = [
   {
     "title": "接受待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/accept?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -832,9 +832,9 @@ CASES = [
   {
     "title": "拒绝待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/reject?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -858,9 +858,9 @@ CASES = [
   {
     "title": "标记已完成线下转账：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/paid?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -884,9 +884,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -910,9 +910,9 @@ CASES = [
   {
     "title": "补充上传付款或投诉凭证：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -952,9 +952,9 @@ CASES = [
   {
     "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
     "method": "POST",
-    "path": "/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1010,9 +1010,9 @@ CASES = [
   {
     "title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/create?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1068,9 +1068,9 @@ CASES = [
   {
     "title": "取消待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/cancel?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1094,9 +1094,9 @@ CASES = [
   {
     "title": "确认已收到代理转账：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/confirm?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1120,9 +1120,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1146,9 +1146,9 @@ CASES = [
   {
     "title": "补充上传本人订单凭证：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1220,9 +1220,9 @@ CASES = [
   {
     "title": "保存自己的交易公告：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/notice/save?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1278,9 +1278,9 @@ CASES = [
   {
     "title": "接受待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/accept?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1304,9 +1304,9 @@ CASES = [
   {
     "title": "拒绝待代理处理订单：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/reject?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1330,9 +1330,9 @@ CASES = [
   {
     "title": "标记已完成线下转账：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/paid?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1356,9 +1356,9 @@ CASES = [
   {
     "title": "待确认收款时提交投诉：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/order/appeal?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200
@@ -1382,9 +1382,9 @@ CASES = [
   {
     "title": "补充上传付款或投诉凭证：重复提交与幂等性",
     "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android",
+    "path": "/userserv/salary/trade/agent/evidence/upload?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&deviceType=0&isVpnConnected=0&os=android&appsflyerId=1787803900487-1623248308013165548&netType=2&model=SM-A546B&channel=google&appCode=100156&appVersion=100.1.5.6&osVersion=16&packageName=com.soulfree.happiness&organic=Organic&appid=soulfree&ispType=4&systemLanguage=zh&language=ar",
     "headers": {
-      "t": "1788177850680"
+      "t": "1788237305837"
     },
     "payload": "",
     "expected_status": 200

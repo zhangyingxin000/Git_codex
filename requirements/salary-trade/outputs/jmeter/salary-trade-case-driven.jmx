@@ -215,7 +215,7 @@
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="工资交易账号数据集：申请人CSV">
         <stringProp name="delimiter">,</stringProp>
         <stringProp name="fileEncoding">UTF-8</stringProp>
-        <stringProp name="filename">${__P(salary_applicants_csv,${__P(salary_applicants_csv,C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-applicants.csv)})}</stringProp>
+        <stringProp name="filename">${__P(salary_applicants_csv,C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-applicants.csv)}</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
         <boolProp name="quotedData">true</boolProp>
         <boolProp name="recycle">false</boolProp>

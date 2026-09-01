@@ -64,13 +64,13 @@ if (loginUid) {
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="返回工资快速结算创建入口开关：正常请求" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?osVersion=16&amp;language=ar&amp;appsflyerId=1787803900487-1623248308013165548&amp;appCode=100156&amp;channel=google&amp;isVpnConnected=0&amp;systemLanguage=zh&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;appid=soulfree&amp;appVersion=100.1.5.6&amp;ispType=4&amp;version=100.1.5.6&amp;deviceType=0&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;organic=Organic&amp;netType=2&amp;os=android</stringProp>
+          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;version=100.1.5.6&amp;deviceType=0&amp;isVpnConnected=0&amp;os=android&amp;appsflyerId=1787803900487-1623248308013165548&amp;netType=2&amp;model=SM-A546B&amp;channel=google&amp;appCode=100156&amp;appVersion=100.1.5.6&amp;osVersion=16&amp;packageName=com.soulfree.happiness&amp;organic=Organic&amp;appid=soulfree&amp;ispType=4&amp;systemLanguage=zh&amp;language=ar</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"></collectionProp></elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788177850680</stringProp></elementProp></collectionProp></HeaderManager>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788237305837</stringProp></elementProp></collectionProp></HeaderManager>
           <hashTree/>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings"><stringProp name="status">200</stringProp></collectionProp>
@@ -84,13 +84,13 @@ if (loginUid) {
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="返回工资快速结算创建入口开关：正常请求" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?osVersion=16&amp;language=ar&amp;appsflyerId=1787803900487-1623248308013165548&amp;appCode=100156&amp;channel=google&amp;isVpnConnected=0&amp;systemLanguage=zh&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;appid=soulfree&amp;appVersion=100.1.5.6&amp;ispType=4&amp;version=100.1.5.6&amp;deviceType=0&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;organic=Organic&amp;netType=2&amp;os=android</stringProp>
+          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;version=100.1.5.6&amp;deviceType=0&amp;isVpnConnected=0&amp;os=android&amp;appsflyerId=1787803900487-1623248308013165548&amp;netType=2&amp;model=SM-A546B&amp;channel=google&amp;appCode=100156&amp;appVersion=100.1.5.6&amp;osVersion=16&amp;packageName=com.soulfree.happiness&amp;organic=Organic&amp;appid=soulfree&amp;ispType=4&amp;systemLanguage=zh&amp;language=ar</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"></collectionProp></elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788177850680</stringProp></elementProp></collectionProp></HeaderManager>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788237305837</stringProp></elementProp></collectionProp></HeaderManager>
           <hashTree/>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings"><stringProp name="status">200</stringProp></collectionProp>
@@ -104,13 +104,13 @@ if (loginUid) {
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="返回工资快速结算创建入口开关：正常请求" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?osVersion=16&amp;language=ar&amp;appsflyerId=1787803900487-1623248308013165548&amp;appCode=100156&amp;channel=google&amp;isVpnConnected=0&amp;systemLanguage=zh&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;appid=soulfree&amp;appVersion=100.1.5.6&amp;ispType=4&amp;version=100.1.5.6&amp;deviceType=0&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;organic=Organic&amp;netType=2&amp;os=android</stringProp>
+          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;version=100.1.5.6&amp;deviceType=0&amp;isVpnConnected=0&amp;os=android&amp;appsflyerId=1787803900487-1623248308013165548&amp;netType=2&amp;model=SM-A546B&amp;channel=google&amp;appCode=100156&amp;appVersion=100.1.5.6&amp;osVersion=16&amp;packageName=com.soulfree.happiness&amp;organic=Organic&amp;appid=soulfree&amp;ispType=4&amp;systemLanguage=zh&amp;language=ar</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"></collectionProp></elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788177850680</stringProp></elementProp></collectionProp></HeaderManager>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788237305837</stringProp></elementProp></collectionProp></HeaderManager>
           <hashTree/>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings"><stringProp name="status">200</stringProp></collectionProp>
@@ -124,13 +124,13 @@ if (loginUid) {
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="返回工资快速结算创建入口开关：正常请求" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?osVersion=16&amp;language=ar&amp;appsflyerId=1787803900487-1623248308013165548&amp;appCode=100156&amp;channel=google&amp;isVpnConnected=0&amp;systemLanguage=zh&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;appid=soulfree&amp;appVersion=100.1.5.6&amp;ispType=4&amp;version=100.1.5.6&amp;deviceType=0&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;organic=Organic&amp;netType=2&amp;os=android</stringProp>
+          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;version=100.1.5.6&amp;deviceType=0&amp;isVpnConnected=0&amp;os=android&amp;appsflyerId=1787803900487-1623248308013165548&amp;netType=2&amp;model=SM-A546B&amp;channel=google&amp;appCode=100156&amp;appVersion=100.1.5.6&amp;osVersion=16&amp;packageName=com.soulfree.happiness&amp;organic=Organic&amp;appid=soulfree&amp;ispType=4&amp;systemLanguage=zh&amp;language=ar</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"></collectionProp></elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788177850680</stringProp></elementProp></collectionProp></HeaderManager>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788237305837</stringProp></elementProp></collectionProp></HeaderManager>
           <hashTree/>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings"><stringProp name="status">200</stringProp></collectionProp>
@@ -144,13 +144,13 @@ if (loginUid) {
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="返回工资快速结算创建入口开关：重复提交与幂等性" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?osVersion=16&amp;language=ar&amp;appsflyerId=1787803900487-1623248308013165548&amp;appCode=100156&amp;channel=google&amp;isVpnConnected=0&amp;systemLanguage=zh&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;appid=soulfree&amp;appVersion=100.1.5.6&amp;ispType=4&amp;version=100.1.5.6&amp;deviceType=0&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;organic=Organic&amp;netType=2&amp;os=android</stringProp>
+          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;version=100.1.5.6&amp;deviceType=0&amp;isVpnConnected=0&amp;os=android&amp;appsflyerId=1787803900487-1623248308013165548&amp;netType=2&amp;model=SM-A546B&amp;channel=google&amp;appCode=100156&amp;appVersion=100.1.5.6&amp;osVersion=16&amp;packageName=com.soulfree.happiness&amp;organic=Organic&amp;appid=soulfree&amp;ispType=4&amp;systemLanguage=zh&amp;language=ar</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"></collectionProp></elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788177850680</stringProp></elementProp></collectionProp></HeaderManager>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788237305837</stringProp></elementProp></collectionProp></HeaderManager>
           <hashTree/>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings"><stringProp name="status">200</stringProp></collectionProp>
@@ -164,13 +164,13 @@ if (loginUid) {
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="返回工资快速结算创建入口开关：重复提交与幂等性" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?osVersion=16&amp;language=ar&amp;appsflyerId=1787803900487-1623248308013165548&amp;appCode=100156&amp;channel=google&amp;isVpnConnected=0&amp;systemLanguage=zh&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;appid=soulfree&amp;appVersion=100.1.5.6&amp;ispType=4&amp;version=100.1.5.6&amp;deviceType=0&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;organic=Organic&amp;netType=2&amp;os=android</stringProp>
+          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;version=100.1.5.6&amp;deviceType=0&amp;isVpnConnected=0&amp;os=android&amp;appsflyerId=1787803900487-1623248308013165548&amp;netType=2&amp;model=SM-A546B&amp;channel=google&amp;appCode=100156&amp;appVersion=100.1.5.6&amp;osVersion=16&amp;packageName=com.soulfree.happiness&amp;organic=Organic&amp;appid=soulfree&amp;ispType=4&amp;systemLanguage=zh&amp;language=ar</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"></collectionProp></elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788177850680</stringProp></elementProp></collectionProp></HeaderManager>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788237305837</stringProp></elementProp></collectionProp></HeaderManager>
           <hashTree/>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings"><stringProp name="status">200</stringProp></collectionProp>

@@ -1,3 +1,10 @@
+---
+name: jmeter-script-generation
+description: Generate Apache JMeter plans from requirement packages, test cases, account models, YAML configuration, and runtime data rules.
+metadata:
+  short-description: Requirement package JMeter script generation
+---
+
 # JMeter Script Generation Skill
 
 ## Purpose
@@ -9,6 +16,7 @@ Generate enterprise-recognized Apache JMeter plans from requirement packages and
 Each generated script must be traceable to one requirement package and one test scenario. Required input fields:
 
 - requirement_package_id
+- account_model.yaml
 - case_id
 - case_title
 - business_flow
@@ -23,6 +31,21 @@ Each generated script must be traceable to one requirement package and one test 
 - assertions
 - data_evidence_rules
 - performance_profile
+
+## Account Model First
+
+Every JMeter generation run must load the selected requirement package's `account_model.yaml` before deciding script structure. Test cases describe what to verify; the account model decides how identities are supplied and isolated at runtime.
+
+Required behavior:
+
+- `single_account` packages must not receive CSV Data Set Config unless the selected test cases require data-driven execution.
+- `dual_role` packages must generate separate role variables, for example applicant and proxy, and must validate that each ticket belongs to the matching uid.
+- `multi_flow_slots` packages must generate flow slot variables so one workflow cannot accidentally reuse another workflow's applicant or order number.
+- role credential sources must follow the model order: runtime parameters, CSV, login API, Redis readonly token cache, then block.
+- DB tables from the model may provide candidate users and evidence only; DB must not be treated as a ticket source.
+- unknown roles or unsupported matching rules must be written to the manifest as pending extensions instead of silently guessing.
+
+The manifest must include the loaded account model path, mode, roles, credential sources, matching rules and blocking rules.
 
 ## YAML And CSV Boundary
 
