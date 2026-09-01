@@ -1824,6 +1824,92 @@ def _evidence_rule_query(rule):
     }
 
 
+def _case_text(case):
+    return "\n".join(str(case.get(key) or "") for key in (
+        "title", "scenario_type", "steps", "expected", "requirement_ref", "path", "payload", "headers"
+    ))
+
+
+def _case_exception_sources(case):
+    text = _case_text(case).lower()
+    scenario = str(case.get("scenario_type") or "")
+    sources = []
+    if any(word in scenario for word in ("异常", "反向", "失败", "非法", "边界")):
+        sources.append("requirement_exception")
+    if any(word in text for word in ("ticket", "token", "鉴权", "认证", "必填", "缺失", "为空", "参数", "类型", "格式", "非法uid", "无效")):
+        sources.append("api_contract_exception")
+    if any(word in text for word in ("订单状态", "状态流", "待处理", "接单", "转账", "确认收款", "交易完成", "取消订单", "拒绝订单", "投诉", "过期", "重复申请", "不能", "不允许")):
+        sources.append("state_machine_exception")
+    if any(word in text for word in ("数据库", "db", "redis", "缓存", "余额", "额度", "白名单", "国家", "币种", "处理中", "唯一", "互斥")):
+        sources.append("data_constraint_exception")
+    return sorted(set(sources))
+
+
+def _case_manual_signals(case):
+    text = _case_text(case).lower()
+    return any(word in text for word in (
+        "人工", "手工", "后台人工", "运营处理", "等待12小时", "12小时", "等待24小时", "24小时", "定时任务", "自然过期"
+    ))
+
+
+def _classify_structured_case(case, required_variables, db_checks, redis_checks):
+    method = str(case.get("method") or "").upper()
+    path = str(case.get("path") or "").strip()
+    variables = set(required_variables or [])
+    evidence_checks = list(db_checks or []) + list(redis_checks or [])
+    confirmed_evidence = [x for x in evidence_checks if x.get("review_status") == "CONFIRMED"]
+    candidate_evidence = [x for x in evidence_checks if x.get("review_status") != "CONFIRMED"]
+    exception_sources = _case_exception_sources(case)
+    manual = _case_manual_signals(case)
+    reasons = []
+
+    if not method or not path:
+        quality_status = "MANUAL_ONLY"
+        automation_status = "MANUAL_ONLY"
+        coverage_tool = "manual"
+        reasons.append("缺少可直接执行的接口 method/path。")
+    elif manual:
+        quality_status = "MANUAL_ONLY"
+        automation_status = "MANUAL_ONLY"
+        coverage_tool = "manual"
+        reasons.append("包含人工处理、后台处理、定时过期或长时间等待信号。")
+    elif method in {"POST", "PUT", "PATCH", "DELETE"} and not evidence_checks:
+        quality_status = "NEEDS_EVIDENCE"
+        automation_status = "SCRIPTABLE_EVIDENCE_PENDING"
+        coverage_tool = "jmeter"
+        reasons.append("写操作/状态变更用例缺少DB或Redis证据规则。")
+    elif variables and any(name in variables for name in ("ticket", "uid", "orderNo", "order_no", "country_code", "currency")) and not method:
+        quality_status = "NEEDS_DATA"
+        automation_status = "BLOCKED_NEEDS_DATA"
+        coverage_tool = "manual"
+        reasons.append("依赖运行变量，但缺少执行接口。")
+    elif candidate_evidence and not confirmed_evidence:
+        quality_status = "NEEDS_EVIDENCE_REVIEW"
+        automation_status = "SCRIPTABLE_EVIDENCE_PENDING"
+        coverage_tool = "jmeter" if method != "GET" or exception_sources else "newman"
+        reasons.append("仅命中候选证据规则，需要采纳后再作为正式校验。")
+    else:
+        quality_status = "READY"
+        automation_status = "AUTO_READY"
+        if db_checks or redis_checks:
+            coverage_tool = "jmeter" if method != "GET" or "state_machine_exception" in exception_sources else "pytest"
+        else:
+            coverage_tool = "newman"
+        reasons.append("接口、变量和证据条件满足当前自动化生成要求。")
+
+    if method and path and variables and quality_status == "READY":
+        reasons.append("需要运行时提供变量：" + ", ".join(sorted(variables)) + "。")
+    if exception_sources:
+        reasons.append("异常来源：" + ", ".join(exception_sources) + "。")
+    return {
+        "quality_status": quality_status,
+        "automation_status": automation_status,
+        "coverage_tool": coverage_tool,
+        "exception_sources": exception_sources,
+        "blocking_reasons": reasons,
+    }
+
+
 def generate_structured_test_cases(project_id, payload=None):
     payload = payload or {}
     package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
@@ -1889,6 +1975,7 @@ def generate_structured_test_cases(project_id, payload=None):
             expected.append(f"DB校验：{check['table']} WHERE {check['where']}，字段 {', '.join(check['fields']) or '存在性'} 符合规则 {check['rule_id']}。")
         for check in redis_checks:
             expected.append(f"Redis校验：{check.get('key') or 'Key'} 的字段符合规则 {check['rule_id']}。")
+        quality = _classify_structured_case(case, required_variables, db_checks, redis_checks)
         enhanced.append({
             "id": case.get("id"),
             "title": case.get("title"),
@@ -1896,6 +1983,7 @@ def generate_structured_test_cases(project_id, payload=None):
             "scenario_type": case.get("scenario_type"),
             "method": case.get("method"),
             "path": case.get("path"),
+            **quality,
             "interface_fields": interface_fields,
             "preconditions": preconditions,
             "steps": [x for x in steps if str(x).strip()],
@@ -1907,10 +1995,24 @@ def generate_structured_test_cases(project_id, payload=None):
                 "evidence_rules": [x.get("rule_id") for x in db_checks + redis_checks],
             },
         })
+    quality_counts = {}
+    automation_counts = {}
+    tool_counts = {}
+    exception_counts = {}
+    for item in enhanced:
+        quality_counts[item["quality_status"]] = quality_counts.get(item["quality_status"], 0) + 1
+        automation_counts[item["automation_status"]] = automation_counts.get(item["automation_status"], 0) + 1
+        tool_counts[item["coverage_tool"]] = tool_counts.get(item["coverage_tool"], 0) + 1
+        for source in item.get("exception_sources") or []:
+            exception_counts[source] = exception_counts.get(source, 0) + 1
     summary = {
         "cases": len(enhanced),
         "with_db_checks": sum(1 for x in enhanced if x["db_checks"]),
         "with_redis_checks": sum(1 for x in enhanced if x["redis_checks"]),
+        "quality_counts": quality_counts,
+        "automation_counts": automation_counts,
+        "tool_counts": tool_counts,
+        "exception_counts": exception_counts,
         "official_rules": len(official_rules),
         "candidate_rules": len(candidate_rules),
     }
@@ -1935,6 +2037,8 @@ def generate_structured_test_cases(project_id, payload=None):
         f"- 用例数：{summary['cases']}",
         f"- 带DB校验：{summary['with_db_checks']}",
         f"- 带Redis校验：{summary['with_redis_checks']}",
+        f"- 质量分级：{json.dumps(summary['quality_counts'], ensure_ascii=False)}",
+        f"- 自动化覆盖：{json.dumps(summary['automation_counts'], ensure_ascii=False)}",
         "",
     ]
     for item in enhanced:
@@ -1945,6 +2049,9 @@ def generate_structured_test_cases(project_id, payload=None):
             f"- 场景类型：{item.get('scenario_type') or '-'}",
             f"- 接口：{(item.get('method') or '-')} {(item.get('path') or '')}",
             f"- 接口字段：{', '.join(item['interface_fields']) or '-'}",
+            f"- 质量分级：{item.get('quality_status')}",
+            f"- 自动化覆盖：{item.get('automation_status')} / {item.get('coverage_tool')}",
+            f"- 异常来源：{', '.join(item.get('exception_sources') or []) or '-'}",
             "",
             "### 前置条件",
             *[f"- {x}" for x in item["preconditions"]],
@@ -1954,6 +2061,9 @@ def generate_structured_test_cases(project_id, payload=None):
             "",
             "### 预期结果",
             *[f"- {x}" for x in item["expected_results"]],
+            "",
+            "### 分级原因",
+            *[f"- {x}" for x in item.get("blocking_reasons") or []],
             "",
         ]
     md_path.write_text("\n".join(lines), encoding="utf-8")
@@ -1967,7 +2077,7 @@ def generate_structured_test_cases(project_id, payload=None):
         "summary": summary,
         "json_path": str(json_path),
         "markdown_path": str(md_path),
-        "conclusion": "已生成自带接口字段、DB/Redis证据校验点的结构化测试用例。",
+        "conclusion": "已生成自带接口字段、DB/Redis证据校验点、用例质量分级和自动化覆盖状态的结构化测试用例。",
     }
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     out = ROOT / "reports" / f"structured-test-cases-{project_id}-{package_id}-{stamp}.json"
@@ -8335,7 +8445,9 @@ def list_generated_reports(project_id):
         if payload.get("project_id") and payload.get("project_id") != project_id:
             continue
         summary = payload.get("summary") or {}
-        result.append({"name":"结构化测试用例增强报告","kind":"结构化用例","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"用例{summary.get('cases',0)}条 · DB校验{summary.get('with_db_checks',0)}条 · Redis校验{summary.get('with_redis_checks',0)}条","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+        quality = summary.get("quality_counts") or {}
+        automation = summary.get("automation_counts") or {}
+        result.append({"name":"结构化测试用例增强报告","kind":"结构化用例","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"用例{summary.get('cases',0)}条 · READY{quality.get('READY',0)} · 自动化{automation.get('AUTO_READY',0)} · 待证据{quality.get('NEEDS_EVIDENCE',0)+quality.get('NEEDS_EVIDENCE_REVIEW',0)} · 人工{quality.get('MANUAL_ONLY',0)}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
