@@ -1277,8 +1277,12 @@ async function generateMetadataHallucinationCorrection(){
     if(box)box.innerHTML='<div class="summary-panel"><b>正在生成一次修正版</b><p>平台会读取最新元数据校验报告，把未证实的DB/Redis引用降级为待确认项，并保存为候选修正版。</p></div>';
     toast('正在生成AI输出修正版…');
     let result=await api(`/api/projects/${current}/metadata-hallucination-correction`,{method:'POST',body:JSON.stringify({package_id:pid})});
-    let s=result.summary||{},msg=`修正完成：${result.status}，生成${s.assets_generated||0}份，调整${s.changes||0}处`;
-    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>修正版不会覆盖正式资产；请确认后再采纳。输出目录：${esc(result.output_dir||'')}</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    let s=result.summary||{},changes=result.changes||[],refs=result.unverified_references||[],files=result.generated_files||[],msg=`修正完成：${result.status}，生成${s.assets_generated||0}份，调整${s.changes||0}处`;
+    let fileRows=files.map(f=>{let safe=String(f||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");return `<div class="evidence-item script-path-row"><div><b>${esc((f||'').split(/[\\/]/).pop()||'候选文件')}</b><small>${esc(f)}</small></div><button class="small" onclick="copyText('${esc(safe)}')">复制</button></div>`}).join('');
+    let changeRows=changes.map(x=>`<div class="gap-item P1"><span class="tag P1">待确认</span><div><b>${esc(x.asset||'资产')}</b><p>${esc(x.action||'')}</p><small>调整 ${esc(x.changed_items||0)} 处</small></div></div>`).join('');
+    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>修正版不会覆盖正式资产；请确认后再采纳。</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name||pid)} · 一次修正版</h2><p class="policy-note">本次只生成候选修正版，不覆盖正式资产。确认元数据真实存在后，再人工采纳。</p><div class="metrics"><div class="metric"><span>状态</span><b style="font-size:20px">${esc(result.status)}</b></div><div class="metric"><span>未证实引用</span><b>${esc(s.unverified_references||0)}</b></div><div class="metric"><span>候选文件</span><b>${esc(s.assets_generated||0)}</b></div><div class="metric"><span>调整</span><b>${esc(s.changes||0)}</b></div></div>${refs.length?`<h3>未证实引用</h3><div class="evidence-list">${refs.map(r=>`<div class="evidence-item"><b>${esc(r)}</b><small>DB/Redis 元数据中暂未证实</small></div>`).join('')}</div>`:''}${changeRows?`<h3>修正动作</h3><div class="gap-list">${changeRows}</div>`:''}${fileRows?`<h3>候选修正版文件</h3><div class="evidence-list">${fileRows}</div>`:''}<label>输出目录</label><code>${esc(result.output_dir||'')}</code>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">打开报告JSON</button>`:''}`;
+    $('#modal').classList.remove('hidden');
     toast(msg,result.status==='CORRECTED'?'success':result.status==='NO_FINDINGS'?'success':'warning');
     await openProject(current);
     switchTab('dataquality')
