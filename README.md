@@ -157,6 +157,19 @@ JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md`。它定义
 
 AI 复盘不是替代测试判断，而是把原始执行结果变成可读结论：识别鉴权、参数契约、业务断言、数据证据、环境网络和服务异常，并给出下一步应由测试、产品、后端、DBA 或环境负责人确认的方向。
 
+## 多账号标准化
+
+多账号规则见 `docs/multi-account-standard.md`，生成规则见 `skills/account-model-generation/SKILL.md`。每个需求包会生成自己的 `account_model.yaml`，例如 `requirements/salary-trade/account_model.yaml`。
+
+核心原则：
+
+- 单账号需求不强制 CSV，例如财富等级默认走运行参数、登录接口或 Redis 登录态。
+- 双角色需求使用角色化账号，例如申请人、代理人、运营。
+- 多流程且账号互斥的需求使用流程槽位，例如工资交易 8 条状态流需要 8 个申请人。
+- 代理人可以复用，但必须先由数据库白名单确认国家和币种匹配，再由 CSV、登录接口或 Redis 补齐真实 ticket。
+- token/ticket 必须校验 uid 归属，不允许拿 A 用户的 ticket 跑 B 用户接口。
+- 未知角色或新业务约束先写入当前需求包 `extensions.pending`，由测试确认后再生效；多次复用后再升级到通用 Skill。
+
 ## Git 版本管理
 
 项目可以直接作为 Git 仓库管理，Python、前端、JMeter 脚本和需求包结构都可以进入版本管理。`.gitignore` 已排除运行态和敏感文件，包括 `.venv`、`reports`、`work`、`database.env`、本地数据库、ticket/password CSV、凭证 bin 和备份文件。

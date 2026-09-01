@@ -763,6 +763,17 @@ function showMultiAccountContextModal(){
   $('#modal').classList.remove('hidden')
 }
 
+function accountStrategyHtml(){
+  let m=data.multi_account_context||{},strategies=m.requirement_strategies||[],rules=m.standard_rules||[];
+  return `<div class="card"><div class="diagnosis-head"><div><h2>多账号标准化规则</h2><p>平台按测试用例判断账号模型：单账号不强制CSV，多角色和多流程才启用账号槽位。</p></div><span class="tag ${m.status==='READY'?'PASSED':'P1'}">${esc(m.status||'PENDING')}</span></div><div class="endpoint-matrix">${strategies.map(s=>`<div class="endpoint-card"><span class="tag ${s.csv_required?'P1':'PASSED'}">${esc(s.mode)}</span><h3>${esc(s.package_name||s.package_id)}</h3><p>${esc(s.blocking_rule||'')}</p><small>${esc((s.reasons||[]).join(' · '))}</small><table><thead><tr><th>角色</th><th>需要</th><th>当前</th></tr></thead><tbody>${(s.readiness||[]).map(r=>`<tr><td>${esc(r.role)}</td><td>${esc(r.needed)}</td><td><span class="tag ${r.status==='READY'?'PASSED':'P1'}">${esc(r.actual)}</span></td></tr>`).join('')}</tbody></table></div>`).join('')}</div><h3>统一规则</h3><div class="evidence-list">${rules.map(r=>`<div class="evidence-item"><b>${esc(r.mode)}</b><small>${esc(r.when)} · ${esc(r.data_source)} · ${esc(r.example)}</small></div>`).join('')}</div><h3>身份获取顺序</h3><ol>${(m.credential_resolution_order||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ol><h3>匹配规则</h3><ol>${(m.matching_rules||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`
+}
+
+const multiAccountContextPanelBeforeStandardRules=typeof multiAccountContextPanel==='function'?multiAccountContextPanel:null;
+multiAccountContextPanel=function(){
+  let base=multiAccountContextPanelBeforeStandardRules?multiAccountContextPanelBeforeStandardRules():'';
+  return accountStrategyHtml()+base
+}
+
 function jmeterSkillPanel(){
   let s=data.jmeter_generation_skill||{},coverage=s.coverage||[],model=s.case_model||{};
   return `<div class="card"><div class="diagnosis-head"><div><h2>JMeter 脚本生成 Skill</h2><p>把“测试用例如何生成 JMX”沉淀成平台规则：线程组、请求、CSV参数化、断言、监听器、压测模型和指标回收。</p></div><span class="tag ${s.status==='READY'?'PASSED':'P1'}">${esc(s.status||'PENDING')}</span></div><div class="metrics"><div class="metric"><span>规则覆盖</span><b>${coverage.filter(x=>x.status==='READY').length}/${coverage.length||0}</b></div><div class="metric"><span>业务流</span><b>${esc(model.flows||0)}</b></div><div class="metric"><span>可脚本化</span><b>${esc(model.ready_flows||0)}</b></div><div class="metric"><span>待补条件</span><b>${esc(model.gaps||0)}</b></div></div><div class="summary-panel"><b>生成标准</b><p>${esc(s.summary||'')}</p><button class="small" onclick="showJmeterSkillModal()">查看规则</button></div></div>`
@@ -1119,6 +1130,20 @@ async function generateSelectedRequirementPackageAiReview(){
   }catch(e){toast(e.message,'error')}
 }
 
+async function generateSelectedRequirementPackageAccountModel(){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!packageId)return toast('当前没有可生成账号模型的需求包','warning');
+  try{
+    toast(`正在生成 ${pkg.name} 的账号模型…`);
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/account-model`,{method:'POST',body:'{}'});
+    let roles=x.roles||[],pending=x.extensions?.pending||[];
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 账号模型</h2><p class="policy-note">这是当前需求包自己的 account_model.yaml。通用Skill只提供能力，实际启用哪些账号场景由需求和测试用例判断。</p><div class="metrics"><div class="metric"><span>模型</span><b style="font-size:20px">${esc(x.mode)}</b></div><div class="metric"><span>CSV</span><b>${x.csv_required?'需要':'不强制'}</b></div><div class="metric"><span>角色</span><b>${roles.length}</b></div><div class="metric"><span>待确认扩展</span><b>${pending.length}</b></div></div><h3>角色规则</h3><table><thead><tr><th>角色</th><th>最少账号</th><th>可复用</th><th>匹配规则</th><th>凭证来源</th></tr></thead><tbody>${roles.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.min_count)}</td><td>${r.reusable?'是':'否'}</td><td>${esc((r.match_rules||[]).join('、')||'-')}</td><td>${esc((r.credential_sources||[]).join(' -> '))}</td></tr>`).join('')}</tbody></table>${pending.length?`<h3>待确认扩展</h3><div class="gap-list">${pending.map(p=>`<div class="gap-item P1"><span class="tag P1">待确认</span><div><b>${esc(p.name)}</b><p>${esc(p.reason)}</p></div></div>`).join('')}</div>`:'<div class="card empty"><b>没有未知账号场景</b></div>'}<h3>阻断规则</h3><ol>${(x.blocking_rules||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ol><label>模型文件</label><code>${esc(x.path||'')}</code>`;
+    $('#modal').classList.remove('hidden');
+    toast(`${pkg.name} 账号模型已生成`,'success');
+    await openProject(current)
+  }catch(e){toast(e.message,'error')}
+}
+
 const requirementPackageFlowCardWithCreate=typeof requirementPackageFlowCard==='function'?requirementPackageFlowCard:null;
 requirementPackageFlowCard=function(){
   let html=requirementPackageFlowCardWithCreate?requirementPackageFlowCardWithCreate():'';
@@ -1128,12 +1153,12 @@ requirementPackageFlowCard=function(){
 const requirementPackageSelectorHtmlWithCreate=typeof requirementPackageSelectorHtml==='function'?requirementPackageSelectorHtml:null;
 requirementPackageSelectorHtml=function(){
   let html=requirementPackageSelectorHtmlWithCreate?requirementPackageSelectorHtmlWithCreate():'';
-  return html.replace('</div><div class="metrics">','<button class="small" onclick="showCreateRequirementPackageModal()">新建</button></div><div class="metrics">')
+  return html.replace('</div><div class="metrics">','<button class="small" onclick="showCreateRequirementPackageModal()">新建</button><button class="small" onclick="generateSelectedRequirementPackageAccountModel()">账号模型</button></div><div class="metrics">')
 }
 
 const unifiedExecutionFlowWithNewman=typeof unifiedExecutionFlow==='function'?unifiedExecutionFlow:null;
 unifiedExecutionFlow=function(){
   let html=unifiedExecutionFlowWithNewman?unifiedExecutionFlowWithNewman():'';
-  return html.replace('<button class="small" onclick="switchTab(\'reports\')">查看报告</button>', '<button class="small" onclick="runSelectedRequirementPackageNewman()">运行本包Newman</button><button class="small" onclick="generateSelectedRequirementPackageAiReview()">AI复盘</button><button class="small" onclick="switchTab(\'reports\')">查看报告</button>')
+  return html.replace('<button class="small" onclick="switchTab(\'reports\')">查看报告</button>', '<button class="small" onclick="generateSelectedRequirementPackageAccountModel()">账号模型</button><button class="small" onclick="runSelectedRequirementPackageNewman()">运行本包Newman</button><button class="small" onclick="generateSelectedRequirementPackageAiReview()">AI复盘</button><button class="small" onclick="switchTab(\'reports\')">查看报告</button>')
 }
 

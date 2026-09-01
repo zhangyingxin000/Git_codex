@@ -663,6 +663,14 @@ def multi_account_context_status(project_id):
         supported = [x.strip() for x in re.split(r"[|,;/]", support) if x.strip()]
         if currency and supported and currency not in supported:
             mismatched_currency.append(item)
+    requirement_strategies = build_multi_account_strategy(project_id, {
+        "accounts": accounts,
+        "account_csv_rows": account_csv_rows,
+        "applicant_csv_rows": applicant_csv_rows,
+        "enabled_account_rows": enabled_account_rows,
+        "applicant_count": applicant_count,
+        "proxy_count": proxy_count,
+    })
     gaps = []
     if applicant_count < 8:
         gaps.append({"level": "P0", "item": "申请人账号", "detail": f"工资交易8条流程建议准备8个申请人账号，当前识别{applicant_count}个。"})
@@ -679,6 +687,25 @@ def multi_account_context_status(project_id):
     return {
         "status": "READY" if not any(item["level"] == "P0" for item in gaps) else "ATTENTION",
         "strategy": "按需求和测试用例判断数据载体：单账号可走运行参数，多账号/多流程才启用CSV。",
+        "requirement_strategies": requirement_strategies,
+        "standard_rules": [
+            {"mode": "single_account", "when": "单用户、单角色、无账号互斥", "data_source": "运行参数 / 登录前置 / Redis登录态", "example": "财富等级闭环"},
+            {"mode": "dual_role", "when": "同一流程存在申请人、代理人、运营等角色", "data_source": "角色化账号CSV + 登录接口/Redis补ticket", "example": "申请人创建订单，代理人接单"},
+            {"mode": "multi_flow_slots", "when": "一个账号同一时间只能有一个处理中订单，多个流程并行或连续覆盖", "data_source": "流程槽位CSV + 申请人账号池 + DB白名单匹配代理", "example": "工资交易8条状态流"},
+        ],
+        "credential_resolution_order": [
+            "运行时显式传入 ticket/password",
+            "角色CSV中填写 ticket/password/redis_uid",
+            "登录接口按 shortId + password_encrypted 获取 access_token",
+            "Redis只读读取 user_login_info:{uid}.access_token",
+            "仍未取得则阻断，不伪造身份认证",
+        ],
+        "matching_rules": [
+            "申请人由用例流程槽位决定，不能所有流程复用同一个申请人。",
+            "代理人先按申请人国家和收款币种在DB白名单匹配候选，再用CSV或Redis补齐该代理的真实登录态。",
+            "JWT解析出的uid必须等于当前角色uid，否则直接阻断，避免拿错人的ticket导致401。",
+            "数据库只证明代理资格和订单证据，不保存ticket，也不替代登录态。",
+        ],
         "roles": [
             {"role": "wealth_user", "purpose": "财富等级单账号闭环，变量独立于工资交易。"},
             {"role": "applicant", "purpose": "工资交易申请人，一人同一时刻只能有一个处理中订单。"},
@@ -712,6 +739,173 @@ def multi_account_context_status(project_id):
     }
 
 
+def build_multi_account_strategy(project_id, context=None):
+    context = context or {}
+    strategies = []
+    for package in requirement_package_catalog(project_id).get("packages", []):
+        package_id = package.get("package_id")
+        cases = _requirement_package_cases(project_id, package_id)
+        flows = SALARY_TRADE_CASE_FLOWS if package_id == "salary-trade" else []
+        decision = infer_jmeter_runtime_data_strategy(cases, flows)
+        if package_id == "wealth-level":
+            mode = "single_account"
+            required_roles = ["wealth_user"]
+            min_accounts = {"wealth_user": 1}
+            data_carrier = "runtime_or_login_or_redis"
+            blocking_rule = "缺少可登录账号或ticket时阻断；不强制CSV。"
+        elif decision.get("csv_required"):
+            mode = "multi_flow_slots" if len(decision.get("account_slots") or []) > 1 else "dual_role"
+            required_roles = decision.get("roles") or ["applicant", "proxy"]
+            min_accounts = {"applicant": max(1, len(decision.get("account_slots") or [])), "proxy": 1}
+            data_carrier = "csv_plus_db_redis"
+            blocking_rule = "申请人槽位不足、代理白名单不匹配、ticket与uid不一致时阻断。"
+        else:
+            mode = "single_account"
+            required_roles = decision.get("roles") or ["default_user"]
+            min_accounts = {required_roles[0]: 1}
+            data_carrier = "runtime_parameters"
+            blocking_rule = "缺少运行参数时提示补齐，不自动创建CSV。"
+        readiness = []
+        for role, needed in min_accounts.items():
+            if role == "applicant":
+                actual = context.get("applicant_count", 0)
+            elif role in {"proxy", "agent"}:
+                actual = context.get("proxy_count", 0)
+            elif role == "wealth_user":
+                actual = len([x for x in context.get("accounts", []) if (x.get("account_role") or "") in {"wealth_user", "general", ""}])
+            else:
+                actual = len(context.get("accounts", []))
+            readiness.append({"role": role, "needed": needed, "actual": actual, "status": "READY" if actual >= needed else "MISSING"})
+        strategies.append({
+            "package_id": package_id,
+            "package_name": package.get("name"),
+            "mode": mode,
+            "data_carrier": data_carrier,
+            "required_roles": required_roles,
+            "min_accounts": min_accounts,
+            "readiness": readiness,
+            "csv_required": mode in {"dual_role", "multi_flow_slots"},
+            "reasons": decision.get("reasons") or [],
+            "blocking_rule": blocking_rule,
+            "variable_namespace": f"{package_id.replace('-', '_')}_*",
+        })
+    return strategies
+
+
+def _yaml_dump(data):
+    try:
+        import yaml
+        return yaml.safe_dump(data, allow_unicode=True, sort_keys=False)
+    except Exception:
+        return json.dumps(data, ensure_ascii=False, indent=2)
+
+
+def _unknown_account_signals(cases):
+    known = {"uid", "ticket", "agentuid", "operatorid", "roomid", "anchoruid", "countrycode", "currency", "userid", "shortid"}
+    role_hints = {
+        "reviewerUid": "reviewer",
+        "auditorUid": "auditor",
+        "adminUid": "admin",
+        "familyOwnerUid": "family_owner",
+        "payerUid": "payer",
+        "payeeUid": "payee",
+    }
+    pending = []
+    text = "\n".join(str(case.get(key) or "") for case in cases for key in ("title", "steps", "expected", "path", "payload", "parameters"))
+    for field, role in role_hints.items():
+        if field in text and field.lower() not in known:
+            pending.append({
+                "type": "role",
+                "name": role,
+                "reason": f"测试用例或接口字段出现 {field}，需要确认是否为独立执行身份。",
+                "suggested_fields": [field, "ticket"],
+            })
+    return pending
+
+
+def generate_requirement_account_model(project_id, package_id, persist=True):
+    context = multi_account_context_status(project_id)
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    strategy = next((item for item in context.get("requirement_strategies", []) if item.get("package_id") == package_id), None)
+    if not strategy:
+        raise ValueError("没有找到该需求包的账号策略")
+    cases = _requirement_package_cases(project_id, package_id)
+    roles = []
+    for role in strategy.get("required_roles") or []:
+        credential_sources = ["runtime.ticket", "csv.ticket", "login_api", "redis:user_login_info:{uid}.access_token"]
+        if role in {"proxy", "agent"}:
+            candidate_sources = ["db:anchor_salary_trade_agent_whitelist", "csv"]
+            match_rules = ["countryCode", "currency"]
+            reusable = True
+        elif role == "applicant":
+            candidate_sources = ["csv"]
+            match_rules = ["countryCode", "currency"]
+            reusable = strategy.get("mode") != "multi_flow_slots"
+        else:
+            candidate_sources = ["runtime", "csv", "redis"]
+            match_rules = []
+            reusable = True
+        roles.append({
+            "name": role,
+            "min_count": int((strategy.get("min_accounts") or {}).get(role, 1)),
+            "reusable": reusable,
+            "candidate_sources": candidate_sources,
+            "credential_sources": credential_sources,
+            "match_rules": match_rules,
+            "required_fields": ["uid", "ticket"],
+        })
+    if package_id == "salary-trade":
+        blocking_rules = context.get("matching_rules") or []
+    elif package_id == "wealth-level":
+        blocking_rules = [
+            "单账号需求不强制CSV；运行参数、登录接口或Redis登录态任一可用即可。",
+            "ticket必须能代表当前wealth_user_uid，不能拿其他用户ticket执行。",
+            "只有多账号登录压测或账号矩阵场景才启用CSV账号池。",
+        ]
+    else:
+        blocking_rules = [
+            "没有明确多角色、多流程或数据矩阵证据时，默认按单账号执行。",
+            "检测到未知角色或身份字段时先进入extensions.pending，测试确认后才生效。",
+            "ticket必须校验uid归属，无法校验或不匹配时阻断。",
+        ]
+    model = {
+        "schema_version": "1.0",
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "generated_at": now(),
+        "source": {
+            "skill": str(SKILL_DIR / "account-model-generation" / "SKILL.md"),
+            "decision_basis": "需求包测试用例、接口参数、业务角色、账号互斥和数据证据规则",
+        },
+        "mode": strategy.get("mode"),
+        "csv_required": bool(strategy.get("csv_required")),
+        "data_carrier": strategy.get("data_carrier"),
+        "variable_namespace": strategy.get("variable_namespace"),
+        "roles": roles,
+        "credential_resolution_order": context.get("credential_resolution_order") or [],
+        "data_sources": {
+            "runtime": "测试执行时显式传入的非持久化参数",
+            "csv": "仅在多账号、多角色、多流程或数据矩阵需求启用",
+            "login_api": "用 shortId + password_encrypted 前置登录，提取 access_token",
+            "redis": "只读读取 user_login_info:{uid}.access_token 或缓存证据",
+            "mysql": "只读查询业务候选和执行证据，不保存ticket",
+        },
+        "blocking_rules": blocking_rules,
+        "readiness": strategy.get("readiness") or [],
+        "extensions": {
+            "pending": _unknown_account_signals(cases),
+            "confirmed": [],
+        },
+    }
+    if persist:
+        path = Path(package["root"]) / "account_model.yaml"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(_yaml_dump(model), encoding="utf-8")
+        model["path"] = str(path)
+    return model
+
+
 def _file_status(path):
     path = Path(path)
     return {
@@ -742,6 +936,7 @@ def _requirement_package_template(project_id, key):
             "data_policy": "申请人/代理身份走CSV或Redis；数据库只负责代理资格和订单证据，不保存ticket。",
             "base_url": base_url,
             "artifacts": {
+                "account_model": REQUIREMENT_PACKAGE_ROOT / "salary-trade" / "account_model.yaml",
                 "test_cases": ROOT / "outputs" / "salary-trade-manual-test-cases.md",
                 "jmeter": ROOT / "outputs" / "salary-trade-state-machine.jmx",
                 "launcher": ROOT / "outputs" / "open-salary-trade-state-machine.ps1",
@@ -773,6 +968,7 @@ def _requirement_package_template(project_id, key):
         "data_policy": "单账号可走运行参数或Redis复用，多账号压测再启用CSV。",
         "base_url": base_url,
         "artifacts": {
+            "account_model": REQUIREMENT_PACKAGE_ROOT / "wealth-level" / "account_model.yaml",
             "jmeter": Path("D:/apache-jmeter-5.6.3/jmx/20260826/性能基线.jmx"),
             "runtime_csv": ROOT / str(wealth.get("runtime_csv_path") or "data/wealth-level-runtime.csv"),
             "jtl": Path(str(wealth.get("result_jtl_path") or "D:/apache-jmeter-5.6.3/jmx/20260826/性能基线-result.jtl")),
@@ -894,6 +1090,7 @@ def _custom_requirement_package_template(project_id, manifest):
         "base_url": base_url,
         "artifacts": {
             "manifest": REQUIREMENT_PACKAGE_ROOT / package_id / "manifest.json",
+            "account_model": REQUIREMENT_PACKAGE_ROOT / package_id / "account_model.yaml",
             "newman": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "newman" / "postman-collection.json",
             "jmeter": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "jmeter" / "jmeter-plan.jmx",
             "pytest": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "pytest" / "pytest_api_cases.py",
@@ -1021,6 +1218,8 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
     executable_cases = [case for case in source_cases if str(case.get("method") or "").strip() and str(case.get("path") or "").strip()]
     generated = []
     warnings = []
+    account_model = generate_requirement_account_model(project_id, package_id, True)
+    generated.append({"tool": "Account Model", "path": account_model.get("path", "")})
 
     if executable_cases:
         tool_cases = _external_tool_cases(executable_cases, False)
@@ -8085,6 +8284,8 @@ class Handler(BaseHTTPRequestHandler):
                 except ValueError as exc: return self.send_json({"error":str(exc)},404)
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages", path)
             if m: return self.send_json(requirement_package_catalog(m.group(1)))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/account-model", path)
+            if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
             m = re.fullmatch(r"/api/projects/([^/]+)/wealth-latest-report", path)
             if m:
                 report_dir=ROOT/"reports"
@@ -8273,6 +8474,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(create_requirement_package(m.group(1), self.body()), 201)
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/tool-assets", path)
             if m: return self.send_json(generate_requirement_package_tool_assets(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/account-model", path)
+            if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/newman/run", path)
             if m: return self.send_json(run_requirement_package_newman(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/ai-review", path)

@@ -1,0 +1,52 @@
+schema_version: '1.0'
+package_id: wealth-level
+package_name: 财富等级
+generated_at: '2026-09-01T12:22:15+08:00'
+source:
+  skill: C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\skills\account-model-generation\SKILL.md
+  decision_basis: 需求包测试用例、接口参数、业务角色、账号互斥和数据证据规则
+mode: single_account
+csv_required: false
+data_carrier: runtime_or_login_or_redis
+variable_namespace: wealth_level_*
+roles:
+- name: wealth_user
+  min_count: 1
+  reusable: true
+  candidate_sources:
+  - runtime
+  - csv
+  - redis
+  credential_sources:
+  - runtime.ticket
+  - csv.ticket
+  - login_api
+  - redis:user_login_info:{uid}.access_token
+  match_rules: []
+  required_fields:
+  - uid
+  - ticket
+credential_resolution_order:
+- 运行时显式传入 ticket/password
+- 角色CSV中填写 ticket/password/redis_uid
+- 登录接口按 shortId + password_encrypted 获取 access_token
+- Redis只读读取 user_login_info:{uid}.access_token
+- 仍未取得则阻断，不伪造身份认证
+data_sources:
+  runtime: 测试执行时显式传入的非持久化参数
+  csv: 仅在多账号、多角色、多流程或数据矩阵需求启用
+  login_api: 用 shortId + password_encrypted 前置登录，提取 access_token
+  redis: 只读读取 user_login_info:{uid}.access_token 或缓存证据
+  mysql: 只读查询业务候选和执行证据，不保存ticket
+blocking_rules:
+- 单账号需求不强制CSV；运行参数、登录接口或Redis登录态任一可用即可。
+- ticket必须能代表当前wealth_user_uid，不能拿其他用户ticket执行。
+- 只有多账号登录压测或账号矩阵场景才启用CSV账号池。
+readiness:
+- role: wealth_user
+  needed: 1
+  actual: 1
+  status: READY
+extensions:
+  pending: []
+  confirmed: []
