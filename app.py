@@ -4431,19 +4431,65 @@ def summarize_jmeter_jmx(jmx_path):
     }
 
 
+def _package_jmeter_candidates(package_root, package_id):
+    package_root = Path(package_root)
+    jmeter_dir = package_root / "outputs" / "jmeter"
+    preferred = []
+    if package_id == "salary-trade":
+        preferred.extend([
+            jmeter_dir / "salary-trade-case-driven.jmx",
+            jmeter_dir / "salary-trade-state-machine.jmx",
+        ])
+    if package_id == "wealth-level":
+        preferred.append(jmeter_dir / "性能基线.jmx")
+    preferred.append(jmeter_dir / "jmeter-plan.jmx")
+    existing = [path for path in preferred if path.is_file()]
+    if existing:
+        return existing
+    return sorted(jmeter_dir.glob("*.jmx")) if jmeter_dir.is_dir() else []
+
+
+def _requirement_package_jmeter_plan(project_id, package_id, options=None):
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package.get("id") or package_id
+    candidates = _package_jmeter_candidates(package["root"], package_id)
+    generated = None
+    if not candidates:
+        generated = generate_requirement_package_tool_assets(project_id, package_id, options or {})
+        candidates = _package_jmeter_candidates(package["root"], package_id)
+    if not candidates:
+        raise ValueError("当前需求包还没有 JMeter 脚本，请先生成本包脚本")
+    return package, Path(candidates[0]), generated
+
+
 def open_jmeter_gui(project_id, options=None):
     options = _merge_execution_profile_options(project_id, options)
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
-    script_key = str(options.get("script_key") or options.get("jmeter_script") or options.get("package_id") or "").strip() or "select_required"
-    script_key = script_key.replace("-", "_")
+    raw_script_key = str(options.get("script_key") or options.get("jmeter_script") or options.get("package_id") or "").strip()
+    package = None
+    script_key = raw_script_key.replace("-", "_") if raw_script_key else "select_required"
     generated = None
     jtl_path = JMETER_WORKBENCH_JTL
     command_properties = []
+    jmx_path = None
+    handled = False
+    package_ids = {item.get("package_id") or item.get("id") for item in requirement_package_catalog(project_id).get("packages", [])}
+    if raw_script_key in package_ids:
+        package, jmx_path, generated = _requirement_package_jmeter_plan(project_id, raw_script_key, options)
+        handled = True
+        if raw_script_key == "salary-trade":
+            script_key = "salary_trade"
+    elif script_key in {"salary_trade", "salary"}:
+        package, jmx_path, generated = _requirement_package_jmeter_plan(project_id, "salary-trade", options)
+        handled = True
+    elif script_key in {"wealth_level", "wealth", "generic"}:
+        package, jmx_path, generated = _requirement_package_jmeter_plan(project_id, "wealth-level", options)
+        handled = True
+    if not handled:
+        raise ValueError("请先选择要打开的 JMeter 脚本：财富等级、工资代理结算，或当前需求包脚本。")
     if script_key in {"salary_trade", "salary"}:
-        generated = generate_salary_trade_jmeter_from_cases(project_id)
-        jmx_path = Path(generated["jmx_path"])
         jtl_path = _latest_salary_trade_jtl()
         runtime_properties = ROOT / "work" / "salary-trade-runtime.properties"
         if runtime_properties.is_file():
@@ -4452,11 +4498,6 @@ def open_jmeter_gui(project_id, options=None):
             "-Jsample_variables=flow_a_order_no,flow_b_order_no,flow_c_order_no,flow_d_order_no,flow_e_order_no,flow_f_order_no,flow_g_order_no,flow_h_order_no,salary_order_no,applicant_uid,proxy_uid,agent_uid,countryCode,currency",
             f"-Jsalary_result_jtl={str(jtl_path)}",
         ])
-    elif script_key in {"wealth_level", "wealth", "generic"}:
-        generated = generate_jmeter_workbench_asset(project_id, options)
-        jmx_path = Path(generated["path"])
-    else:
-        raise ValueError("请先选择要打开的 JMeter 脚本：财富等级、工资代理结算，或当前需求包脚本。")
     if not jmx_path.is_file():
         raise ValueError("JMeter 脚本尚未生成")
     summary = summarize_jmeter_jmx(jmx_path)
@@ -4491,7 +4532,8 @@ def open_jmeter_gui(project_id, options=None):
         "project_id": project_id,
         "project_name": project["name"],
         "script_key": script_key,
-        "script_name": "工资代理快速结算" if script_key in {"salary_trade", "salary"} else "财富等级/通用接口",
+        "script_name": package.get("name") if package else ("工资代理快速结算" if script_key in {"salary_trade", "salary"} else "财富等级/通用接口"),
+        "package_id": package.get("package_id") if package else "",
         "jmeter_command": str(jmeter),
         "runtime_parameters_passed": bool(runtime_context.get("ticket") or saved_login_password or str(options.get("login_password_encrypted") or options.get("login_t") or options.get("login_sn") or "").strip()),
         "login_password_available": bool(str(options.get("login_password_encrypted") or "").strip() or saved_login_password),

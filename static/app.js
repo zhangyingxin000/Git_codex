@@ -956,6 +956,7 @@ openJmeterWorkbench=async function(scriptKey){
     toast('正在打开真实 JMeter，并加载所选需求脚本…');
     let payload=collectJmeterWorkbenchPayload();
     payload.script_key=scriptKey;
+    payload.package_id=scriptKey;
     let x=await api(`/api/projects/${current}/jmeter/open-gui`,{method:'POST',body:JSON.stringify(payload)});
     let s=x.summary||{},groups=s.groups||[];
     $('#modalBody').innerHTML=`<h2>JMeter 已打开</h2><p class="policy-note">已打开：${esc(x.script_name||'所选脚本')}。脚本、结果文件和报告会按需求包归档，不会和其他需求混在一起。</p><div class="metrics"><div class="metric"><span>线程组</span><b>${esc(s.thread_groups||0)}</b></div><div class="metric"><span>HTTP请求</span><b>${esc(s.http_samplers||0)}</b></div><div class="metric"><span>断言</span><b>${esc(s.assertions||0)}</b></div><div class="metric"><span>监听器</span><b>${esc(s.listeners||0)}</b></div></div>${groups.length?`<table><thead><tr><th>线程组</th><th>线程数</th><th>循环</th><th>爬升秒</th></tr></thead><tbody>${groups.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.threads)}</td><td>${esc(g.loops)}</td><td>${esc(g.rampup)}</td></tr>`).join('')}</tbody></table>`:''}<label>JMX</label><code>${esc(x.jmx_path||'')}</code><label>JTL</label><code>${esc(x.jtl_path||'')}</code>`;
@@ -1046,8 +1047,6 @@ async function generateSelectedRequirementPackageAssets(){
 }
 
 function jmeterScriptKeyForPackage(packageId){
-  if(packageId==='salary-trade')return 'salary_trade';
-  if(packageId==='wealth-level')return 'wealth_level';
   return packageId
 }
 
@@ -1074,7 +1073,7 @@ unifiedExecutionFlow=function(){
 
 showJmeterScriptChooser=function(){
   let packages=portableRequirementPackages(),selected=selectedRequirementPackageId();
-  $('#modalBody').innerHTML=`<h2>选择 JMeter 脚本</h2><p class="policy-note">按需求包选择脚本。平台不会再默认打开某一个需求，避免多个需求互相污染。</p><div class="endpoint-matrix">${packages.map(pkg=>{let pid=requirementPackageId(pkg);return `<div class="endpoint-card"><span class="tag ${pid===selected?'PASSED':'P1'}">${pid===selected?'当前':'可选'}</span><h3>${esc(pkg.name)}</h3><p>${esc(pkg.description||'')}</p><code>${esc(pkg.artifacts?.jmeter?.path||pkg.root||'')}</code><div class="formrow"><button class="primary" onclick="setSelectedRequirementPackage('${esc(pid)}');openJmeterWorkbench('${esc(jmeterScriptKeyForPackage(pid))}')">选择并打开</button><button class="small" onclick="generateSelectedRequirementPackageAssets()">生成脚本</button></div></div>`}).join('')}</div>`;
+  $('#modalBody').innerHTML=`<h2>选择 JMeter 脚本</h2><p class="policy-note">按需求包选择脚本。平台不会再默认打开某一个需求，避免多个需求互相污染。</p><div class="endpoint-matrix">${packages.map(pkg=>{let pid=requirementPackageId(pkg);return `<div class="endpoint-card"><span class="tag ${pid===selected?'PASSED':'P1'}">${pid===selected?'当前':'可选'}</span><h3>${esc(pkg.name)}</h3><p>${esc(pkg.description||'')}</p><code>${esc(pkg.artifacts?.jmeter?.path||pkg.root||'')}</code><div class="formrow"><button class="primary" onclick="setSelectedRequirementPackage('${esc(pid)}');openJmeterWorkbench('${esc(jmeterScriptKeyForPackage(pid))}')">选择并打开</button><button class="small" onclick="setSelectedRequirementPackage('${esc(pid)}');generateSelectedRequirementPackageAssets()">生成脚本</button></div></div>`}).join('')}</div>`;
   $('#modal').classList.remove('hidden')
 }
 
@@ -1160,5 +1159,39 @@ const unifiedExecutionFlowWithNewman=typeof unifiedExecutionFlow==='function'?un
 unifiedExecutionFlow=function(){
   let html=unifiedExecutionFlowWithNewman?unifiedExecutionFlowWithNewman():'';
   return html.replace('<button class="small" onclick="switchTab(\'reports\')">查看报告</button>', '<button class="small" onclick="generateSelectedRequirementPackageAccountModel()">账号模型</button><button class="small" onclick="runSelectedRequirementPackageNewman()">运行本包Newman</button><button class="small" onclick="generateSelectedRequirementPackageAiReview()">AI复盘</button><button class="small" onclick="switchTab(\'reports\')">查看报告</button>')
+}
+
+function requirementPackagePills(){
+  let selected=selectedRequirementPackageId();
+  return portableRequirementPackages().map(pkg=>{
+    let pid=requirementPackageId(pkg),chosen=pid===selected;
+    return `<button class="package-pill ${chosen?'active':''}" onclick="setSelectedRequirementPackage('${esc(pid)}')"><b>${esc(pkg.name)}</b><span>${esc(pkg.status||'PENDING')} · ${esc(pkg.primary_tool||'-')}</span></button>`
+  }).join('')
+}
+
+function selectedPackageAssetLine(pkg){
+  let artifacts=pkg.artifacts||{};
+  let jmeter=artifacts.jmeter||{},account=artifacts.account_model||{},manifest=artifacts.manifest||{};
+  return [
+    ['账号模型',account.exists],
+    ['JMeter脚本',jmeter.exists],
+    ['需求清单',manifest.exists]
+  ].map(x=>`<span class="asset-chip ${x[1]?'ready':'pending'}">${esc(x[0])}</span>`).join('')
+}
+
+function requirementExecutionConsole(){
+  let pkg=currentRequirementPackage(),pid=requirementPackageId(pkg),isSalary=pid==='salary-trade',map=data.salary_trade_jmeter_mapping||{},m=data.case_jmeter_model||{},flows=isSalary?(m.flows||[]):[],ready=flows.filter(x=>x.automation_status==='ready').length;
+  if(!pid)return `<div class="card empty"><b>暂无需求包</b><p>先在需求资产里导入资料或新建需求包。</p></div>`;
+  let steps=[
+    ['01','生成测试用例',`${pkg.counts?.test_cases||0}条用例 · ${pkg.counts?.test_points||0}个测试点`,'runPipeline()','生成'],
+    ['02','生成本包脚本',isSalary?`${flows.length||0}条流程 · ${ready}条可脚本化`:'按账号模型输出工具脚本','generateSelectedRequirementPackageAssets()','生成脚本'],
+    ['03','打开JMeter维护',`加载 ${esc(pkg.name||pid)} 的独立 JMX`,`openJmeterWorkbench('${esc(jmeterScriptKeyForPackage(pid))}')`,'打开'],
+    ['04','回收并复盘',isSalary?`${map.jtl_rows||0}条JTL采样`:'报告回到当前需求包',isSalary?'harvestSalaryTradeJmeter()':'harvestJmeterGuiReport()','回收']
+  ];
+  return `<div class="execution-console"><div class="card package-focus"><div class="diagnosis-head"><div><h2>当前需求包</h2><p>执行中心只围绕这个需求包操作，脚本和报告不会串到别的需求。</p></div><span class="tag ${pkg.status==='READY'?'PASSED':'P1'}">${esc(pkg.status||'PENDING')}</span></div><div class="package-title-block"><h3>${esc(pkg.name||pid)}</h3><p>${esc(pkg.description||'')}</p></div><div class="package-pills">${requirementPackagePills()}</div><div class="package-assets">${selectedPackageAssetLine(pkg)}</div><div class="hub-action-row"><button class="small" onclick="showPortableRequirementPackage(portableRequirementPackages().findIndex(x=>requirementPackageId(x)===selectedRequirementPackageId()))">查看需求包</button><button class="small" onclick="showCreateRequirementPackageModal()">新建需求包</button><button class="small" onclick="generateSelectedRequirementPackageAccountModel()">账号模型</button></div><p class="policy-note">${esc(pkg.root||'')}</p></div><div class="card execution-focus"><div class="diagnosis-head"><div><h2>执行闭环</h2><p>按顺序从测试用例生成脚本、调起 JMeter、回收报告和 AI 复盘。</p></div><span class="tag PASSED">PACKAGE RUN</span></div><div class="execution-steps">${steps.map(x=>`<button class="execution-step" onclick="${x[3]}"><span>${x[0]}</span><b>${esc(x[1])}</b><small>${esc(x[2])}</small><em>${esc(x[4])}</em></button>`).join('')}</div><div class="hub-action-row primary-actions"><button class="primary" onclick="generateSelectedRequirementPackageAssets()">生成本包脚本</button><button class="primary" onclick="openJmeterWorkbench('${esc(jmeterScriptKeyForPackage(pid))}')">打开本包JMeter</button><button class="small" onclick="runSelectedRequirementPackageNewman()">Newman</button><button class="small" onclick="generateSelectedRequirementPackageAiReview()">AI复盘</button><button class="small" onclick="switchTab('reports')">报告中心</button></div><div id="salaryJmeterMappingResult"></div></div></div>${isSalary?`<details class="card compact-details"><summary><b>工资交易脚本明细</b><span>JMX、启动脚本、JTL位置</span></summary>${salaryTradeScriptPathCard()}</details>`:''}`
+}
+
+unifiedExecutionFlow=function(){
+  return requirementExecutionConsole()
 }
 
