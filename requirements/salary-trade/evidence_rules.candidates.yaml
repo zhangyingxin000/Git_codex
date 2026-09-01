@@ -1,7 +1,7 @@
 schema_version: '1.0'
 package_id: salary-trade
 package_name: 工资代理快速结算
-generated_at: '2026-09-01T15:25:57+08:00'
+generated_at: '2026-09-01T15:35:48+08:00'
 mode: candidate_only
 note: 候选规则不会自动覆盖正式 evidence_rules.yaml。请人工确认后再复制或合并。
 summary:
@@ -10,12 +10,14 @@ summary:
   candidates: 21
   existing_rules: 6
   scope: confirmed_business_tables
+  needs_scope_confirmation: false
 rules:
 - id: salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist
   name: 候选证据：进入入口时查询可结算额度：正常请求
   trigger: GET /userserv/salary/trade/quota
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -44,6 +46,7 @@ rules:
   trigger: GET /userserv/salary/trade/agents
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -72,6 +75,7 @@ rules:
   trigger: POST /userserv/salary/trade/order/create
   business_object: anchor_salary_trade_order
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -97,6 +101,7 @@ rules:
   trigger: GET /userserv/salary/trade/order/page
   business_object: anchor_salary_trade_order
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -116,6 +121,7 @@ rules:
   trigger: GET /userserv/salary/trade/order/detail
   business_object: anchor_salary_trade_order
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -135,6 +141,7 @@ rules:
   trigger: POST /userserv/salary/trade/order/cancel
   business_object: anchor_salary_trade_order
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -160,6 +167,7 @@ rules:
   trigger: POST /userserv/salary/trade/order/confirm
   business_object: anchor_salary_trade_order
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -185,6 +193,7 @@ rules:
   trigger: POST /userserv/salary/trade/order/appeal
   business_object: anchor_salary_trade_order
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -209,6 +218,7 @@ rules:
   trigger: POST /userserv/salary/trade/evidence/upload
   business_object: anchor_salary_trade_evidence
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_evidence 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -230,6 +240,7 @@ rules:
   trigger: GET /userserv/salary/trade/evidence/list
   business_object: anchor_salary_trade_evidence
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_evidence 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -251,6 +262,7 @@ rules:
   trigger: GET /userserv/salary/trade/logs
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -279,6 +291,7 @@ rules:
   trigger: GET /userserv/salary/trade/agent/notice
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -307,6 +320,7 @@ rules:
   trigger: POST /userserv/salary/trade/agent/notice/save
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -335,6 +349,7 @@ rules:
   trigger: GET /userserv/salary/trade/agent/order/page
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -363,6 +378,7 @@ rules:
   trigger: GET /userserv/salary/trade/agent/order/detail
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -391,6 +407,7 @@ rules:
   trigger: POST /userserv/salary/trade/agent/order/accept
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -419,6 +436,7 @@ rules:
   trigger: POST /userserv/salary/trade/agent/order/reject
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -447,6 +465,7 @@ rules:
   trigger: POST /userserv/salary/trade/agent/order/paid
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -475,6 +494,7 @@ rules:
   trigger: POST /userserv/salary/trade/agent/order/appeal
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -503,6 +523,7 @@ rules:
   trigger: POST /userserv/salary/trade/agent/evidence/upload
   business_object: anchor_salary_trade_evidence
   confidence: 0.95
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_evidence 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql
@@ -524,6 +545,7 @@ rules:
   trigger: CASE
   business_object: anchor_salary_trade_agent_whitelist
   confidence: 0.6
+  review_status: READY_FOR_REVIEW
   reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
   query:
     source: mysql

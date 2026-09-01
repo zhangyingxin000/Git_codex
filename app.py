@@ -1013,6 +1013,11 @@ def ensure_requirement_package_manifest(project_id, package):
     root = REQUIREMENT_PACKAGE_ROOT / package["id"]
     for child in ("docs", "data", "skills", "outputs/jmeter", "outputs/newman", "outputs/pytest", "reports"):
         (root / child).mkdir(parents=True, exist_ok=True)
+    manifest_path = root / "manifest.json"
+    try:
+        existing_manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.is_file() else {}
+    except Exception:
+        existing_manifest = {}
     artifacts = {name: _file_status(path) for name, path in (package.get("artifacts") or {}).items()}
     counts = _package_signal_counts(project_id, package["id"])
     ready_artifacts = sum(1 for item in artifacts.values() if item["exists"])
@@ -1039,9 +1044,14 @@ def ensure_requirement_package_manifest(project_id, package):
             "outputs": "Newman/JMeter/pytest生成物",
             "reports": "执行报告和AI复盘",
         },
-        "updated_at": now(),
     }
-    (root / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    data_scope = package.get("data_scope") or existing_manifest.get("data_scope")
+    if data_scope:
+        manifest["data_scope"] = data_scope
+    comparable_existing = {k: v for k, v in existing_manifest.items() if k not in {"updated_at", "root", "manifest_path"}}
+    manifest["updated_at"] = existing_manifest.get("updated_at") if comparable_existing == manifest else now()
+    if comparable_existing != {k: v for k, v in manifest.items() if k != "updated_at"} or existing_manifest.get("updated_at") != manifest["updated_at"]:
+        manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     readme = root / "README.md"
     if not readme.exists():
         readme.write_text(
@@ -1055,7 +1065,7 @@ def ensure_requirement_package_manifest(project_id, package):
             encoding="utf-8",
         )
     manifest["root"] = str(root)
-    manifest["manifest_path"] = str(root / "manifest.json")
+    manifest["manifest_path"] = str(manifest_path)
     return manifest
 
 
@@ -1089,6 +1099,7 @@ def _custom_requirement_package_template(project_id, manifest):
             "pytest": "深度断言和AI复盘",
         },
         "data_policy": str(manifest.get("data_policy") or "按测试用例判断是否需要运行参数、CSV、DB或Redis证据。").strip(),
+        "data_scope": manifest.get("data_scope") or {},
         "base_url": base_url,
         "artifacts": {
             "manifest": REQUIREMENT_PACKAGE_ROOT / package_id / "manifest.json",
@@ -1558,12 +1569,32 @@ def generate_candidate_evidence_rules(project_id, payload=None):
     payload = payload or {}
     package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
     package = requirement_package_by_id(project_id, package_id)
+    manifest_path = Path(package["root"]) / "manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.is_file() else {}
+    except Exception:
+        manifest = {}
     cases = _requirement_package_cases(project_id, package_id)
     tables = rows("SELECT table_name,table_comment,module,columns_json FROM db_tables WHERE project_id=?", (project_id,))
     existing = requirement_evidence_rules(project_id, package_id)
     existing_ids = {x.get("id") for x in existing.get("rules", [])}
     existing_tables = {x.get("table") for x in existing.get("rules", []) if x.get("table")}
-    table_pool = [x for x in tables if x.get("table_name") in existing_tables] if existing_tables else tables
+    scoped_tables = set()
+    data_scope = manifest.get("data_scope") if isinstance(manifest, dict) else {}
+    if isinstance(data_scope, dict):
+        scoped_tables.update(str(x).strip() for x in data_scope.get("mysql_tables") or [] if str(x).strip())
+    if existing_tables:
+        table_pool = [x for x in tables if x.get("table_name") in existing_tables]
+        scope_mode = "confirmed_business_tables"
+        needs_scope_confirmation = False
+    elif scoped_tables:
+        table_pool = [x for x in tables if x.get("table_name") in scoped_tables]
+        scope_mode = "manifest_data_scope"
+        needs_scope_confirmation = False
+    else:
+        table_pool = tables
+        scope_mode = "all_imported_tables"
+        needs_scope_confirmation = True
     candidates = []
     seen = set()
     for case in cases:
@@ -1597,8 +1628,11 @@ def generate_candidate_evidence_rules(project_id, payload=None):
                 "name": f"候选证据：{case.get('title') or path}",
                 "trigger": f"{method} {path}".strip(),
                 "business_object": table_name,
-                "confidence": min(0.95, 0.45 + table["score"] / 20),
-                "reason": f"测试用例与表 {table_name} 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。",
+                "confidence": round(min(0.95, (0.25 if needs_scope_confirmation else 0.45) + table["score"] / 20), 2),
+                "review_status": "NEEDS_SCOPE_CONFIRMATION" if needs_scope_confirmation else "READY_FOR_REVIEW",
+                "reason": (f"未声明 data_scope，本候选只表示关键词命中，需先确认需求包数据范围；命中表 {table_name}。"
+                           if needs_scope_confirmation else
+                           f"测试用例与表 {table_name} 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。"),
                 "query": {
                     "source": "mysql",
                     "table": table_name,
@@ -1624,7 +1658,8 @@ def generate_candidate_evidence_rules(project_id, payload=None):
                 "db_tables_scanned": len(table_pool),
                 "candidates": len(candidates),
                 "existing_rules": len(existing_ids),
-                "scope": "confirmed_business_tables" if existing_tables else "all_imported_tables",
+                "scope": scope_mode,
+                "needs_scope_confirmation": needs_scope_confirmation,
             },
         "rules": candidates,
     }
@@ -1636,12 +1671,12 @@ def generate_candidate_evidence_rules(project_id, payload=None):
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
-        "status": "READY" if candidates else "ATTENTION",
+        "status": "NEEDS_SCOPE_CONFIRMATION" if needs_scope_confirmation and candidates else "READY" if candidates else "ATTENTION",
         "created_at": now(),
         "summary": out_payload["summary"],
         "candidates_path": str(candidates_path),
         "candidates": candidates[:50],
-        "conclusion": "已根据测试用例和数据库元数据生成候选证据规则；候选结果需要测试人员确认后再进入正式规则。",
+        "conclusion": "未声明数据范围，请先确认需求包 data_scope 后再采纳候选规则。" if needs_scope_confirmation else "已根据测试用例和数据库元数据生成候选证据规则；候选结果需要测试人员确认后再进入正式规则。",
     }
     out = ROOT / "reports" / f"candidate-evidence-rules-{project_id}-{package_id}-{stamp}.json"
     out.parent.mkdir(parents=True, exist_ok=True)

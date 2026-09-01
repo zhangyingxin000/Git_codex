@@ -13,6 +13,18 @@
     "pytest": "接口结果、DB、Redis证据复盘"
   },
   "data_policy": "申请人/代理身份走CSV或Redis；数据库只负责代理资格和订单证据，不保存ticket。",
+  "data_scope": {
+    "mysql_tables": [
+      "anchor_salary_trade_agent_whitelist",
+      "anchor_salary_trade_order",
+      "anchor_salary_trade_order_log",
+      "anchor_salary_trade_evidence"
+    ],
+    "redis_patterns": [
+      "user_login_info:{uid}"
+    ],
+    "scope_reason": "工资代理结算只围绕代理白名单、订单主表、订单日志和投诉凭证取证；登录态只读取对应用户缓存。"
+  },
   "base_url": "https://test2westarlive.gzxchate.com/",
   "workflow": [
     "导入需求文档和接口文档",
