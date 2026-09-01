@@ -1117,6 +1117,12 @@ def ensure_requirement_package_manifest(project_id, package):
         "data_policy": package["data_policy"],
         "base_url": package.get("base_url", ""),
         "workflow": package["workflow"],
+        "orchestration": package.get("orchestration") or existing_manifest.get("orchestration") or {
+            "primary_plan": "outputs/execution-plan.json",
+            "kind": "scenario_execution_plan",
+            "fallback": "structured test case scenario_type",
+            "rule": "需求包可以声明自己的主编排文件；未声明时默认使用场景执行计划，未来可替换为更高级编排资产。",
+        },
         "counts": counts,
         "artifacts": artifacts,
         "portable_layout": {
@@ -1183,6 +1189,7 @@ def _custom_requirement_package_template(project_id, manifest):
         },
         "data_policy": str(manifest.get("data_policy") or "按测试用例判断是否需要运行参数、CSV、DB或Redis证据。").strip(),
         "data_scope": manifest.get("data_scope") or {},
+        "orchestration": manifest.get("orchestration") or {},
         "base_url": base_url,
         "artifacts": {
             "manifest": REQUIREMENT_PACKAGE_ROOT / package_id / "manifest.json",
@@ -2719,6 +2726,8 @@ def _pytest_evidence_skill_contract():
         "skill": "pytest-evidence-review",
         "purpose": "从需求包场景计划、运行变量、HTTP结果和DB/Redis证据规则生成pytest深度复核资产",
         "inputs": [
+            "manifest.json",
+            "manifest.orchestration.primary_plan",
             "outputs/execution-plan.json",
             "outputs/structured-test-cases.json",
             "evidence_rules.yaml",
@@ -2732,6 +2741,7 @@ def _pytest_evidence_skill_contract():
         ],
         "principles": [
             "pytest负责执行后深度证据复核，不替代JMeter状态机主流程",
+            "主编排入口由需求包manifest声明，execution-plan.json只是默认值",
             "运行变量从环境、场景计划、账号模型和前序响应中提取",
             "DB/Redis证据只读校验，缺变量标记BLOCKED，不编造字段",
             "报告按需求包和场景归档，方便人工复核和维护",
@@ -2779,7 +2789,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
         "generated_at": now(),
         "source": pytest_skill["path"],
         "contract": pytest_skill,
-        "usage": "pytest证据复盘必须遵守本契约；复杂需求优先消费场景计划、账号模型、运行别名和证据规则，不把业务流程写死在全局代码。",
+        "usage": "pytest证据复盘必须遵守本契约；复杂需求优先消费manifest声明的主编排文件、账号模型、运行别名和证据规则，不把业务流程写死在全局代码。",
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     generated.append({"tool": "pytest Evidence Skill Contract", "path": str(pytest_skill_contract_path), "source": pytest_skill["path"]})
 
@@ -6891,15 +6901,43 @@ def redact_obj(value):
     return value
 
 
+def load_package_manifest():
+    root = package_root()
+    return load_json(root / "manifest.json", {{}})
+
+
+def resolve_package_asset_path(*relative_candidates):
+    root = package_root()
+    manifest = load_package_manifest()
+    orchestration = manifest.get("orchestration") if isinstance(manifest, dict) else None
+    paths = []
+    if isinstance(orchestration, dict):
+        for key in ("primary_plan", "execution_plan", "scenario_plan", "path"):
+            if orchestration.get(key):
+                paths.append(orchestration.get(key))
+    for candidate in relative_candidates:
+        if candidate:
+            paths.append(candidate)
+    for item in paths:
+        path = Path(str(item))
+        if not path.is_absolute():
+            path = root / path
+        if path.is_file():
+            return path
+    return root / (relative_candidates[0] if relative_candidates else "")
+
+
 def load_execution_plan():
     root = package_root()
-    payload = load_json(root / "outputs" / "execution-plan.json", {{}})
+    path = resolve_package_asset_path("outputs/execution-plan.json")
+    payload = load_json(path, {{}})
     scenarios = payload.get("scenarios") if isinstance(payload, dict) else None
     return scenarios if isinstance(scenarios, list) else []
 
 
 def case_scenario_index():
     mapping = {{}}
+    order = []
     for scenario in load_execution_plan():
         scenario_id = scenario.get("scenario_id") or scenario.get("id") or scenario.get("name") or "unassigned"
         scenario_name = scenario.get("name") or scenario_id
@@ -6907,21 +6945,42 @@ def case_scenario_index():
             case_id = case.get("id") if isinstance(case, dict) else case
             if case_id:
                 mapping[str(case_id)] = {{"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": scenario.get("status")}}
+                order.append(str(case_id))
         for task in scenario.get("tool_tasks") or []:
             for case_id in task.get("cases") or []:
                 if case_id:
                     mapping[str(case_id)] = {{"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": scenario.get("status")}}
-    return mapping
+                    order.append(str(case_id))
+    return {{"mapping": mapping, "order": order}}
 
 
 def scenario_for_case(case, index=None):
     index = index or case_scenario_index()
-    item = index.get(str(case.get("id") or ""))
+    mapping = index.get("mapping") if isinstance(index, dict) else index
+    item = (mapping or {{}}).get(str(case.get("id") or ""))
     if item:
         return item
     scenario_name = case.get("scenario_type") or "未分组场景"
     scenario_id = snake_case(scenario_name) or "unassigned"
     return {{"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": ""}}
+
+
+def ordered_cases(cases, index=None):
+    index = index or case_scenario_index()
+    order = index.get("order") if isinstance(index, dict) else []
+    case_by_id = {{str(case.get("id") or ""): case for case in cases}}
+    seen = set()
+    result = []
+    for case_id in order or []:
+        if case_id in case_by_id and case_id not in seen:
+            result.append(case_by_id[case_id])
+            seen.add(case_id)
+    for case in cases:
+        case_id = str(case.get("id") or "")
+        if case_id not in seen:
+            result.append(case)
+            seen.add(case_id)
+    return result
 
 
 def build_scenario_results(http_results, evidence, jtl, newman):
@@ -6977,6 +7036,7 @@ def build_scenario_results(http_results, evidence, jtl, newman):
 
 def build_evidence_report(http_results):
     root = package_root()
+    plan_path = resolve_package_asset_path("outputs/execution-plan.json")
     jtl = parse_jtl(os.getenv("AUTOTEST_JTL_PATH", ""))
     newman = load_newman(os.getenv("AUTOTEST_NEWMAN_JSON", ""))
     evidence = run_evidence_rules()
@@ -6988,6 +7048,7 @@ def build_evidence_report(http_results):
         "package_id": PACKAGE_ID or root.name,
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "status": "BLOCKED" if blocked else "FAILED" if failed or http_failed or jtl.get("failures") or newman.get("failures") else "PASSED",
+        "orchestration": {{"path": str(plan_path), "exists": plan_path.is_file(), "fallback": "scenario_type" if not plan_path.is_file() else ""}},
         "summary": {{
             "http_cases": len(http_results),
             "http_failed": http_failed,
@@ -7020,7 +7081,7 @@ def test_api_cases():
     bootstrap_env()
     http_results = []
     scenario_index = case_scenario_index()
-    for case in CASES:
+    for case in ordered_cases(CASES, scenario_index):
         scenario = scenario_for_case(case, scenario_index)
         status, body = run_case(case)
         update_runtime_from_response(case, body)

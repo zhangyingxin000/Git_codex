@@ -27,7 +27,8 @@ Use this abstraction:
 
 ```text
 requirement package
--> scenario execution plan
+-> manifest orchestration entry
+-> scenario execution plan or future orchestration asset
 -> ordered test cases
 -> runtime variables
 -> HTTP results
@@ -42,14 +43,15 @@ Salary trade is only a reference sample because it has useful complexity: multip
 
 Prefer package-local assets:
 
-- `outputs/execution-plan.json` for scenario grouping and human review context
+- `manifest.json` for package identity and the current orchestration entry
+- the manifest `orchestration.primary_plan` file for scenario grouping and human review context; default to `outputs/execution-plan.json`
 - `outputs/structured-test-cases.json` for case definitions and quality status
 - `evidence_rules.yaml` for DB/Redis checks
 - `account_model.yaml` for roles, credential sources, and blocking rules
 - optional `runtime_aliases.yaml` for project-specific variable aliases
 - optional JMeter JTL path and Newman JSON path from runtime environment
 
-If a formal asset is missing, degrade gracefully and explain the blocker in the pytest evidence report instead of silently inventing fields.
+If a formal orchestration asset is missing, degrade gracefully to case `scenario_type` grouping and explain the fallback in the pytest evidence report instead of silently inventing fields. Do not treat `outputs/execution-plan.json` as a permanent global priority; it is the default package orchestration asset until the package manifest points to a more specific one.
 
 ## Runtime Variable Rules
 

@@ -223,7 +223,7 @@ pytest 复盘层按通用规则运行，不绑定某个业务需求。它会从�
 
 pytest 证据复盘规则已沉淀为 `skills/pytest-evidence-review/SKILL.md`。生成当前需求包工具资产时，平台会同步输出 `outputs/pytest/pytest-evidence-skill-contract.json`，用于说明本次 pytest 应该消费哪些需求包资产、如何处理运行变量、如何读取 DB/Redis 证据，以及报告必须如何归档。
 
-pytest 报告会优先读取 `outputs/execution-plan.json`，按业务场景汇总 HTTP、JMeter/Newman 和 DB/Redis 证据结果；没有正式场景计划时，才退回结构化用例里的 `scenario_type`。这样复杂需求不会变成一坨接口结果，而是能按“创建-取消”“创建-拒绝”“完整成交”等场景复核。
+pytest 报告会优先读取 `manifest.json` 里声明的 `orchestration.primary_plan`，默认是 `outputs/execution-plan.json`，并按业务场景汇总 HTTP、JMeter/Newman 和 DB/Redis 证据结果；没有正式编排文件时，才退回结构化用例里的 `scenario_type`。这样复杂需求不会变成一坨接口结果，而是能按“创建-取消”“创建-拒绝”“完整成交”等场景复核；未来如果出现更高级的编排文件，也只需要让需求包 manifest 指向新文件。
 
 ## 执行结果回灌复盘
 
