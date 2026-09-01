@@ -1286,8 +1286,8 @@ async function generateStructuredTestCases(){
     if(box)box.innerHTML='<div class="summary-panel"><b>正在生成结构化用例</b><p>平台会读取当前需求包测试用例，并把接口字段、DB/Redis证据校验点补进用例步骤和预期结果。</p></div>';
     toast('正在生成结构化测试用例…');
     let result=await api(`/api/projects/${current}/structured-test-cases`,{method:'POST',body:JSON.stringify({package_id:pid})});
-    let s=result.summary||{},q=s.quality_counts||{},r=s.readiness_counts||s.automation_counts||{},ready=r.SCRIPT_GENERATION_READY||r.AUTO_READY||0,d=result.coverage_dashboard||{},gaps=result.gap_list||[],msg=`结构化用例完成：${result.status}，用例${s.cases||0}条`;
-    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>${esc(d.headline||`READY ${q.READY||0} 条，脚本生成就绪 ${ready} 条，待证据 ${(q.NEEDS_EVIDENCE||0)+(q.NEEDS_EVIDENCE_REVIEW||0)} 条，人工 ${q.MANUAL_ONLY||0} 条。`)}</p><p>缺口分组 ${esc(gaps.length)} 类；文件已写入当前需求包 outputs。</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    let s=result.summary||{},q=s.quality_counts||{},r=s.readiness_counts||s.automation_counts||{},ready=r.SCRIPT_GENERATION_READY||r.AUTO_READY||0,d=result.coverage_dashboard||{},gaps=result.gap_list||[],jm=result.jmeter_mapping||{},pf=result.data_preflight||{},msg=`结构化用例完成：${result.status}，用例${s.cases||0}条`;
+    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>${esc(d.headline||`READY ${q.READY||0} 条，脚本生成就绪 ${ready} 条，待证据 ${(q.NEEDS_EVIDENCE||0)+(q.NEEDS_EVIDENCE_REVIEW||0)} 条，人工 ${q.MANUAL_ONLY||0} 条。`)}</p><p>JMeter目标 ${esc(jm.summary?.jmeter_targets||jm.jmeter_targets||0)} 条，Redis可选建议 ${esc(s.with_optional_redis_suggestions||0)} 条，数据预检 ${esc(pf.status||'-')}，缺口分组 ${esc(gaps.length)} 类。</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
     toast(msg,result.status==='READY'?'success':'warning');
     await openProject(current);
     switchTab('dataquality')

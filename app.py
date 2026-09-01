@@ -2022,6 +2022,268 @@ def _structured_case_dashboard(enhanced, summary):
     }
 
 
+def _structured_case_redis_suggestions(item):
+    text = "\n".join(str(item.get(key) or "") for key in ("title", "scenario_type", "path", "steps", "expected_results")).lower()
+    suggestions = []
+    if any(word in text for word in ("ticket", "token", "登录", "鉴权", "认证")):
+        suggestions.append({
+            "type": "login_state",
+            "source": "redis_optional",
+            "key_pattern": "user_login_info:{uid}",
+            "field": "access_token",
+            "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。",
+        })
+    if any(word in text for word in ("缓存", "cache")):
+        suggestions.append({
+            "type": "cache_consistency",
+            "source": "redis_optional",
+            "key_pattern": "待按需求包确认",
+            "field": "",
+            "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。",
+        })
+    if any(word in text for word in ("限流", "频控", "重复提交", "幂等")):
+        suggestions.append({
+            "type": "rate_limit_or_idempotency",
+            "source": "redis_optional",
+            "key_pattern": "待按服务实现确认",
+            "field": "",
+            "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。",
+        })
+    if any(word in text for word in ("处理中", "进行中", "未处理", "锁", "互斥")):
+        suggestions.append({
+            "type": "processing_lock",
+            "source": "redis_optional",
+            "key_pattern": "待按服务实现确认",
+            "field": "",
+            "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。",
+        })
+    return suggestions
+
+
+def _csv_rows_for_path(path):
+    path = Path(path)
+    if not path.is_file():
+        return []
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            return [item for item in csv.DictReader(handle) if item]
+    except Exception:
+        return []
+
+
+def _truthy_csv_value(value):
+    return bool(str(value or "").strip()) and str(value or "").strip().lower() not in ("0", "false", "no", "off", "null", "none")
+
+
+def _ticket_source_ready(row_data, prefix=""):
+    names = [f"{prefix}ticket", "ticket", f"{prefix}password_encrypted", "password_encrypted", f"{prefix}redis_uid", "redis_uid", "uid"]
+    return any(_truthy_csv_value(row_data.get(name)) for name in names)
+
+
+def _structured_case_data_preflight(project_id, package_id, package_root):
+    account_model_path = Path(package_root) / "account_model.yaml"
+    account_model = _load_yaml_file(account_model_path)
+    config = load_environment_config()
+    salary_dataset = deep_get(config, "requirement_datasets.salary_trade", {}) or {}
+    checks = []
+    runtime_sql_checks = []
+    status = "READY"
+
+    def add_check(name, state, detail, next_action=""):
+        nonlocal status
+        if state in {"BLOCKED", "NEEDS_DATA"}:
+            status = "BLOCKED"
+        elif state in {"WARNING", "NEEDS_LIVE_CHECK"} and status == "READY":
+            status = "READY_WITH_WARNINGS"
+        checks.append({"name": name, "status": state, "detail": detail, "next_action": next_action})
+
+    if account_model_path.is_file():
+        add_check("账号模型", "READY", f"已读取 {account_model_path}")
+    else:
+        add_check("账号模型", "NEEDS_DATA", f"缺少 {account_model_path}", "先生成当前需求包 account_model.yaml")
+
+    if package_id == "salary-trade":
+        account_csv = ROOT / str(salary_dataset.get("account_csv_path") or "data/salary-trade-accounts.csv")
+        applicant_csv = ROOT / str(salary_dataset.get("applicant_csv_path") or "data/salary-trade-applicants.csv")
+        proxy_csv = ROOT / "data" / "salary-trade-proxies.csv"
+        applicant_rows = _csv_rows_for_path(applicant_csv)
+        account_rows = _csv_rows_for_path(account_csv)
+        proxy_rows = _csv_rows_for_path(proxy_csv)
+        account_applicants = [x for x in account_rows if str(x.get("role") or "").strip() == "applicant"]
+        applicants = applicant_rows + account_applicants
+        applicant_uids = {str(x.get("applicant_uid") or x.get("uid") or "").strip() for x in applicants if str(x.get("applicant_uid") or x.get("uid") or "").strip()}
+        applicant_ready = [x for x in applicants if _ticket_source_ready(x, "applicant_")]
+        if len(applicant_uids) >= 8 and len(applicant_ready) >= 8:
+            add_check("8个申请人账号", "READY", f"已识别 {len(applicant_uids)} 个申请人，具备登录态来源 {len(applicant_ready)} 个。")
+        else:
+            add_check("8个申请人账号", "NEEDS_DATA", f"需要8个申请人；当前识别 {len(applicant_uids)} 个，具备登录态来源 {len(applicant_ready)} 个。", "补齐 applicant CSV 或账号CSV的 ticket/password/redis_uid")
+        applicant_pairs = sorted({
+            (str(x.get("countryCode") or x.get("country_code") or "").strip(), str(x.get("currency") or "").strip())
+            for x in applicants
+            if str(x.get("countryCode") or x.get("country_code") or "").strip() and str(x.get("currency") or "").strip()
+        })
+        proxy_matches = []
+        for country_code, currency in applicant_pairs:
+            matched = [
+                x for x in proxy_rows
+                if str(x.get("countryCode") or x.get("country_code") or "").strip() == country_code
+                and currency in str(x.get("supportCurrencies") or x.get("support_currencies") or x.get("currency") or "")
+                and str(x.get("enabled", "true")).strip().lower() not in ("0", "false", "no", "off")
+            ]
+            proxy_matches.append({"countryCode": country_code, "currency": currency, "matched": len(matched), "proxy_uids": [x.get("proxy_uid") or x.get("uid") for x in matched[:5]]})
+        missing_pairs = [x for x in proxy_matches if not x["matched"]]
+        if missing_pairs:
+            add_check("代理国家币种匹配", "NEEDS_DATA", f"存在 {len(missing_pairs)} 组申请人国家/币种未在代理CSV命中。", "同步数据库白名单到代理CSV，或补齐对应代理")
+        else:
+            add_check("代理国家币种匹配", "READY", f"申请人国家/币种组合 {len(applicant_pairs)} 组均能在代理CSV匹配。")
+        proxy_ready = [x for x in proxy_rows if _ticket_source_ready(x, "proxy_")]
+        if proxy_ready:
+            add_check("代理登录态来源", "READY", f"代理CSV中 {len(proxy_ready)} 个代理具备 ticket/password/redis_uid 来源。")
+        else:
+            add_check("代理登录态来源", "NEEDS_DATA", "代理CSV未识别到可用 ticket/password/redis_uid。", "补齐代理登录态或配置Redis登录缓存读取")
+        if applicant_uids:
+            uid_list = ",".join(sorted(applicant_uids))
+            runtime_sql_checks.append({
+                "name": "申请人处理中订单检查",
+                "source": "mysql_runtime_preflight",
+                "sql_template": f"SELECT uid, order_no, status FROM anchor_salary_trade_order WHERE uid IN ({uid_list}) AND status IN (10,20,30) ORDER BY created_time DESC;",
+                "expectation": "每个申请人在执行前没有处理中订单，否则创建订单会触发50017或业务阻断。",
+            })
+        if applicant_pairs:
+            runtime_sql_checks.append({
+                "name": "代理白名单实时检查",
+                "source": "mysql_runtime_preflight",
+                "sql_template": "SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND country_code=${countryCode} AND support_currencies LIKE CONCAT('%', ${currency}, '%') LIMIT 5;",
+                "expectation": "每个申请人国家和收款币种都能匹配至少一个可用代理。",
+            })
+        add_check("业务库执行前检查", "NEEDS_LIVE_CHECK", f"已生成 {len(runtime_sql_checks)} 条运行前只读SQL检查模板。", "执行JMeter前由DB连接器读取真实订单和白名单状态")
+    else:
+        add_check("通用运行数据", "READY_WITH_WARNINGS", "当前需求包不是工资交易，已按通用结构化用例做静态就绪判断。")
+
+    return {
+        "status": status,
+        "checks": checks,
+        "runtime_sql_checks": runtime_sql_checks,
+    }
+
+
+def _structured_case_jmeter_mapping(enhanced, package_id):
+    flows = SALARY_TRADE_CASE_FLOWS if package_id == "salary-trade" else []
+    mappings = []
+
+    def match_flow(item):
+        text = "\n".join(str(item.get(key) or "") for key in ("title", "scenario_type", "path"))
+        text += "\n" + "\n".join(item.get("steps") or [])
+        for flow in flows:
+            flow_signals = {f"流程{flow.get('code')}", flow.get("name"), flow.get("thread_group"), flow.get("id")}
+            if any(signal and str(signal) in text for signal in flow_signals):
+                return flow
+        return {}
+
+    for index, item in enumerate(enhanced, 1):
+        is_jmeter = item.get("coverage_tool") == "jmeter"
+        flow = match_flow(item) if is_jmeter and flows else {}
+        sampler = f"{item.get('method') or '-'} {item.get('path') or ''}".strip()
+        variables = sorted(set((item.get("interface_fields") or []) + (item.get("required_variables") or []) + _path_variables(" ".join(item.get("preconditions") or []))))
+        db_rules = [x.get("rule_id") for x in item.get("db_checks") or [] if x.get("rule_id")]
+        redis_rules = [x.get("rule_id") for x in item.get("redis_checks") or [] if x.get("rule_id")]
+        if item.get("quality_status") == "MANUAL_ONLY":
+            status = "MANUAL_ONLY"
+        elif is_jmeter and item.get("automation_readiness") == "SCRIPT_GENERATION_READY":
+            status = "SCRIPT_READY"
+        elif is_jmeter:
+            status = "SCRIPTABLE_BUT_EVIDENCE_PENDING"
+        else:
+            status = "NOT_JMETER_TARGET"
+        mappings.append({
+            "case_id": item.get("id"),
+            "case_title": item.get("title"),
+            "mapping_status": status,
+            "jmeter_thread_group": flow.get("thread_group") or ("工资交易接口链路线程组" if is_jmeter and package_id == "salary-trade" else "按接口模块生成线程组" if is_jmeter else ""),
+            "matched_flow_id": flow.get("id", ""),
+            "jmeter_sampler": sampler if is_jmeter else "",
+            "variables": variables,
+            "assertions": [str(x) for x in item.get("expected_results") or []][:8],
+            "db_evidence_rules": db_rules,
+            "redis_evidence_rules": redis_rules,
+            "optional_redis_evidence": item.get("optional_redis_evidence") or [],
+            "coverage_tool": item.get("coverage_tool"),
+            "readiness": item.get("automation_readiness"),
+        })
+    covered = sum(1 for x in mappings if x["mapping_status"] in {"SCRIPT_READY", "SCRIPTABLE_BUT_EVIDENCE_PENDING"})
+    return {
+        "summary": {
+            "cases": len(mappings),
+            "jmeter_targets": covered,
+            "script_ready": sum(1 for x in mappings if x["mapping_status"] == "SCRIPT_READY"),
+            "evidence_pending": sum(1 for x in mappings if x["mapping_status"] == "SCRIPTABLE_BUT_EVIDENCE_PENDING"),
+            "manual_only": sum(1 for x in mappings if x["mapping_status"] == "MANUAL_ONLY"),
+            "not_jmeter_target": sum(1 for x in mappings if x["mapping_status"] == "NOT_JMETER_TARGET"),
+        },
+        "mappings": mappings,
+    }
+
+
+def _excel_col(index):
+    label = ""
+    while index:
+        index, rem = divmod(index - 1, 26)
+        label = chr(65 + rem) + label
+    return label
+
+
+def _xml_text(value):
+    return (str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
+
+
+def _write_structured_cases_xlsx(path, enhanced):
+    headers = ["用例ID", "标题", "优先级", "场景类型", "质量分级", "脚本生成就绪", "推荐工具", "异常来源", "接口", "接口字段", "运行变量", "DB校验", "Redis校验", "下一步", "分级原因"]
+    rows_out = [headers]
+    for item in enhanced:
+        rows_out.append([
+            item.get("id"),
+            item.get("title"),
+            item.get("priority"),
+            item.get("scenario_type"),
+            item.get("quality_status"),
+            item.get("automation_readiness"),
+            item.get("coverage_tool"),
+            ", ".join(item.get("exception_sources") or []),
+            f"{item.get('method') or ''} {item.get('path') or ''}".strip(),
+            ", ".join(item.get("interface_fields") or []),
+            ", ".join(item.get("required_variables") or []),
+            ", ".join(sorted({x.get("table") or "" for x in item.get("db_checks") or [] if x.get("table")})),
+            ", ".join(sorted({x.get("key") or x.get("rule_id") or "" for x in item.get("redis_checks") or [] if x.get("key") or x.get("rule_id")})),
+            (item.get("next_action") or {}).get("label", ""),
+            "；".join(item.get("blocking_reasons") or []),
+        ])
+    sheet_rows = []
+    for r_idx, row_values in enumerate(rows_out, 1):
+        cells = []
+        for c_idx, value in enumerate(row_values, 1):
+            ref = f"{_excel_col(c_idx)}{r_idx}"
+            cells.append(f'<c r="{ref}" t="inlineStr"><is><t>{_xml_text(value)}</t></is></c>')
+        sheet_rows.append(f'<row r="{r_idx}">{"".join(cells)}</row>')
+    worksheet = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <sheetData>{''.join(sheet_rows)}</sheetData>
+</worksheet>'''
+    workbook = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="结构化用例" sheetId="1" r:id="rId1"/></sheets></workbook>'''
+    rels = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'''
+    workbook_rels = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>'''
+    content_types = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>'''
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("[Content_Types].xml", content_types)
+        archive.writestr("_rels/.rels", rels)
+        archive.writestr("xl/workbook.xml", workbook)
+        archive.writestr("xl/_rels/workbook.xml.rels", workbook_rels)
+        archive.writestr("xl/worksheets/sheet1.xml", worksheet)
+
+
 def generate_structured_test_cases(project_id, payload=None):
     payload = payload or {}
     package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
@@ -2088,6 +2350,16 @@ def generate_structured_test_cases(project_id, payload=None):
         for check in redis_checks:
             expected.append(f"Redis校验：{check.get('key') or 'Key'} 的字段符合规则 {check['rule_id']}。")
         quality = _classify_structured_case(case, required_variables, db_checks, redis_checks)
+        temp_item = {
+            "title": case.get("title"),
+            "scenario_type": case.get("scenario_type"),
+            "method": case.get("method"),
+            "path": case.get("path"),
+            "preconditions": preconditions,
+            "steps": [x for x in steps if str(x).strip()],
+            "expected_results": [x for x in expected if str(x).strip()],
+        }
+        optional_redis = _structured_case_redis_suggestions(temp_item)
         enhanced.append({
             "id": case.get("id"),
             "title": case.get("title"),
@@ -2097,11 +2369,13 @@ def generate_structured_test_cases(project_id, payload=None):
             "path": case.get("path"),
             **quality,
             "interface_fields": interface_fields,
+            "required_variables": sorted(required_variables),
             "preconditions": preconditions,
             "steps": [x for x in steps if str(x).strip()],
             "expected_results": [x for x in expected if str(x).strip()],
             "db_checks": db_checks,
             "redis_checks": redis_checks,
+            "optional_redis_evidence": optional_redis,
             "traceability": {
                 "requirement_ref": case.get("requirement_ref"),
                 "evidence_rules": [x.get("rule_id") for x in db_checks + redis_checks],
@@ -2123,6 +2397,7 @@ def generate_structured_test_cases(project_id, payload=None):
         "cases": len(enhanced),
         "with_db_checks": sum(1 for x in enhanced if x["db_checks"]),
         "with_redis_checks": sum(1 for x in enhanced if x["redis_checks"]),
+        "with_optional_redis_suggestions": sum(1 for x in enhanced if x.get("optional_redis_evidence")),
         "quality_counts": quality_counts,
         "readiness_counts": readiness_counts,
         "tool_counts": tool_counts,
@@ -2132,10 +2407,15 @@ def generate_structured_test_cases(project_id, payload=None):
     }
     coverage_dashboard = _structured_case_dashboard(enhanced, summary)
     gap_list = _structured_case_gap_list(enhanced)
+    jmeter_mapping = _structured_case_jmeter_mapping(enhanced, package_id)
+    data_preflight = _structured_case_data_preflight(project_id, package_id, package_root)
     out_dir = package_root / "outputs"
     out_dir.mkdir(parents=True, exist_ok=True)
     json_path = out_dir / "structured-test-cases.json"
     md_path = out_dir / "structured-test-cases.md"
+    xlsx_path = out_dir / "structured-test-cases.xlsx"
+    jmeter_mapping_path = out_dir / "case-jmeter-mapping.json"
+    data_preflight_path = out_dir / "data-preflight-check.json"
     payload_out = {
         "schema_version": "1.0",
         "project_id": project_id,
@@ -2145,9 +2425,26 @@ def generate_structured_test_cases(project_id, payload=None):
         "summary": summary,
         "coverage_dashboard": coverage_dashboard,
         "gap_list": gap_list,
+        "jmeter_mapping": jmeter_mapping,
+        "data_preflight": data_preflight,
         "cases": enhanced,
     }
     json_path.write_text(json.dumps(payload_out, ensure_ascii=False, indent=2), encoding="utf-8")
+    jmeter_mapping_path.write_text(json.dumps({
+        "schema_version": "1.0",
+        "project_id": project_id,
+        "package_id": package_id,
+        "generated_at": payload_out["generated_at"],
+        **jmeter_mapping,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    data_preflight_path.write_text(json.dumps({
+        "schema_version": "1.0",
+        "project_id": project_id,
+        "package_id": package_id,
+        "generated_at": payload_out["generated_at"],
+        **data_preflight,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    _write_structured_cases_xlsx(xlsx_path, enhanced)
     lines = [
         f"# {package.get('name') or package_id} - 结构化测试用例",
         "",
@@ -2155,9 +2452,33 @@ def generate_structured_test_cases(project_id, payload=None):
         f"- 用例数：{summary['cases']}",
         f"- 带DB校验：{summary['with_db_checks']}",
         f"- 带Redis校验：{summary['with_redis_checks']}",
+        f"- Redis可选证据建议：{summary['with_optional_redis_suggestions']}",
         f"- 质量分级：{json.dumps(summary['quality_counts'], ensure_ascii=False)}",
         f"- 脚本生成就绪：{json.dumps(summary['readiness_counts'], ensure_ascii=False)}",
         f"- 总览：{coverage_dashboard['headline']}",
+        "",
+        "## 生成前数据准备检查",
+        "",
+        f"- 状态：{data_preflight['status']}",
+        "",
+    ]
+    for check in data_preflight.get("checks") or []:
+        lines.append(f"- {check.get('name')}：{check.get('status')}；{check.get('detail')}" + (f"；下一步：{check.get('next_action')}" if check.get("next_action") else ""))
+    if data_preflight.get("runtime_sql_checks"):
+        lines += ["", "### 执行前只读SQL检查模板", ""]
+        for check in data_preflight["runtime_sql_checks"]:
+            lines += [
+                f"- {check.get('name')}：{check.get('expectation')}",
+                f"  `{check.get('sql_template')}`",
+            ]
+    lines += [
+        "",
+        "## 用例到 JMeter 映射总览",
+        "",
+        f"- JMeter目标用例：{jmeter_mapping['summary']['jmeter_targets']}",
+        f"- 脚本就绪：{jmeter_mapping['summary']['script_ready']}",
+        f"- 待证据：{jmeter_mapping['summary']['evidence_pending']}",
+        f"- 非JMeter目标：{jmeter_mapping['summary']['not_jmeter_target']}",
         "",
         "## 缺口清单",
         "",
@@ -2188,9 +2509,11 @@ def generate_structured_test_cases(project_id, payload=None):
             f"- 场景类型：{item.get('scenario_type') or '-'}",
             f"- 接口：{(item.get('method') or '-')} {(item.get('path') or '')}",
             f"- 接口字段：{', '.join(item['interface_fields']) or '-'}",
+            f"- 运行变量：{', '.join(item.get('required_variables') or []) or '-'}",
             f"- 质量分级：{item.get('quality_status')}",
             f"- 脚本生成就绪：{item.get('automation_readiness')} / {item.get('coverage_tool')}",
             f"- 异常来源：{', '.join(item.get('exception_sources') or []) or '-'}",
+            f"- Redis可选证据：{'; '.join(x.get('reason','') for x in item.get('optional_redis_evidence') or []) or '-'}",
             f"- 下一步：{(item.get('next_action') or {}).get('label') or '-'}",
             "",
             "### 前置条件",
@@ -2217,8 +2540,13 @@ def generate_structured_test_cases(project_id, payload=None):
         "summary": summary,
         "coverage_dashboard": coverage_dashboard,
         "gap_list": gap_list,
+        "jmeter_mapping": jmeter_mapping.get("summary"),
+        "data_preflight": data_preflight,
         "json_path": str(json_path),
         "markdown_path": str(md_path),
+        "excel_path": str(xlsx_path),
+        "jmeter_mapping_path": str(jmeter_mapping_path),
+        "data_preflight_path": str(data_preflight_path),
         "conclusion": "已生成自带接口字段、DB/Redis证据校验点、用例质量分级和脚本生成就绪状态的结构化测试用例。",
     }
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -8591,9 +8919,11 @@ def list_generated_reports(project_id):
         readiness = summary.get("readiness_counts") or summary.get("automation_counts") or {}
         ready_count = readiness.get("SCRIPT_GENERATION_READY", readiness.get("AUTO_READY", 0))
         dashboard = payload.get("coverage_dashboard") or {}
+        preflight = payload.get("data_preflight") or {}
+        jmeter = payload.get("jmeter_mapping") or {}
         ready_rate = dashboard.get("script_generation_ready_rate")
         rate_text = f" · 就绪率{ready_rate}%" if ready_rate is not None else ""
-        result.append({"name":"结构化测试用例增强报告","kind":"结构化用例","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"用例{summary.get('cases',0)}条 · READY{quality.get('READY',0)} · 脚本就绪{ready_count}{rate_text} · 待证据{quality.get('NEEDS_EVIDENCE',0)+quality.get('NEEDS_EVIDENCE_REVIEW',0)} · 人工{quality.get('MANUAL_ONLY',0)}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+        result.append({"name":"结构化测试用例增强报告","kind":"结构化用例","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"用例{summary.get('cases',0)}条 · READY{quality.get('READY',0)} · 脚本就绪{ready_count}{rate_text} · JMeter目标{jmeter.get('jmeter_targets','-')} · 数据预检{preflight.get('status','-')}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}

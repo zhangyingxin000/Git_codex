@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "generated_at": "2026-09-01T16:59:05+08:00",
+  "status": "BLOCKED",
+  "checks": [
+    {
+      "name": "账号模型",
+      "status": "READY",
+      "detail": "已读取 C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
+      "next_action": ""
+    },
+    {
+      "name": "8个申请人账号",
+      "status": "READY",
+      "detail": "已识别 8 个申请人，具备登录态来源 9 个。",
+      "next_action": ""
+    },
+    {
+      "name": "代理国家币种匹配",
+      "status": "NEEDS_DATA",
+      "detail": "存在 2 组申请人国家/币种未在代理CSV命中。",
+      "next_action": "同步数据库白名单到代理CSV，或补齐对应代理"
+    },
+    {
+      "name": "代理登录态来源",
+      "status": "NEEDS_DATA",
+      "detail": "代理CSV未识别到可用 ticket/password/redis_uid。",
+      "next_action": "补齐代理登录态或配置Redis登录缓存读取"
+    },
+    {
+      "name": "业务库执行前检查",
+      "status": "NEEDS_LIVE_CHECK",
+      "detail": "已生成 2 条运行前只读SQL检查模板。",
+      "next_action": "执行JMeter前由DB连接器读取真实订单和白名单状态"
+    }
+  ],
+  "runtime_sql_checks": [
+    {
+      "name": "申请人处理中订单检查",
+      "source": "mysql_runtime_preflight",
+      "sql_template": "SELECT uid, order_no, status FROM anchor_salary_trade_order WHERE uid IN (1454617,1454696,1454723,1454724,1454744,1455113,1455141,1455185) AND status IN (10,20,30) ORDER BY created_time DESC;",
+      "expectation": "每个申请人在执行前没有处理中订单，否则创建订单会触发50017或业务阻断。"
+    },
+    {
+      "name": "代理白名单实时检查",
+      "source": "mysql_runtime_preflight",
+      "sql_template": "SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND country_code=${countryCode} AND support_currencies LIKE CONCAT('%', ${currency}, '%') LIMIT 5;",
+      "expectation": "每个申请人国家和收款币种都能匹配至少一个可用代理。"
+    }
+  ]
+}

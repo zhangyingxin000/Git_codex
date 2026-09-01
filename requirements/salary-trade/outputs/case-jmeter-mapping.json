@@ -1,0 +1,4111 @@
+{
+  "schema_version": "1.0",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "generated_at": "2026-09-01T16:59:05+08:00",
+  "summary": {
+    "cases": 170,
+    "jmeter_targets": 136,
+    "script_ready": 32,
+    "evidence_pending": 104,
+    "manual_only": 14,
+    "not_jmeter_target": 20
+  },
+  "mappings": [
+    {
+      "case_id": "tc_3c2aa3f293",
+      "case_title": "返回工资快速结算创建入口开关：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_c4f56bbedb",
+      "case_title": "返回工资快速结算创建入口开关：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_586b91c352",
+      "case_title": "进入入口时查询可结算额度：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/quota",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_cb0f14e257",
+      "case_title": "按国家和币种选择代理用户：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agents",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_ddc2782339",
+      "case_title": "提交收款信息并创建待代理处理订单：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_2c8302c8bf",
+      "case_title": "查看本人快速结算订单列表：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_ed495e60ee",
+      "case_title": "查看本人订单详情：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_4a361f2e73",
+      "case_title": "取消待代理处理订单：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_da1f72545f",
+      "case_title": "确认已收到代理转账：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_be228a1cd1",
+      "case_title": "待确认收款时提交投诉：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_8ea08e4145",
+      "case_title": "补充上传本人订单凭证：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_3b931425b2",
+      "case_title": "查看本人订单凭证：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_634b8077e8",
+      "case_title": "查看本人订单流转记录：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_8038c2a2f7",
+      "case_title": "查看自己的交易公告编辑页信息：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_92bfaeecaf",
+      "case_title": "保存自己的交易公告：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_6e4c0c21e9",
+      "case_title": "查看可处理或已承接的订单列表：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_b05f2ae271",
+      "case_title": "查看代理侧订单详情：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_e07f18ed5f",
+      "case_title": "接受待代理处理订单：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_d1023be903",
+      "case_title": "拒绝待代理处理订单：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_3fea7697b2",
+      "case_title": "标记已完成线下转账：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_343e941fe3",
+      "case_title": "待确认收款时提交投诉：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_aaf3603a09",
+      "case_title": "补充上传付款或投诉凭证：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_41124614a0",
+      "case_title": "返回工资快速结算创建入口开关：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_6e7337e6e9",
+      "case_title": "返回工资快速结算创建入口开关：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_babf6074f7",
+      "case_title": "进入入口时查询可结算额度：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/quota",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_6ff142e9f5",
+      "case_title": "按国家和币种选择代理用户：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agents",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_6f8644c487",
+      "case_title": "提交收款信息并创建待代理处理订单：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_1cb94e5edc",
+      "case_title": "查看本人快速结算订单列表：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_91b7086290",
+      "case_title": "查看本人订单详情：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_9cce4f325a",
+      "case_title": "取消待代理处理订单：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_94914f389f",
+      "case_title": "确认已收到代理转账：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_a38fbdd48f",
+      "case_title": "待确认收款时提交投诉：正常请求",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_41d65a3338",
+      "case_title": "补充上传本人订单凭证：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_d1f6bc0f3e",
+      "case_title": "查看本人订单凭证：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_df72e0207d",
+      "case_title": "查看本人订单流转记录：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_8c2efcbd7d",
+      "case_title": "查看自己的交易公告编辑页信息：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_afc760e2ba",
+      "case_title": "保存自己的交易公告：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_d0163abe31",
+      "case_title": "查看可处理或已承接的订单列表：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_8701a0bd85",
+      "case_title": "查看代理侧订单详情：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_8942a7db0b",
+      "case_title": "接受待代理处理订单：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_36f4222004",
+      "case_title": "拒绝待代理处理订单：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_27de387073",
+      "case_title": "标记已完成线下转账：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_3c1ef0b151",
+      "case_title": "待确认收款时提交投诉：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_3c4461d66e",
+      "case_title": "补充上传付款或投诉凭证：正常请求",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "根据接口资料样例验证核心成功路径",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_a29da10d78",
+      "case_title": "返回工资快速结算创建入口开关：缺失必填参数",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "验证必填字段校验："
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_931a51df47",
+      "case_title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "验证长度、数值、类型和空值边界"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_4186d63f07",
+      "case_title": "返回工资快速结算创建入口开关：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "验证必填字段校验："
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_25bb4b4110",
+      "case_title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "验证长度、数值、类型和空值边界"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_ffe359e00e",
+      "case_title": "返回工资快速结算创建入口开关：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_71d4c8f02c",
+      "case_title": "进入入口时查询可结算额度：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/quota",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_43c6c779d8",
+      "case_title": "进入入口时查询可结算额度：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/quota",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_520d95529f",
+      "case_title": "按国家和币种选择代理用户：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agents",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_09f5709402",
+      "case_title": "按国家和币种选择代理用户：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agents",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_9e9ab12cdd",
+      "case_title": "提交收款信息并创建待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_e2826cb5f1",
+      "case_title": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_7b37235a8c",
+      "case_title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_cec2930031",
+      "case_title": "查看本人快速结算订单列表：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/page",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_09a3bd659e",
+      "case_title": "查看本人快速结算订单列表：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/page",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_040bef7520",
+      "case_title": "查看本人订单详情：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/detail",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_1c37a1d263",
+      "case_title": "查看本人订单详情：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/detail",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_fd3c65bfca",
+      "case_title": "取消待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_ea40bd1230",
+      "case_title": "取消待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_5e834a4d16",
+      "case_title": "取消待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_82c425f44c",
+      "case_title": "确认已收到代理转账：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_d280272aef",
+      "case_title": "确认已收到代理转账：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_d5cae5cd7e",
+      "case_title": "确认已收到代理转账：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_60ad3df5c9",
+      "case_title": "待确认收款时提交投诉：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_78189ffc40",
+      "case_title": "待确认收款时提交投诉：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_ac39a4c15e",
+      "case_title": "待确认收款时提交投诉：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_6501f71533",
+      "case_title": "补充上传本人订单凭证：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_2e9af91fa2",
+      "case_title": "补充上传本人订单凭证：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_92a0e95d19",
+      "case_title": "补充上传本人订单凭证：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_894bfa0bef",
+      "case_title": "查看本人订单凭证：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/evidence/list",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_44f440f8ec",
+      "case_title": "查看本人订单凭证：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/evidence/list",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_204821a151",
+      "case_title": "查看本人订单流转记录：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/logs",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_3995b1037b",
+      "case_title": "查看本人订单流转记录：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/logs",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_148e1062ae",
+      "case_title": "查看自己的交易公告编辑页信息：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_970acf530c",
+      "case_title": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_aa5fd1ad97",
+      "case_title": "保存自己的交易公告：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_456ee46651",
+      "case_title": "保存自己的交易公告：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_5754cedeaa",
+      "case_title": "保存自己的交易公告：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_92de8ee503",
+      "case_title": "查看可处理或已承接的订单列表：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_f96f0a6e7c",
+      "case_title": "查看可处理或已承接的订单列表：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_67d008fb3c",
+      "case_title": "查看代理侧订单详情：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_13d2898449",
+      "case_title": "查看代理侧订单详情：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_d5b812d9bc",
+      "case_title": "接受待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_2cbdc73c2a",
+      "case_title": "接受待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_6d0fa5869e",
+      "case_title": "接受待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_ae8f94bb13",
+      "case_title": "拒绝待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_e7f828e13a",
+      "case_title": "拒绝待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_e3fe32d890",
+      "case_title": "拒绝待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_7b351242d9",
+      "case_title": "标记已完成线下转账：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_81ca4518aa",
+      "case_title": "标记已完成线下转账：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_cecc2e452e",
+      "case_title": "标记已完成线下转账：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_63b49481af",
+      "case_title": "待确认收款时提交投诉：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_9703f0d4b0",
+      "case_title": "待确认收款时提交投诉：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_6d43b840fc",
+      "case_title": "待确认收款时提交投诉：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_a252cf3ccf",
+      "case_title": "补充上传付款或投诉凭证：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_4754618c13",
+      "case_title": "补充上传付款或投诉凭证：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_8f0fbfb1e9",
+      "case_title": "补充上传付款或投诉凭证：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_3c912c730e",
+      "case_title": "业务规则验证：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_99096c5c8a",
+      "case_title": "业务规则验证：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "系统行为与规则一致：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_case_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_case_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_d7e443d8f1",
+      "case_title": "业务规则验证：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及服务端按国家汇总的可收款币种。"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a17fdba77c",
+      "case_title": "业务规则验证：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | da",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_46f8c0108e",
+      "case_title": "业务规则验证：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | da",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b7ac4c24e1",
+      "case_title": "业务规则验证：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data.",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ee9a73677e",
+      "case_title": "业务规则验证：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_33bebd5371",
+      "case_title": "返回工资快速结算创建入口开关：缺失必填参数",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "验证必填字段校验："
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_168f41460d",
+      "case_title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "验证长度、数值、类型和空值边界"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_bac78ca4b2",
+      "case_title": "返回工资快速结算创建入口开关：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "验证必填字段校验："
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_e50c04090a",
+      "case_title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "验证长度、数值、类型和空值边界"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_fee04cee2e",
+      "case_title": "返回工资快速结算创建入口开关：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /union/getAnchorApplyRecord",
+      "variables": [],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_bb7afdaec1",
+      "case_title": "进入入口时查询可结算额度：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/quota",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_c42b64b285",
+      "case_title": "进入入口时查询可结算额度：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/quota",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_b96f244486",
+      "case_title": "按国家和币种选择代理用户：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agents",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_5c6a8b6e6b",
+      "case_title": "按国家和币种选择代理用户：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agents",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_29ae76a3e3",
+      "case_title": "提交收款信息并创建待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_ae27bbd8fb",
+      "case_title": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_8aac818fe6",
+      "case_title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/create",
+      "variables": [
+        "applicant_uid",
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status, uid 符合规则 salary_trade_order_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_order_created",
+        "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_bcaafeea5a",
+      "case_title": "查看本人快速结算订单列表：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/page",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_bce7f0b1de",
+      "case_title": "查看本人快速结算订单列表：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/page",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_98f4e0db33",
+      "case_title": "查看本人订单详情：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/detail",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_61b2cc4cee",
+      "case_title": "查看本人订单详情：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/order/detail",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 order_no 符合规则 salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_9f5be4623d",
+      "case_title": "取消待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_0517361e1a",
+      "case_title": "取消待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_432f1720e0",
+      "case_title": "取消待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/cancel",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 cancel_reason, status 符合规则 salary_trade_cancelled。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_cancelled",
+        "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_090c1808f0",
+      "case_title": "确认已收到代理转账：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_040a77f5fc",
+      "case_title": "确认已收到代理转账：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_f6bc6b6313",
+      "case_title": "确认已收到代理转账：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/confirm",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 confirmed_time, finished_time, status 符合规则 salary_trade_finished。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_finished",
+        "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_c4b5e635f7",
+      "case_title": "待确认收款时提交投诉：缺失必填参数",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_ce9183787a",
+      "case_title": "待确认收款时提交投诉：字段边界与类型错误",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_6f03ba81cf",
+      "case_title": "待确认收款时提交投诉：重复提交与幂等性",
+      "mapping_status": "SCRIPT_READY",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/order/appeal",
+      "variables": [
+        "applicant_uid",
+        "order_no"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no, uid 符合规则 salary_trade_appeal_evidence_created。",
+        "DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_appeal_evidence_created",
+        "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_703aba0d61",
+      "case_title": "补充上传本人订单凭证：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_6ff1104c86",
+      "case_title": "补充上传本人订单凭证：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_7da441dd85",
+      "case_title": "补充上传本人订单凭证：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/evidence/upload",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_106998984f",
+      "case_title": "查看本人订单凭证：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/evidence/list",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_63b5a08d94",
+      "case_title": "查看本人订单凭证：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/evidence/list",
+      "variables": [
+        "order_no"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 evidence_type, order_no 符合规则 salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_3e7984c960",
+      "case_title": "查看本人订单流转记录：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/logs",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_a1f392e60e",
+      "case_title": "查看本人订单流转记录：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/logs",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_4f4462577f",
+      "case_title": "查看自己的交易公告编辑页信息：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_c5e7cc7a5a",
+      "case_title": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_c69289c871",
+      "case_title": "保存自己的交易公告：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_5d168a6591",
+      "case_title": "保存自己的交易公告：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_bceb2b7ba5",
+      "case_title": "保存自己的交易公告：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_bc46fc0c40",
+      "case_title": "查看可处理或已承接的订单列表：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_81660bd59d",
+      "case_title": "查看可处理或已承接的订单列表：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_a32323adbc",
+      "case_title": "查看代理侧订单详情：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_94b6d42347",
+      "case_title": "查看代理侧订单详情：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_faa2ab7c86",
+      "case_title": "接受待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_f26a9456cf",
+      "case_title": "接受待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_a001066bcb",
+      "case_title": "接受待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_45166545a3",
+      "case_title": "拒绝待代理处理订单：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_73f8c0f05a",
+      "case_title": "拒绝待代理处理订单：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_c1da29bb4c",
+      "case_title": "拒绝待代理处理订单：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_d17c532894",
+      "case_title": "标记已完成线下转账：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_27dd9da1a1",
+      "case_title": "标记已完成线下转账：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_c240887ef3",
+      "case_title": "标记已完成线下转账：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_150ccec0dd",
+      "case_title": "待确认收款时提交投诉：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_050931dc62",
+      "case_title": "待确认收款时提交投诉：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_e28e6a08e2",
+      "case_title": "待确认收款时提交投诉：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
+      "variables": [
+        "country_code",
+        "currency",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_2e5e8738c3",
+      "case_title": "补充上传付款或投诉凭证：缺失必填参数",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证必填字段校验：",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_1857980542",
+      "case_title": "补充上传付款或投诉凭证：字段边界与类型错误",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证长度、数值、类型和空值边界",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_147643288b",
+      "case_title": "补充上传付款或投诉凭证：重复提交与幂等性",
+      "mapping_status": "SCRIPTABLE_BUT_EVIDENCE_PENDING",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "matched_flow_id": "",
+      "jmeter_sampler": "POST /userserv/salary/trade/agent/evidence/upload",
+      "variables": [
+        "order_no",
+        "proxy_uid"
+      ],
+      "assertions": [
+        "验证重复操作不会破坏数据一致性",
+        "DB校验：anchor_salary_trade_evidence WHERE order_no = ${order_no}，字段 agent_uid, evidence_type 符合规则 salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence。"
+      ],
+      "db_evidence_rules": [
+        "salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence"
+      ],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "jmeter",
+      "readiness": "SCRIPTABLE_EVIDENCE_PENDING"
+    },
+    {
+      "case_id": "tc_9215032b30",
+      "case_title": "业务规则验证：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览.",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：公共业务规则、状态枚举和状态流转见 [接口文档索引与业务总览](00-工资代理快速结算接口文档索引与业务总览."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b987a5196c",
+      "case_title": "业务规则验证：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_540a55c9d7",
+      "case_title": "业务规则验证：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：不传时服务端使用当前申请用户所属公会查询工资额度 | - 说明：返回可申请工资、进行中冻结工资、最低金额、金币倍数，以及服务端按国家汇总的可收款币种。"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7753fde391",
+      "case_title": "业务规则验证：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | da",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：availableSalary | int64 | 当前可申请工资的整数兼容值，由精确金额截取整数部分得到 | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_dec89caf45",
+      "case_title": "业务规则验证：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | da",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：availableSalaryAmount | float64 | 当前可申请工资的精确金额，单位 USD | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7f09e04dd4",
+      "case_title": "业务规则验证：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data.",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：processingSalary | float64 | 当前进行中订单冻结的工资金额，单位 USD | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_c54317ee46",
+      "case_title": "业务规则验证：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "系统行为与规则一致：minApplyAmount | float64 | 单笔最低申请工资金额，单位 USD，当前为 50 | | data."
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    }
+  ]
+}
