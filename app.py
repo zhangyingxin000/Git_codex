@@ -7473,6 +7473,16 @@ def list_generated_reports(project_id):
                 "file_name": str(summary_file),
                 "package_id": package_id,
             })
+    for item in result:
+        if item.get("package_id"):
+            continue
+        marker = " ".join(str(item.get(key) or "") for key in ("name", "kind", "summary", "file_name")).lower()
+        if any(word in marker for word in ("salary", "工资", "代理", "交易", "订单")):
+            item["package_id"] = "salary-trade"
+        elif any(word in marker for word in ("wealth", "财富", "送礼", "等级")):
+            item["package_id"] = "wealth-level"
+        else:
+            item["package_id"] = "general"
     return sorted(result,key=lambda x:x["created_at"],reverse=True)
 
 

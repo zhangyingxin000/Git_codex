@@ -1195,3 +1195,39 @@ unifiedExecutionFlow=function(){
   return requirementExecutionConsole()
 }
 
+function reportPackageId(report){
+  return report?.package_id || 'general'
+}
+
+function selectedReportScope(){
+  return localStorage.getItem('autotest_report_scope') || 'current'
+}
+
+function setReportScope(scope){
+  localStorage.setItem('autotest_report_scope',scope);
+  render();
+  switchTab('reports')
+}
+
+function filteredReportsForScope(){
+  let reports=data.generated_reports||[],scope=selectedReportScope(),pid=selectedRequirementPackageId();
+  return scope==='all'?reports:reports.filter(x=>reportPackageId(x)===pid)
+}
+
+function packageReportRows(reports){
+  if(!reports.length)return `<div class="card empty"><b>当前范围暂无报告</b><p>执行或回收当前需求包后，报告会自动归档到这里。</p></div>`;
+  return `<div class="card report-table-card"><table><thead><tr><th>生成时间</th><th>报告</th><th>需求包</th><th>状态</th><th>摘要</th><th>操作</th></tr></thead><tbody>${reports.map(x=>`<tr><td>${esc((x.created_at||'').replace('T',' '))}</td><td><b>${esc(x.name)}</b><br><small>${esc(x.kind)} · ${esc(x.file_name)}</small></td><td><span class="tag">${esc(reportPackageId(x))}</span></td><td><span class="tag ${x.status==='PASSED'?'PASSED':x.status==='FAILED'?'FAILED':'P1'}">${esc(x.status)}</span></td><td>${esc(x.summary)}</td><td>${x.html_url?`<button class="small" onclick="openReport('${esc(x.html_url)}')">HTML</button> `:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">JSON</button>`:''}</td></tr>`).join('')}</tbody></table></div>`
+}
+
+function packageReportCenter(){
+  let all=data.generated_reports||[],reports=filteredReportsForScope(),pkg=currentRequirementPackage(),pid=selectedRequirementPackageId(),scope=selectedReportScope();
+  let failed=reports.filter(x=>!['PASSED','READY','OPENED'].includes(x.status)),jmeter=reports.filter(x=>/JMeter|性能/.test(`${x.kind||''}${x.name||''}`)),dataEvidence=reports.filter(x=>/数据|证据|DB|Redis|映射/.test(`${x.kind||''}${x.name||''}${x.summary||''}`));
+  let byPackage={};
+  all.forEach(x=>{let key=reportPackageId(x);byPackage[key]=(byPackage[key]||0)+1});
+  return `<div class="card report-workbench"><div class="diagnosis-head"><div><span class="tag PASSED">REPORT WORKBENCH</span><h2>报告中心</h2><p>默认只看当前需求包报告；需要排查历史时再切到全部报告。</p></div><span class="tag ${scope==='current'?'PASSED':'P1'}">${scope==='current'?'当前需求包':'全部报告'}</span></div><div class="report-scope-row"><button class="${scope==='current'?'primary':'small'}" onclick="setReportScope('current')">当前需求包</button><button class="${scope==='all'?'primary':'small'}" onclick="setReportScope('all')">全部报告</button><select onchange="setSelectedRequirementPackage(this.value);setReportScope('current')">${requirementPackageOptionsHtml(pid)}</select></div><div class="metrics"><div class="metric"><span>需求包</span><b style="font-size:20px">${esc(pkg.name||pid||'-')}</b></div><div class="metric"><span>范围内报告</span><b>${reports.length}</b></div><div class="metric"><span>异常/待处理</span><b>${failed.length}</b></div><div class="metric"><span>JMeter/数据证据</span><b>${jmeter.length}/${dataEvidence.length}</b></div></div></div><div class="report-package-strip">${Object.entries(byPackage).map(([key,count])=>`<button class="package-pill ${key===pid&&scope==='current'?'active':''}" onclick="setSelectedRequirementPackage('${esc(key)}');setReportScope('current')"><b>${esc(requirementPackageName(key))}</b><span>${count}份报告</span></button>`).join('')}</div>${packageReportRows(reports)}`
+}
+
+enterpriseReportCenter=function(){
+  return packageReportCenter()
+}
+
