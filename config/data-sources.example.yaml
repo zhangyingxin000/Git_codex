@@ -1,0 +1,14 @@
+# Example data evidence metadata.
+# Database connection settings belong in ../database.env.
+
+data_sources:
+  mysql:
+    readonly: true
+    business_tables: {}
+
+  redis:
+    readonly: true
+    host: 127.0.0.1
+    port: 6379
+    db: 0
+    ssl: false

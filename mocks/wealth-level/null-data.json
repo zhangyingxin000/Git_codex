@@ -1,0 +1,12 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": null,
+  "ts": 1787133455042,
+  "setting_version": 6327,
+  "_mockMeta": {
+    "mock": true,
+    "scenario": "null-data",
+    "basis": "fault-injection"
+  }
+}

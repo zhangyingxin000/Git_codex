@@ -1,0 +1,25 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "myExperLevelInfo": {
+      "avatar": "https://s6.gzxchate.com/user/1455186/userHeader/6bdac74a9daf45fb8bc48da086654577.jpg",
+      "nick": "dalaohdhdhdh",
+      "currentLevel": 100,
+      "nextLevel": 100,
+      "nickId": "200200",
+      "currentExperValue": 15583378001,
+      "currentExperLevelValue": 15583300000,
+      "nextExperLevelValue": 0,
+      "uid": 1455186
+    },
+    "experRights": []
+  },
+  "ts": 1787133455042,
+  "setting_version": 6327,
+  "_mockMeta": {
+    "mock": true,
+    "scenario": "empty-rights",
+    "basis": "fault-injection"
+  }
+}

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Soulfree测试服 性能基线" enabled="true">
+      <stringProp name="TestPlan.comments">由 AutoTest AI 生成；GUI 用于审阅维护，非 GUI 执行用于报告归档。</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments"><collectionProp name="Arguments.arguments"/></elementProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="运行变量" enabled="true">
+        <collectionProp name="Arguments.arguments"><elementProp name="appCode" elementType="Argument"><stringProp name="Argument.name">appCode</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appVersion" elementType="Argument"><stringProp name="Argument.name">appVersion</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appid" elementType="Argument"><stringProp name="Argument.name">appid</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appsflyerId" elementType="Argument"><stringProp name="Argument.name">appsflyerId</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="channel" elementType="Argument"><stringProp name="Argument.name">channel</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="deviceId" elementType="Argument"><stringProp name="Argument.name">deviceId</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="deviceType" elementType="Argument"><stringProp name="Argument.name">deviceType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="gift_count" elementType="Argument"><stringProp name="Argument.name">gift_count</stringProp><stringProp name="Argument.value">1</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="isVpnConnected" elementType="Argument"><stringProp name="Argument.name">isVpnConnected</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="ispType" elementType="Argument"><stringProp name="Argument.name">ispType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="language" elementType="Argument"><stringProp name="Argument.name">language</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="login_password_encrypted" elementType="Argument"><stringProp name="Argument.name">login_password_encrypted</stringProp><stringProp name="Argument.value">${__P(login_password_encrypted,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="model" elementType="Argument"><stringProp name="Argument.name">model</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="netType" elementType="Argument"><stringProp name="Argument.name">netType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="organic" elementType="Argument"><stringProp name="Argument.name">organic</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="os" elementType="Argument"><stringProp name="Argument.name">os</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="osVersion" elementType="Argument"><stringProp name="Argument.name">osVersion</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="packageName" elementType="Argument"><stringProp name="Argument.name">packageName</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="pageNo" elementType="Argument"><stringProp name="Argument.name">pageNo</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="pageSize" elementType="Argument"><stringProp name="Argument.name">pageSize</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="sn" elementType="Argument"><stringProp name="Argument.name">sn</stringProp><stringProp name="Argument.value">${__P(sn,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="systemLanguage" elementType="Argument"><stringProp name="Argument.name">systemLanguage</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="t" elementType="Argument"><stringProp name="Argument.name">t</stringProp><stringProp name="Argument.value">${__P(t,${__time(,)})}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="ticket" elementType="Argument"><stringProp name="Argument.name">ticket</stringProp><stringProp name="Argument.value">${__P(ticket,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="type" elementType="Argument"><stringProp name="Argument.name">type</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="uid" elementType="Argument"><stringProp name="Argument.name">uid</stringProp><stringProp name="Argument.value">${__P(uid,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="version" elementType="Argument"><stringProp name="Argument.name">version</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp></collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
+        <stringProp name="HTTPSampler.protocol">https</stringProp>
+        <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
+        <stringProp name="HTTPSampler.port"></stringProp>
+        <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+        <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"/></elementProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie 管理器" enabled="true">
+        <collectionProp name="CookieManager.cookies"/>
+        <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+        <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
+      </CookieManager>
+      <hashTree/>
+      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache 管理器" enabled="true">
+        <boolProp name="clearEachIteration">false</boolProp>
+        <boolProp name="useExpires">true</boolProp>
+      </CacheManager>
+      <hashTree/>
+      
+      
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="接口性能冒烟" enabled="true">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">false</boolProp><stringProp name="LoopController.loops">1</stringProp></elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取登录身份上下文" enabled="true">
+          <stringProp name="cacheKey">autotest-load-auth-context</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">def token = props.get('ticket') ?: vars.get('ticket') ?: '${__P(ticket,)}'
+if (!token) {
+    throw new IllegalStateException('未取得 ticket：请在平台先完成一次真实登录，或填写登录加密密码后重新打开 JMeter 工作台')
+}
+vars.put('ticket', token)
+def loginUid = props.get('uid') ?: vars.get('uid') ?: '${__P(uid,)}'
+if (loginUid) {
+    vars.put('uid', loginUid)
+}</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223PreProcessor>
+        <hashTree/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="请求间隔" enabled="true">
+          <stringProp name="ConstantTimer.delay">300</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+        
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

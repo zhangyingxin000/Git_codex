@@ -1,0 +1,332 @@
+{
+  "generated_at": "2026-08-31T20:04:10+08:00",
+  "project_id": "prj_e3515817c4",
+  "requirement": "工资代理快速结算",
+  "source": "test_cases_to_jmeter_model",
+  "skill": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\SKILL.md",
+  "yaml_config": {
+    "status": "READY",
+    "build": "20260831.10",
+    "env_name": "test",
+    "env_file": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\config\\env.test.yaml",
+    "yaml_backend": "PyYAML",
+    "project": {
+      "name": "AutoTest AI",
+      "env": "soulfree-test",
+      "base_url": "https://test2westarlive.gzxchate.com"
+    },
+    "tools": {
+      "jmeter_home": "D:/apache-jmeter-5.6.3",
+      "jmeter_command": "D:\\apache-jmeter-5.6.3\\bin\\jmeter.bat",
+      "newman_enabled": true
+    },
+    "data_sources": {
+      "mysql_readonly": true,
+      "mysql_configured": false,
+      "mysql_live": {
+        "status": "CONFIGURED",
+        "host": "47.237.139.110",
+        "port": 3306,
+        "database": "yingtao_test",
+        "database_configured": true,
+        "user": "root",
+        "password_configured": true,
+        "readonly": true,
+        "allowed_sql": [
+          "SELECT",
+          "SHOW",
+          "DESCRIBE",
+          "EXPLAIN"
+        ],
+        "project_id": "prj_e3515817c4"
+      },
+      "redis_readonly": true,
+      "redis_configured": true,
+      "redis_host": "47.237.139.110",
+      "redis_port": 6450
+    },
+    "accounts": {
+      "strategy": "csv_or_login_or_redis",
+      "csv_path": "data/accounts.csv",
+      "roles": [
+        "applicant",
+        "proxy",
+        "wealth_user",
+        "operator"
+      ]
+    },
+    "reports": {
+      "root": "reports",
+      "group_by": "requirement_package"
+    },
+    "policy": {
+      "secrets_in_yaml": false,
+      "business_datasource_readonly": true,
+      "config_overridable_by_ui": true
+    }
+  },
+  "csv_contract": {
+    "owner": "Runtime data source is inferred from test cases. CSV is used only when cases require multi-account, multi-role or data-matrix execution.",
+    "account_csv": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-accounts.csv",
+    "applicant_csv": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
+    "flow_slots_csv": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-flow-slots.csv",
+    "jmeter_properties": [
+      "salary_accounts_csv",
+      "salary_applicants_csv",
+      "salary_flow_slots_csv",
+      "salary_result_jtl"
+    ]
+  },
+  "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-driven.jmx",
+  "launcher": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\open-salary-trade-state-machine.ps1",
+  "runtime_parameters": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-runtime-parameters.md",
+  "csv_files": {
+    "accounts": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-accounts.csv",
+    "applicants": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
+    "flow_slots": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-flow-slots.csv"
+  },
+  "jmeter_property_defaults": {
+    "salary_accounts_csv": "C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-accounts.csv",
+    "salary_applicants_csv": "C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-applicants.csv",
+    "salary_flow_slots_csv": "C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-flow-slots.csv",
+    "salary_result_jtl": "D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl"
+  },
+  "preserve_policy": {
+    "mode": "patch_existing_jmx",
+    "manual_edits_preserved": true,
+    "backup_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-driven.backup-20260831-200410.jmx",
+    "written": true,
+    "rule": "已有正式JMX时不再从模板整文件覆盖，只做路径参数化、空脚本文件名清理等补丁。"
+  },
+  "flows": [
+    {
+      "id": "salary_flow_a_cancel_by_applicant",
+      "code": "A",
+      "name": "创建后申请人取消",
+      "type": "normal",
+      "priority": "P0",
+      "account_slot": "applicant_01",
+      "thread_group": "工资交易流程A：创建后申请人取消",
+      "order_var": "flow_a_order_no",
+      "steps": [
+        "申请人读取额度",
+        "申请人创建订单",
+        "提取 orderNo/orderId",
+        "申请人取消订单",
+        "校验订单状态 50"
+      ],
+      "assertions": [
+        "创建接口 code=200",
+        "orderNo 不为空",
+        "取消后状态为已取消",
+        "订单日志存在创建和取消记录"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "ready"
+    },
+    {
+      "id": "salary_flow_b_reject_by_proxy",
+      "code": "B",
+      "name": "创建后代理拒绝",
+      "type": "normal",
+      "priority": "P0",
+      "account_slot": "applicant_02",
+      "thread_group": "工资交易流程B：创建后代理拒绝",
+      "order_var": "flow_b_order_no",
+      "steps": [
+        "申请人创建订单",
+        "代理查询待处理订单",
+        "代理拒绝订单",
+        "校验订单状态为拒绝/关闭"
+      ],
+      "assertions": [
+        "代理侧能查到该订单",
+        "拒绝接口 code=200",
+        "拒绝后申请人无进行中订单"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "planned"
+    },
+    {
+      "id": "salary_flow_c_finish",
+      "code": "C",
+      "name": "接受并转账后申请人确认完成",
+      "type": "normal",
+      "priority": "P0",
+      "account_slot": "applicant_03",
+      "thread_group": "工资交易流程C：完整成交",
+      "order_var": "flow_c_order_no",
+      "steps": [
+        "申请人创建订单",
+        "代理接受",
+        "代理标记已转账",
+        "申请人确认收款",
+        "校验交易完成"
+      ],
+      "assertions": [
+        "状态按 10 -> 20 -> 30 -> 40 流转",
+        "完成后金额释放/扣减符合需求",
+        "日志链路完整"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "planned"
+    },
+    {
+      "id": "salary_flow_d_appeal_failed",
+      "code": "D",
+      "name": "转账后申请人投诉，投诉失败",
+      "type": "exception",
+      "priority": "P0",
+      "account_slot": "applicant_04",
+      "thread_group": "工资交易流程D：投诉失败",
+      "order_var": "flow_d_order_no",
+      "steps": [
+        "申请人创建订单",
+        "代理接受",
+        "代理标记已转账",
+        "申请人投诉",
+        "运营处理投诉失败",
+        "校验最终状态"
+      ],
+      "assertions": [
+        "投诉记录写入",
+        "投诉失败后订单结果符合需求",
+        "证据记录可追溯"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_evidence",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "planned"
+    },
+    {
+      "id": "salary_flow_e_appeal_success",
+      "code": "E",
+      "name": "转账后申请人投诉，投诉成功",
+      "type": "exception",
+      "priority": "P0",
+      "account_slot": "applicant_05",
+      "thread_group": "工资交易流程E：投诉成功",
+      "order_var": "flow_e_order_no",
+      "steps": [
+        "申请人创建订单",
+        "代理接受",
+        "代理标记已转账",
+        "申请人投诉",
+        "运营处理投诉成功",
+        "校验退款/关闭"
+      ],
+      "assertions": [
+        "投诉记录写入",
+        "投诉成功后资金处理符合需求",
+        "订单日志记录运营动作"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_evidence",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "planned"
+    },
+    {
+      "id": "salary_flow_f_create_timeout",
+      "code": "F",
+      "name": "创建后代理不处理直到订单过期",
+      "type": "timeout",
+      "priority": "P1",
+      "account_slot": "applicant_06",
+      "thread_group": "工资交易流程F：待接单超时",
+      "order_var": "flow_f_order_no",
+      "steps": [
+        "申请人创建订单",
+        "等待或模拟过期时间",
+        "触发/查询过期结果",
+        "校验订单关闭"
+      ],
+      "assertions": [
+        "过期前状态保持待处理",
+        "过期后状态符合需求",
+        "资金原路返回"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "blocked",
+      "blocker": "需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。"
+    },
+    {
+      "id": "salary_flow_g_accept_timeout",
+      "code": "G",
+      "name": "代理接受后不转账，12小时过期取消",
+      "type": "timeout",
+      "priority": "P1",
+      "account_slot": "applicant_07",
+      "thread_group": "工资交易流程G：已接受未转账超时",
+      "order_var": "flow_g_order_no",
+      "steps": [
+        "申请人创建订单",
+        "代理接受",
+        "等待或模拟12小时",
+        "校验订单取消和资金返回"
+      ],
+      "assertions": [
+        "接受后状态正确",
+        "超时任务执行后订单关闭",
+        "申请人工资/冻结金额恢复"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "blocked",
+      "blocker": "需要测试环境可控过期时间或后台定时任务触发入口。"
+    },
+    {
+      "id": "salary_flow_h_confirm_timeout",
+      "code": "H",
+      "name": "代理已转账后申请人24小时不确认，订单自动完成",
+      "type": "timeout",
+      "priority": "P1",
+      "account_slot": "applicant_08",
+      "thread_group": "工资交易流程H：已转账未确认超时完成",
+      "order_var": "flow_h_order_no",
+      "steps": [
+        "申请人创建订单",
+        "代理接受",
+        "代理标记已转账",
+        "等待或模拟24小时",
+        "校验订单自动完成"
+      ],
+      "assertions": [
+        "已转账状态正确",
+        "超时后订单完成",
+        "日志记录自动完成来源"
+      ],
+      "data_evidence": [
+        "anchor_salary_trade_order",
+        "anchor_salary_trade_order_log"
+      ],
+      "automation_status": "blocked",
+      "blocker": "需要测试环境可控24小时超时或后台任务触发入口。"
+    }
+  ],
+  "gaps": [
+    {
+      "level": "P1",
+      "item": "超时流程",
+      "detail": "3条超时流程需要测试环境提供时间加速或后台任务触发方式。"
+    }
+  ],
+  "trace_rule": "JMeter线程组/请求名称必须保留 flow code、case id、step name，JTL回收后按这些标签归档回测试用例。"
+}

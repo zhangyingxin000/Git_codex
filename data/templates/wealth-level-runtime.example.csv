@@ -1,0 +1,2 @@
+role,slot,uid,shortId,password_encrypted,ticket,deviceId,model,osVersion,appVersion,gift_count,gift_gold,threads,loops,rampup_seconds,enabled,remark
+wealth_user,W01,1454428,888,,,,SM-A546B,16,100.1.5.4,3,8000,1,3,1,true,single-account wealth level workflow

@@ -1,0 +1,1 @@
+{"openapi":"3.0.0","info":{"title":"示例订单服务","version":"1.0"},"paths":{"/api/orders":{"get":{"summary":"查询订单列表","tags":["订单"],"security":[{"bearerAuth":[]}]},"post":{"summary":"创建订单","tags":["订单"],"security":[{"bearerAuth":[]}]}},"/api/orders/{id}/cancel":{"post":{"summary":"取消订单","tags":["订单"],"security":[{"bearerAuth":[]}]}}}}

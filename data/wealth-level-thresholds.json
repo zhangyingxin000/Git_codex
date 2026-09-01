@@ -1,0 +1,713 @@
+{
+  "source_file": "财富等级升级数据.xlsx",
+  "sheet": "Sheet1",
+  "headers": [
+    "等级",
+    "累计经验值",
+    "所需美元数",
+    "升级所需（与上一级差值）",
+    "升级所需美元数"
+  ],
+  "rows": [
+    {
+      "level": 1,
+      "cumulative_experience": 25000,
+      "cumulative_usd": 5,
+      "upgrade_experience": 25000,
+      "upgrade_usd": 5
+    },
+    {
+      "level": 2,
+      "cumulative_experience": 50000,
+      "cumulative_usd": 10,
+      "upgrade_experience": 25000,
+      "upgrade_usd": 5
+    },
+    {
+      "level": 3,
+      "cumulative_experience": 100000,
+      "cumulative_usd": 20,
+      "upgrade_experience": 50000,
+      "upgrade_usd": 10
+    },
+    {
+      "level": 4,
+      "cumulative_experience": 150000,
+      "cumulative_usd": 30,
+      "upgrade_experience": 50000,
+      "upgrade_usd": 10
+    },
+    {
+      "level": 5,
+      "cumulative_experience": 300000,
+      "cumulative_usd": 60,
+      "upgrade_experience": 150000,
+      "upgrade_usd": 30
+    },
+    {
+      "level": 6,
+      "cumulative_experience": 550000,
+      "cumulative_usd": 110,
+      "upgrade_experience": 250000,
+      "upgrade_usd": 50
+    },
+    {
+      "level": 7,
+      "cumulative_experience": 1050000,
+      "cumulative_usd": 210,
+      "upgrade_experience": 500000,
+      "upgrade_usd": 100
+    },
+    {
+      "level": 8,
+      "cumulative_experience": 1550000,
+      "cumulative_usd": 310,
+      "upgrade_experience": 500000,
+      "upgrade_usd": 100
+    },
+    {
+      "level": 9,
+      "cumulative_experience": 2550000,
+      "cumulative_usd": 510,
+      "upgrade_experience": 1000000,
+      "upgrade_usd": 200
+    },
+    {
+      "level": 10,
+      "cumulative_experience": 3550000,
+      "cumulative_usd": 710,
+      "upgrade_experience": 1000000,
+      "upgrade_usd": 200
+    },
+    {
+      "level": 11,
+      "cumulative_experience": 4800000,
+      "cumulative_usd": 960,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 12,
+      "cumulative_experience": 6050000,
+      "cumulative_usd": 1210,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 13,
+      "cumulative_experience": 7300000,
+      "cumulative_usd": 1460,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 14,
+      "cumulative_experience": 8550000,
+      "cumulative_usd": 1710,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 15,
+      "cumulative_experience": 9800000,
+      "cumulative_usd": 1960,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 16,
+      "cumulative_experience": 11050000,
+      "cumulative_usd": 2210,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 17,
+      "cumulative_experience": 12300000,
+      "cumulative_usd": 2460,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 18,
+      "cumulative_experience": 13550000,
+      "cumulative_usd": 2710,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 19,
+      "cumulative_experience": 14800000,
+      "cumulative_usd": 2960,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 20,
+      "cumulative_experience": 16050000,
+      "cumulative_usd": 3210,
+      "upgrade_experience": 1250000,
+      "upgrade_usd": 250
+    },
+    {
+      "level": 21,
+      "cumulative_experience": 17550000,
+      "cumulative_usd": 3510,
+      "upgrade_experience": 1500000,
+      "upgrade_usd": 300
+    },
+    {
+      "level": 22,
+      "cumulative_experience": 19300000,
+      "cumulative_usd": 3860,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 23,
+      "cumulative_experience": 21050000,
+      "cumulative_usd": 4210,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 24,
+      "cumulative_experience": 22800000,
+      "cumulative_usd": 4560,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 25,
+      "cumulative_experience": 24550000,
+      "cumulative_usd": 4910,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 26,
+      "cumulative_experience": 26300000,
+      "cumulative_usd": 5260,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 27,
+      "cumulative_experience": 28050000,
+      "cumulative_usd": 5610,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 28,
+      "cumulative_experience": 29800000,
+      "cumulative_usd": 5960,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 29,
+      "cumulative_experience": 31550000,
+      "cumulative_usd": 6310,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 30,
+      "cumulative_experience": 33300000,
+      "cumulative_usd": 6660,
+      "upgrade_experience": 1750000,
+      "upgrade_usd": 350
+    },
+    {
+      "level": 31,
+      "cumulative_experience": 35800000,
+      "cumulative_usd": 7160,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 32,
+      "cumulative_experience": 38300000,
+      "cumulative_usd": 7660,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 33,
+      "cumulative_experience": 40800000,
+      "cumulative_usd": 8160,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 34,
+      "cumulative_experience": 43300000,
+      "cumulative_usd": 8660,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 35,
+      "cumulative_experience": 45800000,
+      "cumulative_usd": 9160,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 36,
+      "cumulative_experience": 48300000,
+      "cumulative_usd": 9660,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 37,
+      "cumulative_experience": 50800000,
+      "cumulative_usd": 10160,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 38,
+      "cumulative_experience": 53300000,
+      "cumulative_usd": 10660,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 39,
+      "cumulative_experience": 55800000,
+      "cumulative_usd": 11160,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 40,
+      "cumulative_experience": 58300000,
+      "cumulative_usd": 11660,
+      "upgrade_experience": 2500000,
+      "upgrade_usd": 500
+    },
+    {
+      "level": 41,
+      "cumulative_experience": 63300000,
+      "cumulative_usd": 12660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 42,
+      "cumulative_experience": 68300000,
+      "cumulative_usd": 13660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 43,
+      "cumulative_experience": 73300000,
+      "cumulative_usd": 14660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 44,
+      "cumulative_experience": 78300000,
+      "cumulative_usd": 15660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 45,
+      "cumulative_experience": 83300000,
+      "cumulative_usd": 16660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 46,
+      "cumulative_experience": 88300000,
+      "cumulative_usd": 17660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 47,
+      "cumulative_experience": 93300000,
+      "cumulative_usd": 18660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 48,
+      "cumulative_experience": 98300000,
+      "cumulative_usd": 19660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 49,
+      "cumulative_experience": 103300000,
+      "cumulative_usd": 20660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 50,
+      "cumulative_experience": 108300000,
+      "cumulative_usd": 21660,
+      "upgrade_experience": 5000000,
+      "upgrade_usd": 1000
+    },
+    {
+      "level": 51,
+      "cumulative_experience": 115800000,
+      "cumulative_usd": 23160,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 52,
+      "cumulative_experience": 123300000,
+      "cumulative_usd": 24660,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 53,
+      "cumulative_experience": 130800000,
+      "cumulative_usd": 26160,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 54,
+      "cumulative_experience": 138300000,
+      "cumulative_usd": 27660,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 55,
+      "cumulative_experience": 145800000,
+      "cumulative_usd": 29160,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 56,
+      "cumulative_experience": 153300000,
+      "cumulative_usd": 30660,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 57,
+      "cumulative_experience": 160800000,
+      "cumulative_usd": 32160,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 58,
+      "cumulative_experience": 168300000,
+      "cumulative_usd": 33660,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 59,
+      "cumulative_experience": 175800000,
+      "cumulative_usd": 35160,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 60,
+      "cumulative_experience": 183300000,
+      "cumulative_usd": 36660,
+      "upgrade_experience": 7500000,
+      "upgrade_usd": 1500
+    },
+    {
+      "level": 61,
+      "cumulative_experience": 198300000,
+      "cumulative_usd": 39660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 62,
+      "cumulative_experience": 213300000,
+      "cumulative_usd": 42660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 63,
+      "cumulative_experience": 228300000,
+      "cumulative_usd": 45660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 64,
+      "cumulative_experience": 243300000,
+      "cumulative_usd": 48660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 65,
+      "cumulative_experience": 258300000,
+      "cumulative_usd": 51660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 66,
+      "cumulative_experience": 273300000,
+      "cumulative_usd": 54660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 67,
+      "cumulative_experience": 288300000,
+      "cumulative_usd": 57660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 68,
+      "cumulative_experience": 303300000,
+      "cumulative_usd": 60660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 69,
+      "cumulative_experience": 318300000,
+      "cumulative_usd": 63660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 70,
+      "cumulative_experience": 333300000,
+      "cumulative_usd": 66660,
+      "upgrade_experience": 15000000,
+      "upgrade_usd": 3000
+    },
+    {
+      "level": 71,
+      "cumulative_experience": 363300000,
+      "cumulative_usd": 72660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 72,
+      "cumulative_experience": 393300000,
+      "cumulative_usd": 78660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 73,
+      "cumulative_experience": 423300000,
+      "cumulative_usd": 84660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 74,
+      "cumulative_experience": 453300000,
+      "cumulative_usd": 90660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 75,
+      "cumulative_experience": 483300000,
+      "cumulative_usd": 96660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 76,
+      "cumulative_experience": 513300000,
+      "cumulative_usd": 102660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 77,
+      "cumulative_experience": 543300000,
+      "cumulative_usd": 108660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 78,
+      "cumulative_experience": 573300000,
+      "cumulative_usd": 114660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 79,
+      "cumulative_experience": 603300000,
+      "cumulative_usd": 120660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 80,
+      "cumulative_experience": 633300000,
+      "cumulative_usd": 126660,
+      "upgrade_experience": 30000000,
+      "upgrade_usd": 6000
+    },
+    {
+      "level": 81,
+      "cumulative_experience": 733300000,
+      "cumulative_usd": 146660,
+      "upgrade_experience": 100000000,
+      "upgrade_usd": 20000
+    },
+    {
+      "level": 82,
+      "cumulative_experience": 833300000,
+      "cumulative_usd": 166660,
+      "upgrade_experience": 100000000,
+      "upgrade_usd": 20000
+    },
+    {
+      "level": 83,
+      "cumulative_experience": 998300000,
+      "cumulative_usd": 199660,
+      "upgrade_experience": 165000000,
+      "upgrade_usd": 33000
+    },
+    {
+      "level": 84,
+      "cumulative_experience": 1198300000,
+      "cumulative_usd": 239660,
+      "upgrade_experience": 200000000,
+      "upgrade_usd": 40000
+    },
+    {
+      "level": 85,
+      "cumulative_experience": 1428300000,
+      "cumulative_usd": 285660,
+      "upgrade_experience": 230000000,
+      "upgrade_usd": 46000
+    },
+    {
+      "level": 86,
+      "cumulative_experience": 1738300000,
+      "cumulative_usd": 347660,
+      "upgrade_experience": 310000000,
+      "upgrade_usd": 62000
+    },
+    {
+      "level": 87,
+      "cumulative_experience": 2058300000,
+      "cumulative_usd": 411660,
+      "upgrade_experience": 320000000,
+      "upgrade_usd": 64000
+    },
+    {
+      "level": 88,
+      "cumulative_experience": 2408300000,
+      "cumulative_usd": 481660,
+      "upgrade_experience": 350000000,
+      "upgrade_usd": 70000
+    },
+    {
+      "level": 89,
+      "cumulative_experience": 2783300000,
+      "cumulative_usd": 556660,
+      "upgrade_experience": 375000000,
+      "upgrade_usd": 75000
+    },
+    {
+      "level": 90,
+      "cumulative_experience": 3133300000,
+      "cumulative_usd": 626660,
+      "upgrade_experience": 350000000,
+      "upgrade_usd": 70000
+    },
+    {
+      "level": 91,
+      "cumulative_experience": 3933300000,
+      "cumulative_usd": 786660,
+      "upgrade_experience": 800000000,
+      "upgrade_usd": 160000
+    },
+    {
+      "level": 92,
+      "cumulative_experience": 4683300000,
+      "cumulative_usd": 936660,
+      "upgrade_experience": 750000000,
+      "upgrade_usd": 150000
+    },
+    {
+      "level": 93,
+      "cumulative_experience": 5433300000,
+      "cumulative_usd": 1086660,
+      "upgrade_experience": 750000000,
+      "upgrade_usd": 150000
+    },
+    {
+      "level": 94,
+      "cumulative_experience": 6333300000,
+      "cumulative_usd": 1266660,
+      "upgrade_experience": 900000000,
+      "upgrade_usd": 180000
+    },
+    {
+      "level": 95,
+      "cumulative_experience": 7183300000,
+      "cumulative_usd": 1436660,
+      "upgrade_experience": 850000000,
+      "upgrade_usd": 170000
+    },
+    {
+      "level": 96,
+      "cumulative_experience": 8033300000,
+      "cumulative_usd": 1606660,
+      "upgrade_experience": 850000000,
+      "upgrade_usd": 170000
+    },
+    {
+      "level": 97,
+      "cumulative_experience": 9683300000,
+      "cumulative_usd": 1936660,
+      "upgrade_experience": 1650000000,
+      "upgrade_usd": 330000
+    },
+    {
+      "level": 98,
+      "cumulative_experience": 11433300000,
+      "cumulative_usd": 2286660,
+      "upgrade_experience": 1750000000,
+      "upgrade_usd": 350000
+    },
+    {
+      "level": 99,
+      "cumulative_experience": 13333300000,
+      "cumulative_usd": 2666660,
+      "upgrade_experience": 1900000000,
+      "upgrade_usd": 380000
+    },
+    {
+      "level": 100,
+      "cumulative_experience": 15583300000,
+      "cumulative_usd": 3116660,
+      "upgrade_experience": 2250000000,
+      "upgrade_usd": 450000
+    }
+  ]
+}

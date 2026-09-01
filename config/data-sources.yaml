@@ -1,0 +1,20 @@
+# Data evidence metadata for AutoTest AI.
+# Database connection settings are centralized in ../database.env.
+# This file keeps business table hints only.
+
+data_sources:
+  mysql:
+    readonly: true
+    business_tables:
+      salary_trade:
+        - anchor_salary_trade_agent_whitelist
+        - anchor_salary_trade_evidence
+        - anchor_salary_trade_order
+        - anchor_salary_trade_order_log
+
+  redis:
+    readonly: true
+    host: 47.237.139.110
+    port: 6450
+    db: 0
+    ssl: false

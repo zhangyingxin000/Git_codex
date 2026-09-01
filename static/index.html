@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN" data-build="20260831.10">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AutoTest AI · AI质量中枢</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/refresh.css?v=20260820-6">
+  <link rel="stylesheet" href="/result.css?v=20260820-1">
+  <link rel="stylesheet" href="/reports.css?v=20260820-1">
+  <link rel="stylesheet" href="/report-sidebar.css?v=20260826-20">
+  <link rel="stylesheet" href="/quality-hub.css?v=20260831-10">
+  <style>.toolbar{gap:12px;min-width:0}.toolbar>div:last-child{display:flex;gap:6px;flex:none;align-items:center}.tabs{display:flex;overflow-x:auto;min-width:0;scrollbar-width:thin}.tabs button{white-space:nowrap;flex:none;padding-left:13px;padding-right:13px}</style>
+</head>
+<body>
+  <aside>
+    <div class="brand"><span class="logo">A</span><div><b>AutoTest AI</b><small>质量工程平台</small></div></div>
+    <button class="new" onclick="showNewProject()">＋ 新建测试项目</button>
+    <div class="label">项目</div><div id="projects"></div>
+    <div class="label">工作区</div>
+    <button class="nav side-tab active" data-tab="overview">质量总览</button>
+    <button class="nav side-tab" data-tab="sources">需求资产</button>
+    <button class="nav side-tab" data-tab="automation">执行中心</button>
+    <button class="nav side-tab" data-tab="dataquality">数据验证</button>
+    <button class="nav side-tab" data-tab="reports">报告中心</button>
+    <div class="grow"></div><button class="nav" onclick="showSettings()">⚙ 模型设置</button>
+  </aside>
+  <main>
+    <header><div><h1 id="pageTitle">质量工程控制台</h1><p id="subtitle">测试资产、执行任务、数据验证与报告证据统一管理</p></div><div class="status"><i></i>系统就绪</div></header>
+    <section id="welcome" class="welcome">
+      <div class="hero"><span>AI QUALITY HUB</span><h2>输入需求，自动形成<br>接口、性能与数据测试闭环</h2><p>AI 负责需求理解、测试设计和链路编排；Newman、pytest、JMeter、MySQL 与 Redis 等企业认可工具负责真实执行和取证。</p><button onclick="showNewProject()">创建第一个项目 →</button></div>
+      <div class="steps"><div><b>01</b><h3>需求接入</h3><p>文档、链接、图片、描述、OpenAPI</p></div><div><b>02</b><h3>AI 编排</h3><p>测试点、用例、多接口链路、数据规则</p></div><div><b>03</b><h3>工具执行</h3><p>接口、JMeter、MySQL、Redis 与报告归档</p></div></div>
+    </section>
+    <section id="workspace" class="hidden">
+      <div class="metrics" id="metrics"></div>
+      <div class="toolbar"><div class="workbench-title"><b>项目工作区</b><span>按侧边栏进入资产、执行、数据验证和报告模块</span></div><div><button class="small" onclick="downloadExport()">↓ 导出资产</button> <button class="primary" onclick="switchTab('sources')">启动生成流程</button></div></div>
+      <div id="overview" class="tab"></div>
+      <div id="manual" class="tab hidden"></div>
+      <div id="sources" class="tab hidden"></div>
+      <div id="changes" class="tab hidden"></div>
+      <div id="apis" class="tab hidden"></div>
+      <div id="flows" class="tab hidden"></div>
+      <div id="automation" class="tab hidden"></div>
+      <div id="operations" class="tab hidden"></div>
+      <div id="points" class="tab hidden"></div>
+      <div id="cases" class="tab hidden"></div>
+      <div id="dataquality" class="tab hidden"></div>
+      <div id="database" class="tab hidden"></div>
+      <div id="redis" class="tab hidden"></div>
+      <div id="reports" class="tab hidden"></div>
+      <div id="runs" class="tab hidden"></div>
+    </section>
+  </main>
+  <div id="modal" class="modal hidden"><div class="dialog"><button class="close" onclick="closeModal()">×</button><div id="modalBody"></div></div></div>
+  <div id="toast"></div>
+  <script src="/app.js?v=20260831-10"></script>
+</body></html>

@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "Soulfree测试服 接口自动化集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://test2westarlive.gzxchate.com/"
+    }
+  ],
+  "item": [
+    {
+      "name": "缺失UID参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/level/exeperience/v2/get"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "非法UID类型",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/level/exeperience/v2/get"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

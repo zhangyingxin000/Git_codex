@@ -1,0 +1,4 @@
+role,slot,uid,shortId,password_encrypted,ticket,redis_uid,countryCode,currency,supportCurrencies,deviceId,model,osVersion,appVersion,language,enabled,remark
+applicant,A01,1454696,30010027,,,,MA,USD,USD,8fcce1f1-5153-3207-9786-0240140a524a,SM-A546B,16,100.1.5.6,en,true,one applicant can only hold one processing order
+proxy,P01,1454097,1001067,,,,MA,USD,USD,8fcce1f1-5153-3207-9786-0240140a524a,SM-A546B,16,100.1.5.6,en,true,proxy can be reused when country and currency match
+operator,O01,,,,,,,,,,,,,en,false,used for appeal handling when backend operator API is available

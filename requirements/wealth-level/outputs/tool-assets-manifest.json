@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "package_name": "财富等级",
+  "generated_at": "2026-08-31T20:04:23+08:00",
+  "status": "READY",
+  "generated": [
+    {
+      "tool": "Newman",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\newman\\postman-collection.json"
+    },
+    {
+      "tool": "pytest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\pytest\\pytest_api_cases.py"
+    },
+    {
+      "tool": "JMeter",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\jmeter-plan.jmx"
+    },
+    {
+      "tool": "JMeter",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\性能基线.jmx",
+      "source": "D:\\apache-jmeter-5.6.3\\jmx\\20260826\\性能基线.jmx"
+    }
+  ],
+  "warnings": [],
+  "rule": "同一需求包独立生成 Newman、JMeter、pytest 资产；报告也按需求包回收。"
+}

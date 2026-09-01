@@ -1,0 +1,3386 @@
+{
+  "info": {
+    "name": "Soulfree测试服 接口自动化集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://test2westarlive.gzxchate.com/"
+    }
+  ],
+  "item": [
+    {
+      "name": "返回工资快速结算创建入口开关：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "进入入口时查询可结算额度：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/quota?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "按国家和币种选择代理用户：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agents?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人快速结算订单列表：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单详情：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单凭证：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/list?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单流转记录：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/logs?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看自己的交易公告编辑页信息：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看可处理或已承接的订单列表：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看代理侧订单详情：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "进入入口时查询可结算额度：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/quota?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "按国家和币种选择代理用户：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agents?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人快速结算订单列表：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单详情：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单凭证：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/list?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单流转记录：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/logs?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看自己的交易公告编辑页信息：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看可处理或已承接的订单列表：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/page?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看代理侧订单详情：正常请求",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/detail?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：正常请求",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "进入入口时查询可结算额度：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/quota"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "进入入口时查询可结算额度：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/quota"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "按国家和币种选择代理用户：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agents"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "按国家和币种选择代理用户：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agents"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人快速结算订单列表：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人快速结算订单列表：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单详情：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单详情：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单凭证：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/list"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单凭证：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/list"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单流转记录：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/logs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单流转记录：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/logs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看自己的交易公告编辑页信息：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看可处理或已承接的订单列表：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看可处理或已承接的订单列表：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看代理侧订单详情：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看代理侧订单详情：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "返回工资快速结算创建入口开关：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/union/getAnchorApplyRecord?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "进入入口时查询可结算额度：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/quota"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "进入入口时查询可结算额度：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/quota"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "按国家和币种选择代理用户：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agents"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "按国家和币种选择代理用户：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agents"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/create?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人快速结算订单列表：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人快速结算订单列表：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单详情：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单详情：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "取消待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/cancel?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "确认已收到代理转账：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/confirm?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传本人订单凭证：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单凭证：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/list"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单凭证：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/evidence/list"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单流转记录：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/logs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看本人订单流转记录：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/logs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看自己的交易公告编辑页信息：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "保存自己的交易公告：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/notice/save?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看可处理或已承接的订单列表：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看可处理或已承接的订单列表：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/page"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看代理侧订单详情：缺失必填参数",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "查看代理侧订单详情：字段边界与类型错误",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/detail"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "接受待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/accept?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "拒绝待代理处理订单：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/reject?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "标记已完成线下转账：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/paid?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "待确认收款时提交投诉：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/order/appeal?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：缺失必填参数",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：字段边界与类型错误",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(400);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "补充上传付款或投诉凭证：重复提交与幂等性",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "t",
+            "value": "1788177850680",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/userserv/salary/trade/agent/evidence/upload?osVersion=16&language=ar&appsflyerId=1787803900487-1623248308013165548&appCode=100156&channel=google&isVpnConnected=0&systemLanguage=zh&model=SM-A546B&packageName=com.soulfree.happiness&appid=soulfree&appVersion=100.1.5.6&ispType=4&version=100.1.5.6&deviceType=0&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&organic=Organic&netType=2&os=android"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

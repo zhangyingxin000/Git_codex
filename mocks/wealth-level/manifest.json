@@ -1,0 +1,163 @@
+[
+  {
+    "name": "等级 1",
+    "file": "level-001.json",
+    "currentLevel": 1,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 9",
+    "file": "level-009.json",
+    "currentLevel": 9,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 10",
+    "file": "level-010.json",
+    "currentLevel": 10,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 19",
+    "file": "level-019.json",
+    "currentLevel": 19,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 20",
+    "file": "level-020.json",
+    "currentLevel": 20,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 29",
+    "file": "level-029.json",
+    "currentLevel": 29,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 30",
+    "file": "level-030.json",
+    "currentLevel": 30,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 39",
+    "file": "level-039.json",
+    "currentLevel": 39,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 40",
+    "file": "level-040.json",
+    "currentLevel": 40,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 49",
+    "file": "level-049.json",
+    "currentLevel": 49,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 50",
+    "file": "level-050.json",
+    "currentLevel": 50,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 59",
+    "file": "level-059.json",
+    "currentLevel": 59,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 60",
+    "file": "level-060.json",
+    "currentLevel": 60,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 69",
+    "file": "level-069.json",
+    "currentLevel": 69,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 70",
+    "file": "level-070.json",
+    "currentLevel": 70,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 79",
+    "file": "level-079.json",
+    "currentLevel": 79,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 80",
+    "file": "level-080.json",
+    "currentLevel": 80,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 89",
+    "file": "level-089.json",
+    "currentLevel": 89,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 90",
+    "file": "level-090.json",
+    "currentLevel": 90,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 99",
+    "file": "level-099.json",
+    "currentLevel": 99,
+    "type": "boundary"
+  },
+  {
+    "name": "等级 100",
+    "file": "level-100.json",
+    "currentLevel": 100,
+    "type": "boundary"
+  },
+  {
+    "name": "empty-rights",
+    "file": "empty-rights.json",
+    "type": "abnormal"
+  },
+  {
+    "name": "missing-user-info",
+    "file": "missing-user-info.json",
+    "type": "abnormal"
+  },
+  {
+    "name": "null-data",
+    "file": "null-data.json",
+    "type": "abnormal"
+  },
+  {
+    "name": "duplicate-level-range",
+    "file": "duplicate-level-range.json",
+    "type": "abnormal"
+  },
+  {
+    "name": "invalid-resource-url",
+    "file": "invalid-resource-url.json",
+    "type": "abnormal"
+  },
+  {
+    "name": "missing-arabic-name",
+    "file": "missing-arabic-name.json",
+    "type": "abnormal"
+  },
+  {
+    "name": "未授权",
+    "file": "unauthorized.json",
+    "type": "auth"
+  }
+]

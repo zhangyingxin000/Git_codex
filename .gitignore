@@ -1,0 +1,48 @@
+# Python runtime
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.egg-info/
+
+# Local databases and credentials
+autotest_ai.db
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.bin
+data/.runtime-credential.key
+database.env
+*.env
+!*.env.example
+
+# Sensitive runtime test data
+data/salary-trade-accounts.csv
+data/salary-trade-applicants.csv
+data/salary-trade-proxies.csv
+data/wealth-level-runtime.csv
+data/redis-wealth-decoded.json
+
+# Reports, logs, temporary work files
+reports/
+work/
+backups/
+*.log
+*.jtl
+*.har
+*.zip
+
+# Generated backups
+*.bak
+*.backup-*
+*.bak-*
+outputs/*.backup-*
+outputs/*.bak-*
+
+# Local editor and OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+New Folder/
+-Context

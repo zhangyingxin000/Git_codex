@@ -1,0 +1,9 @@
+﻿flow_code,flow_id,flow_name,flow_type,priority,account_slot,applicant_slot,proxy_slot,operator_slot,order_var,thread_group,automation_status,enabled,blocker
+A,salary_flow_a_cancel_by_applicant,创建后申请人取消,normal,P0,applicant_01,applicant_01,proxy_01,,flow_a_order_no,工资交易流程A：创建后申请人取消,ready,true,
+B,salary_flow_b_reject_by_proxy,创建后代理拒绝,normal,P0,applicant_02,applicant_02,proxy_01,,flow_b_order_no,工资交易流程B：创建后代理拒绝,planned,true,
+C,salary_flow_c_finish,接受并转账后申请人确认完成,normal,P0,applicant_03,applicant_03,proxy_01,,flow_c_order_no,工资交易流程C：完整成交,planned,true,
+D,salary_flow_d_appeal_failed,转账后申请人投诉，投诉失败,exception,P0,applicant_04,applicant_04,proxy_01,operator_01,flow_d_order_no,工资交易流程D：投诉失败,planned,true,
+E,salary_flow_e_appeal_success,转账后申请人投诉，投诉成功,exception,P0,applicant_05,applicant_05,proxy_01,operator_01,flow_e_order_no,工资交易流程E：投诉成功,planned,true,
+F,salary_flow_f_create_timeout,创建后代理不处理直到订单过期,timeout,P1,applicant_06,applicant_06,proxy_01,,flow_f_order_no,工资交易流程F：待接单超时,blocked,false,需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。
+G,salary_flow_g_accept_timeout,代理接受后不转账，12小时过期取消,timeout,P1,applicant_07,applicant_07,proxy_01,,flow_g_order_no,工资交易流程G：已接受未转账超时,blocked,false,需要测试环境可控过期时间或后台定时任务触发入口。
+H,salary_flow_h_confirm_timeout,代理已转账后申请人24小时不确认，订单自动完成,timeout,P1,applicant_08,applicant_08,proxy_01,,flow_h_order_no,工资交易流程H：已转账未确认超时完成,blocked,false,需要测试环境可控24小时超时或后台任务触发入口。

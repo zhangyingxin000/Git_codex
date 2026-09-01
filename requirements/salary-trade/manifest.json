@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "name": "工资代理快速结算",
+  "domain": "工资交易",
+  "description": "多申请人、多代理、订单状态流转、DB白名单和Redis登录态校验。",
+  "status": "READY",
+  "primary_tool": "JMeter",
+  "tool_strategy": {
+    "newman": "读接口、鉴权和参数回归",
+    "jmeter": "多账号订单状态机和性能观察",
+    "pytest": "接口结果、DB、Redis证据复盘"
+  },
+  "data_policy": "申请人/代理身份走CSV或Redis；数据库只负责代理资格和订单证据，不保存ticket。",
+  "base_url": "https://test2westarlive.gzxchate.com/",
+  "workflow": [
+    "导入需求文档和接口文档",
+    "生成正常/异常/边界测试用例",
+    "按用例生成独立JMeter状态机",
+    "JMeter按申请人CSV读取8条流程",
+    "DB匹配代理白名单，CSV/Redis补身份认证",
+    "回收JTL并结合DB/Redis复盘"
+  ],
+  "counts": {
+    "sources": 9,
+    "test_points": 162,
+    "test_cases": 162
+  },
+  "artifacts": {
+    "test_cases": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-manual-test-cases.md",
+      "exists": false,
+      "updated_at": ""
+    },
+    "jmeter": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-state-machine.jmx",
+      "exists": true,
+      "updated_at": "2026-08-31T20:06:02+08:00"
+    },
+    "launcher": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\open-salary-trade-state-machine.ps1",
+      "exists": true,
+      "updated_at": "2026-08-31T19:18:27+08:00"
+    },
+    "manifest": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-jmeter-manifest.json",
+      "exists": true,
+      "updated_at": "2026-08-31T20:04:10+08:00"
+    },
+    "applicant_csv": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
+      "exists": true,
+      "updated_at": "2026-08-31T18:49:49+08:00"
+    },
+    "proxy_csv": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-proxies.csv",
+      "exists": true,
+      "updated_at": "2026-08-31T16:57:03+08:00"
+    },
+    "jtl": {
+      "path": "D:\\apache-jmeter-5.6.3\\jmx\\20260826\\工资代理结算-result.jtl",
+      "exists": true,
+      "updated_at": "2026-08-31T19:23:10+08:00"
+    }
+  },
+  "portable_layout": {
+    "docs": "需求、接口文档、抓包说明",
+    "data": "CSV账号池、参数化数据、运行槽位",
+    "skills": "工具生成规则和场景约束",
+    "outputs": "Newman/JMeter/pytest生成物",
+    "reports": "执行报告和AI复盘"
+  },
+  "updated_at": "2026-09-01T11:23:42+08:00"
+}

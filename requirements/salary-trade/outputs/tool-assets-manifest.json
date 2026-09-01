@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "package_name": "工资代理快速结算",
+  "generated_at": "2026-08-31T20:04:11+08:00",
+  "status": "READY",
+  "generated": [
+    {
+      "tool": "Newman",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json"
+    },
+    {
+      "tool": "pytest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py"
+    },
+    {
+      "tool": "JMeter",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx"
+    },
+    {
+      "tool": "JMeter",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\salary-trade-case-driven.jmx",
+      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-driven.jmx"
+    },
+    {
+      "tool": "JMeter Manifest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\salary-trade-case-jmeter-manifest.json",
+      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-jmeter-manifest.json"
+    }
+  ],
+  "warnings": [],
+  "rule": "同一需求包独立生成 Newman、JMeter、pytest 资产；报告也按需求包回收。"
+}

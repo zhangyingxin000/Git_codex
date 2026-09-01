@@ -1,0 +1,871 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "myExperLevelInfo": {
+      "avatar": "https://s6.gzxchate.com/user/1455186/userHeader/6bdac74a9daf45fb8bc48da086654577.jpg",
+      "nick": "dalaohdhdhdh",
+      "currentLevel": 100,
+      "nextLevel": 100,
+      "nickId": "200200",
+      "currentExperValue": 15583378001,
+      "currentExperLevelValue": 15583300000,
+      "nextExperLevelValue": 0,
+      "uid": 1455186
+    },
+    "experRights": [
+      {
+        "title": "Lv.100",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_100_title_icon.png",
+        "levelMin": 100,
+        "levelMax": 100,
+        "right1": [
+          {
+            "rightName": "Launch Screen*7 Days",
+            "rightArName": "صفحة افتتاحية*7 أيام",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_launch_screen_100.png",
+            "rightImageBigUrl": "https://s3.gzxchate.com/img/wealth_level_launch_screen_big_100.png",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 3,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Vehicle*Permanent",
+            "rightArName": "المركبات * دائمة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_vehicle_100.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 6,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/dc28af79dc354c8487783bcd894a7853.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Headwear*Permanent",
+            "rightArName": "غطاء رأس * دائم",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_headwear_100.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 7,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/4889d07926054c36925fea52ebd91013.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Banner * 7d",
+            "rightArName": "بانر*7 أيام",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_banner_100.png",
+            "rightImageBigUrl": "https://s3.gzxchate.com/img/wealth_level_banner_big_100.png",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 4,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Sound waves",
+            "rightArName": "تأثيرات الميكروفون",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_sound_waves_100.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 5,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": "https://s3.gzxchate.com/Spartysys/file/9e55608169b040fe899b87ee3f16a5ca.pag"
+          }
+        ],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_100.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 50,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_100.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 122,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/6be7ccaf0c3e42f583150fc4dda0b032.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Bubble",
+            "rightArName": "فقاعة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_bubble_100.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 51,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Special ID",
+            "rightArName": "المعرّف المميز",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_special_ID.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "AA",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.90-99",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_90-99_title_icon.png",
+        "levelMin": 90,
+        "levelMax": 99,
+        "right1": [
+          {
+            "rightName": "Launch Screen*5d",
+            "rightArName": "صفحة افتتاحية*5 أيام",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_launch_screen_90.png",
+            "rightImageBigUrl": "https://s3.gzxchate.com/img/wealth_level_launch_screen_big_90.png",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 3,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Vehicle*Permanent",
+            "rightArName": "المركبات * دائمة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_vehicle_90.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 6,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/148bbf04c137462bbfc4b2e421d78a1a.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Headwear*Permanent",
+            "rightArName": "غطاء رأس * دائم",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_headwear_90.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 7,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/6f8532f5983849b2b8bff2cbf75caaea.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Banner * 5d",
+            "rightArName": "بانر*5 أيام",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_banner_90.png",
+            "rightImageBigUrl": "https://s3.gzxchate.com/img/wealth_level_banner_big_90.png",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 4,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Sound waves",
+            "rightArName": "تأثيرات الميكروفون",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_sound_waves_90.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 5,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": "https://s3.gzxchate.com/Spartysys/file/f33f0f56197640febc0e066edae6f38d.pag"
+          }
+        ],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_90.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 43,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_90.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 122,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/5636217128fe4fdfad40012f02fca609.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Bubble",
+            "rightArName": "فقاعة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_bubble_90.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 51,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Special ID",
+            "rightArName": "المعرّف المميز",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_special_ID.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "AAA",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.80-89",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_80-89_title_icon.png",
+        "levelMin": 80,
+        "levelMax": 89,
+        "right1": [
+          {
+            "rightName": "Launch Screen*2d",
+            "rightArName": "صفحة افتتاحية*2 أيام",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_launch_screen_80.png",
+            "rightImageBigUrl": "https://s3.gzxchate.com/img/wealth_level_launch_screen_big_80.png",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 3,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Vehicle*Permanent",
+            "rightArName": "المركبات * دائمة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_vehicle_80.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 6,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/aaa6e46b331c4e91991e7d3aee6139a2.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Headwear*Permanent",
+            "rightArName": "غطاء رأس * دائم",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_headwear_80.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 7,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/15f7f75531234f1ca053c3f49c14c42a.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Banner * 2d",
+            "rightArName": "بانر*2 أيام",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_banner_80.png",
+            "rightImageBigUrl": "https://s3.gzxchate.com/img/wealth_level_banner_big_80.png",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 4,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Sound waves",
+            "rightArName": "تأثيرات الميكروفون",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_sound_waves_80.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 5,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": "https://s3.gzxchate.com/Spartysys/file/01305555bc904128866a838339a75209.pag"
+          }
+        ],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_80.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 40,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_80.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 115,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/a3f2a63c7f564f79b54f9b0e4ada9bc9.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Special ID",
+            "rightArName": "المعرّف المميز",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_special_ID.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "ABC",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.70-79",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_70-79_title_icon.png",
+        "levelMin": 70,
+        "levelMax": 79,
+        "right1": [
+          {
+            "rightName": "Vehicle*Permanent",
+            "rightArName": "المركبات * دائمة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_vehicle_70.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 6,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/03b582bb943f41aea4bf83a28f0d573e.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Headwear*Permanent",
+            "rightArName": "غطاء رأس * دائم",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_headwear_70.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 7,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/21b7d6ec1af847238e131f86064b2094.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Banner * 1d",
+            "rightArName": "بانر*1 أيام",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_banner_70.png",
+            "rightImageBigUrl": "https://s3.gzxchate.com/img/wealth_level_banner_big_70.png",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 4,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Sound waves",
+            "rightArName": "تأثيرات الميكروفون",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_sound_waves_70.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 5,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": "https://s3.gzxchate.com/Spartysys/file/f23521f85ea248f288ca440a4455e4e6.pag"
+          }
+        ],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_70.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 40,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_70.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 113,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/544798b6a8e6463bbdaf3851f8d39a2f.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Bubble",
+            "rightArName": "فقاعة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_bubble_70.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 51,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Special ID",
+            "rightArName": "المعرّف المميز",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_special_ID.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "ABCD",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.60-69",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_60-69_title_icon.png",
+        "levelMin": 60,
+        "levelMax": 69,
+        "right1": [
+          {
+            "rightName": "Headwear*Permanent",
+            "rightArName": "غطاء رأس * دائم",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_headwear_60.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 0,
+            "rightImageHeight": 0,
+            "type": 7,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/0c5fc0370ae24ea98d15e2254823326d.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_60.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 39,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_60.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 109,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/06e74bb434234cd093d11cdeeee00b53.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Gift Broadcast",
+            "rightArName": "بث الهدايا",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_gift_broadcast.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 101,
+            "rightImageHeight": 30,
+            "type": 8,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Level-Up Broadcast",
+            "rightArName": "بث ترقية المستوى",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_level-up_broadcast.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 101,
+            "rightImageHeight": 30,
+            "type": 9,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Special ID",
+            "rightArName": "المعرّف المميز",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_special_ID.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "ABCDE",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.50-59",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_50-59_title_icon.png",
+        "levelMin": 50,
+        "levelMax": 59,
+        "right1": [],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_50.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 37,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/8e96bcced4e4492eb61544622e4c6d5f.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_50.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 120,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Bubble",
+            "rightArName": "فقاعة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_bubble_50.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 51,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Special ID",
+            "rightArName": "المعرّف المميز",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_special_ID.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "AABCC",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.40-49",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_49-49_title_icon.png",
+        "levelMin": 40,
+        "levelMax": 49,
+        "right1": [],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_40.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 37,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/d52197e061da4574855adcc8d5161944.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_40.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 121,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Hide Charm Level",
+            "rightArName": "إخفاء عرض مستوى الجاذبية",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_hide_charm_level.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.30-39",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_30-39_title_icon.png",
+        "levelMin": 30,
+        "levelMax": 39,
+        "right1": [],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_30.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 36,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_30.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 119,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/6acba9e9d61d4c21b4939e3f43476cda.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Bubble",
+            "rightArName": "فقاعة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_bubble_30.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 51,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.20-29",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_20-29_title_icon.png",
+        "levelMin": 20,
+        "levelMax": 29,
+        "right1": [],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_20.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 36,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Entry",
+            "rightArName": "مؤثرات الدخول",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_entry_20.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 121,
+            "rightImageHeight": 30,
+            "type": 2,
+            "idTitle": "",
+            "mp4Url": "https://s3.gzxchate.com/Spartysys/file/58fc157b28e840159ca89f0918483b7b.mp4",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Unlock Privilege Gifts",
+            "rightArName": "فتح هدايا الامتيازات",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_unlock_privilege_gifts.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Custom Room Background",
+            "rightArName": "خلفية مخصصة للغرفة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_custom_room_background.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.10-19",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_10-19_title_icon.png",
+        "levelMin": 10,
+        "levelMax": 19,
+        "right1": [],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_10.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 36,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      },
+      {
+        "title": "Lv.1-9",
+        "titlePicUrl": "https://s3.gzxchate.com/img/wealth_level_1-9_title_icon.png",
+        "levelMin": 1,
+        "levelMax": 9,
+        "right1": [],
+        "right2": [
+          {
+            "rightName": "Wealth Icon",
+            "rightArName": "أيقونة الثروة",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_wealth_icon_1.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 30,
+            "rightImageHeight": 18,
+            "type": 1,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          },
+          {
+            "rightName": "Room image messages",
+            "rightArName": "رسائل الصور في الغرف",
+            "rightImageUrl": "https://s3.gzxchate.com/img/wealth_level_room_image_messages.png",
+            "rightImageBigUrl": "",
+            "rightImageWidth": 28,
+            "rightImageHeight": 28,
+            "type": 0,
+            "idTitle": "",
+            "mp4Url": "",
+            "svgaUrl": "",
+            "pagUrl": ""
+          }
+        ]
+      }
+    ]
+  },
+  "ts": 1787133455042,
+  "setting_version": 6327,
+  "_mockMeta": {
+    "mock": true,
+    "scenario": "missing-arabic-name",
+    "basis": "fault-injection"
+  }
+}

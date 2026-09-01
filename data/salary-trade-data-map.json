@@ -1,0 +1,71 @@
+{
+  "requirement": "工资代理快速结算",
+  "readonly": true,
+  "updated_at": "2026-08-28T11:43:07",
+  "tables": [
+    {
+      "name": "anchor_salary_trade_agent_whitelist",
+      "purpose": "查询可交易代理用户白名单",
+      "key_fields": [
+        "uid",
+        "country_code",
+        "support_currencies"
+      ],
+      "usage": "按国家和币种筛选可接单代理，生成 proxy_uid / agentUid"
+    },
+    {
+      "name": "anchor_salary_trade_order",
+      "purpose": "订单记录表",
+      "key_fields": [
+        "id",
+        "order_no",
+        "uid",
+        "agent_uid",
+        "status",
+        "salary_amount",
+        "country_code",
+        "receive_currency"
+      ],
+      "usage": "按 orderNo/orderId 核查订单状态、申请人、代理人、金额、币种"
+    },
+    {
+      "name": "anchor_salary_trade_order_log",
+      "purpose": "订单流转日志表",
+      "key_fields": [
+        "order_no",
+        "order_id",
+        "status",
+        "operator_uid",
+        "created_time"
+      ],
+      "usage": "核查创建、接单、付款、确认、取消、拒绝、投诉等状态流转日志"
+    },
+    {
+      "name": "anchor_salary_trade_evidence",
+      "purpose": "用户反馈/凭证记录表",
+      "key_fields": [
+        "order_no",
+        "order_id",
+        "uid",
+        "evidence",
+        "created_time"
+      ],
+      "usage": "核查付款凭证、投诉证据、反馈记录是否可追溯"
+    }
+  ],
+  "runtime_variable_rules": [
+    "proxy_uid = anchor_salary_trade_agent_whitelist.uid where country_code='{countryCode}' and support_currencies like '%{currency}%'",
+    "agentUid = anchor_salary_trade_agent_whitelist.uid where country_code='{countryCode}' and support_currencies like '%{currency}%'",
+    "salary_order_id = anchor_salary_trade_order.id where order_no='{salary_order_no}'",
+    "salary_order_status = anchor_salary_trade_order.status where order_no='{salary_order_no}'",
+    "salary_order_log_status = anchor_salary_trade_order_log.status where order_no='{salary_order_no}'",
+    "salary_evidence_order = anchor_salary_trade_evidence.order_no where order_no='{salary_order_no}'"
+  ],
+  "closure_checks": [
+    "创建订单后 anchor_salary_trade_order 存在订单记录，状态为10",
+    "代理接单/付款/确认/取消/拒绝/投诉后 anchor_salary_trade_order.status 与接口响应一致",
+    "每一次状态变化在 anchor_salary_trade_order_log 有对应日志",
+    "上传付款凭证或投诉证据后 anchor_salary_trade_evidence 可追溯到 orderNo/orderId",
+    "所有数据库核查只允许 SELECT，不允许 UPDATE/DELETE/INSERT"
+  ]
+}

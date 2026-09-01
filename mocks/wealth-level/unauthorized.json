@@ -1,0 +1,9 @@
+{
+  "code": 401,
+  "message": "unauthorized",
+  "data": null,
+  "_mockMeta": {
+    "mock": true,
+    "scenario": "unauthorized"
+  }
+}

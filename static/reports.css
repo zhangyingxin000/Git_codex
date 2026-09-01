@@ -1,0 +1,4 @@
+.nav.active{background:#1c382c;color:white}
+.report-nav{margin-top:18px;border-left:3px solid var(--lime)}
+#reports .card:first-child{background:linear-gradient(135deg,#123d2b,#24704e);color:white}
+#reports .card:first-child p{color:#c9ded3}

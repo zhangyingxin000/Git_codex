@@ -1,0 +1,9 @@
+flow_code,flow_name,applicant_slot,proxy_slot,operator_slot,countryCode,currency,apply_amount,expected_final_status,enabled,remark
+F01,create_then_applicant_cancel,A01,P01,,MA,USD,100,50,true,created order is cancelled by applicant
+F02,create_then_proxy_reject,A02,P01,,MA,USD,100,60,true,proxy rejects pending order
+F03,create_accept_paid_confirm_finish,A03,P01,,MA,USD,100,100,true,normal completed salary trade
+F04,create_accept_paid_appeal_rejected,A04,P01,O01,MA,USD,100,100,true,appeal failed and order completes
+F05,create_accept_paid_appeal_success,A05,P01,O01,MA,USD,100,90,true,appeal success and refund/rollback evidence verified
+F06,create_proxy_no_action_expire,A06,P01,,MA,USD,100,70,false,requires controllable expire time
+F07,create_accept_proxy_no_paid_timeout,A07,P01,,MA,USD,100,80,false,requires 12 hour timeout or time-control support
+F08,create_accept_paid_applicant_no_confirm_auto_finish,A08,P01,,MA,USD,100,100,false,requires 24 hour timeout or time-control support
