@@ -1240,6 +1240,10 @@ function latestBusinessEvidencePlanReports(){
   return (data.generated_reports||[]).filter(x=>x.kind==='业务证据规则').slice(0,5)
 }
 
+function latestBusinessEvidenceRunReports(){
+  return (data.generated_reports||[]).filter(x=>x.kind==='业务证据执行').slice(0,5)
+}
+
 async function runMetadataHallucinationAudit(){
   let box=$('#metadataAuditStatus'),pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
   try{
@@ -1260,9 +1264,9 @@ async function runMetadataHallucinationAudit(){
 const dataQualityClosureBeforeMetadataAudit=dataQualityClosure;
 dataQualityClosure=function(){
   let html=dataQualityClosureBeforeMetadataAudit?dataQualityClosureBeforeMetadataAudit():'';
-  let reports=latestMetadataAuditReports(),plans=latestBusinessEvidencePlanReports();
+  let reports=latestMetadataAuditReports(),plans=latestBusinessEvidencePlanReports(),runs=latestBusinessEvidenceRunReports();
   let audit=`<div class="card"><div class="diagnosis-head"><div><h2>AI输出校验</h2><p>用已保存的数据库表、字段和Redis Key核查AI生成内容，避免脚本和用例里出现查无依据的数据位置。</p></div><button class="primary" onclick="runMetadataHallucinationAudit()">元数据幻觉校验</button></div><div id="metadataAuditStatus">${reports.length?reports.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无AI输出校验报告</b></div>'}</div></div>`;
-  let evidencePlan=`<div class="card"><div class="diagnosis-head"><div><h2>执行后业务证据</h2><p>把当前需求包的证据规则整理成计划：接口跑完后去哪张表或哪个Key查、用什么变量定位、期望什么结果。</p></div><button class="primary" onclick="generateBusinessEvidencePlan()">生成证据计划</button></div><div id="businessEvidencePlanStatus">${plans.length?plans.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无业务证据规则报告</b></div>'}</div></div>`;
+  let evidencePlan=`<div class="card"><div class="diagnosis-head"><div><h2>执行后业务证据</h2><p>把当前需求包的证据规则整理成计划并执行：接口跑完后去哪张表或哪个Key查、用什么变量定位、期望什么结果。</p></div><div class="formrow"><button class="primary" onclick="generateBusinessEvidencePlan()">生成证据计划</button><button class="primary" onclick="showBusinessEvidenceRunModal()">执行证据规则</button></div></div><div id="businessEvidencePlanStatus">${plans.length?plans.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无业务证据规则报告</b></div>'}</div><div id="businessEvidenceRunStatus">${runs.length?runs.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看执行报告</button>`:''}</div>`).join(''):''}</div></div>`;
   return html + audit + evidencePlan
 }
 
@@ -1280,6 +1284,33 @@ async function generateBusinessEvidencePlan(){
   }catch(e){
     if(box)box.innerHTML=`<div class="summary-panel"><b>生成失败</b><p>${esc(e.message)}</p></div>`;
     toast(e.message,'error')
+  }
+}
+
+function showBusinessEvidenceRunModal(){
+  let pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
+  let sample={package_id:pid,scenarios:[{name:"流程A：创建后取消",rule_ids:["salary_trade_agent_whitelist_matched","salary_trade_cancelled","salary_trade_status_log_traceable"],order_no:"",applicant_uid:"",proxy_uid:"",country_code:"",currency:"",expected_log_statuses:"10,50"},{name:"流程C：确认收款完成",rule_ids:["salary_trade_agent_whitelist_matched","salary_trade_finished","salary_trade_status_log_traceable"],order_no:"",applicant_uid:"",proxy_uid:"",country_code:"",currency:"",expected_log_statuses:"10,20,30,100"}]};
+  $('#modalBody').innerHTML=`<h2>${esc(requirementPackageName(pid))} · 执行业务证据规则</h2><p class="policy-note">这里不写业务库，只用运行变量去只读查询DB/Redis。JMeter跑完后，把订单号和账号上下文填进来。</p><label>运行变量 JSON</label><textarea id="businessEvidenceRunJson" rows="10">${esc(JSON.stringify(sample,null,2))}</textarea><div class="formrow"><button id="businessEvidenceRunButton" class="primary" onclick="runBusinessEvidenceRules()">执行规则</button><button class="small" onclick="$('#modal').classList.add('hidden')">取消</button></div><div id="businessEvidenceRunModalStatus"></div>`;
+  $('#modal').classList.remove('hidden')
+}
+
+async function runBusinessEvidenceRules(){
+  let button=$('#businessEvidenceRunButton'),box=$('#businessEvidenceRunModalStatus'),payload={};
+  try{payload=JSON.parse($('#businessEvidenceRunJson')?.value||'{}')}catch{return toast('运行变量必须是合法 JSON','warning')}
+  try{
+    if(button){button.disabled=true;button.textContent='执行中…'}
+    if(box)box.innerHTML='<div class="summary-panel"><b>正在只读查询业务证据</b><p>平台会按 evidence_rules.yaml 执行规则，并生成证据报告。</p></div>';
+    let result=await api(`/api/projects/${current}/business-evidence-run`,{method:'POST',body:JSON.stringify(payload)});
+    let s=result.summary||{},msg=`执行完成：${result.status}，通过${s.rules_passed||0}/${s.rules_total||0}`;
+    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>失败 ${esc(s.rules_failed||0)}，阻断 ${esc(s.rules_blocked||0)}。</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    toast(msg,result.status==='PASSED'?'success':result.status==='FAILED'?'error':'warning');
+    await openProject(current);
+    switchTab('dataquality')
+  }catch(e){
+    if(box)box.innerHTML=`<div class="summary-panel"><b>执行失败</b><p>${esc(e.message)}</p></div>`;
+    toast(e.message,'error')
+  }finally{
+    let b=$('#businessEvidenceRunButton');if(b){b.disabled=false;b.textContent='执行规则'}
   }
 }
 

@@ -1274,6 +1274,216 @@ def generate_business_evidence_plan(project_id, payload=None):
     return report
 
 
+def _evidence_runtime_vars(payload):
+    variables = payload.get("runtime_variables") or payload.get("variables") or {}
+    if isinstance(variables, str):
+        try:
+            variables = json.loads(variables or "{}")
+        except Exception:
+            variables = {}
+    variables = variables if isinstance(variables, dict) else {}
+    for key in ("order_no", "orderNo", "salary_order_no", "applicant_uid", "proxy_uid", "agent_uid", "country_code", "countryCode", "currency", "expected_log_statuses"):
+        if key in payload and payload.get(key) not in (None, ""):
+            variables[key] = payload.get(key)
+    if "orderNo" in variables and "order_no" not in variables:
+        variables["order_no"] = variables["orderNo"]
+    if "salary_order_no" in variables and "order_no" not in variables:
+        variables["order_no"] = variables["salary_order_no"]
+    if "agent_uid" in variables and "proxy_uid" not in variables:
+        variables["proxy_uid"] = variables["agent_uid"]
+    if "countryCode" in variables and "country_code" not in variables:
+        variables["country_code"] = variables["countryCode"]
+    return variables
+
+
+def _evidence_sql_value(value):
+    if isinstance(value, bool):
+        return "1" if value else "0"
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return str(value)
+    text = str(value if value is not None else "")
+    return "'" + text.replace("\\", "\\\\").replace("'", "''") + "'"
+
+
+def _render_evidence_template(template, variables, missing):
+    def repl(match):
+        name = match.group(1)
+        if name not in variables or variables.get(name) in (None, ""):
+            missing.add(name)
+            return "NULL"
+        return _evidence_sql_value(variables.get(name))
+
+    return re.sub(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", repl, str(template or ""))
+
+
+def _resolve_expected_value(value, variables, missing):
+    if isinstance(value, str):
+        match = re.fullmatch(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", value.strip())
+        if match:
+            name = match.group(1)
+            if name not in variables or variables.get(name) in (None, ""):
+                missing.add(name)
+                return None
+            return variables.get(name)
+    return value
+
+
+def _values_for_field(records, field):
+    return [item.get(field) for item in records if isinstance(item, dict) and field in item]
+
+
+def _number_value(value):
+    try:
+        return float(str(value).strip())
+    except Exception:
+        return None
+
+
+def _run_evidence_assertion(assertion, records, variables):
+    field = str(assertion.get("field") or "").strip()
+    operator = str(assertion.get("operator") or "equals").strip()
+    missing = set()
+    expected = _resolve_expected_value(assertion.get("expected"), variables, missing)
+    values = _values_for_field(records, field)
+    first = values[0] if values else None
+    if missing:
+        return {"field": field, "operator": operator, "expected": assertion.get("expected"), "actual": first, "passed": False, "reason": "缺少运行变量：" + ",".join(sorted(missing))}
+    if operator == "equals":
+        passed = str(first) == str(expected)
+    elif operator == "contains":
+        passed = any(str(expected) in str(value or "") for value in values)
+    elif operator == "contains_any":
+        expected_items = expected if isinstance(expected, list) else re.split(r"[,，\s]+", str(expected or ""))
+        expected_items = [str(x).strip() for x in expected_items if str(x).strip()]
+        passed = bool(expected_items) and any(str(value) in expected_items for value in values)
+    elif operator == "not_empty":
+        passed = any(value not in (None, "") for value in values)
+    elif operator == "greater_than":
+        left = _number_value(first)
+        right = _number_value(expected)
+        passed = left is not None and right is not None and left > right
+    else:
+        passed = False
+    return {"field": field, "operator": operator, "expected": expected, "actual": first if len(values) <= 1 else values[:20], "passed": bool(passed), "reason": "" if passed else "断言不满足"}
+
+
+def run_business_evidence_rules(project_id, payload=None):
+    payload = payload or {}
+    package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
+    plan = requirement_evidence_rules(project_id, package_id)
+    scenarios = payload.get("scenarios")
+    if not isinstance(scenarios, list) or not scenarios:
+        scenarios = [{"name": payload.get("scenario_name") or "默认场景", **payload}]
+    scenario_results = []
+    all_rule_results = []
+    for index, scenario in enumerate(scenarios, 1):
+        if not isinstance(scenario, dict):
+            continue
+        variables = _evidence_runtime_vars({**payload, **scenario})
+        selected = set(scenario.get("rule_ids") or payload.get("rule_ids") or [])
+        rule_results = []
+        scenario_name = str(scenario.get("name") or scenario.get("scenario") or f"场景{index}")
+        for rule in plan.get("rules", []):
+            if selected and rule.get("id") not in selected:
+                continue
+            missing = set()
+            source = rule.get("source")
+            rows_data = []
+            sql = ""
+            blockers = list(rule.get("blockers") or [])
+            if source == "mysql" and not blockers:
+                where_sql = _render_evidence_template(rule.get("where") or "1=1", variables, missing)
+                table_name = _mysql_safe_string(rule.get("table"), "table", 128)
+                if missing:
+                    blockers.append("缺少运行变量：" + ",".join(sorted(missing)))
+                else:
+                    sql = f"SELECT * FROM {table_name} WHERE {where_sql} LIMIT 100"
+                    try:
+                        rows_data = _mysql_rows(sql, 100)
+                    except Exception as exc:
+                        blockers.append(str(exc))
+            elif source == "redis":
+                blockers.append("Redis证据规则执行器待接入，只读计划已保留")
+            elif source not in {"mysql", "redis"}:
+                blockers.append(f"暂不支持的数据源 {source}")
+            assertions = []
+            if not blockers:
+                assertions.append({"field": "__rows__", "operator": "exists", "expected": "至少1行", "actual": len(rows_data), "passed": len(rows_data) > 0, "reason": "" if rows_data else "查询无数据"})
+                for assertion in rule.get("assertions") or []:
+                    assertions.append(_run_evidence_assertion(assertion, rows_data, variables))
+            status = "BLOCKED" if blockers else "PASSED" if assertions and all(x.get("passed") for x in assertions) else "FAILED"
+            rule_results.append({
+                "scenario": scenario_name,
+                "id": rule.get("id"),
+                "name": rule.get("name"),
+                "trigger": rule.get("trigger"),
+                "source": source,
+                "table": rule.get("table"),
+                "where": rule.get("where"),
+                "sql": sql,
+                "status": status,
+                "rows": len(rows_data),
+                "assertions": assertions,
+                "blockers": blockers,
+                "sample": rows_data[:3],
+            })
+        scenario_passed = sum(1 for x in rule_results if x["status"] == "PASSED")
+        scenario_failed = sum(1 for x in rule_results if x["status"] == "FAILED")
+        scenario_blocked = sum(1 for x in rule_results if x["status"] == "BLOCKED")
+        scenario_status = "PASSED" if rule_results and not scenario_failed and not scenario_blocked else "BLOCKED" if scenario_blocked else "FAILED" if scenario_failed else "MISSING"
+        scenario_results.append({
+            "name": scenario_name,
+            "status": scenario_status,
+            "runtime_variables": {k: ("***" if "ticket" in str(k).lower() or "token" in str(k).lower() else v) for k, v in variables.items()},
+            "summary": {
+                "rules_total": len(rule_results),
+                "rules_passed": scenario_passed,
+                "rules_failed": scenario_failed,
+                "rules_blocked": scenario_blocked,
+            },
+            "rules": rule_results,
+        })
+        all_rule_results.extend(rule_results)
+    passed = sum(1 for x in all_rule_results if x["status"] == "PASSED")
+    failed = sum(1 for x in all_rule_results if x["status"] == "FAILED")
+    blocked = sum(1 for x in all_rule_results if x["status"] == "BLOCKED")
+    status = "PASSED" if all_rule_results and not failed and not blocked else "BLOCKED" if blocked else "FAILED" if failed else "MISSING"
+    report = {
+        "report_type": "BUSINESS_EVIDENCE_RULE_RUN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": plan.get("package_name"),
+        "status": status,
+        "created_at": now(),
+        "summary": {
+            "scenarios_total": len(scenario_results),
+            "scenarios_passed": sum(1 for x in scenario_results if x["status"] == "PASSED"),
+            "scenarios_failed": sum(1 for x in scenario_results if x["status"] == "FAILED"),
+            "scenarios_blocked": sum(1 for x in scenario_results if x["status"] == "BLOCKED"),
+            "rules_total": len(all_rule_results),
+            "rules_passed": passed,
+            "rules_failed": failed,
+            "rules_blocked": blocked,
+            "mysql_rules": sum(1 for x in all_rule_results if x.get("source") == "mysql"),
+            "redis_rules": sum(1 for x in all_rule_results if x.get("source") == "redis"),
+        },
+        "scenarios": scenario_results,
+        "rules": all_rule_results,
+        "readonly_policy": {
+            "mysql": ["SELECT", "SHOW", "DESCRIBE", "EXPLAIN"],
+            "business_write_allowed": False,
+            "note": "业务写入由接口执行产生；执行器只读取业务库并归档证据。",
+        },
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out = ROOT / "reports" / f"business-evidence-run-{project_id}-{package_id}-{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    report["json_url"] = "/reports/" + out.name
+    report["file_name"] = out.name
+    return report
+
+
 def _requirement_package_keywords(package_id):
     if package_id == "salary-trade":
         return ("工资", "代理", "交易", "订单", "结算", "投诉", "salary", "trade")
@@ -7604,6 +7814,13 @@ def list_generated_reports(project_id):
             continue
         summary = payload.get("summary") or {}
         result.append({"name":"执行后业务数据证据规则报告","kind":"业务证据规则","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"规则{summary.get('ready',0)}/{summary.get('rules',0)}可用 · MySQL{summary.get('mysql_rules',0)}条 · Redis{summary.get('redis_rules',0)}条 · 提醒{summary.get('attention',0)}项","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+    for file in report_dir.glob("business-evidence-run-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        result.append({"name":"执行后业务数据证据执行报告","kind":"业务证据执行","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"场景{summary.get('scenarios_passed',0)}/{summary.get('scenarios_total',0)}通过 · 规则{summary.get('rules_passed',0)}/{summary.get('rules_total',0)}通过 · 失败{summary.get('rules_failed',0)} · 阻断{summary.get('rules_blocked',0)}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -8765,6 +8982,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(metadata_hallucination_audit(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/business-evidence-plan", path)
             if m: return self.send_json(generate_business_evidence_plan(m.group(1), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/business-evidence-run", path)
+            if m: return self.send_json(run_business_evidence_rules(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/assistant", path)
             if m:
                 x=self.body(); return self.send_json(assistant_reply(m.group(1),x.get("message","")))
