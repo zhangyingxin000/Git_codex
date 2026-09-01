@@ -57,6 +57,8 @@ If a formal orchestration asset is missing, degrade gracefully to case `scenario
 
 The runner should maintain a runtime state while executing cases.
 
+For scenario-driven execution, reset temporary runtime state at the start of each scenario while preserving environment-level values such as base URL, credentials, device context, and explicit runtime JSON. Identifiers produced inside one scenario, such as `orderNo`, `flowId`, or status values, must not leak into the next scenario unless the orchestration asset explicitly declares shared variables.
+
 Variables can come from:
 
 - explicit environment variables
@@ -92,6 +94,7 @@ Rules should identify:
 The pytest runner must:
 
 - allow only read-only SQL operations
+- prefer scenario-bound evidence rule ids from the orchestration asset
 - treat missing runtime variables as `BLOCKED`
 - treat no returned records as `FAILED`
 - treat assertion mismatch as `FAILED`

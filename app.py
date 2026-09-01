@@ -2986,7 +2986,17 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
     if pytest_file.is_file():
         try:
             existing_pytest = pytest_file.read_text(encoding="utf-8", errors="replace")
-            needs_refresh = "PYTEST_DEEP_EVIDENCE_REVIEW" not in existing_pytest or "ensure_common_query_params" not in existing_pytest or "update_runtime_from_response" not in existing_pytest or "load_runtime_aliases" not in existing_pytest or 'headers["t"]' not in existing_pytest
+            required_markers = (
+                "PYTEST_DEEP_EVIDENCE_REVIEW",
+                "ensure_common_query_params",
+                "update_runtime_from_response",
+                "load_runtime_aliases",
+                'headers["t"]',
+                "planned_scenario_batches",
+                "run_scenario_batch",
+                "orchestration",
+            )
+            needs_refresh = any(marker not in existing_pytest for marker in required_markers)
         except Exception:
             needs_refresh = True
     if needs_refresh:
@@ -6837,14 +6847,21 @@ def run_assertion(assertion, records, variables):
     return {{"field": field, "operator": operator, "expected": expected, "actual": first if len(values) <= 1 else values[:20], "passed": bool(passed), "reason": "" if passed else "assertion not satisfied"}}
 
 
-def run_evidence_rules():
+def rule_identifier(rule):
+    return str(rule.get("id") or rule.get("name") or "").strip()
+
+
+def run_evidence_rules(rule_ids=None):
     bootstrap_env()
     root = package_root()
     variables = runtime_variables()
     rules_payload = load_yaml(root / "evidence_rules.yaml", {{"rules": []}})
     rules = rules_payload.get("rules") if isinstance(rules_payload, dict) else []
+    selected = set(str(item) for item in (rule_ids or []) if str(item).strip())
     results = []
     for rule in rules or []:
+        if selected and rule_identifier(rule) not in selected:
+            continue
         query = rule.get("query") if isinstance(rule.get("query"), dict) else {{}}
         source = str(query.get("source") or rule.get("source") or "mysql").lower()
         blockers = []
@@ -6983,66 +7000,141 @@ def ordered_cases(cases, index=None):
     return result
 
 
-def build_scenario_results(http_results, evidence, jtl, newman):
-    scenario_map = {{}}
-    for item in http_results:
-        scenario_id = item.get("scenario_id") or "unassigned"
-        scenario = scenario_map.setdefault(scenario_id, {{
-            "scenario_id": scenario_id,
-            "name": item.get("scenario_name") or scenario_id,
-            "status": "PASSED",
-            "http_cases": 0,
-            "http_failed": 0,
-            "evidence_rules": [],
-            "jmeter_failed_labels": [],
-            "newman_failures": 0,
-        }})
-        scenario["http_cases"] += 1
-        failed = item.get("status") != item.get("expected_status") or str(item.get("business_code") or "200") != "200"
-        if failed:
-            scenario["http_failed"] += 1
-    if not scenario_map:
-        scenario_map["package_review"] = {{
-            "scenario_id": "package_review",
-            "name": "需求包证据复核",
-            "status": "PASSED",
-            "http_cases": 0,
-            "http_failed": 0,
-            "evidence_rules": [],
-            "jmeter_failed_labels": [],
-            "newman_failures": 0,
-        }}
-    all_rule_statuses = [x.get("status") for x in evidence]
-    package_scenario = scenario_map.setdefault("package_evidence", {{
-        "scenario_id": "package_evidence",
-        "name": "需求包公共数据证据",
-        "status": "PASSED",
-        "http_cases": 0,
-        "http_failed": 0,
-        "evidence_rules": [],
-        "jmeter_failed_labels": [],
-        "newman_failures": 0,
-    }})
-    package_scenario["evidence_rules"] = [{{"id": x.get("id"), "name": x.get("name"), "status": x.get("status"), "source": x.get("source")}} for x in evidence]
-    package_scenario["jmeter_failed_labels"] = jtl.get("failed_labels") or []
-    package_scenario["newman_failures"] = newman.get("failures", 0)
-    for scenario in scenario_map.values():
-        if scenario["http_failed"] or scenario["newman_failures"] or scenario["jmeter_failed_labels"] or "FAILED" in all_rule_statuses:
-            scenario["status"] = "FAILED"
-        if "BLOCKED" in all_rule_statuses:
-            scenario["status"] = "BLOCKED"
-    return list(scenario_map.values())
+def planned_scenario_batches(cases, index=None):
+    index = index or case_scenario_index()
+    case_by_id = {{str(case.get("id") or ""): case for case in cases}}
+    seen = set()
+    batches = []
+    for scenario in load_execution_plan():
+        scenario_id = scenario.get("scenario_id") or scenario.get("id") or scenario.get("name") or "unassigned"
+        scenario_name = scenario.get("name") or scenario_id
+        case_ids = []
+        evidence_rule_ids = []
+        for rule_id in scenario.get("evidence_rules") or []:
+            if rule_id:
+                evidence_rule_ids.append(str(rule_id))
+        for case in scenario.get("cases") or []:
+            case_id = case.get("id") if isinstance(case, dict) else case
+            if case_id:
+                case_ids.append(str(case_id))
+        for task in scenario.get("tool_tasks") or []:
+            for rule_id in task.get("evidence_rules") or []:
+                if rule_id:
+                    evidence_rule_ids.append(str(rule_id))
+            for case_id in task.get("cases") or []:
+                if case_id:
+                    case_ids.append(str(case_id))
+        batch_cases = []
+        for case_id in case_ids:
+            if case_id in case_by_id and case_id not in seen:
+                batch_cases.append(case_by_id[case_id])
+                seen.add(case_id)
+        if batch_cases:
+            batches.append({{
+                "scenario_id": scenario_id,
+                "scenario_name": scenario_name,
+                "scenario_status": scenario.get("status"),
+                "cases": batch_cases,
+                "evidence_rule_ids": sorted(set(evidence_rule_ids)),
+                "uses_explicit_evidence_rules": bool(evidence_rule_ids),
+                "source": "orchestration",
+                "raw": scenario,
+            }})
+    fallback = {{}}
+    for case in cases:
+        case_id = str(case.get("id") or "")
+        if case_id in seen:
+            continue
+        scenario = scenario_for_case(case, index)
+        key = scenario.get("scenario_id") or "unassigned"
+        item = fallback.setdefault(key, {{"scenario_id": key, "scenario_name": scenario.get("scenario_name") or key, "scenario_status": scenario.get("scenario_status") or "", "cases": [], "evidence_rule_ids": [], "uses_explicit_evidence_rules": False, "source": "scenario_type", "raw": {{}}}})
+        item["cases"].append(case)
+        seen.add(case_id)
+    batches.extend(fallback.values())
+    if not batches:
+        batches.append({{"scenario_id": "package_review", "scenario_name": "需求包证据复核", "scenario_status": "", "cases": [], "evidence_rule_ids": [], "uses_explicit_evidence_rules": False, "source": "empty", "raw": {{}}}})
+    return batches
 
 
-def build_evidence_report(http_results):
+def apply_scenario_runtime(scenario):
+    raw = scenario.get("raw") if isinstance(scenario.get("raw"), dict) else {{}}
+    values = {{}}
+    for key in ("runtime", "runtime_variables", "variables", "params", "parameters"):
+        item = raw.get(key)
+        if isinstance(item, dict):
+            values.update(item)
+    for key in ("scenario_id", "account_slot", "order_variable", "order_no", "orderNo", "order_id", "orderId", "applicant_uid", "proxy_uid", "agent_uid", "country_code", "countryCode", "currency"):
+        value = raw.get(key, scenario.get(key))
+        if value not in (None, ""):
+            values[key] = value
+    for key, value in values.items():
+        if isinstance(value, (dict, list)):
+            continue
+        remember_runtime_value(key, value, overwrite=True)
+
+
+def run_single_case(case, scenario):
+    status, body = run_case(case)
+    update_runtime_from_response(case, body)
+    business_code = ""
+    business_message = ""
+    try:
+        parsed_body = json.loads(body[body.find("{{"):]) if "{{" in body else json.loads(body)
+        if isinstance(parsed_body, dict):
+            business_code = parsed_body.get("code", "")
+            business_message = parsed_body.get("message", "")
+    except Exception:
+        pass
+    return {{"id": case.get("id"), "title": case["title"], "scenario_id": scenario.get("scenario_id"), "scenario_name": scenario.get("scenario_name"), "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}}
+
+
+def run_scenario_batch(scenario, base_runtime_state=None):
+    RUNTIME_STATE.clear()
+    RUNTIME_STATE.update(base_runtime_state or {{}})
+    apply_scenario_runtime(scenario)
+    http_results = []
+    for case in scenario.get("cases") or []:
+        http_results.append(run_single_case(case, scenario))
+    rule_ids = scenario.get("evidence_rule_ids") or []
+    evidence = run_evidence_rules(rule_ids if rule_ids else None)
+    for item in evidence:
+        item["scenario_id"] = scenario.get("scenario_id")
+        item["scenario_name"] = scenario.get("scenario_name")
+    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status") or str(x.get("business_code") or "200") != "200")
+    failed = sum(1 for x in evidence if x.get("status") == "FAILED")
+    blocked = sum(1 for x in evidence if x.get("status") == "BLOCKED")
+    status = "BLOCKED" if blocked else "FAILED" if failed or http_failed else "PASSED"
+    return {{
+        "scenario_id": scenario.get("scenario_id"),
+        "name": scenario.get("scenario_name"),
+        "planned_status": scenario.get("scenario_status"),
+        "source": scenario.get("source"),
+        "status": status,
+        "http_cases": len(http_results),
+        "http_failed": http_failed,
+        "evidence_rule_ids": rule_ids,
+        "evidence_rules": [{{"id": x.get("id"), "name": x.get("name"), "status": x.get("status"), "source": x.get("source")}} for x in evidence],
+        "runtime_variables": {{k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v) for k, v in runtime_variables().items()}},
+        "http_results": http_results,
+        "evidence_results": evidence,
+    }}
+
+
+def build_evidence_report(scenario_runs):
     root = package_root()
     plan_path = resolve_package_asset_path("outputs/execution-plan.json")
     jtl = parse_jtl(os.getenv("AUTOTEST_JTL_PATH", ""))
     newman = load_newman(os.getenv("AUTOTEST_NEWMAN_JSON", ""))
-    evidence = run_evidence_rules()
+    http_results = [item for scenario in scenario_runs for item in scenario.get("http_results") or []]
+    evidence = [item for scenario in scenario_runs for item in scenario.get("evidence_results") or []]
     http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status") or str(x.get("business_code") or "200") != "200")
     failed = sum(1 for x in evidence if x["status"] == "FAILED")
     blocked = sum(1 for x in evidence if x["status"] == "BLOCKED")
+    for scenario in scenario_runs:
+        if jtl.get("failures"):
+            scenario["jmeter_failed_labels"] = jtl.get("failed_labels") or []
+        if newman.get("failures"):
+            scenario["newman_failures"] = newman.get("failures", 0)
     report = {{
         "report_type": "PYTEST_DEEP_EVIDENCE_REVIEW",
         "package_id": PACKAGE_ID or root.name,
@@ -7060,7 +7152,7 @@ def build_evidence_report(http_results):
             "newman_failures": newman.get("failures", 0),
         }},
         "runtime_variables": {{k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v) for k, v in runtime_variables().items()}},
-        "scenarios": build_scenario_results(http_results, evidence, jtl, newman),
+        "scenarios": scenario_runs,
         "http_results": http_results,
         "jmeter": jtl,
         "newman": newman,
@@ -7079,23 +7171,10 @@ def build_evidence_report(http_results):
 def test_api_cases():
     assert BASE_URL, "缺少 AUTOTEST_BASE_URL"
     bootstrap_env()
-    http_results = []
     scenario_index = case_scenario_index()
-    for case in ordered_cases(CASES, scenario_index):
-        scenario = scenario_for_case(case, scenario_index)
-        status, body = run_case(case)
-        update_runtime_from_response(case, body)
-        business_code = ""
-        business_message = ""
-        try:
-            parsed_body = json.loads(body[body.find("{{"):]) if "{{" in body else json.loads(body)
-            if isinstance(parsed_body, dict):
-                business_code = parsed_body.get("code", "")
-                business_message = parsed_body.get("message", "")
-        except Exception:
-            pass
-        http_results.append({{"id": case.get("id"), "title": case["title"], "scenario_id": scenario.get("scenario_id"), "scenario_name": scenario.get("scenario_name"), "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}})
-    report = build_evidence_report(http_results)
+    base_runtime_state = dict(RUNTIME_STATE)
+    scenario_runs = [run_scenario_batch(scenario, base_runtime_state) for scenario in planned_scenario_batches(CASES, scenario_index)]
+    report = build_evidence_report(scenario_runs)
     strict = os.getenv("AUTOTEST_STRICT_EVIDENCE", "true").lower() not in ("0", "false", "no")
     if strict:
         assert report["status"] == "PASSED", "pytest evidence review failed: " + report.get("summary_path", "")
