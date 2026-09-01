@@ -28,6 +28,7 @@ data/redis-wealth-decoded.json
 reports/
 work/
 backups/
+requirements/*/outputs/corrections/
 *.log
 *.jtl
 *.har

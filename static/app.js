@@ -1271,11 +1271,29 @@ async function runMetadataHallucinationAudit(){
   }
 }
 
+async function generateMetadataHallucinationCorrection(){
+  let box=$('#metadataAuditStatus'),pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
+  try{
+    if(box)box.innerHTML='<div class="summary-panel"><b>正在生成一次修正版</b><p>平台会读取最新元数据校验报告，把未证实的DB/Redis引用降级为待确认项，并保存为候选修正版。</p></div>';
+    toast('正在生成AI输出修正版…');
+    let result=await api(`/api/projects/${current}/metadata-hallucination-correction`,{method:'POST',body:JSON.stringify({package_id:pid})});
+    let s=result.summary||{},msg=`修正完成：${result.status}，生成${s.assets_generated||0}份，调整${s.changes||0}处`;
+    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>修正版不会覆盖正式资产；请确认后再采纳。输出目录：${esc(result.output_dir||'')}</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    toast(msg,result.status==='CORRECTED'?'success':result.status==='NO_FINDINGS'?'success':'warning');
+    await openProject(current);
+    switchTab('dataquality')
+  }catch(e){
+    if(box)box.innerHTML=`<div class="summary-panel"><b>生成修正版失败</b><p>${esc(e.message)}</p></div>`;
+    toast(e.message,'error')
+  }
+}
+
 const dataQualityClosureBeforeMetadataAudit=dataQualityClosure;
 dataQualityClosure=function(){
   let html=dataQualityClosureBeforeMetadataAudit?dataQualityClosureBeforeMetadataAudit():'';
-  let reports=latestMetadataAuditReports(),plans=latestBusinessEvidencePlanReports(),runs=latestBusinessEvidenceRunReports(),candidates=latestCandidateEvidenceRuleReports(),structured=latestStructuredTestCaseReports();
-  let audit=`<div class="card"><div class="diagnosis-head"><div><h2>AI输出校验</h2><p>用已保存的数据库表、字段和Redis Key核查AI生成内容，避免脚本和用例里出现查无依据的数据位置。</p></div><button class="primary" onclick="runMetadataHallucinationAudit()">元数据幻觉校验</button></div><div id="metadataAuditStatus">${reports.length?reports.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无AI输出校验报告</b></div>'}</div></div>`;
+  let reports=latestMetadataAuditReports(),corrections=(data.generated_reports||[]).filter(x=>x.kind==='元数据修正').slice(0,5),plans=latestBusinessEvidencePlanReports(),runs=latestBusinessEvidenceRunReports(),candidates=latestCandidateEvidenceRuleReports(),structured=latestStructuredTestCaseReports();
+  let auditReports=[...reports,...corrections].slice(0,6);
+  let audit=`<div class="card"><div class="diagnosis-head"><div><h2>AI输出校验</h2><p>用已保存的数据库表、字段和Redis Key核查AI生成内容，发现未证实引用后只生成一次候选修正版。</p></div><div class="formrow"><button class="primary" onclick="runMetadataHallucinationAudit()">元数据幻觉校验</button><button class="small" onclick="generateMetadataHallucinationCorrection()">生成一次修正版</button></div></div><div id="metadataAuditStatus">${auditReports.length?auditReports.map(x=>`<div class="summary-panel"><b>${esc(x.kind||'报告')} · ${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无AI输出校验报告</b></div>'}</div></div>`;
   let structuredPanel=`<div class="card"><div class="diagnosis-head"><div><h2>结构化测试用例</h2><p>按当前需求包生成增强用例，把接口字段、运行变量、DB/Redis证据规则、质量分级和脚本生成就绪状态写进用例。</p></div><button class="primary" onclick="generateStructuredTestCases()">生成结构化用例</button></div><div id="structuredTestCaseStatus">${structured.length?structured.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无结构化用例报告</b></div>'}</div></div>`;
   let candidatePanel=`<div class="card"><div class="diagnosis-head"><div><h2>候选证据规则</h2><p>根据当前需求包的测试用例和数据范围，自动推荐执行后应该查哪些表、用哪些变量和断言；没有数据范围时只给待确认候选。</p></div><div class="formrow"><button class="primary" onclick="generateCandidateEvidenceRules()">生成候选规则</button><button class="small" onclick="showAcceptCandidateEvidenceRulesModal()">采纳候选</button></div></div><div id="candidateEvidenceRuleStatus">${candidates.length?candidates.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无候选证据规则</b></div>'}</div></div>`;
   let evidencePlan=`<div class="card"><div class="diagnosis-head"><div><h2>执行后业务证据</h2><p>把当前需求包的证据规则整理成计划并执行：接口跑完后去哪张表或哪个Key查、用什么变量定位、期望什么结果。</p></div><div class="formrow"><button class="primary" onclick="generateBusinessEvidencePlan()">生成证据计划</button><button class="primary" onclick="showBusinessEvidenceRunModal()">执行证据规则</button></div></div><div id="businessEvidencePlanStatus">${plans.length?plans.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无业务证据规则报告</b></div>'}</div><div id="businessEvidenceRunStatus">${runs.length?runs.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看执行报告</button>`:''}</div>`).join(''):''}</div></div>`;

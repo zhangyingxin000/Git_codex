@@ -9094,6 +9094,213 @@ def metadata_hallucination_audit(project_id, payload=None):
     return report
 
 
+def _latest_metadata_audit_report(project_id, package_id):
+    report_dir = ROOT / "reports"
+    if not report_dir.exists():
+        return {}
+    candidates = []
+    for file in report_dir.glob("metadata-hallucination-audit-*.json"):
+        try:
+            payload = json.loads(file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if payload.get("project_id") != project_id:
+            continue
+        if str(payload.get("package_id") or "general") != str(package_id or "general"):
+            continue
+        candidates.append((file.stat().st_mtime, file, payload))
+    if not candidates:
+        return {}
+    _, file, payload = sorted(candidates, key=lambda x: x[0], reverse=True)[0]
+    payload["json_url"] = "/reports/" + file.name
+    payload["file_name"] = file.name
+    payload["file_path"] = str(file)
+    return payload
+
+
+def _metadata_unverified_names(audit_report):
+    findings = audit_report.get("findings") or []
+    return sorted({
+        str(item.get("name") or "").strip()
+        for item in findings
+        if str(item.get("name") or "").strip()
+    })
+
+
+def _metadata_text_has_unverified(value, names):
+    text = json.dumps(value, ensure_ascii=False, default=str) if not isinstance(value, str) else value
+    return [name for name in names if name and name in text]
+
+
+def _apply_metadata_review_marker(record, names, source=""):
+    hits = _metadata_text_has_unverified(record, names)
+    if not hits:
+        return False
+    marker = {
+        "status": "NEEDS_METADATA_REVIEW",
+        "unverified_references": hits,
+        "source": source,
+        "correction_action": "已降级为人工确认项；确认元数据存在后再采纳为正式资产。",
+    }
+    if isinstance(record, dict):
+        record["metadata_validation"] = marker
+        if record.get("quality_status") == "READY":
+            record["quality_status"] = "NEEDS_METADATA_REVIEW"
+        if record.get("automation_readiness") == "SCRIPT_GENERATION_READY":
+            record["automation_readiness"] = "METADATA_REVIEW_REQUIRED"
+        if record.get("review_status") in {"READY_FOR_REVIEW", "READY"}:
+            record["review_status"] = "METADATA_REVIEW_REQUIRED"
+        if record.get("readiness") in {"READY", "SCRIPT_GENERATION_READY"}:
+            record["readiness"] = "METADATA_REVIEW_REQUIRED"
+    return True
+
+
+def _correct_account_model_for_metadata(account_model, names):
+    corrected = json.loads(json.dumps(account_model, ensure_ascii=False))
+    changed = 0
+    for role in corrected.get("roles") or []:
+        if not isinstance(role, dict):
+            continue
+        sources = role.get("credential_sources")
+        if not isinstance(sources, list):
+            continue
+        kept, unverified = [], []
+        for source in sources:
+            if _metadata_text_has_unverified(source, names):
+                unverified.append(source)
+            else:
+                kept.append(source)
+        if unverified:
+            role["credential_sources"] = kept
+            role["unverified_credential_sources"] = unverified
+            role["credential_review_required"] = True
+            changed += len(unverified)
+    if changed:
+        corrected["metadata_correction"] = {
+            "status": "NEEDS_REVIEW",
+            "action": "未被元数据证实的登录态来源已从强凭证来源降级为待确认来源。",
+            "unverified_references": names,
+        }
+    return corrected, changed
+
+
+def metadata_hallucination_correction(project_id, payload=None):
+    payload = payload or {}
+    package_id = str(payload.get("package_id") or "").strip()
+    if not package_id:
+        raise ValueError("请选择需要修正的需求包")
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    audit = _latest_metadata_audit_report(project_id, package_id)
+    if not audit:
+        audit = metadata_hallucination_audit(project_id, {"package_id": package_id})
+    names = _metadata_unverified_names(audit)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    corrections_dir = package_root / "outputs" / "corrections" / f"metadata-correction-{stamp}"
+    corrections_dir.mkdir(parents=True, exist_ok=True)
+    generated = []
+    changes = []
+
+    structured_path = package_root / "outputs" / "structured-test-cases.json"
+    structured = _read_json_asset(structured_path)
+    if structured:
+        corrected = json.loads(json.dumps(structured, ensure_ascii=False))
+        changed = 0
+        for case in corrected.get("cases") or []:
+            if _apply_metadata_review_marker(case, names, str(structured_path)):
+                changed += 1
+        if changed:
+            corrected.setdefault("summary", {})["metadata_review_required"] = changed
+            corrected["correction_source"] = {
+                "audit_report": audit.get("file_name"),
+                "created_at": now(),
+                "policy": "只生成一次修正版，不覆盖正式结构化用例。",
+            }
+            out = corrections_dir / "structured-test-cases.corrected.json"
+            out.write_text(json.dumps(corrected, ensure_ascii=False, indent=2), encoding="utf-8")
+            generated.append(str(out))
+            changes.append({"asset": "structured-test-cases", "changed_items": changed, "action": "命中未证实元数据的用例已降级为元数据待确认。"})
+
+    candidates_path = package_root / "evidence_rules.candidates.yaml"
+    candidates = _load_yaml_file(candidates_path)
+    if candidates:
+        corrected = json.loads(json.dumps(candidates, ensure_ascii=False))
+        changed = 0
+        for rule in corrected.get("rules") or []:
+            if _apply_metadata_review_marker(rule, names, str(candidates_path)):
+                changed += 1
+        if changed:
+            corrected["metadata_correction"] = {
+                "status": "NEEDS_REVIEW",
+                "audit_report": audit.get("file_name"),
+                "policy": "只生成一次修正版，不覆盖正式候选证据规则。",
+                "unverified_references": names,
+            }
+            out = corrections_dir / "evidence-rules.candidates.corrected.yaml"
+            out.write_text(_yaml_dump(corrected), encoding="utf-8")
+            generated.append(str(out))
+            changes.append({"asset": "candidate-evidence-rules", "changed_items": changed, "action": "命中未证实元数据的候选规则已降级为人工确认。"})
+
+    account_model_path = package_root / "account_model.yaml"
+    account_model = _load_yaml_file(account_model_path)
+    if account_model:
+        corrected, changed = _correct_account_model_for_metadata(account_model, names)
+        if changed:
+            out = corrections_dir / "account_model.corrected.yaml"
+            out.write_text(_yaml_dump(corrected), encoding="utf-8")
+            generated.append(str(out))
+            changes.append({"asset": "account-model", "changed_items": changed, "action": "未证实凭证来源已移入 unverified_credential_sources。"})
+
+    mapping_path = package_root / "outputs" / "case-jmeter-mapping.json"
+    mapping = _read_json_asset(mapping_path)
+    if mapping:
+        corrected = json.loads(json.dumps(mapping, ensure_ascii=False))
+        changed = 0
+        for item in corrected.get("mappings") or []:
+            if _apply_metadata_review_marker(item, names, str(mapping_path)):
+                changed += 1
+        if changed:
+            corrected.setdefault("summary", {})["metadata_review_required"] = changed
+            corrected["correction_source"] = {
+                "audit_report": audit.get("file_name"),
+                "created_at": now(),
+                "policy": "只生成一次修正版，不覆盖正式JMeter映射。",
+            }
+            out = corrections_dir / "case-jmeter-mapping.corrected.json"
+            out.write_text(json.dumps(corrected, ensure_ascii=False, indent=2), encoding="utf-8")
+            generated.append(str(out))
+            changes.append({"asset": "case-jmeter-mapping", "changed_items": changed, "action": "命中未证实元数据的映射已标记为待确认。"})
+
+    status = "NO_FINDINGS" if not names else "CORRECTED" if generated else "NEEDS_MANUAL_REVIEW"
+    report = {
+        "report_type": "METADATA_HALLUCINATION_CORRECTION",
+        "project_id": project_id,
+        "package_id": package_id,
+        "status": status,
+        "created_at": now(),
+        "summary": {
+            "unverified_references": len(names),
+            "assets_generated": len(generated),
+            "changes": sum(int(x.get("changed_items") or 0) for x in changes),
+        },
+        "audit_report": audit.get("file_name"),
+        "unverified_references": names,
+        "changes": changes,
+        "generated_files": generated,
+        "output_dir": str(corrections_dir),
+        "note": "修正版只作为候选输出保存，不覆盖正式用例、证据规则、账号模型或JMeter映射；由测试人员确认后再采纳。",
+    }
+    summary_path = corrections_dir / "metadata-correction-summary.json"
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report_out = ROOT / "reports" / f"metadata-hallucination-correction-{project_id}-{package_id}-{stamp}.json"
+    report_out.parent.mkdir(parents=True, exist_ok=True)
+    report_out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report["json_url"] = "/reports/" + report_out.name
+    report["file_name"] = report_out.name
+    report["summary_path"] = str(summary_path)
+    return report
+
+
 def list_generated_reports(project_id):
     report_dir=ROOT/"reports"
     if not report_dir.exists(): return []
@@ -9105,6 +9312,13 @@ def list_generated_reports(project_id):
             continue
         summary = payload.get("summary") or {}
         result.append({"name":"AI输出元数据幻觉校验报告","kind":"元数据校验","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"扫描{summary.get('sources_scanned',0)}处资产 · 已证实{summary.get('db_references_verified',0)+summary.get('redis_references_verified',0)}项 · 提醒{summary.get('attention_items',0)}项","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+    for file in report_dir.glob("metadata-hallucination-correction-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        result.append({"name":"AI输出一次修正版报告","kind":"元数据修正","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"未证实引用{summary.get('unverified_references',0)}项 · 生成修正版{summary.get('assets_generated',0)}份 · 调整{summary.get('changes',0)}处","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("business-evidence-plan-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -10323,6 +10537,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(run_manual_evidence_check(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/metadata-hallucination-audit", path)
             if m: return self.send_json(metadata_hallucination_audit(m.group(1), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/metadata-hallucination-correction", path)
+            if m: return self.send_json(metadata_hallucination_correction(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/business-evidence-plan", path)
             if m: return self.send_json(generate_business_evidence_plan(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/business-evidence-run", path)
