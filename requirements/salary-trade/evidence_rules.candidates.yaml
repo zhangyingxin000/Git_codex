@@ -1,0 +1,549 @@
+schema_version: '1.0'
+package_id: salary-trade
+package_name: 工资代理快速结算
+generated_at: '2026-09-01T15:25:57+08:00'
+mode: candidate_only
+note: 候选规则不会自动覆盖正式 evidence_rules.yaml。请人工确认后再复制或合并。
+summary:
+  cases_scanned: 170
+  db_tables_scanned: 4
+  candidates: 21
+  existing_rules: 6
+  scope: confirmed_business_tables
+rules:
+- id: salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist
+  name: 候选证据：进入入口时查询可结算额度：正常请求
+  trigger: GET /userserv/salary/trade/quota
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_586b91c352
+    title: 进入入口时查询可结算额度：正常请求
+    method: GET
+    path: /userserv/salary/trade/quota
+- id: salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist
+  name: 候选证据：按国家和币种选择代理用户：正常请求
+  trigger: GET /userserv/salary/trade/agents
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_cb0f14e257
+    title: 按国家和币种选择代理用户：正常请求
+    method: GET
+    path: /userserv/salary/trade/agents
+- id: salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order
+  name: 候选证据：提交收款信息并创建待代理处理订单：正常请求
+  trigger: POST /userserv/salary/trade/order/create
+  business_object: anchor_salary_trade_order
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_order
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  - field: agent_uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 10
+  source_case:
+    id: tc_ddc2782339
+    title: 提交收款信息并创建待代理处理订单：正常请求
+    method: POST
+    path: /userserv/salary/trade/order/create
+- id: salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order
+  name: 候选证据：查看本人快速结算订单列表：正常请求
+  trigger: GET /userserv/salary/trade/order/page
+  business_object: anchor_salary_trade_order
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_order
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  source_case:
+    id: tc_2c8302c8bf
+    title: 查看本人快速结算订单列表：正常请求
+    method: GET
+    path: /userserv/salary/trade/order/page
+- id: salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order
+  name: 候选证据：查看本人订单详情：正常请求
+  trigger: GET /userserv/salary/trade/order/detail
+  business_object: anchor_salary_trade_order
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_order
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  source_case:
+    id: tc_ed495e60ee
+    title: 查看本人订单详情：正常请求
+    method: GET
+    path: /userserv/salary/trade/order/detail
+- id: salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order
+  name: 候选证据：取消待代理处理订单：正常请求
+  trigger: POST /userserv/salary/trade/order/cancel
+  business_object: anchor_salary_trade_order
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_order
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  - field: agent_uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 50
+  source_case:
+    id: tc_4a361f2e73
+    title: 取消待代理处理订单：正常请求
+    method: POST
+    path: /userserv/salary/trade/order/cancel
+- id: salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order
+  name: 候选证据：确认已收到代理转账：正常请求
+  trigger: POST /userserv/salary/trade/order/confirm
+  business_object: anchor_salary_trade_order
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_order
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  - field: agent_uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 100
+  source_case:
+    id: tc_da1f72545f
+    title: 确认已收到代理转账：正常请求
+    method: POST
+    path: /userserv/salary/trade/order/confirm
+- id: salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order
+  name: 候选证据：待确认收款时提交投诉：正常请求
+  trigger: POST /userserv/salary/trade/order/appeal
+  business_object: anchor_salary_trade_order
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_order 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_order
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  - field: status
+    operator: equals
+    expected: 100
+  - field: evidence_type
+    operator: not_empty
+  source_case:
+    id: tc_be228a1cd1
+    title: 待确认收款时提交投诉：正常请求
+    method: POST
+    path: /userserv/salary/trade/order/appeal
+- id: salary_trade_post_userserv_salary_trade_evidence_upload_anchor_salary_trade_evidence
+  name: 候选证据：补充上传本人订单凭证：正常请求
+  trigger: POST /userserv/salary/trade/evidence/upload
+  business_object: anchor_salary_trade_evidence
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_evidence 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_evidence
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  - field: evidence_type
+    operator: not_empty
+  source_case:
+    id: tc_8ea08e4145
+    title: 补充上传本人订单凭证：正常请求
+    method: POST
+    path: /userserv/salary/trade/evidence/upload
+- id: salary_trade_get_userserv_salary_trade_evidence_list_anchor_salary_trade_evidence
+  name: 候选证据：查看本人订单凭证：正常请求
+  trigger: GET /userserv/salary/trade/evidence/list
+  business_object: anchor_salary_trade_evidence
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_evidence 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_evidence
+    where: order_no = ${order_no}
+  assertions:
+  - field: order_no
+    operator: equals
+    expected: ${order_no}
+  - field: evidence_type
+    operator: not_empty
+  source_case:
+    id: tc_3b931425b2
+    title: 查看本人订单凭证：正常请求
+    method: GET
+    path: /userserv/salary/trade/evidence/list
+- id: salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist
+  name: 候选证据：查看本人订单流转记录：正常请求
+  trigger: GET /userserv/salary/trade/logs
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_634b8077e8
+    title: 查看本人订单流转记录：正常请求
+    method: GET
+    path: /userserv/salary/trade/logs
+- id: salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist
+  name: 候选证据：查看自己的交易公告编辑页信息：正常请求
+  trigger: GET /userserv/salary/trade/agent/notice
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_8038c2a2f7
+    title: 查看自己的交易公告编辑页信息：正常请求
+    method: GET
+    path: /userserv/salary/trade/agent/notice
+- id: salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist
+  name: 候选证据：保存自己的交易公告：正常请求
+  trigger: POST /userserv/salary/trade/agent/notice/save
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_92bfaeecaf
+    title: 保存自己的交易公告：正常请求
+    method: POST
+    path: /userserv/salary/trade/agent/notice/save
+- id: salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist
+  name: 候选证据：查看可处理或已承接的订单列表：正常请求
+  trigger: GET /userserv/salary/trade/agent/order/page
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_6e4c0c21e9
+    title: 查看可处理或已承接的订单列表：正常请求
+    method: GET
+    path: /userserv/salary/trade/agent/order/page
+- id: salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist
+  name: 候选证据：查看代理侧订单详情：正常请求
+  trigger: GET /userserv/salary/trade/agent/order/detail
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_b05f2ae271
+    title: 查看代理侧订单详情：正常请求
+    method: GET
+    path: /userserv/salary/trade/agent/order/detail
+- id: salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist
+  name: 候选证据：接受待代理处理订单：正常请求
+  trigger: POST /userserv/salary/trade/agent/order/accept
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_e07f18ed5f
+    title: 接受待代理处理订单：正常请求
+    method: POST
+    path: /userserv/salary/trade/agent/order/accept
+- id: salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist
+  name: 候选证据：拒绝待代理处理订单：正常请求
+  trigger: POST /userserv/salary/trade/agent/order/reject
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_d1023be903
+    title: 拒绝待代理处理订单：正常请求
+    method: POST
+    path: /userserv/salary/trade/agent/order/reject
+- id: salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist
+  name: 候选证据：标记已完成线下转账：正常请求
+  trigger: POST /userserv/salary/trade/agent/order/paid
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_3fea7697b2
+    title: 标记已完成线下转账：正常请求
+    method: POST
+    path: /userserv/salary/trade/agent/order/paid
+- id: salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist
+  name: 候选证据：待确认收款时提交投诉：正常请求
+  trigger: POST /userserv/salary/trade/agent/order/appeal
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_343e941fe3
+    title: 待确认收款时提交投诉：正常请求
+    method: POST
+    path: /userserv/salary/trade/agent/order/appeal
+- id: salary_trade_post_userserv_salary_trade_agent_evidence_upload_anchor_salary_trade_evidence
+  name: 候选证据：补充上传付款或投诉凭证：正常请求
+  trigger: POST /userserv/salary/trade/agent/evidence/upload
+  business_object: anchor_salary_trade_evidence
+  confidence: 0.95
+  reason: 测试用例与表 anchor_salary_trade_evidence 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_evidence
+    where: order_no = ${order_no}
+  assertions:
+  - field: agent_uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: evidence_type
+    operator: not_empty
+  source_case:
+    id: tc_aaf3603a09
+    title: 补充上传付款或投诉凭证：正常请求
+    method: POST
+    path: /userserv/salary/trade/agent/evidence/upload
+- id: salary_trade_case_anchor_salary_trade_agent_whitelist
+  name: 候选证据：业务规则验证：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。
+  trigger: CASE
+  business_object: anchor_salary_trade_agent_whitelist
+  confidence: 0.6
+  reason: 测试用例与表 anchor_salary_trade_agent_whitelist 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。
+  query:
+    source: mysql
+    table: anchor_salary_trade_agent_whitelist
+    where: uid = ${proxy_uid}
+  assertions:
+  - field: uid
+    operator: equals
+    expected: ${proxy_uid}
+  - field: status
+    operator: equals
+    expected: 1
+  - field: country_code
+    operator: equals
+    expected: ${country_code}
+  - field: support_currencies
+    operator: contains
+    expected: ${currency}
+  source_case:
+    id: tc_99096c5c8a
+    title: 业务规则验证：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。
+    method: CASE
+    path: ''

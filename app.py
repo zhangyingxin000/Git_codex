@@ -1484,6 +1484,173 @@ def run_business_evidence_rules(project_id, payload=None):
     return report
 
 
+def _case_text(case):
+    return "\n".join(str(case.get(key) or "") for key in ("title", "method", "path", "payload", "steps", "expected", "requirement_ref", "scenario_type"))
+
+
+def _words_for_matching(text):
+    raw = re.findall(r"[A-Za-z][A-Za-z0-9_]{2,}|[\u4e00-\u9fff]{2,}", str(text or ""))
+    stop = {"get", "post", "put", "delete", "api", "http", "https", "uid", "ticket", "json", "data", "code", "message", "success"}
+    return [x.lower() for x in raw if x.lower() not in stop]
+
+
+def _table_match_score(table, words):
+    haystack = " ".join(str(table.get(key) or "") for key in ("table_name", "table_comment", "module", "columns_json")).lower()
+    score = 0
+    for word in words:
+        if word and word in haystack:
+            score += 3 if word in str(table.get("table_name") or "").lower() else 1
+    name = str(table.get("table_name") or "").lower()
+    if any(word in name for word in ("order", "trade", "salary")) and any(word in words for word in ("order", "trade", "salary", "订单", "交易", "工资")):
+        score += 4
+    if any(word in name for word in ("log", "record")) and any(word in words for word in ("log", "record", "日志", "记录", "流转")):
+        score += 4
+    if any(word in name for word in ("evidence", "appeal", "complaint")) and any(word in words for word in ("evidence", "appeal", "complaint", "投诉", "凭证")):
+        score += 4
+    if any(word in name for word in ("wallet", "purse", "balance")) and any(word in words for word in ("wallet", "purse", "balance", "钱包", "余额")):
+        score += 4
+    return score
+
+
+def _candidate_expected_status(text):
+    text = str(text or "")
+    pairs = [
+        (100, ("完成", "确认收款", "finished", "confirm")),
+        (90, ("投诉成功", "appeal success")),
+        (80, ("投诉失败", "appeal failed")),
+        (50, ("取消", "cancel")),
+        (30, ("已转账", "mark paid", "paid")),
+        (20, ("接受", "接单", "accept")),
+        (10, ("创建", "待处理", "pending", "create")),
+    ]
+    for status, words in pairs:
+        if any(word.lower() in text.lower() for word in words):
+            return status
+    m = re.search(r"状态[^\d]{0,6}(\d{1,3})", text)
+    return int(m.group(1)) if m else None
+
+
+def _candidate_rule_assertions(table_name, case_text):
+    lower = str(case_text or "").lower()
+    assertions = []
+    if "whitelist" in table_name:
+        return [
+            {"field": "uid", "operator": "equals", "expected": "${proxy_uid}"},
+            {"field": "status", "operator": "equals", "expected": 1},
+            {"field": "country_code", "operator": "equals", "expected": "${country_code}"},
+            {"field": "support_currencies", "operator": "contains", "expected": "${currency}"},
+        ]
+    if "order" in table_name or "订单" in case_text:
+        assertions.append({"field": "order_no", "operator": "equals", "expected": "${order_no}"})
+    if any(word in lower for word in ("申请人", "applicant")):
+        assertions.append({"field": "uid", "operator": "equals", "expected": "${applicant_uid}"})
+    if any(word in lower for word in ("代理", "agent", "proxy")):
+        assertions.append({"field": "agent_uid", "operator": "equals", "expected": "${proxy_uid}"})
+    status = _candidate_expected_status(case_text)
+    if status is not None and ("order" in table_name or "status" in lower):
+        assertions.append({"field": "status", "operator": "equals", "expected": status})
+    if any(word in lower for word in ("投诉", "appeal", "凭证", "evidence")):
+        assertions.append({"field": "evidence_type", "operator": "not_empty"})
+    return assertions or [{"field": "__rows__", "operator": "exists", "expected": "至少1行"}]
+
+
+def generate_candidate_evidence_rules(project_id, payload=None):
+    payload = payload or {}
+    package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
+    package = requirement_package_by_id(project_id, package_id)
+    cases = _requirement_package_cases(project_id, package_id)
+    tables = rows("SELECT table_name,table_comment,module,columns_json FROM db_tables WHERE project_id=?", (project_id,))
+    existing = requirement_evidence_rules(project_id, package_id)
+    existing_ids = {x.get("id") for x in existing.get("rules", [])}
+    existing_tables = {x.get("table") for x in existing.get("rules", []) if x.get("table")}
+    table_pool = [x for x in tables if x.get("table_name") in existing_tables] if existing_tables else tables
+    candidates = []
+    seen = set()
+    for case in cases:
+        text = _case_text(case)
+        words = _words_for_matching(text)
+        ranked = sorted(
+            ({"score": _table_match_score(table, words), **table} for table in table_pool),
+            key=lambda x: x["score"],
+            reverse=True,
+        )
+        ranked = [x for x in ranked if x["score"] > 0][:3]
+        path = str(case.get("path") or "").split("?", 1)[0]
+        method = str(case.get("method") or "").upper() or "CASE"
+        for table in ranked[:1]:
+            table_name = table.get("table_name")
+            if not table_name:
+                continue
+            base = re.sub(r"[^a-z0-9_]+", "_", f"{package_id}_{method}_{path}_{table_name}".lower()).strip("_")
+            rule_id = re.sub(r"_+", "_", base)[-96:] or uid("candidate_rule")
+            if rule_id in seen or rule_id in existing_ids:
+                continue
+            seen.add(rule_id)
+            if "whitelist" in table_name:
+                where = "uid = ${proxy_uid}"
+            elif any(x in table_name for x in ("order", "evidence", "log")):
+                where = "order_no = ${order_no}"
+            else:
+                where = "uid = ${uid}"
+            candidates.append({
+                "id": rule_id,
+                "name": f"候选证据：{case.get('title') or path}",
+                "trigger": f"{method} {path}".strip(),
+                "business_object": table_name,
+                "confidence": min(0.95, 0.45 + table["score"] / 20),
+                "reason": f"测试用例与表 {table_name} 命中业务关键词，建议人工确认后转入正式 evidence_rules.yaml。",
+                "query": {
+                    "source": "mysql",
+                    "table": table_name,
+                    "where": where,
+                },
+                "assertions": _candidate_rule_assertions(table_name, text),
+                "source_case": {
+                    "id": case.get("id"),
+                    "title": case.get("title"),
+                    "method": method,
+                    "path": path,
+                },
+            })
+    out_payload = {
+        "schema_version": "1.0",
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "generated_at": now(),
+        "mode": "candidate_only",
+        "note": "候选规则不会自动覆盖正式 evidence_rules.yaml。请人工确认后再复制或合并。",
+            "summary": {
+                "cases_scanned": len(cases),
+                "db_tables_scanned": len(table_pool),
+                "candidates": len(candidates),
+                "existing_rules": len(existing_ids),
+                "scope": "confirmed_business_tables" if existing_tables else "all_imported_tables",
+            },
+        "rules": candidates,
+    }
+    candidates_path = Path(package["root"]) / "evidence_rules.candidates.yaml"
+    candidates_path.write_text(_yaml_dump(out_payload), encoding="utf-8")
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    report = {
+        "report_type": "CANDIDATE_EVIDENCE_RULES",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": "READY" if candidates else "ATTENTION",
+        "created_at": now(),
+        "summary": out_payload["summary"],
+        "candidates_path": str(candidates_path),
+        "candidates": candidates[:50],
+        "conclusion": "已根据测试用例和数据库元数据生成候选证据规则；候选结果需要测试人员确认后再进入正式规则。",
+    }
+    out = ROOT / "reports" / f"candidate-evidence-rules-{project_id}-{package_id}-{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report["json_url"] = "/reports/" + out.name
+    report["file_name"] = out.name
+    return report
+
+
 def _requirement_package_keywords(package_id):
     if package_id == "salary-trade":
         return ("工资", "代理", "交易", "订单", "结算", "投诉", "salary", "trade")
@@ -7821,6 +7988,13 @@ def list_generated_reports(project_id):
             continue
         summary = payload.get("summary") or {}
         result.append({"name":"执行后业务数据证据执行报告","kind":"业务证据执行","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"场景{summary.get('scenarios_passed',0)}/{summary.get('scenarios_total',0)}通过 · 规则{summary.get('rules_passed',0)}/{summary.get('rules_total',0)}通过 · 失败{summary.get('rules_failed',0)} · 阻断{summary.get('rules_blocked',0)}","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+    for file in report_dir.glob("candidate-evidence-rules-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        result.append({"name":"测试用例候选证据规则报告","kind":"候选证据规则","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"扫描用例{summary.get('cases_scanned',0)}条 · 候选规则{summary.get('candidates',0)}条 · 已有正式规则{summary.get('existing_rules',0)}条","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -8984,6 +9158,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_business_evidence_plan(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/business-evidence-run", path)
             if m: return self.send_json(run_business_evidence_rules(m.group(1), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/candidate-evidence-rules", path)
+            if m: return self.send_json(generate_candidate_evidence_rules(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/assistant", path)
             if m:
                 x=self.body(); return self.send_json(assistant_reply(m.group(1),x.get("message","")))
