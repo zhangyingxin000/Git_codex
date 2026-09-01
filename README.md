@@ -202,6 +202,7 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/execution-plan`：生成场景级执行计划，把 Newman、JMeter、pytest 和人工复核按业务场景归拢。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/tool-assets`：按需求包生成 Newman、JMeter、pytest 资产。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/newman/run`：运行当前需求包的 Newman 轻量接口回归。
+- `POST /api/projects/{project_id}/requirement-packages/{package_id}/pytest/run`：运行当前需求包的 pytest 深度证据复核，发起接口请求并输出 HTTP、JMeter/Newman、DB/Redis 证据 JSON。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/ai-review`：汇总当前需求包报告、外部工具结果和数据证据，生成 AI 复盘报告。
 - `POST /api/projects/{project_id}/jmeter/open-gui`：传入 `package_id` 或 `script_key` 后打开对应 JMeter 脚本。
 - `POST /api/projects/{project_id}/structured-test-cases`：按当前需求包生成结构化测试用例增强版。
@@ -211,6 +212,12 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 同一份需求和接口资产可以生成不同工具脚本：Newman 跑轻量接口回归，JMeter 跑复杂流程和性能，pytest 做深度校验和复盘。新增需求时应新增或识别独立需求包，避免覆盖已有需求的 JMX、CSV 或报告。
 
 AI 复盘不是替代测试判断，而是把原始执行结果变成可读结论：识别鉴权、参数契约、业务断言、数据证据、环境网络和服务异常，并给出下一步应由测试、产品、后端、DBA 或环境负责人确认的方向。
+
+## pytest 深度证据复核
+
+pytest 在这套体系里负责执行后的深度校验。它会读取当前需求包的 `evidence_rules.yaml`，主动发起接口请求，并可通过运行变量读取 JMeter JTL、Newman JSON、MySQL 和 Redis 证据。输出报告归档在 `requirements/<package_id>/reports/pytest-evidence-*`。
+
+这层的定位不是替代 JMeter 状态机，也不是只看 HTTP 状态码，而是回答“接口跑完之后，业务数据是否真的符合预期”：订单是否落库、状态是否正确、日志是否可追溯、Redis 缓存是否匹配。默认只允许只读 SQL，业务写入仍由接口请求产生。
 
 ## 执行结果回灌复盘
 

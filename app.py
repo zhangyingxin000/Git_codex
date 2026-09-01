@@ -2753,7 +2753,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
                 "path": _write_package_file(
                     package_root,
                     "outputs/pytest/pytest_api_cases.py",
-                    build_pytest_script(project, tool_cases, runtime, True),
+                    build_pytest_script(project, tool_cases, runtime, True, package_id, str(package_root)),
                 ),
             })
             generated.append({
@@ -2909,6 +2909,76 @@ def run_requirement_package_newman(project_id, package_id, options=None):
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     return {
         **summary,
+        "summary_path": str(summary_path),
+        "json_url": "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
+    }
+
+
+def run_requirement_package_pytest(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    pytest_file = package_root / "outputs" / "pytest" / "pytest_api_cases.py"
+    needs_refresh = True
+    if pytest_file.is_file():
+        try:
+            needs_refresh = "PYTEST_DEEP_EVIDENCE_REVIEW" not in pytest_file.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            needs_refresh = True
+    if needs_refresh:
+        project = row("SELECT * FROM projects WHERE id=?", (project_id,))
+        source_cases = _requirement_package_cases(project_id, package_id)
+        executable_cases = [case for case in source_cases if str(case.get("method") or "").strip() and str(case.get("path") or "").strip()]
+        tool_cases = _external_tool_cases(executable_cases, False)
+        if not project or not tool_cases:
+            return {"status": "BLOCKED", "package_id": package_id, "message": "当前需求包没有可生成 pytest 的可执行接口用例。"}
+        pytest_file.parent.mkdir(parents=True, exist_ok=True)
+        pytest_file.write_text(build_pytest_script(project, tool_cases, safe_runtime_context(_runtime_context(project_id, options)), True, package_id, str(package_root)), encoding="utf-8")
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_dir = package_root / "reports" / f"pytest-evidence-{stamp}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    summary_path = run_dir / "summary.json"
+    env = os.environ.copy()
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
+    runtime = _runtime_context(project_id, _merge_execution_profile_options(project_id, options))
+    env["AUTOTEST_BASE_URL"] = project.get("base_url") or env.get("AUTOTEST_BASE_URL", "")
+    env["AUTOTEST_RUNTIME_PARAMS_JSON"] = json.dumps(runtime, ensure_ascii=False, default=str)
+    env["AUTOTEST_PYTEST_EVIDENCE_OUT"] = str(summary_path)
+    if options.get("jtl_path"):
+        env["AUTOTEST_JTL_PATH"] = str(options.get("jtl_path"))
+    if options.get("newman_json"):
+        env["AUTOTEST_NEWMAN_JSON"] = str(options.get("newman_json"))
+    result = _sanitize_tool_result(_run_command_capture([sys.executable, "-m", "pytest", str(pytest_file), "-q"], ROOT, int(options.get("timeout", 240) or 240), env), runtime)
+    payload = {}
+    if summary_path.is_file():
+        try:
+            payload = json.loads(summary_path.read_text(encoding="utf-8"))
+        except Exception:
+            payload = {}
+    status = payload.get("status") or ("PASSED" if result.get("exit_code") == 0 else "FAILED")
+    summary = payload.get("summary") or {}
+    run_summary = {
+        "report_type": "REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": status,
+        "created_at": now(),
+        "pytest_file": str(pytest_file),
+        "exit_code": result.get("exit_code"),
+        "duration_ms": result.get("duration_ms"),
+        "summary": summary,
+        "evidence_report": payload,
+        "stdout": result.get("stdout", "")[-4000:],
+        "stderr": result.get("stderr", "")[-4000:],
+    }
+    if not summary_path.is_file():
+        summary_path.write_text(json.dumps(run_summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    else:
+        summary_path.write_text(json.dumps({**payload, **run_summary}, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    return {
+        **run_summary,
         "summary_path": str(summary_path),
         "json_url": "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
     }
@@ -6252,19 +6322,113 @@ if (loginUid) {{
 </jmeterTestPlan>"""
 
 
-def build_pytest_script(project, cases, runtime_context=None, redact_runtime=True):
+def build_pytest_script(project, cases, runtime_context=None, redact_runtime=True, package_id="", package_root=""):
     runtime_context = runtime_context or {}
     serializable = []
     for case in cases:
         case_path, headers, payload = _case_request_with_runtime_context(case, runtime_context)
-        serializable.append({"title": case["title"], "method": case["method"], "path": _replace_runtime_placeholders(case_path, runtime_context, redact_runtime), "headers": _replace_runtime_placeholders(headers, runtime_context, redact_runtime), "payload": _replace_runtime_placeholders(payload, runtime_context, redact_runtime), "expected_status": _tool_expected_status(case)})
-    return f'''import json
+        serializable.append({"id": case.get("id", ""), "title": case["title"], "method": case["method"], "path": _replace_runtime_placeholders(case_path, runtime_context, redact_runtime), "headers": _replace_runtime_placeholders(headers, runtime_context, redact_runtime), "payload": _replace_runtime_placeholders(payload, runtime_context, redact_runtime), "expected_status": _tool_expected_status(case)})
+    return f'''import csv
+import json
 import os
+import re
+import time
 import urllib.error
 import urllib.request
+import xml.etree.ElementTree as ET
+from pathlib import Path
 
 BASE_URL = os.getenv("AUTOTEST_BASE_URL", {json.dumps(project.get("base_url") or "", ensure_ascii=False)})
+PACKAGE_ID = {json.dumps(package_id or "", ensure_ascii=False)}
+PACKAGE_ROOT_HINT = {json.dumps(str(package_root or ""), ensure_ascii=False)}
 CASES = {json.dumps(serializable, ensure_ascii=False, indent=2)}
+
+
+def package_root():
+    hinted = Path(PACKAGE_ROOT_HINT) if PACKAGE_ROOT_HINT else None
+    if hinted and hinted.exists():
+        return hinted
+    here = Path(__file__).resolve()
+    return here.parents[2] if len(here.parents) > 2 else here.parent
+
+
+def project_root():
+    root = package_root()
+    return root.parents[1] if len(root.parents) > 1 and root.parent.name == "requirements" else root
+
+
+def load_json(path, default):
+    try:
+        p = Path(path)
+        return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else default
+    except Exception:
+        return default
+
+
+def load_yaml(path, default):
+    p = Path(path)
+    if not p.is_file():
+        return default
+    try:
+        import yaml
+        return yaml.safe_load(p.read_text(encoding="utf-8")) or default
+    except Exception as exc:
+        return {{"_load_error": str(exc), "rules": []}}
+
+
+def load_env_file(path):
+    p = Path(path)
+    if not p.is_file():
+        return
+    for raw in p.read_text(encoding="utf-8-sig", errors="replace").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+def bootstrap_env():
+    root = project_root()
+    load_env_file(root / "database.env")
+    load_env_file(root / "config" / "runtime.env")
+    load_env_file(package_root() / "data" / "database.env")
+
+
+def runtime_variables():
+    runtime = {{}}
+    for env_key in ("AUTOTEST_RUNTIME_PARAMS_JSON", "AUTOTEST_EVIDENCE_RUNTIME_JSON"):
+        try:
+            payload = json.loads(os.getenv(env_key, "{{}}"))
+            if isinstance(payload, dict):
+                runtime.update(payload)
+        except Exception:
+            pass
+    aliases = {{
+        "AUTOTEST_ORDER_NO": "order_no",
+        "AUTOTEST_SALARY_ORDER_NO": "order_no",
+        "AUTOTEST_APPLICANT_UID": "applicant_uid",
+        "AUTOTEST_PROXY_UID": "proxy_uid",
+        "AUTOTEST_AGENT_UID": "proxy_uid",
+        "AUTOTEST_COUNTRY_CODE": "country_code",
+        "AUTOTEST_CURRENCY": "currency",
+        "AUTOTEST_EXPECTED_LOG_STATUSES": "expected_log_statuses",
+        "AUTOTEST_RUNTIME_TICKET": "ticket",
+        "AUTOTEST_RUNTIME_UID": "uid",
+    }}
+    for env_key, name in aliases.items():
+        value = os.getenv(env_key, "")
+        if value:
+            runtime[name] = value
+    if "orderNo" in runtime and "order_no" not in runtime:
+        runtime["order_no"] = runtime["orderNo"]
+    if "salary_order_no" in runtime and "order_no" not in runtime:
+        runtime["order_no"] = runtime["salary_order_no"]
+    if "countryCode" in runtime and "country_code" not in runtime:
+        runtime["country_code"] = runtime["countryCode"]
+    if "agent_uid" in runtime and "proxy_uid" not in runtime:
+        runtime["proxy_uid"] = runtime["agent_uid"]
+    return runtime
 
 
 def fill_runtime(value):
@@ -6273,13 +6437,7 @@ def fill_runtime(value):
     if isinstance(value, list):
         return [fill_runtime(v) for v in value]
     text = str(value or "")
-    runtime = {{}}
-    try:
-        runtime = json.loads(os.getenv("AUTOTEST_RUNTIME_PARAMS_JSON", "{{}}"))
-    except Exception:
-        runtime = {{}}
-    runtime.setdefault("ticket", os.getenv("AUTOTEST_RUNTIME_TICKET", ""))
-    runtime.setdefault("uid", os.getenv("AUTOTEST_RUNTIME_UID", ""))
+    runtime = runtime_variables()
     for key, raw in runtime.items():
         text = text.replace("{{{{" + key + "}}}}", str(raw))
     return text
@@ -6302,13 +6460,266 @@ def run_case(case):
             return response.status, response.read(200000).decode("utf-8", "replace")
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read(200000).decode("utf-8", "replace")
+    except urllib.error.URLError as exc:
+        return 0, str(exc)
+    except Exception as exc:
+        return 0, str(exc)
+
+
+def parse_jtl(path):
+    p = Path(path or "")
+    if not p.is_file():
+        return {{"path": str(p) if path else "", "exists": False, "samples": 0, "failures": 0, "failed_labels": []}}
+    if p.suffix.lower() == ".xml":
+        root = ET.parse(p).getroot()
+        samples = [x for x in root.iter() if x.attrib.get("lb")]
+        failed = [x.attrib.get("lb", "") for x in samples if x.attrib.get("s") == "false"]
+        return {{"path": str(p), "exists": True, "samples": len(samples), "failures": len(failed), "failed_labels": failed[:30]}}
+    with p.open("r", encoding="utf-8-sig", errors="replace", newline="") as f:
+        rows = list(csv.DictReader(f))
+    failed = [r.get("label", "") for r in rows if str(r.get("success", "")).lower() == "false" or str(r.get("responseCode", "")).startswith(("4", "5"))]
+    return {{"path": str(p), "exists": True, "samples": len(rows), "failures": len(failed), "failed_labels": failed[:30]}}
+
+
+def load_newman(path):
+    payload = load_json(path, {{}})
+    run = payload.get("run", {{}}) if isinstance(payload, dict) else {{}}
+    failures = run.get("failures", []) if isinstance(run, dict) else []
+    stats = run.get("stats", {{}}) if isinstance(run, dict) else {{}}
+    return {{"path": path or "", "exists": bool(payload), "failures": len(failures), "stats": stats}}
+
+
+def sql_value(value):
+    if isinstance(value, bool):
+        return "1" if value else "0"
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return str(value)
+    text = str(value if value is not None else "")
+    return "'" + text.replace("\\\\", "\\\\\\\\").replace("'", "''") + "'"
+
+
+def render_template(template, variables, missing):
+    def repl(match):
+        name = match.group(1)
+        if name not in variables or variables.get(name) in (None, ""):
+            missing.add(name)
+            return "NULL"
+        return sql_value(variables.get(name))
+    return re.sub(r"\\$\\{{([A-Za-z_][A-Za-z0-9_]*)\\}}", repl, str(template or ""))
+
+
+def mysql_query(sql):
+    if not re.match(r"^\\s*(select|show|describe|explain)\\b", sql, re.I):
+        raise RuntimeError("pytest evidence only allows read-only SQL")
+    try:
+        import pymysql
+    except Exception as exc:
+        raise RuntimeError("PyMySQL is not installed: " + str(exc))
+    conn = pymysql.connect(
+        host=os.getenv("AUTOTEST_DB_HOST", ""),
+        port=int(os.getenv("AUTOTEST_DB_PORT", "3306") or "3306"),
+        user=os.getenv("AUTOTEST_DB_USER", ""),
+        password=os.getenv("AUTOTEST_DB_PASSWORD", ""),
+        database=os.getenv("AUTOTEST_DB_NAME", ""),
+        charset="utf8mb4",
+        cursorclass=pymysql.cursors.DictCursor,
+        connect_timeout=8,
+        read_timeout=15,
+        write_timeout=15,
+    )
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql)
+            return list(cur.fetchall())
+    finally:
+        conn.close()
+
+
+def redis_read(rule, variables):
+    try:
+        import redis
+    except Exception as exc:
+        raise RuntimeError("redis package is not installed: " + str(exc))
+    query = rule.get("query") if isinstance(rule.get("query"), dict) else {{}}
+    key_template = query.get("key") or query.get("pattern") or rule.get("redis_key") or ""
+    key = key_template
+    missing = set()
+    for name in re.findall(r"\\$\\{{([A-Za-z_][A-Za-z0-9_]*)\\}}", key_template):
+        if not variables.get(name):
+            missing.add(name)
+        key = key.replace("${{" + name + "}}", str(variables.get(name, "")))
+    if missing:
+        raise RuntimeError("missing runtime variables: " + ",".join(sorted(missing)))
+    client = redis.Redis(
+        host=os.getenv("AUTOTEST_REDIS_HOST", os.getenv("REDIS_HOST", "")),
+        port=int(os.getenv("AUTOTEST_REDIS_PORT", os.getenv("REDIS_PORT", "6379")) or "6379"),
+        db=int(os.getenv("AUTOTEST_REDIS_DB", os.getenv("REDIS_DB", "0")) or "0"),
+        ssl=str(os.getenv("AUTOTEST_REDIS_SSL", "false")).lower() in ("1", "true", "yes"),
+        socket_timeout=8,
+        decode_responses=True,
+    )
+    key_type = client.type(key)
+    if key_type == "hash":
+        return {{"key": key, "type": key_type, "records": [client.hgetall(key)]}}
+    if key_type == "string":
+        return {{"key": key, "type": key_type, "records": [{{"value": client.get(key)}}]}}
+    return {{"key": key, "type": key_type, "records": []}}
+
+
+def values_for_field(records, field):
+    return [item.get(field) for item in records if isinstance(item, dict) and field in item]
+
+
+def resolve_expected(value, variables):
+    if isinstance(value, str):
+        m = re.fullmatch(r"\\$\\{{([A-Za-z_][A-Za-z0-9_]*)\\}}", value.strip())
+        if m:
+            return variables.get(m.group(1))
+    return value
+
+
+def run_assertion(assertion, records, variables):
+    field = str(assertion.get("field") or "")
+    operator = str(assertion.get("operator") or "equals")
+    expected = resolve_expected(assertion.get("expected"), variables)
+    values = values_for_field(records, field)
+    first = values[0] if values else None
+    if operator == "exists":
+        passed = bool(records)
+    elif operator == "equals":
+        passed = str(first) == str(expected)
+    elif operator == "contains":
+        passed = any(str(expected) in str(v or "") for v in values)
+    elif operator == "contains_any":
+        items = expected if isinstance(expected, list) else re.split(r"[,，\\s]+", str(expected or ""))
+        items = [str(x).strip() for x in items if str(x).strip()]
+        passed = bool(items) and any(str(v) in items for v in values)
+    elif operator == "not_empty":
+        passed = any(v not in (None, "") for v in values)
+    elif operator == "greater_than":
+        try:
+            passed = float(first) > float(expected)
+        except Exception:
+            passed = False
+    else:
+        passed = False
+    return {{"field": field, "operator": operator, "expected": expected, "actual": first if len(values) <= 1 else values[:20], "passed": bool(passed), "reason": "" if passed else "assertion not satisfied"}}
+
+
+def run_evidence_rules():
+    bootstrap_env()
+    root = package_root()
+    variables = runtime_variables()
+    rules_payload = load_yaml(root / "evidence_rules.yaml", {{"rules": []}})
+    rules = rules_payload.get("rules") if isinstance(rules_payload, dict) else []
+    results = []
+    for rule in rules or []:
+        query = rule.get("query") if isinstance(rule.get("query"), dict) else {{}}
+        source = str(query.get("source") or rule.get("source") or "mysql").lower()
+        blockers = []
+        records = []
+        sql = ""
+        try:
+            if source == "mysql":
+                missing = set()
+                table = str(query.get("table") or rule.get("table") or "")
+                where = render_template(query.get("where") or rule.get("where") or "1=1", variables, missing)
+                if missing:
+                    blockers.append("缺少运行变量：" + ",".join(sorted(missing)))
+                elif not table:
+                    blockers.append("缺少表名")
+                else:
+                    sql = f"SELECT * FROM {{table}} WHERE {{where}} LIMIT 100"
+                    records = mysql_query(sql)
+            elif source == "redis":
+                records = redis_read(rule, variables).get("records") or []
+            else:
+                blockers.append("不支持的数据源：" + source)
+        except Exception as exc:
+            blockers.append(str(exc))
+        assertions = []
+        if not blockers:
+            assertions.append({{"field": "__rows__", "operator": "exists", "expected": "至少1行", "actual": len(records), "passed": len(records) > 0, "reason": "" if records else "query returned no rows"}})
+            for assertion in rule.get("assertions") or []:
+                assertions.append(run_assertion(assertion, records, variables))
+        status = "BLOCKED" if blockers else "PASSED" if assertions and all(x.get("passed") for x in assertions) else "FAILED"
+        results.append({{"id": rule.get("id"), "name": rule.get("name"), "source": source, "sql": sql, "status": status, "rows": len(records), "assertions": assertions, "blockers": blockers, "sample": records[:3]}})
+    return results
+
+
+def redact_text(text):
+    text = str(text or "")
+    text = re.sub(r"eyJ[A-Za-z0-9_\\-]+\\.[A-Za-z0-9_\\-]+\\.[A-Za-z0-9_\\-]+", "***jwt***", text)
+    text = re.sub(r'("?(?:access_token|ticket|token)"?\\s*[:=]\\s*")([^"]+)(")', r'\\1***\\3', text, flags=re.I)
+    return text
+
+
+def redact_obj(value):
+    if isinstance(value, dict):
+        out = {{}}
+        for key, item in value.items():
+            if any(word in str(key).lower() for word in ("ticket", "token", "password")):
+                out[key] = "***"
+            else:
+                out[key] = redact_obj(item)
+        return out
+    if isinstance(value, list):
+        return [redact_obj(item) for item in value]
+    if isinstance(value, str):
+        return redact_text(value)
+    return value
+
+
+def build_evidence_report(http_results):
+    root = package_root()
+    jtl = parse_jtl(os.getenv("AUTOTEST_JTL_PATH", ""))
+    newman = load_newman(os.getenv("AUTOTEST_NEWMAN_JSON", ""))
+    evidence = run_evidence_rules()
+    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status"))
+    failed = sum(1 for x in evidence if x["status"] == "FAILED")
+    blocked = sum(1 for x in evidence if x["status"] == "BLOCKED")
+    report = {{
+        "report_type": "PYTEST_DEEP_EVIDENCE_REVIEW",
+        "package_id": PACKAGE_ID or root.name,
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "status": "BLOCKED" if blocked else "FAILED" if failed or http_failed or jtl.get("failures") or newman.get("failures") else "PASSED",
+        "summary": {{
+            "http_cases": len(http_results),
+            "http_failed": http_failed,
+            "rules_total": len(evidence),
+            "rules_failed": failed,
+            "rules_blocked": blocked,
+            "jtl_samples": jtl.get("samples", 0),
+            "jtl_failures": jtl.get("failures", 0),
+            "newman_failures": newman.get("failures", 0),
+        }},
+        "runtime_variables": {{k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v) for k, v in runtime_variables().items()}},
+        "http_results": http_results,
+        "jmeter": jtl,
+        "newman": newman,
+        "evidence_rules": evidence,
+    }}
+    out_dir = root / "reports" / ("pytest-evidence-" + time.strftime("%Y%m%d-%H%M%S"))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = Path(os.getenv("AUTOTEST_PYTEST_EVIDENCE_OUT", str(out_dir / "summary.json")))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    safe_report = redact_obj(report)
+    out.write_text(json.dumps(safe_report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    safe_report["summary_path"] = str(out)
+    return safe_report
 
 
 def test_api_cases():
     assert BASE_URL, "缺少 AUTOTEST_BASE_URL"
+    bootstrap_env()
+    http_results = []
     for case in CASES:
-        status, _ = run_case(case)
-        assert status == case["expected_status"], f'{{case["title"]}} expected {{case["expected_status"]}}, got {{status}}'
+        status, body = run_case(case)
+        http_results.append({{"id": case.get("id"), "title": case["title"], "method": case["method"], "path": redact_text(fill_runtime(case.get("path", ""))), "status": status, "expected_status": case["expected_status"], "response_preview": redact_text(body[:800])}})
+    report = build_evidence_report(http_results)
+    strict = os.getenv("AUTOTEST_STRICT_EVIDENCE", "true").lower() not in ("0", "false", "no")
+    if strict:
+        assert report["status"] == "PASSED", "pytest evidence review failed: " + report.get("summary_path", "")
 '''
 
 
@@ -9918,6 +10329,20 @@ def list_generated_reports(project_id):
                     "package_id": package_id,
                 })
                 continue
+            if payload.get("report_type") in {"REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN", "PYTEST_DEEP_EVIDENCE_REVIEW"}:
+                summary = payload.get("summary") or {}
+                result.append({
+                    "name": f"{package_name}pytest深度证据报告",
+                    "kind": "pytest证据",
+                    "status": payload.get("status", "UNKNOWN"),
+                    "created_at": payload.get("created_at") or datetime.fromtimestamp(summary_file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+                    "summary": f"HTTP失败{summary.get('http_failed',0)} · 证据规则{summary.get('rules_total',0)}条 · 失败{summary.get('rules_failed',0)} · 阻断{summary.get('rules_blocked',0)} · JTL失败{summary.get('jtl_failures',0)}",
+                    "json_url": "/requirement-reports/" + summary_file.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
+                    "html_url": "",
+                    "file_name": str(summary_file),
+                    "package_id": package_id,
+                })
+                continue
             tool = "Newman" if payload.get("report_type") == "REQUIREMENT_PACKAGE_NEWMAN_RUN" else "需求包执行"
             result.append({
                 "name": f"{package_name}{tool}报告",
@@ -11031,6 +11456,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_requirement_execution_plan(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/newman/run", path)
             if m: return self.send_json(run_requirement_package_newman(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/pytest/run", path)
+            if m: return self.send_json(run_requirement_package_pytest(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/ai-review", path)
             if m: return self.send_json(generate_requirement_package_ai_review(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/jmeter/open-gui", path)
