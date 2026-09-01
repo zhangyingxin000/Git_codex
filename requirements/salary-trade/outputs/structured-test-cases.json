@@ -3,7 +3,7 @@
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
   "package_name": "工资代理快速结算",
-  "generated_at": "2026-09-01T16:33:23+08:00",
+  "generated_at": "2026-09-01T16:40:30+08:00",
   "summary": {
     "cases": 170,
     "with_db_checks": 143,
@@ -14,8 +14,8 @@
       "NEEDS_EVIDENCE_REVIEW": 110,
       "MANUAL_ONLY": 14
     },
-    "automation_counts": {
-      "AUTO_READY": 38,
+    "readiness_counts": {
+      "SCRIPT_GENERATION_READY": 38,
       "SCRIPTABLE_EVIDENCE_PENDING": 118,
       "MANUAL_ONLY": 14
     },
@@ -41,11 +41,11 @@
       "method": "GET",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。"
+        "接口、变量和证据条件满足当前脚本生成要求。"
       ],
       "interface_fields": [],
       "preconditions": [
@@ -77,7 +77,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -113,7 +113,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/quota",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "data_constraint_exception"
@@ -196,7 +196,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agents",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "data_constraint_exception"
@@ -279,11 +279,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -394,7 +394,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -456,7 +456,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -518,11 +518,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -620,13 +620,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：state_machine_exception。"
       ],
@@ -732,13 +732,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：state_machine_exception。"
       ],
@@ -842,7 +842,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -909,7 +909,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/evidence/list",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -976,7 +976,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/logs",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1056,7 +1056,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/notice",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1136,7 +1136,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1216,7 +1216,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1296,7 +1296,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1376,7 +1376,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1456,7 +1456,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1536,7 +1536,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -1619,7 +1619,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -1702,7 +1702,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -1772,11 +1772,11 @@
       "method": "GET",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。"
+        "接口、变量和证据条件满足当前脚本生成要求。"
       ],
       "interface_fields": [],
       "preconditions": [
@@ -1808,7 +1808,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -1844,7 +1844,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/quota",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "data_constraint_exception"
@@ -1927,7 +1927,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agents",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "data_constraint_exception"
@@ -2010,11 +2010,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -2125,7 +2125,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -2187,7 +2187,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -2249,11 +2249,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -2351,13 +2351,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：state_machine_exception。"
       ],
@@ -2463,13 +2463,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：state_machine_exception。"
       ],
@@ -2573,7 +2573,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -2640,7 +2640,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/evidence/list",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -2707,7 +2707,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/logs",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -2787,7 +2787,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/notice",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -2867,7 +2867,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -2947,7 +2947,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -3027,7 +3027,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "newman",
       "exception_sources": [],
       "blocking_reasons": [
@@ -3107,7 +3107,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -3187,7 +3187,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -3267,7 +3267,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -3350,7 +3350,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -3433,7 +3433,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -3503,13 +3503,13 @@
       "method": "GET",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "newman",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "异常来源：api_contract_exception。"
       ],
       "interface_fields": [],
@@ -3542,13 +3542,13 @@
       "method": "GET",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "newman",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "异常来源：api_contract_exception。"
       ],
       "interface_fields": [],
@@ -3581,7 +3581,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -3620,7 +3620,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -3659,7 +3659,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -3695,7 +3695,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/quota",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -3779,7 +3779,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/quota",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -3863,7 +3863,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agents",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -3947,7 +3947,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agents",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -4031,13 +4031,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -4149,13 +4149,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -4267,11 +4267,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -4382,7 +4382,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -4447,7 +4447,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -4512,7 +4512,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -4577,7 +4577,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -4642,13 +4642,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -4747,13 +4747,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -4852,11 +4852,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -4954,14 +4954,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -5067,14 +5067,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -5180,13 +5180,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：state_machine_exception。"
       ],
@@ -5292,14 +5292,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -5403,14 +5403,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -5514,13 +5514,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：state_machine_exception。"
       ],
@@ -5624,7 +5624,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -5694,7 +5694,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -5764,7 +5764,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -5831,7 +5831,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/evidence/list",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -5901,7 +5901,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/evidence/list",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -5971,7 +5971,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/logs",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6054,7 +6054,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/logs",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6137,7 +6137,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/notice",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6220,7 +6220,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/notice",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6303,7 +6303,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6386,7 +6386,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6469,7 +6469,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -6549,7 +6549,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6632,7 +6632,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6715,7 +6715,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6798,7 +6798,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6881,7 +6881,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -6964,7 +6964,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -7047,7 +7047,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -7127,7 +7127,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -7210,7 +7210,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -7293,7 +7293,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -7373,7 +7373,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -7457,7 +7457,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -7541,7 +7541,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -7624,7 +7624,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -7708,7 +7708,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -7792,7 +7792,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -7875,7 +7875,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -7946,7 +7946,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -8017,7 +8017,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -8087,7 +8087,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [
         "state_machine_exception"
@@ -8125,7 +8125,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [
         "data_constraint_exception"
@@ -8207,7 +8207,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [
         "data_constraint_exception"
@@ -8245,7 +8245,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [
@@ -8280,7 +8280,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [
@@ -8315,7 +8315,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [
@@ -8350,7 +8350,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [
@@ -8385,13 +8385,13 @@
       "method": "GET",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "newman",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "异常来源：api_contract_exception。"
       ],
       "interface_fields": [],
@@ -8424,13 +8424,13 @@
       "method": "GET",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "newman",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "异常来源：api_contract_exception。"
       ],
       "interface_fields": [],
@@ -8463,7 +8463,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -8502,7 +8502,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -8541,7 +8541,7 @@
       "method": "POST",
       "path": "/union/getAnchorApplyRecord",
       "quality_status": "NEEDS_EVIDENCE",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -8577,7 +8577,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/quota",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -8661,7 +8661,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/quota",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -8745,7 +8745,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agents",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -8829,7 +8829,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agents",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -8913,13 +8913,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -9031,13 +9031,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -9149,11 +9149,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/create",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -9264,7 +9264,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -9329,7 +9329,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -9394,7 +9394,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -9459,7 +9459,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -9524,13 +9524,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -9629,13 +9629,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception。"
       ],
@@ -9734,11 +9734,11 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/cancel",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。"
       ],
       "interface_fields": [],
@@ -9836,14 +9836,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -9949,14 +9949,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -10062,13 +10062,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/confirm",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：order_no, proxy_uid。",
         "异常来源：state_machine_exception。"
       ],
@@ -10174,14 +10174,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -10285,14 +10285,14 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：api_contract_exception, state_machine_exception。"
       ],
@@ -10396,13 +10396,13 @@
       "method": "POST",
       "path": "/userserv/salary/trade/order/appeal",
       "quality_status": "READY",
-      "automation_status": "AUTO_READY",
+      "automation_readiness": "SCRIPT_GENERATION_READY",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
       ],
       "blocking_reasons": [
-        "接口、变量和证据条件满足当前自动化生成要求。",
+        "接口、变量和证据条件满足当前脚本生成要求。",
         "需要运行时提供变量：applicant_uid, order_no。",
         "异常来源：state_machine_exception。"
       ],
@@ -10506,7 +10506,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -10576,7 +10576,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -10646,7 +10646,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -10713,7 +10713,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/evidence/list",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -10783,7 +10783,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/evidence/list",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -10853,7 +10853,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/logs",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -10936,7 +10936,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/logs",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11019,7 +11019,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/notice",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11102,7 +11102,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/notice",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11185,7 +11185,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11268,7 +11268,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11351,7 +11351,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/notice/save",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -11431,7 +11431,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11514,7 +11514,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/page",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11597,7 +11597,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11680,7 +11680,7 @@
       "method": "GET",
       "path": "/userserv/salary/trade/agent/order/detail",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11763,7 +11763,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11846,7 +11846,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -11929,7 +11929,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/accept",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -12009,7 +12009,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -12092,7 +12092,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception"
@@ -12175,7 +12175,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/reject",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [],
       "blocking_reasons": [
@@ -12255,7 +12255,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -12339,7 +12339,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -12423,7 +12423,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/paid",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -12506,7 +12506,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -12590,7 +12590,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -12674,7 +12674,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/order/appeal",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -12757,7 +12757,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -12828,7 +12828,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "api_contract_exception",
@@ -12899,7 +12899,7 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "quality_status": "NEEDS_EVIDENCE_REVIEW",
-      "automation_status": "SCRIPTABLE_EVIDENCE_PENDING",
+      "automation_readiness": "SCRIPTABLE_EVIDENCE_PENDING",
       "coverage_tool": "jmeter",
       "exception_sources": [
         "state_machine_exception"
@@ -12969,7 +12969,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [
         "state_machine_exception"
@@ -13007,7 +13007,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [
         "data_constraint_exception"
@@ -13045,7 +13045,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [
         "data_constraint_exception"
@@ -13083,7 +13083,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [
@@ -13118,7 +13118,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [
@@ -13153,7 +13153,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [
@@ -13188,7 +13188,7 @@
       "method": "",
       "path": "",
       "quality_status": "MANUAL_ONLY",
-      "automation_status": "MANUAL_ONLY",
+      "automation_readiness": "MANUAL_ONLY",
       "coverage_tool": "manual",
       "exception_sources": [],
       "blocking_reasons": [

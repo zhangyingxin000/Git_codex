@@ -1,11 +1,11 @@
 # 工资代理快速结算 - 结构化测试用例
 
-- 生成时间：2026-09-01T16:33:23+08:00
+- 生成时间：2026-09-01T16:40:30+08:00
 - 用例数：170
 - 带DB校验：143
 - 带Redis校验：0
 - 质量分级：{"READY": 38, "NEEDS_EVIDENCE": 8, "NEEDS_EVIDENCE_REVIEW": 110, "MANUAL_ONLY": 14}
-- 自动化覆盖：{"AUTO_READY": 38, "SCRIPTABLE_EVIDENCE_PENDING": 118, "MANUAL_ONLY": 14}
+- 脚本生成就绪：{"SCRIPT_GENERATION_READY": 38, "SCRIPTABLE_EVIDENCE_PENDING": 118, "MANUAL_ONLY": 14}
 
 ## 返回工资快速结算创建入口开关：正常请求
 
@@ -14,7 +14,7 @@
 - 接口：GET /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / newman
+- 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：-
 
 ### 前置条件
@@ -32,7 +32,7 @@
 - 根据接口资料样例验证核心成功路径
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 
 ## 返回工资快速结算创建入口开关：正常请求
 
@@ -41,7 +41,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -68,7 +68,7 @@
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -99,7 +99,7 @@
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -130,7 +130,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -152,7 +152,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 
 ## 查看本人快速结算订单列表：正常请求
@@ -162,7 +162,7 @@
 - 接口：GET /userserv/salary/trade/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -192,7 +192,7 @@
 - 接口：GET /userserv/salary/trade/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -222,7 +222,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -244,7 +244,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 
 ## 确认已收到代理转账：正常请求
@@ -254,7 +254,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -276,7 +276,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：state_machine_exception。
 
@@ -287,7 +287,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -309,7 +309,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：state_machine_exception。
 
@@ -320,7 +320,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -350,7 +350,7 @@
 - 接口：GET /userserv/salary/trade/evidence/list
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -380,7 +380,7 @@
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -410,7 +410,7 @@
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -440,7 +440,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -470,7 +470,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -500,7 +500,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -530,7 +530,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -560,7 +560,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -590,7 +590,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -621,7 +621,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -652,7 +652,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -683,7 +683,7 @@
 - 接口：GET /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / newman
+- 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：-
 
 ### 前置条件
@@ -701,7 +701,7 @@
 - 根据接口资料样例验证核心成功路径
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 
 ## 返回工资快速结算创建入口开关：正常请求
 
@@ -710,7 +710,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -737,7 +737,7 @@
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -768,7 +768,7 @@
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -799,7 +799,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -821,7 +821,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 
 ## 查看本人快速结算订单列表：正常请求
@@ -831,7 +831,7 @@
 - 接口：GET /userserv/salary/trade/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -861,7 +861,7 @@
 - 接口：GET /userserv/salary/trade/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -891,7 +891,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -913,7 +913,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 
 ## 确认已收到代理转账：正常请求
@@ -923,7 +923,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -945,7 +945,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：state_machine_exception。
 
@@ -956,7 +956,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -978,7 +978,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：state_machine_exception。
 
@@ -989,7 +989,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -1019,7 +1019,7 @@
 - 接口：GET /userserv/salary/trade/evidence/list
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -1049,7 +1049,7 @@
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -1079,7 +1079,7 @@
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -1109,7 +1109,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -1139,7 +1139,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -1169,7 +1169,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / newman
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
 
 ### 前置条件
@@ -1199,7 +1199,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -1229,7 +1229,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -1259,7 +1259,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -1290,7 +1290,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -1321,7 +1321,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -1352,7 +1352,7 @@
 - 接口：GET /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / newman
+- 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1370,7 +1370,7 @@
 - 验证必填字段校验：
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 异常来源：api_contract_exception。
 
 ## 返回工资快速结算创建入口开关：字段边界与类型错误
@@ -1380,7 +1380,7 @@
 - 接口：GET /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / newman
+- 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1398,7 +1398,7 @@
 - 验证长度、数值、类型和空值边界
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 异常来源：api_contract_exception。
 
 ## 返回工资快速结算创建入口开关：缺失必填参数
@@ -1408,7 +1408,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1436,7 +1436,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1464,7 +1464,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -1491,7 +1491,7 @@
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -1522,7 +1522,7 @@
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -1553,7 +1553,7 @@
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -1584,7 +1584,7 @@
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -1615,7 +1615,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1637,7 +1637,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -1648,7 +1648,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1670,7 +1670,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -1681,7 +1681,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -1703,7 +1703,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 
 ## 查看本人快速结算订单列表：缺失必填参数
@@ -1713,7 +1713,7 @@
 - 接口：GET /userserv/salary/trade/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1744,7 +1744,7 @@
 - 接口：GET /userserv/salary/trade/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1775,7 +1775,7 @@
 - 接口：GET /userserv/salary/trade/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1806,7 +1806,7 @@
 - 接口：GET /userserv/salary/trade/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1837,7 +1837,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1859,7 +1859,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -1870,7 +1870,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -1892,7 +1892,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -1903,7 +1903,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -1925,7 +1925,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 
 ## 确认已收到代理转账：缺失必填参数
@@ -1935,7 +1935,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -1957,7 +1957,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -1968,7 +1968,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -1990,7 +1990,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -2001,7 +2001,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -2023,7 +2023,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：state_machine_exception。
 
@@ -2034,7 +2034,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -2056,7 +2056,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -2067,7 +2067,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -2089,7 +2089,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -2100,7 +2100,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -2122,7 +2122,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：state_machine_exception。
 
@@ -2133,7 +2133,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2164,7 +2164,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2195,7 +2195,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -2225,7 +2225,7 @@
 - 接口：GET /userserv/salary/trade/evidence/list
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2256,7 +2256,7 @@
 - 接口：GET /userserv/salary/trade/evidence/list
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2287,7 +2287,7 @@
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2318,7 +2318,7 @@
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2349,7 +2349,7 @@
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2380,7 +2380,7 @@
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2411,7 +2411,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2442,7 +2442,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2473,7 +2473,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -2503,7 +2503,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2534,7 +2534,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2565,7 +2565,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2596,7 +2596,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2627,7 +2627,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2658,7 +2658,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2689,7 +2689,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -2719,7 +2719,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2750,7 +2750,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -2781,7 +2781,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -2811,7 +2811,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -2842,7 +2842,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -2873,7 +2873,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -2904,7 +2904,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -2935,7 +2935,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -2966,7 +2966,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -2997,7 +2997,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -3028,7 +3028,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -3059,7 +3059,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -3090,7 +3090,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -3117,7 +3117,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -3147,7 +3147,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -3174,7 +3174,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
@@ -3200,7 +3200,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
@@ -3226,7 +3226,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
@@ -3252,7 +3252,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
@@ -3278,7 +3278,7 @@
 - 接口：GET /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / newman
+- 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3296,7 +3296,7 @@
 - 验证必填字段校验：
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 异常来源：api_contract_exception。
 
 ## 返回工资快速结算创建入口开关：字段边界与类型错误
@@ -3306,7 +3306,7 @@
 - 接口：GET /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / newman
+- 脚本生成就绪：SCRIPT_GENERATION_READY / newman
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3324,7 +3324,7 @@
 - 验证长度、数值、类型和空值边界
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 异常来源：api_contract_exception。
 
 ## 返回工资快速结算创建入口开关：缺失必填参数
@@ -3334,7 +3334,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3362,7 +3362,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3390,7 +3390,7 @@
 - 接口：POST /union/getAnchorApplyRecord
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -3417,7 +3417,7 @@
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -3448,7 +3448,7 @@
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -3479,7 +3479,7 @@
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -3510,7 +3510,7 @@
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
 
 ### 前置条件
@@ -3541,7 +3541,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3563,7 +3563,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -3574,7 +3574,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3596,7 +3596,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -3607,7 +3607,7 @@
 - 接口：POST /userserv/salary/trade/order/create
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -3629,7 +3629,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no, proxy_uid。
 
 ## 查看本人快速结算订单列表：缺失必填参数
@@ -3639,7 +3639,7 @@
 - 接口：GET /userserv/salary/trade/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3670,7 +3670,7 @@
 - 接口：GET /userserv/salary/trade/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3701,7 +3701,7 @@
 - 接口：GET /userserv/salary/trade/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3732,7 +3732,7 @@
 - 接口：GET /userserv/salary/trade/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3763,7 +3763,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3785,7 +3785,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -3796,7 +3796,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -3818,7 +3818,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception。
 
@@ -3829,7 +3829,7 @@
 - 接口：POST /userserv/salary/trade/order/cancel
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -3851,7 +3851,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 
 ## 确认已收到代理转账：缺失必填参数
@@ -3861,7 +3861,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -3883,7 +3883,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -3894,7 +3894,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -3916,7 +3916,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -3927,7 +3927,7 @@
 - 接口：POST /userserv/salary/trade/order/confirm
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -3949,7 +3949,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 agent_uid, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：order_no, proxy_uid。
 - 异常来源：state_machine_exception。
 
@@ -3960,7 +3960,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -3982,7 +3982,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -3993,7 +3993,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -4015,7 +4015,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：api_contract_exception, state_machine_exception。
 
@@ -4026,7 +4026,7 @@
 - 接口：POST /userserv/salary/trade/order/appeal
 - 接口字段：-
 - 质量分级：READY
-- 自动化覆盖：AUTO_READY / jmeter
+- 脚本生成就绪：SCRIPT_GENERATION_READY / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -4048,7 +4048,7 @@
 - DB校验：anchor_salary_trade_order WHERE order_no = ${order_no}，字段 evidence_type, order_no, status 符合规则 salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order。
 
 ### 分级原因
-- 接口、变量和证据条件满足当前自动化生成要求。
+- 接口、变量和证据条件满足当前脚本生成要求。
 - 需要运行时提供变量：applicant_uid, order_no。
 - 异常来源：state_machine_exception。
 
@@ -4059,7 +4059,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4090,7 +4090,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4121,7 +4121,7 @@
 - 接口：POST /userserv/salary/trade/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -4151,7 +4151,7 @@
 - 接口：GET /userserv/salary/trade/evidence/list
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4182,7 +4182,7 @@
 - 接口：GET /userserv/salary/trade/evidence/list
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4213,7 +4213,7 @@
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4244,7 +4244,7 @@
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4275,7 +4275,7 @@
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4306,7 +4306,7 @@
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4337,7 +4337,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4368,7 +4368,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4399,7 +4399,7 @@
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -4429,7 +4429,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4460,7 +4460,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4491,7 +4491,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4522,7 +4522,7 @@
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4553,7 +4553,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4584,7 +4584,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4615,7 +4615,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -4645,7 +4645,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4676,7 +4676,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
 
 ### 前置条件
@@ -4707,7 +4707,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
 
 ### 前置条件
@@ -4737,7 +4737,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -4768,7 +4768,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -4799,7 +4799,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -4830,7 +4830,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -4861,7 +4861,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -4892,7 +4892,7 @@
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -4923,7 +4923,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -4954,7 +4954,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
 
 ### 前置条件
@@ -4985,7 +4985,7 @@
 - 接口：POST /userserv/salary/trade/agent/evidence/upload
 - 接口字段：-
 - 质量分级：NEEDS_EVIDENCE_REVIEW
-- 自动化覆盖：SCRIPTABLE_EVIDENCE_PENDING / jmeter
+- 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -5016,7 +5016,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：state_machine_exception
 
 ### 前置条件
@@ -5043,7 +5043,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -5070,7 +5070,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
 
 ### 前置条件
@@ -5097,7 +5097,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
@@ -5123,7 +5123,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
@@ -5149,7 +5149,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
@@ -5175,7 +5175,7 @@
 - 接口：- 
 - 接口字段：-
 - 质量分级：MANUAL_ONLY
-- 自动化覆盖：MANUAL_ONLY / manual
+- 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：-
 
 ### 前置条件
