@@ -1653,14 +1653,14 @@ def generate_candidate_evidence_rules(project_id, payload=None):
         "generated_at": now(),
         "mode": "candidate_only",
         "note": "候选规则不会自动覆盖正式 evidence_rules.yaml。请人工确认后再复制或合并。",
-            "summary": {
-                "cases_scanned": len(cases),
-                "db_tables_scanned": len(table_pool),
-                "candidates": len(candidates),
-                "existing_rules": len(existing_ids),
-                "scope": scope_mode,
-                "needs_scope_confirmation": needs_scope_confirmation,
-            },
+        "summary": {
+            "cases_scanned": len(cases),
+            "db_tables_scanned": len(table_pool),
+            "candidates": len(candidates),
+            "existing_rules": len(existing_ids),
+            "scope": scope_mode,
+            "needs_scope_confirmation": needs_scope_confirmation,
+        },
         "rules": candidates,
     }
     candidates_path = Path(package["root"]) / "evidence_rules.candidates.yaml"
@@ -1679,6 +1679,95 @@ def generate_candidate_evidence_rules(project_id, payload=None):
         "conclusion": "未声明数据范围，请先确认需求包 data_scope 后再采纳候选规则。" if needs_scope_confirmation else "已根据测试用例和数据库元数据生成候选证据规则；候选结果需要测试人员确认后再进入正式规则。",
     }
     out = ROOT / "reports" / f"candidate-evidence-rules-{project_id}-{package_id}-{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report["json_url"] = "/reports/" + out.name
+    report["file_name"] = out.name
+    return report
+
+
+def accept_candidate_evidence_rules(project_id, payload=None):
+    payload = payload or {}
+    package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    candidates_path = package_root / "evidence_rules.candidates.yaml"
+    official_path = package_root / "evidence_rules.yaml"
+    candidates_payload = _load_yaml_file(candidates_path)
+    candidate_rules = candidates_payload.get("rules") if isinstance(candidates_payload, dict) else []
+    if not isinstance(candidate_rules, list) or not candidate_rules:
+        raise ValueError("当前需求包还没有候选证据规则，请先生成候选规则")
+    selected = payload.get("rule_ids")
+    if isinstance(selected, str):
+        selected = [x.strip() for x in re.split(r"[\n,，;；\s]+", selected) if x.strip()]
+    selected = set(selected or [])
+    official_payload = _load_yaml_file(official_path)
+    if not isinstance(official_payload, dict) or not official_payload:
+        official_payload = {
+            "schema_version": "1.0",
+            "package_id": package_id,
+            "package_name": package.get("name"),
+            "purpose": "执行后用只读 MySQL/Redis 证据证明接口产生的业务结果真实落库、状态正确、流水可追溯。",
+            "runtime_variables": {},
+            "rules": [],
+        }
+    official_rules = official_payload.get("rules")
+    if not isinstance(official_rules, list):
+        official_rules = []
+    existing_ids = {str(x.get("id")) for x in official_rules if isinstance(x, dict) and x.get("id")}
+    accepted, skipped = [], []
+    matched_selected = set()
+    for rule in candidate_rules:
+        if not isinstance(rule, dict):
+            continue
+        rule_id = str(rule.get("id") or "").strip()
+        if selected and rule_id not in selected:
+            continue
+        matched_selected.add(rule_id)
+        if rule.get("review_status") == "NEEDS_SCOPE_CONFIRMATION" and not payload.get("force"):
+            skipped.append({"id": rule_id, "reason": "候选规则缺少数据范围确认"})
+            continue
+        if rule_id in existing_ids:
+            skipped.append({"id": rule_id, "reason": "正式规则中已存在"})
+            continue
+        clean = {k: v for k, v in rule.items() if k not in {"confidence", "review_status", "reason", "source_case"}}
+        clean["source"] = {
+            "type": "candidate_evidence_rule",
+            "accepted_at": now(),
+            "source_case": rule.get("source_case") or {},
+            "confidence": rule.get("confidence"),
+        }
+        official_rules.append(clean)
+        existing_ids.add(rule_id)
+        accepted.append({"id": rule_id, "name": clean.get("name"), "table": (clean.get("query") or {}).get("table")})
+    for missing_id in sorted(selected - matched_selected):
+        skipped.append({"id": missing_id, "reason": "候选文件中未找到这个规则ID"})
+    if accepted:
+        official_payload["rules"] = official_rules
+        official_payload["updated_at"] = now()
+        official_path.write_text(_yaml_dump(official_payload), encoding="utf-8")
+    report = {
+        "report_type": "ACCEPT_CANDIDATE_EVIDENCE_RULES",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": "READY" if accepted else "ATTENTION",
+        "created_at": now(),
+        "summary": {
+            "candidate_rules": len(candidate_rules),
+            "selected": len(selected) if selected else "all",
+            "accepted": len(accepted),
+            "skipped": len(skipped),
+            "official_rules": len(official_rules),
+        },
+        "official_rules_path": str(official_path),
+        "candidates_path": str(candidates_path),
+        "accepted": accepted,
+        "skipped": skipped,
+        "conclusion": "已将确认后的候选证据规则追加到正式 evidence_rules.yaml。" if accepted else "没有新增正式规则，请检查是否已存在或仍需确认数据范围。",
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out = ROOT / "reports" / f"accepted-evidence-rules-{project_id}-{package_id}-{stamp}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     report["json_url"] = "/reports/" + out.name
@@ -8030,6 +8119,13 @@ def list_generated_reports(project_id):
             continue
         summary = payload.get("summary") or {}
         result.append({"name":"测试用例候选证据规则报告","kind":"候选证据规则","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"扫描用例{summary.get('cases_scanned',0)}条 · 候选规则{summary.get('candidates',0)}条 · 已有正式规则{summary.get('existing_rules',0)}条","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
+    for file in report_dir.glob("accepted-evidence-rules-*.json"):
+        try: payload=json.loads(file.read_text(encoding="utf-8"))
+        except Exception: payload={}
+        if payload.get("project_id") and payload.get("project_id") != project_id:
+            continue
+        summary = payload.get("summary") or {}
+        result.append({"name":"候选证据规则采纳报告","kind":"证据规则采纳","status":payload.get("status","UNKNOWN"),"created_at":payload.get("created_at") or datetime.fromtimestamp(file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),"summary":f"采纳{summary.get('accepted',0)}条 · 跳过{summary.get('skipped',0)}条 · 正式规则{summary.get('official_rules',0)}条","json_url":"/reports/"+file.name,"html_url":"","file_name":file.name,"package_id":payload.get("package_id","general")})
     for file in report_dir.glob("salary-trade-db-evidence-*.json"):
         try: payload=json.loads(file.read_text(encoding="utf-8"))
         except Exception: payload={}
@@ -9195,6 +9291,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(run_business_evidence_rules(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/candidate-evidence-rules", path)
             if m: return self.send_json(generate_candidate_evidence_rules(m.group(1), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/accept-candidate-evidence-rules", path)
+            if m: return self.send_json(accept_candidate_evidence_rules(m.group(1), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/assistant", path)
             if m:
                 x=self.body(); return self.send_json(assistant_reply(m.group(1),x.get("message","")))

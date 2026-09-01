@@ -1270,9 +1270,35 @@ dataQualityClosure=function(){
   let html=dataQualityClosureBeforeMetadataAudit?dataQualityClosureBeforeMetadataAudit():'';
   let reports=latestMetadataAuditReports(),plans=latestBusinessEvidencePlanReports(),runs=latestBusinessEvidenceRunReports(),candidates=latestCandidateEvidenceRuleReports();
   let audit=`<div class="card"><div class="diagnosis-head"><div><h2>AI输出校验</h2><p>用已保存的数据库表、字段和Redis Key核查AI生成内容，避免脚本和用例里出现查无依据的数据位置。</p></div><button class="primary" onclick="runMetadataHallucinationAudit()">元数据幻觉校验</button></div><div id="metadataAuditStatus">${reports.length?reports.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无AI输出校验报告</b></div>'}</div></div>`;
-  let candidatePanel=`<div class="card"><div class="diagnosis-head"><div><h2>候选证据规则</h2><p>根据当前需求包的测试用例和数据范围，自动推荐执行后应该查哪些表、用哪些变量和断言；没有数据范围时只给待确认候选。</p></div><button class="primary" onclick="generateCandidateEvidenceRules()">生成候选规则</button></div><div id="candidateEvidenceRuleStatus">${candidates.length?candidates.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无候选证据规则</b></div>'}</div></div>`;
+  let candidatePanel=`<div class="card"><div class="diagnosis-head"><div><h2>候选证据规则</h2><p>根据当前需求包的测试用例和数据范围，自动推荐执行后应该查哪些表、用哪些变量和断言；没有数据范围时只给待确认候选。</p></div><div class="formrow"><button class="primary" onclick="generateCandidateEvidenceRules()">生成候选规则</button><button class="small" onclick="showAcceptCandidateEvidenceRulesModal()">采纳候选</button></div></div><div id="candidateEvidenceRuleStatus">${candidates.length?candidates.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无候选证据规则</b></div>'}</div></div>`;
   let evidencePlan=`<div class="card"><div class="diagnosis-head"><div><h2>执行后业务证据</h2><p>把当前需求包的证据规则整理成计划并执行：接口跑完后去哪张表或哪个Key查、用什么变量定位、期望什么结果。</p></div><div class="formrow"><button class="primary" onclick="generateBusinessEvidencePlan()">生成证据计划</button><button class="primary" onclick="showBusinessEvidenceRunModal()">执行证据规则</button></div></div><div id="businessEvidencePlanStatus">${plans.length?plans.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看报告</button>`:''}</div>`).join(''):'<div class="empty"><b>暂无业务证据规则报告</b></div>'}</div><div id="businessEvidenceRunStatus">${runs.length?runs.map(x=>`<div class="summary-panel"><b>${esc(x.status)} · ${esc((x.created_at||'').replace('T',' '))}</b><p>${esc(x.summary||'')}</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看执行报告</button>`:''}</div>`).join(''):''}</div></div>`;
   return html + audit + candidatePanel + evidencePlan
+}
+
+function showAcceptCandidateEvidenceRulesModal(){
+  let pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
+  $('#modalBody').innerHTML=`<h2>${esc(requirementPackageName(pid))} · 采纳候选规则</h2><p class="policy-note">只会追加到正式 evidence_rules.yaml，不会覆盖已有规则。留空表示采纳全部已确认范围的候选；缺少数据范围确认的候选不会被采纳。</p><label>规则ID</label><textarea id="acceptCandidateRuleIds" rows="8" placeholder="一行一个，或用逗号分隔；留空采纳全部可采纳候选"></textarea><div class="formrow"><button id="acceptCandidateRulesButton" class="primary" onclick="acceptCandidateEvidenceRules()">采纳</button><button class="small" onclick="$('#modal').classList.add('hidden')">取消</button></div><div id="acceptCandidateRulesStatus"></div>`;
+  $('#modal').classList.remove('hidden')
+}
+
+async function acceptCandidateEvidenceRules(){
+  let button=$('#acceptCandidateRulesButton'),box=$('#acceptCandidateRulesStatus'),pkg=currentRequirementPackage(),pid=requirementPackageId(pkg)||selectedRequirementPackageId();
+  let ids=($('#acceptCandidateRuleIds')?.value||'').split(/[\n,，;；\s]+/).map(x=>x.trim()).filter(Boolean);
+  try{
+    if(button){button.disabled=true;button.textContent='采纳中…'}
+    if(box)box.innerHTML='<div class="summary-panel"><b>正在写入正式规则</b><p>平台会跳过已存在规则，并生成采纳报告。</p></div>';
+    let result=await api(`/api/projects/${current}/accept-candidate-evidence-rules`,{method:'POST',body:JSON.stringify({package_id:pid,rule_ids:ids})});
+    let s=result.summary||{},msg=`采纳完成：新增${s.accepted||0}条，跳过${s.skipped||0}条`;
+    if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(msg)}</b><p>正式规则当前 ${esc(s.official_rules||0)} 条。</p>${result.json_url?`<button class="small" onclick="openReport('${esc(result.json_url)}')">查看JSON</button>`:''}</div>`;
+    toast(msg,result.status==='READY'?'success':'warning');
+    await openProject(current);
+    switchTab('dataquality')
+  }catch(e){
+    if(box)box.innerHTML=`<div class="summary-panel"><b>采纳失败</b><p>${esc(e.message)}</p></div>`;
+    toast(e.message,'error')
+  }finally{
+    let b=$('#acceptCandidateRulesButton');if(b){b.disabled=false;b.textContent='采纳'}
+  }
 }
 
 async function generateCandidateEvidenceRules(){
