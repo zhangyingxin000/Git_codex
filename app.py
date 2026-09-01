@@ -2924,7 +2924,7 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
     if pytest_file.is_file():
         try:
             existing_pytest = pytest_file.read_text(encoding="utf-8", errors="replace")
-            needs_refresh = "PYTEST_DEEP_EVIDENCE_REVIEW" not in existing_pytest or "ensure_common_query_params" not in existing_pytest or "update_runtime_from_response" not in existing_pytest or 'headers["t"]' not in existing_pytest
+            needs_refresh = "PYTEST_DEEP_EVIDENCE_REVIEW" not in existing_pytest or "ensure_common_query_params" not in existing_pytest or "update_runtime_from_response" not in existing_pytest or "load_runtime_aliases" not in existing_pytest or 'headers["t"]' not in existing_pytest
         except Exception:
             needs_refresh = True
     if needs_refresh:
@@ -6440,6 +6440,69 @@ def runtime_variables():
     return runtime
 
 
+def snake_case(name):
+    text = re.sub(r"(.)([A-Z][a-z]+)", r"\\1_\\2", str(name or ""))
+    text = re.sub(r"([a-z0-9])([A-Z])", r"\\1_\\2", text)
+    return re.sub(r"[^a-zA-Z0-9_]+", "_", text).strip("_").lower()
+
+
+def camel_case(name):
+    parts = [x for x in re.split(r"[_\\-\\s]+", str(name or "")) if x]
+    if not parts:
+        return ""
+    return parts[0] + "".join(x[:1].upper() + x[1:] for x in parts[1:])
+
+
+def load_runtime_aliases():
+    root = package_root()
+    payload = load_yaml(root / "runtime_aliases.yaml", {{}})
+    aliases = payload.get("aliases") if isinstance(payload, dict) else None
+    if not isinstance(aliases, dict):
+        aliases = {{}}
+    defaults = {{
+        "orderNo": ["order_no", "orderNo"],
+        "orderId": ["order_id", "orderId"],
+        "uid": ["uid"],
+        "agentUid": ["agent_uid", "proxy_uid", "agentUid", "proxyUid"],
+        "proxyUid": ["proxy_uid", "agent_uid", "proxyUid", "agentUid"],
+        "countryCode": ["country_code", "countryCode"],
+        "currency": ["currency"],
+    }}
+    for key, values in defaults.items():
+        aliases.setdefault(key, values)
+    return aliases
+
+
+def remember_runtime_value(name, value, aliases=None, overwrite=False):
+    if value in (None, ""):
+        return
+    aliases = aliases or load_runtime_aliases()
+    names = set(aliases.get(name) or [])
+    names.add(name)
+    names.add(snake_case(name))
+    camel = camel_case(name)
+    if camel:
+        names.add(camel)
+    for key in names:
+        if not key:
+            continue
+        if key in ("ticket", "token", "access_token", "password"):
+            continue
+        if overwrite or RUNTIME_STATE.get(key) in (None, ""):
+            RUNTIME_STATE[key] = value
+
+
+def walk_json_scalars(value, parent_key=""):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield from walk_json_scalars(item, str(key))
+    elif isinstance(value, list):
+        for item in value[:3]:
+            yield from walk_json_scalars(item, parent_key)
+    else:
+        yield parent_key, value
+
+
 def fill_runtime(value):
     if isinstance(value, dict):
         return {{k: fill_runtime(v) for k, v in value.items()}}
@@ -6458,6 +6521,7 @@ def ensure_common_query_params(path):
     query_pairs = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
     current = {{key: value for key, value in query_pairs}}
     additions = []
+    aliases = load_runtime_aliases()
     mapping = {{
         "ticket": runtime.get("ticket"),
         "uid": runtime.get("uid") or runtime.get("applicant_uid"),
@@ -6471,6 +6535,12 @@ def ensure_common_query_params(path):
     for key in ("deviceType", "systemLanguage", "appVersion", "os", "netType", "channel", "appsflyerId", "language", "appCode", "deviceId", "version", "osVersion", "isVpnConnected", "appid", "model", "packageName", "ispType", "organic"):
         if runtime.get(key):
             mapping[key] = runtime.get(key)
+    for query_key in re.findall(r"[?&]([A-Za-z_][A-Za-z0-9_]*)=", "?" + parsed.query):
+        alias_names = [query_key, snake_case(query_key), camel_case(query_key)] + list(aliases.get(query_key) or [])
+        for name in alias_names:
+            if runtime.get(name) not in (None, ""):
+                mapping[query_key] = runtime.get(name)
+                break
     for key, value in mapping.items():
         existing = current.get(key)
         if value not in (None, "") and (existing in (None, "", "***REDACTED***")):
@@ -6490,6 +6560,9 @@ def update_runtime_from_response(case, body):
     if not isinstance(data, (dict, list)):
         return
     path = str(case.get("path") or "")
+    aliases = load_runtime_aliases()
+    for key, value in walk_json_scalars(data):
+        remember_runtime_value(key, value, aliases)
     if isinstance(data, dict):
         if data.get("countryCode") not in (None, ""):
             RUNTIME_STATE["country_code"] = data.get("countryCode")

@@ -1,0 +1,22 @@
+schema_version: "1.0"
+purpose: Map business response fields to reusable runtime variables for pytest/JMeter/Newman evidence review.
+
+# Copy this file to requirements/<package_id>/runtime_aliases.yaml only when a
+# requirement package has special business identifiers.
+aliases:
+  orderNo:
+    - order_no
+    - orderNo
+  orderId:
+    - order_id
+    - orderId
+  agentUid:
+    - agent_uid
+    - proxy_uid
+    - agentUid
+    - proxyUid
+  countryCode:
+    - country_code
+    - countryCode
+  currency:
+    - currency
