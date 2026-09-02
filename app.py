@@ -35,7 +35,7 @@ from urllib.parse import parse_qs, urlparse
 
 
 ROOT = Path(__file__).resolve().parent
-BUILD_ID = "20260901.01"
+BUILD_ID = "20260902.02"
 STATIC = ROOT / "static"
 DATA = ROOT / "data"
 DB_PATH = DATA / "autotest_ai.db"
@@ -680,10 +680,10 @@ def multi_account_context_status(project_id):
         gaps.append({"level": "P1", "item": "代理账号", "detail": "代理人可以复用，但至少需要1个可登录或可复用token的代理账号。"})
     no_secret = [item for item in accounts if not item.get("has_ticket") and not item.get("has_password")]
     if no_secret:
-        gaps.append({"level": "P1", "item": "账号凭证", "detail": f"{len(no_secret)}个账号缺少ticket或登录密码，运行前需要登录接口/Redis/CSV补齐。"})
-    csv_no_login_source = [item for item in enabled_account_rows if not str(item.get("password_encrypted") or "").strip() and not str(item.get("ticket") or "").strip() and not str(item.get("redis_uid") or item.get("uid") or "").strip()]
+        gaps.append({"level": "P1", "item": "账号凭证", "detail": f"{len(no_secret)}个账号缺少ticket或登录密码，运行前需要登录接口或CSV补齐。"})
+    csv_no_login_source = [item for item in enabled_account_rows if not str(item.get("password_encrypted") or "").strip() and not str(item.get("ticket") or "").strip() and not str(item.get("uid") or "").strip()]
     if csv_no_login_source:
-        gaps.append({"level": "P1", "item": "CSV登录来源", "detail": f"{len(csv_no_login_source)}行CSV账号缺少登录密码、ticket或可查Redis的uid。"})
+        gaps.append({"level": "P1", "item": "CSV登录来源", "detail": f"{len(csv_no_login_source)}行CSV账号缺少登录密码、ticket或uid。"})
     if mismatched_currency:
         gaps.append({"level": "P0", "item": "国家币种匹配", "detail": f"{len(mismatched_currency)}行账号的currency不在supportCurrencies里，工资交易不能严格校验。"})
     return {
@@ -697,14 +697,13 @@ def multi_account_context_status(project_id):
         ],
         "credential_resolution_order": [
             "运行时显式传入 ticket/password",
-            "角色CSV中填写 ticket/password/redis_uid",
+            "角色CSV中填写 ticket/password",
             "登录接口按 shortId + password_encrypted 获取 access_token",
-            "Redis只读读取 user_login_info:{uid}.access_token",
             "仍未取得则阻断，不伪造身份认证",
         ],
         "matching_rules": [
             "申请人由用例流程槽位决定，不能所有流程复用同一个申请人。",
-            "代理人先按申请人国家和收款币种在DB白名单匹配候选，再用CSV或Redis补齐该代理的真实登录态。",
+            "工资交易代理人先从DB白名单匹配候选，资格判断以 support_currencies 是否包含收款币种为准，再用代理CSV补齐该代理的真实ticket。",
             "JWT解析出的uid必须等于当前角色uid，否则直接阻断，避免拿错人的ticket导致401。",
             "数据库只证明代理资格和订单证据，不保存ticket，也不替代登录态。",
         ],
@@ -759,7 +758,7 @@ def build_multi_account_strategy(project_id, context=None):
             mode = "multi_flow_slots" if len(decision.get("account_slots") or []) > 1 else "dual_role"
             required_roles = decision.get("roles") or ["applicant", "proxy"]
             min_accounts = {"applicant": max(1, len(decision.get("account_slots") or [])), "proxy": 1}
-            data_carrier = "csv_plus_db_redis"
+            data_carrier = "csv_plus_db" if package_id == "salary-trade" else "csv_plus_db_redis"
             blocking_rule = "申请人槽位不足、代理白名单不匹配、ticket与uid不一致时阻断。"
         else:
             mode = "single_account"
@@ -836,16 +835,20 @@ def generate_requirement_account_model(project_id, package_id, persist=True):
     roles = []
     for role in strategy.get("required_roles") or []:
         credential_sources = ["runtime.ticket", "csv.ticket", "login_api", "redis:user_login_info:{uid}.access_token"]
+        if package_id == "salary-trade":
+            credential_sources = ["runtime.ticket", "csv.ticket", "login_api"]
         if role in {"proxy", "agent"}:
             candidate_sources = ["db:anchor_salary_trade_agent_whitelist", "csv"]
-            match_rules = ["countryCode", "currency"]
+            match_rules = ["support_currencies contains currency"] if package_id == "salary-trade" else ["countryCode", "currency"]
+            if package_id == "salary-trade":
+                credential_sources = ["csv.ticket"]
             reusable = True
         elif role == "applicant":
             candidate_sources = ["csv"]
             match_rules = ["countryCode", "currency"]
             reusable = strategy.get("mode") != "multi_flow_slots"
         else:
-            candidate_sources = ["runtime", "csv", "redis"]
+            candidate_sources = ["runtime", "csv"] if package_id == "salary-trade" else ["runtime", "csv", "redis"]
             match_rules = []
             reusable = True
         roles.append({
@@ -871,6 +874,19 @@ def generate_requirement_account_model(project_id, package_id, persist=True):
             "检测到未知角色或身份字段时先进入extensions.pending，测试确认后才生效。",
             "ticket必须校验uid归属，无法校验或不匹配时阻断。",
         ]
+    data_sources = {
+        "runtime": "测试执行时显式传入的非持久化参数",
+        "csv": "仅在多账号、多角色、多流程或数据矩阵需求启用",
+        "login_api": "用 shortId + password_encrypted 前置登录，提取 access_token",
+        "mysql": "只读查询业务候选和执行证据，不保存ticket",
+    }
+    if package_id != "salary-trade":
+        data_sources["redis"] = "只读读取 user_login_info:{uid}.access_token 或缓存证据"
+    credential_resolution_order = list(context.get("credential_resolution_order") or [])
+    if package_id != "salary-trade":
+        redis_step = "按需读取 Redis 登录态或缓存证据"
+        if redis_step not in credential_resolution_order:
+            credential_resolution_order.insert(-1 if credential_resolution_order else 0, redis_step)
     model = {
         "schema_version": "1.0",
         "package_id": package_id,
@@ -885,14 +901,8 @@ def generate_requirement_account_model(project_id, package_id, persist=True):
         "data_carrier": strategy.get("data_carrier"),
         "variable_namespace": strategy.get("variable_namespace"),
         "roles": roles,
-        "credential_resolution_order": context.get("credential_resolution_order") or [],
-        "data_sources": {
-            "runtime": "测试执行时显式传入的非持久化参数",
-            "csv": "仅在多账号、多角色、多流程或数据矩阵需求启用",
-            "login_api": "用 shortId + password_encrypted 前置登录，提取 access_token",
-            "redis": "只读读取 user_login_info:{uid}.access_token 或缓存证据",
-            "mysql": "只读查询业务候选和执行证据，不保存ticket",
-        },
+        "credential_resolution_order": credential_resolution_order,
+        "data_sources": data_sources,
         "blocking_rules": blocking_rules,
         "readiness": strategy.get("readiness") or [],
         "extensions": {
@@ -917,22 +927,231 @@ def _file_status(path):
     }
 
 
+PACKAGE_EXECUTION_REPORT_TYPES = {
+    "REQUIREMENT_PACKAGE_NEWMAN_RUN": "newman",
+    "REQUIREMENT_PACKAGE_JMETER_RUN": "jmeter",
+    "REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN": "pytest",
+    "PYTEST_DEEP_EVIDENCE_REVIEW": "pytest",
+    "BUSINESS_EVIDENCE_RULE_RUN": "business_evidence",
+}
+
+PACKAGE_REVIEW_REPORT_TYPES = {
+    "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT",
+    "REQUIREMENT_PACKAGE_AI_REVIEW",
+}
+
+
+def _normalized_package_status(value, default="ATTENTION"):
+    status = str(value or "").strip().upper()
+    aliases = {
+        "SUCCESS": "PASSED",
+        "READY": "PASSED",
+        "OK": "PASSED",
+        "ERROR": "FAILED",
+        "NEEDS_DATA": "BLOCKED",
+        "UNCONFIGURED": "BLOCKED",
+        "PENDING": "NOT_RUN",
+    }
+    return aliases.get(status, status or default)
+
+
+def _package_report_records(package_root):
+    report_root = Path(package_root) / "reports"
+    if not report_root.exists():
+        return []
+    records = []
+    for summary_path in report_root.glob("*/summary.json"):
+        try:
+            payload = json.loads(summary_path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        records.append({
+            "path": str(summary_path),
+            "modified_at": summary_path.stat().st_mtime,
+            "report_type": str(payload.get("report_type") or "").strip().upper(),
+            "status": _normalized_package_status(payload.get("status")),
+            "created_at": payload.get("created_at") or payload.get("generated_at") or "",
+            "payload": payload,
+        })
+    return sorted(records, key=lambda item: item["modified_at"], reverse=True)
+
+
 def _package_latest_report_status(package_root):
-    root = Path(package_root) / "reports"
-    if not root.exists():
-        return {"exists": False, "status": "PENDING", "latest": "", "count": 0}
-    summaries = sorted(root.glob("*/summary.json"), key=lambda x: x.stat().st_mtime, reverse=True)
-    if not summaries:
-        return {"exists": False, "status": "PENDING", "latest": "", "count": 0}
-    try:
-        latest_payload = json.loads(summaries[0].read_text(encoding="utf-8"))
-    except Exception:
-        latest_payload = {}
+    records = _package_report_records(package_root)
+    if not records:
+        return {"exists": False, "status": "NOT_RUN", "latest": "", "count": 0, "report_type": ""}
+    latest = records[0]
     return {
         "exists": True,
-        "status": latest_payload.get("status") or "READY",
-        "latest": str(summaries[0]),
-        "count": len(summaries),
+        "status": latest["status"],
+        "latest": latest["path"],
+        "count": len(records),
+        "report_type": latest["report_type"],
+    }
+
+
+def _package_asset_status(counts, artifacts):
+    ready_artifacts = sum(1 for item in artifacts.values() if item.get("exists"))
+    if counts.get("test_cases") and ready_artifacts:
+        status = "READY"
+    elif counts.get("sources") or ready_artifacts:
+        status = "DRAFT"
+    else:
+        status = "EMPTY"
+    return {
+        "status": status,
+        "sources": int(counts.get("sources") or 0),
+        "test_points": int(counts.get("test_points") or 0),
+        "test_cases": int(counts.get("test_cases") or 0),
+        "ready_artifacts": ready_artifacts,
+        "total_artifacts": len(artifacts),
+    }
+
+
+def _package_preflight_status(package_root):
+    output_root = Path(package_root) / "outputs"
+    checks = []
+    for name, file_name in (
+        ("resource", "resource-preflight-check.json"),
+        ("data", "data-preflight-check.json"),
+    ):
+        path = output_root / file_name
+        if not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            payload = {}
+        checks.append({
+            "name": name,
+            "status": _normalized_package_status(payload.get("status"), "ATTENTION"),
+            "path": str(path),
+            "summary": payload.get("summary") or {},
+        })
+    statuses = {item["status"] for item in checks}
+    if not checks:
+        status = "NOT_RUN"
+    elif "FAILED" in statuses or "BLOCKED" in statuses:
+        status = "BLOCKED"
+    elif "READY_WITH_WARNINGS" in statuses or "WARNING" in statuses or "ATTENTION" in statuses:
+        status = "READY_WITH_WARNINGS"
+    elif statuses <= {"PASSED"}:
+        status = "READY"
+    else:
+        status = "ATTENTION"
+    return {"status": status, "checks": checks}
+
+
+def _package_execution_status(package_root):
+    execution_records = [
+        item for item in _package_report_records(package_root)
+        if item["report_type"] in PACKAGE_EXECUTION_REPORT_TYPES
+    ]
+    if not execution_records:
+        return {
+            "status": "NOT_RUN",
+            "latest": "",
+            "latest_report_type": "",
+            "count": 0,
+            "tools": [],
+        }
+    latest_by_tool = {}
+    for record in execution_records:
+        tool = PACKAGE_EXECUTION_REPORT_TYPES[record["report_type"]]
+        if tool not in latest_by_tool:
+            latest_by_tool[tool] = record
+    tool_statuses = {record["status"] for record in latest_by_tool.values()}
+    if "FAILED" in tool_statuses:
+        status = "FAILED"
+    elif "BLOCKED" in tool_statuses:
+        status = "BLOCKED"
+    elif tool_statuses and tool_statuses <= {"PASSED"}:
+        status = "PASSED"
+    else:
+        status = "ATTENTION"
+    latest = execution_records[0]
+    return {
+        "status": status,
+        "latest": latest["path"],
+        "latest_report_type": latest["report_type"],
+        "latest_status": latest["status"],
+        "count": len(execution_records),
+        "tools": [
+            {
+                "tool": tool,
+                "status": record["status"],
+                "report_type": record["report_type"],
+                "path": record["path"],
+                "created_at": record["created_at"],
+            }
+            for tool, record in sorted(latest_by_tool.items())
+        ],
+    }
+
+
+def _package_review_status(package_root):
+    reviews = [
+        item for item in _package_report_records(package_root)
+        if item["report_type"] in PACKAGE_REVIEW_REPORT_TYPES
+    ]
+    if not reviews:
+        return {"status": "NOT_RUN", "latest": "", "report_type": "", "count": 0}
+    latest = reviews[0]
+    return {
+        "status": latest["status"],
+        "latest": latest["path"],
+        "report_type": latest["report_type"],
+        "count": len(reviews),
+    }
+
+
+def _package_quality_status(asset, preflight, execution, review):
+    if asset.get("status") != "READY":
+        status = "BLOCKED"
+        reason = "需求资料、测试用例或核心工具资产尚未就绪。"
+    elif preflight.get("status") == "BLOCKED":
+        status = "BLOCKED"
+        reason = "运行数据或资源预检存在阻断。"
+    elif execution.get("status") == "FAILED":
+        status = "FAILED"
+        reason = "最近一轮真实工具执行仍有失败。"
+    elif execution.get("status") == "BLOCKED":
+        status = "BLOCKED"
+        reason = "真实工具执行被环境、数据或凭证阻断。"
+    elif execution.get("status") == "NOT_RUN":
+        status = "NOT_RUN"
+        reason = "资产已生成，但还没有真实执行结果。"
+    elif execution.get("status") != "PASSED":
+        status = "ATTENTION"
+        reason = "真实执行结果尚不能形成通过结论。"
+    elif preflight.get("status") != "READY":
+        status = "ATTENTION"
+        reason = "真实执行已通过，但预检仍有提醒或尚未完成。"
+    elif review.get("status") != "PASSED":
+        status = "ATTENTION"
+        reason = "真实执行已通过，仍需完成统一场景报告或AI复盘确认。"
+    else:
+        status = "PASSED"
+        reason = "资产、预检、真实执行和质量复盘均已通过。"
+    return {"status": status, "reason": reason}
+
+
+def _requirement_package_status_model(package_root, counts, artifacts):
+    asset = _package_asset_status(counts, artifacts)
+    preflight = _package_preflight_status(package_root)
+    execution = _package_execution_status(package_root)
+    review = _package_review_status(package_root)
+    quality = _package_quality_status(asset, preflight, execution, review)
+    return {
+        "asset_status": asset["status"],
+        "preflight_status": preflight["status"],
+        "latest_execution_status": execution["status"],
+        "quality_status": quality["status"],
+        "quality_reason": quality["reason"],
+        "asset": asset,
+        "preflight": preflight,
+        "execution": execution,
+        "review": review,
     }
 
 
@@ -943,7 +1162,8 @@ def _requirement_package_workflow_status(package_root, counts, artifacts):
     mapping = _file_status(output_root / "case-jmeter-mapping.json")
     preflight = _read_json_asset(output_root / "data-preflight-check.json")
     tool_manifest = _read_json_asset(output_root / "tool-assets-manifest.json")
-    report_status = _package_latest_report_status(root)
+    execution_status = _package_execution_status(root)
+    review_status = _package_review_status(root)
     evidence_ready = artifacts.get("evidence_rules", {}).get("exists") or (root / "evidence_rules.candidates.yaml").is_file()
     stages = [
         {
@@ -977,14 +1197,14 @@ def _requirement_package_workflow_status(package_root, counts, artifacts):
         {
             "code": "05",
             "name": "执行报告",
-            "status": report_status.get("status"),
-            "summary": f"{report_status.get('count', 0)}份需求包报告",
+            "status": execution_status.get("status"),
+            "summary": f"{execution_status.get('count', 0)}份真实执行报告",
             "next_action": "运行 Newman/JMeter 并回收报告",
         },
         {
             "code": "06",
             "name": "AI复盘",
-            "status": "READY" if list((root / "reports").glob("ai-review-*/summary.json")) else "PENDING",
+            "status": review_status.get("status"),
             "summary": "结合接口、DB/Redis证据做复盘",
             "next_action": "生成当前需求包 AI 复盘",
         },
@@ -1010,17 +1230,18 @@ def _requirement_package_template(project_id, key):
             "id": "salary-trade",
             "name": salary.get("name") or "工资代理快速结算",
             "domain": "工资交易",
-            "description": "多申请人、多代理、订单状态流转、DB白名单和Redis登录态校验。",
+            "description": "多申请人、多代理、订单状态流转、DB白名单和订单证据校验。",
             "primary_tool": "JMeter",
             "tool_strategy": {
                 "newman": "读接口、鉴权和参数回归",
                 "jmeter": "多账号订单状态机和性能观察",
-                "pytest": "接口结果、DB、Redis证据复盘",
+                "pytest": "接口结果、DB证据复盘",
             },
-            "data_policy": "申请人/代理身份走CSV或Redis；数据库只负责代理资格和订单证据，不保存ticket。",
+            "data_policy": "申请人/代理身份走CSV；数据库负责代理资格和订单、日志、投诉凭证证据，不保存ticket。",
             "base_url": base_url,
             "artifacts": {
                 "account_model": REQUIREMENT_PACKAGE_ROOT / "salary-trade" / "account_model.yaml",
+                "resource_manifest": REQUIREMENT_PACKAGE_ROOT / "salary-trade" / "resource_manifest.yaml",
                 "test_cases": ROOT / "outputs" / "salary-trade-manual-test-cases.md",
                 "jmeter": ROOT / "outputs" / "salary-trade-state-machine.jmx",
                 "launcher": ROOT / "outputs" / "open-salary-trade-state-machine.ps1",
@@ -1034,8 +1255,8 @@ def _requirement_package_template(project_id, key):
                 "生成正常/异常/边界测试用例",
                 "按用例生成独立JMeter状态机",
                 "JMeter按申请人CSV读取8条流程",
-                "DB匹配代理白名单，CSV/Redis补身份认证",
-                "回收JTL并结合DB/Redis复盘",
+                "DB按 support_currencies 匹配代理白名单，CSV补身份认证",
+                "回收JTL并结合DB证据复盘",
             ],
         }
     return {
@@ -1053,6 +1274,7 @@ def _requirement_package_template(project_id, key):
         "base_url": base_url,
         "artifacts": {
             "account_model": REQUIREMENT_PACKAGE_ROOT / "wealth-level" / "account_model.yaml",
+            "resource_manifest": REQUIREMENT_PACKAGE_ROOT / "wealth-level" / "resource_manifest.yaml",
             "jmeter": Path("D:/apache-jmeter-5.6.3/jmx/20260826/性能基线.jmx"),
             "runtime_csv": ROOT / str(wealth.get("runtime_csv_path") or "data/wealth-level-runtime.csv"),
             "jtl": Path(str(wealth.get("result_jtl_path") or "D:/apache-jmeter-5.6.3/jmx/20260826/性能基线-result.jtl")),
@@ -1102,8 +1324,8 @@ def ensure_requirement_package_manifest(project_id, package):
         existing_manifest = {}
     artifacts = {name: _file_status(path) for name, path in (package.get("artifacts") or {}).items()}
     counts = _package_signal_counts(project_id, package["id"])
-    ready_artifacts = sum(1 for item in artifacts.values() if item["exists"])
-    status = "READY" if counts["test_cases"] and ready_artifacts else "DRAFT" if counts["sources"] or ready_artifacts else "EMPTY"
+    asset_status = _package_asset_status(counts, artifacts)
+    status = asset_status["status"]
     manifest = {
         "schema_version": "1.0",
         "project_id": project_id,
@@ -1154,6 +1376,7 @@ def ensure_requirement_package_manifest(project_id, package):
         )
     manifest["root"] = str(root)
     manifest["manifest_path"] = str(manifest_path)
+    manifest["status_model"] = _requirement_package_status_model(root, counts, artifacts)
     manifest["workflow_status"] = _requirement_package_workflow_status(root, counts, artifacts)
     return manifest
 
@@ -1194,6 +1417,7 @@ def _custom_requirement_package_template(project_id, manifest):
         "artifacts": {
             "manifest": REQUIREMENT_PACKAGE_ROOT / package_id / "manifest.json",
             "account_model": REQUIREMENT_PACKAGE_ROOT / package_id / "account_model.yaml",
+            "resource_manifest": REQUIREMENT_PACKAGE_ROOT / package_id / "resource_manifest.yaml",
             "evidence_rules": REQUIREMENT_PACKAGE_ROOT / package_id / "evidence_rules.yaml",
             "newman": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "newman" / "postman-collection.json",
             "jmeter": REQUIREMENT_PACKAGE_ROOT / package_id / "outputs" / "jmeter" / "jmeter-plan.jmx",
@@ -1229,10 +1453,16 @@ def requirement_package_catalog(project_id):
         "ready": sum(item["status"] == "READY" for item in packages),
         "draft": sum(item["status"] == "DRAFT" for item in packages),
         "empty": sum(item["status"] == "EMPTY" for item in packages),
+        "asset_ready": sum(deep_get(item, "status_model.asset_status") == "READY" for item in packages),
+        "preflight_blocked": sum(deep_get(item, "status_model.preflight_status") == "BLOCKED" for item in packages),
+        "execution_failed": sum(deep_get(item, "status_model.latest_execution_status") == "FAILED" for item in packages),
+        "quality_passed": sum(deep_get(item, "status_model.quality_status") == "PASSED" for item in packages),
+        "quality_blocked": sum(deep_get(item, "status_model.quality_status") == "BLOCKED" for item in packages),
+        "quality_not_run": sum(deep_get(item, "status_model.quality_status") == "NOT_RUN" for item in packages),
         "root": str(REQUIREMENT_PACKAGE_ROOT),
     }
     return {
-        "status": "READY" if summary["ready"] else "DRAFT",
+        "status": "READY" if summary["quality_passed"] == summary["total"] and summary["total"] else "ATTENTION",
         "summary": summary,
         "packages": packages,
         "process": [
@@ -1638,7 +1868,6 @@ def _candidate_rule_assertions(table_name, case_text):
         return [
             {"field": "uid", "operator": "equals", "expected": "${proxy_uid}"},
             {"field": "status", "operator": "equals", "expected": 1},
-            {"field": "country_code", "operator": "equals", "expected": "${country_code}"},
             {"field": "support_currencies", "operator": "contains", "expected": "${currency}"},
         ]
     if "order" in table_name or "订单" in case_text:
@@ -1797,7 +2026,7 @@ def accept_candidate_evidence_rules(project_id, payload=None):
             "schema_version": "1.0",
             "package_id": package_id,
             "package_name": package.get("name"),
-            "purpose": "执行后用只读 MySQL/Redis 证据证明接口产生的业务结果真实落库、状态正确、流水可追溯。",
+            "purpose": "执行后用只读 MySQL 证据证明接口产生的业务结果真实落库、状态正确、流水可追溯。" if package_id == "salary-trade" else "执行后用只读 MySQL/Redis 证据证明接口产生的业务结果真实落库、状态正确、流水可追溯。",
             "runtime_variables": {},
             "rules": [],
         }
@@ -2165,9 +2394,362 @@ def _truthy_csv_value(value):
     return bool(str(value or "").strip()) and str(value or "").strip().lower() not in ("0", "false", "no", "off", "null", "none")
 
 
-def _ticket_source_ready(row_data, prefix=""):
-    names = [f"{prefix}ticket", "ticket", f"{prefix}password_encrypted", "password_encrypted", f"{prefix}redis_uid", "redis_uid", "uid"]
+def _ticket_source_ready(row_data, prefix="", allow_redis=False, allow_uid_fallback=False):
+    names = [f"{prefix}ticket", "ticket", f"{prefix}password_encrypted", "password_encrypted"]
+    if allow_redis:
+        names.extend([f"{prefix}redis_uid", "redis_uid"])
+    if allow_uid_fallback:
+        names.append("uid")
     return any(_truthy_csv_value(row_data.get(name)) for name in names)
+
+
+def _credential_input_detection(row_data, prefix=""):
+    uid_value = str(row_data.get(f"{prefix}uid") or row_data.get("uid") or "").strip()
+    ticket_ready = _truthy_csv_value(row_data.get(f"{prefix}ticket")) or _truthy_csv_value(row_data.get("ticket"))
+    password_ready = (
+        _truthy_csv_value(row_data.get(f"{prefix}password_encrypted"))
+        or _truthy_csv_value(row_data.get("password_encrypted"))
+        or _truthy_csv_value(row_data.get("password"))
+    )
+    sources = []
+    if ticket_ready:
+        sources.append("uid+ticket")
+    if password_ready:
+        sources.append("uid+login_password")
+    return {
+        "uid_present": bool(uid_value),
+        "credential_present": bool(ticket_ready or password_ready),
+        "usable": bool(uid_value and (ticket_ready or password_ready)),
+        "sources": sources,
+    }
+
+
+def _credential_input_summary(rows_, prefix=""):
+    detections = [_credential_input_detection(item, prefix) for item in rows_]
+    return {
+        "total": len(detections),
+        "uid_ready": sum(1 for item in detections if item["uid_present"]),
+        "credential_ready": sum(1 for item in detections if item["credential_present"]),
+        "usable": sum(1 for item in detections if item["usable"]),
+        "sources": sorted({source for item in detections for source in item["sources"]}),
+    }
+
+
+def _resource_manifest_path(package_root):
+    return Path(package_root) / "resource_manifest.yaml"
+
+
+def _portable_resource_path(value):
+    path = Path(str(value or ""))
+    if not str(path):
+        return ""
+    try:
+        return str(path.resolve().relative_to(ROOT.resolve())).replace("\\", "/")
+    except Exception:
+        return str(path)
+
+
+def _resolve_resource_path(value):
+    path = Path(str(value or ""))
+    return path if path.is_absolute() else ROOT / path
+
+
+def _resource_role_csv_path(package, role_name):
+    artifacts = package.get("artifacts") or {}
+    candidates = [f"{role_name}_csv"]
+    if role_name in {"proxy", "agent"}:
+        candidates.extend(["proxy_csv", "agent_csv"])
+    if role_name in {"applicant", "user", "wealth_user"}:
+        candidates.extend(["applicant_csv", "runtime_csv", "account_csv"])
+    for name in candidates:
+        item = artifacts.get(name) or {}
+        if item.get("path"):
+            return _portable_resource_path(item["path"])
+    return ""
+
+
+def _default_requirement_resource_manifest(project_id, package_id, package):
+    package_root = Path(package["root"])
+    account_model = _load_yaml_file(package_root / "account_model.yaml")
+    package_manifest = {}
+    try:
+        package_manifest = json.loads((package_root / "manifest.json").read_text(encoding="utf-8"))
+    except Exception:
+        package_manifest = {}
+    credentials = []
+    datasets = []
+    for role in account_model.get("roles") or []:
+        if not isinstance(role, dict):
+            continue
+        role_name = str(role.get("name") or "default_user").strip()
+        required_fields = [str(x) for x in (role.get("required_fields") or []) if str(x).strip()]
+        csv_path = _resource_role_csv_path(package, role_name)
+        declared_sources = [str(x) for x in (role.get("credential_sources") or []) if str(x).strip()]
+        sources = []
+        if csv_path and any("csv" in x.lower() for x in declared_sources):
+            sources.append({"type": "csv", "path": csv_path})
+        if any("runtime" in x.lower() for x in declared_sources):
+            sources.append({"type": "runtime", "path": ""})
+        if any("login_api" in x.lower() for x in declared_sources):
+            sources.append({"type": "login_api", "path": ""})
+        if any("redis" in x.lower() for x in declared_sources):
+            sources.append({"type": "redis", "path": ""})
+        credentials.append({
+            "role": role_name,
+            "min_count": int(role.get("min_count") or 1),
+            "required_fields": required_fields,
+            "sources": sources,
+        })
+        if csv_path:
+            datasets.append({
+                "id": f"{role_name}_accounts",
+                "role": role_name,
+                "type": "csv",
+                "path": csv_path,
+                "purpose": f"{role_name}账号与参数数据",
+            })
+    data_scope = package_manifest.get("data_scope") or package.get("data_scope") or {}
+    scope_reason = str(data_scope.get("scope_reason") or "")
+    disabled_resources = []
+    if "redis" in scope_reason.lower() and any(word in scope_reason for word in ("不参与", "不需要", "不检查", "不使用")):
+        disabled_resources.append("redis")
+    mysql_tables = [
+        {"name": str(name), "purpose": "当前需求包业务证据", "required": True}
+        for name in (data_scope.get("mysql_tables") or []) if str(name).strip()
+    ]
+    redis_patterns = [
+        {"pattern": str(name), "purpose": "当前需求包缓存证据", "required": False}
+        for name in (data_scope.get("redis_patterns") or []) if str(name).strip()
+    ]
+    extractions = []
+    if package_id == "salary-trade":
+        extractions.append({
+            "variable": "salary_order_no",
+            "source": "创建订单响应",
+            "json_paths": ["$.data.orderNo", "$.data.order_no", "$.data.id"],
+            "required": True,
+        })
+    return {
+        "schema_version": "1.0",
+        "package_id": package_id,
+        "updated_at": now(),
+        "policy": "资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。",
+        "credentials": credentials,
+        "datasets": datasets,
+        "mysql_tables": mysql_tables,
+        "redis_patterns": redis_patterns,
+        "runtime_parameters": [],
+        "variable_extractions": extractions,
+        "disabled_resources": disabled_resources,
+        "confirmed_ignored": [],
+    }
+
+
+def requirement_resource_manifest(project_id, package_id, create=True):
+    package = requirement_package_by_id(project_id, package_id)
+    path = _resource_manifest_path(package["root"])
+    payload = _load_yaml_file(path)
+    if not payload:
+        payload = _default_requirement_resource_manifest(project_id, package_id, package)
+        if create:
+            path.write_text(_yaml_dump(payload), encoding="utf-8")
+    payload["path"] = str(path)
+    payload["exists"] = path.is_file()
+    return payload
+
+
+def save_requirement_resource_manifest(project_id, package_id, payload=None):
+    payload = payload or {}
+    current = requirement_resource_manifest(project_id, package_id, True)
+    path = Path(current.pop("path"))
+    current.pop("exists", None)
+    if payload.get("confirm_ignore_gap_id"):
+        ignored = set(str(x) for x in (current.get("confirmed_ignored") or []) if str(x).strip())
+        ignored.add(str(payload["confirm_ignore_gap_id"]).strip())
+        current["confirmed_ignored"] = sorted(ignored)
+    else:
+        for key in ("credentials", "datasets", "mysql_tables", "redis_patterns", "runtime_parameters", "variable_extractions", "disabled_resources", "confirmed_ignored"):
+            if key in payload and isinstance(payload[key], list):
+                current[key] = payload[key]
+        if payload.get("policy"):
+            current["policy"] = str(payload["policy"]).strip()
+    current["schema_version"] = str(current.get("schema_version") or "1.0")
+    current["package_id"] = package_id
+    for item in current.get("datasets") or []:
+        if isinstance(item, dict) and item.get("path"):
+            item["path"] = _portable_resource_path(item["path"])
+    for credential in current.get("credentials") or []:
+        if not isinstance(credential, dict):
+            continue
+        for source in credential.get("sources") or []:
+            if isinstance(source, dict) and source.get("path"):
+                source["path"] = _portable_resource_path(source["path"])
+    current["updated_at"] = now()
+    path.write_text(_yaml_dump(current), encoding="utf-8")
+    return {"status": "READY", "manifest": requirement_resource_manifest(project_id, package_id, False)}
+
+
+def _resource_need_text(cases, scenarios):
+    chunks = []
+    for item in cases or []:
+        if not isinstance(item, dict):
+            continue
+        for key in ("title", "requirement_ref", "steps", "expected", "scenario_type", "path", "payload", "parameters"):
+            chunks.append(str(item.get(key) or ""))
+    for item in scenarios or []:
+        if isinstance(item, dict):
+            chunks.append(json.dumps(item, ensure_ascii=False))
+    return "\n".join(chunks).lower()
+
+
+def requirement_resource_preflight(project_id, package_id):
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    manifest = requirement_resource_manifest(project_id, package_id, True)
+    account_model = _load_yaml_file(package_root / "account_model.yaml")
+    cases = _requirement_package_cases(project_id, package_id)
+    execution_plan = _read_json_asset(package_root / "outputs" / "execution-plan.json")
+    scenarios = execution_plan.get("scenarios") if isinstance(execution_plan, dict) else []
+    evidence_payload = _load_yaml_file(package_root / "evidence_rules.yaml")
+    evidence_rules = [x for x in (evidence_payload.get("rules") or []) if isinstance(x, dict)]
+    text = _resource_need_text(cases, scenarios)
+    ignored = {str(x) for x in (manifest.get("confirmed_ignored") or [])}
+    known_tables = {x["table_name"] for x in rows("SELECT table_name FROM db_tables WHERE project_id=?", (project_id,)) if x.get("table_name")}
+    known_redis = {x["key_name"] for x in rows("SELECT key_name FROM redis_key_snapshots WHERE project_id=?", (project_id,)) if x.get("key_name")}
+    findings = []
+
+    def add_finding(gap_id, severity, title, reason, next_action, resource_type, registered=None):
+        state = "CONFIRMED_IGNORED" if gap_id in ignored else severity
+        findings.append({
+            "id": gap_id,
+            "status": state,
+            "title": title,
+            "reason": reason,
+            "next_action": next_action,
+            "resource_type": resource_type,
+            "registered": registered or [],
+        })
+
+    credential_by_role = {str(x.get("role") or ""): x for x in (manifest.get("credentials") or []) if isinstance(x, dict)}
+    for role in account_model.get("roles") or []:
+        if not isinstance(role, dict):
+            continue
+        role_name = str(role.get("name") or "default_user")
+        required_fields = [str(x).lower() for x in (role.get("required_fields") or [])]
+        needs_credential = any(x in required_fields for x in ("ticket", "token", "password", "password_encrypted"))
+        registered = credential_by_role.get(role_name) or {}
+        sources = [x for x in (registered.get("sources") or []) if isinstance(x, dict) and x.get("type")]
+        if needs_credential and not sources:
+            add_finding(
+                f"credential:{role_name}", "BLOCKED", f"{role_name}缺少可用凭证来源",
+                "测试用例需要身份认证，但当前需求包没有为该角色登记运行参数、账号文件、登录接口或其他真实来源。",
+                "登记一种能同时提供uid和ticket/token的凭证来源。", "credential",
+            )
+        elif needs_credential:
+            missing_files = [x.get("path") for x in sources if x.get("type") in {"csv", "excel"} and x.get("path") and not _resolve_resource_path(x.get("path")).is_file()]
+            non_file_sources = [x for x in sources if x.get("type") not in {"csv", "excel"}]
+            if missing_files and not non_file_sources:
+                add_finding(
+                    f"credential_file:{role_name}", "BLOCKED", f"{role_name}凭证文件不存在",
+                    "已登记账号文件，但运行时无法读取该路径。", "修正文件路径或重新上传账号文件。", "credential", missing_files,
+                )
+
+    datasets = [x for x in (manifest.get("datasets") or []) if isinstance(x, dict)]
+    if account_model.get("csv_required"):
+        existing = [x for x in datasets if x.get("path") and _resolve_resource_path(x.get("path")).is_file()]
+        if not existing:
+            add_finding(
+                "dataset:multi_account", "BLOCKED", "多账号场景缺少可读取的数据文件",
+                "账号模型要求多账号或多流程槽位，但没有登记可读取的CSV/Excel数据集。",
+                "上传或登记与角色对应的账号数据文件。", "dataset",
+            )
+
+    registered_tables = {str(x.get("name") or "") for x in (manifest.get("mysql_tables") or []) if isinstance(x, dict)}
+    required_tables = {
+        str((rule.get("query") or {}).get("table") or "")
+        for rule in evidence_rules if str((rule.get("query") or {}).get("source") or "").lower() == "mysql"
+    }
+    required_tables.discard("")
+    for table_name in sorted(required_tables):
+        if table_name not in registered_tables:
+            add_finding(
+                f"mysql:{table_name}", "WARNING", f"数据库证据表未登记：{table_name}",
+                "正式证据规则引用了该表，但资源清单里没有说明它属于当前需求。",
+                "登记表名和用途，或确认本需求不需要该证据。", "mysql_table",
+            )
+        elif known_tables and table_name not in known_tables:
+            add_finding(
+                f"mysql_metadata:{table_name}", "WARNING", f"数据库元数据未证实：{table_name}",
+                "资源清单已登记该表，但平台保存的数据库元数据中尚未找到。",
+                "重新读取数据库表结构，确认没有写错表名。", "mysql_table", [table_name],
+            )
+
+    redis_words = ("缓存状态", "缓存一致", "缓存登录态", "限流", "频控", "幂等", "分布式锁", "redis key")
+    redis_disabled = "redis" in {str(x).lower() for x in (manifest.get("disabled_resources") or [])}
+    needs_redis = not redis_disabled and (any(word in text for word in redis_words) or any(str((x.get("query") or {}).get("source") or "").lower() == "redis" for x in evidence_rules))
+    registered_redis = [str(x.get("pattern") or "") for x in (manifest.get("redis_patterns") or []) if isinstance(x, dict) and x.get("pattern")]
+    if needs_redis and not registered_redis:
+        add_finding(
+            "redis:unregistered", "WARNING", "用例涉及缓存语义但未登记Redis资源",
+            "平台不会猜测Redis Key；缺少Key模式时仍可执行HTTP，但缓存结论不完整。",
+            "让研发提供Key模式，或确认该需求不检查Redis。", "redis_pattern",
+        )
+    elif needs_redis and known_redis:
+        for pattern in registered_redis:
+            if pattern not in known_redis and not any(pattern.rstrip("*") in item for item in known_redis):
+                add_finding(
+                    f"redis_metadata:{pattern}", "WARNING", f"Redis元数据未证实：{pattern}",
+                    "登记的Key模式尚未在平台缓存元数据中找到。", "重新读取Redis元数据或确认Key模式。", "redis_pattern", [pattern],
+                )
+
+    dependency_words = ("orderno", "order_no", "orderid", "order_id")
+    if any(word in text for word in dependency_words):
+        extractions = [x for x in (manifest.get("variable_extractions") or []) if isinstance(x, dict)]
+        if not extractions:
+            add_finding(
+                "variable:order_dependency", "BLOCKED", "依赖订单号但未登记变量提取规则",
+                "后续接口需要orderNo/orderId，必须从创建或查询响应中提取并传递。",
+                "登记变量名、来源接口和JSON提取路径。", "variable_extraction",
+            )
+
+    if any(word in text for word in ("12小时", "24小时", "定时任务", "超时自动", "到期自动")):
+        runtime_params = {str(x.get("name") if isinstance(x, dict) else x) for x in (manifest.get("runtime_parameters") or [])}
+        if not any(x in runtime_params for x in ("time_offset", "task_trigger", "expire_time_control")):
+            add_finding(
+                "runtime:time_control", "SUGGESTION", "存在超时流程但未登记时间控制资源",
+                "自然等待12/24小时不适合自动化回归，通常需要测试环境时间偏移或定时任务触发入口。",
+                "登记时间偏移参数、任务触发接口，或保留为人工场景。", "runtime_parameter",
+            )
+
+    active = [x for x in findings if x["status"] != "CONFIRMED_IGNORED"]
+    blocked = sum(1 for x in active if x["status"] == "BLOCKED")
+    warnings = sum(1 for x in active if x["status"] == "WARNING")
+    suggestions = sum(1 for x in active if x["status"] == "SUGGESTION")
+    status = "BLOCKED" if blocked else "READY_WITH_WARNINGS" if warnings or suggestions else "READY"
+    result = {
+        "schema_version": "1.0",
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "generated_at": now(),
+        "status": status,
+        "summary": {
+            "blocked": blocked,
+            "warnings": warnings,
+            "suggestions": suggestions,
+            "confirmed_ignored": sum(1 for x in findings if x["status"] == "CONFIRMED_IGNORED"),
+            "registered_datasets": len(datasets),
+            "registered_mysql_tables": len(registered_tables),
+            "registered_redis_patterns": len(registered_redis),
+        },
+        "policy": manifest.get("policy"),
+        "findings": findings,
+        "resource_manifest_path": manifest.get("path"),
+    }
+    out = package_root / "outputs" / "resource-preflight-check.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    result["report_path"] = str(out)
+    return result
 
 
 def _scenario_evidence_rule_ids(scenario):
@@ -2232,7 +2814,7 @@ def _scenario_data_preflight(package_id, package_root, details):
             if index and len(applicant_rows) >= index:
                 applicant = applicant_rows[index - 1]
                 if not applicant.get("credential_ready"):
-                    blockers.append(f"账号槽位 {account_slot} 的申请人缺少 ticket/password/redis_uid")
+                    blockers.append(f"账号槽位 {account_slot} 的申请人缺少 ticket/password")
                 country = applicant.get("countryCode") or applicant.get("country_code") or ""
                 currency = applicant.get("currency") or ""
                 if country and currency:
@@ -2298,6 +2880,12 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         "country_currency_pairs": [],
         "proxy_matches": [],
         "credential_sources": {},
+        "input_detection": {
+            "policy": "按当前需求包 account_model.yaml 和测试用例字段检测数据来源；不默认强加 CSV、Redis 或登录接口。",
+            "enabled_sources": [],
+            "disabled_by_default": ["redis"],
+            "roles": {},
+        },
     }
     status = "READY"
 
@@ -2324,13 +2912,31 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         account_applicants = [x for x in account_rows if str(x.get("role") or "").strip() == "applicant"]
         applicants = applicant_rows + account_applicants
         applicant_uids = {str(x.get("applicant_uid") or x.get("uid") or "").strip() for x in applicants if str(x.get("applicant_uid") or x.get("uid") or "").strip()}
-        applicant_ready = [x for x in applicants if _ticket_source_ready(x, "applicant_")]
+        applicant_ready = [x for x in applicants if _credential_input_detection(x, "applicant_")["usable"]]
+        applicant_input_summary = _credential_input_summary(applicants, "applicant_")
+        proxy_input_summary = _credential_input_summary(proxy_rows, "proxy_")
+        details["input_detection"]["enabled_sources"] = ["applicant_csv", "proxy_csv", "login_api_if_password_present", "mysql_readonly_evidence"]
+        details["input_detection"]["roles"] = {
+            "applicant": {
+                "required": ["uid", "ticket 或 password_encrypted"],
+                **applicant_input_summary,
+            },
+            "proxy": {
+                "required": ["uid", "ticket 或 password_encrypted"],
+                **proxy_input_summary,
+            },
+            "mysql": {
+                "required": ["anchor_salary_trade_agent_whitelist", "anchor_salary_trade_order", "anchor_salary_trade_order_log", "anchor_salary_trade_evidence"],
+                "purpose": "只读检查代理资格、订单主状态、状态日志和投诉凭证。",
+            },
+        }
         details["applicants"] = [
             {
                 "uid": str(x.get("applicant_uid") or x.get("uid") or "").strip(),
                 "countryCode": str(x.get("countryCode") or x.get("country_code") or "").strip(),
                 "currency": str(x.get("currency") or "").strip(),
-                "credential_ready": _ticket_source_ready(x, "applicant_"),
+                "credential_ready": _credential_input_detection(x, "applicant_")["usable"],
+                "credential_sources": _credential_input_detection(x, "applicant_")["sources"],
                 "source": "applicant_csv" if x in applicant_rows else "account_csv",
             }
             for x in applicants
@@ -2339,9 +2945,9 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         details["credential_sources"]["applicant_ready"] = len(applicant_ready)
         details["credential_sources"]["applicant_total"] = len(applicant_uids)
         if len(applicant_uids) >= 8 and len(applicant_ready) >= 8:
-            add_check("8个申请人账号", "READY", f"已识别 {len(applicant_uids)} 个申请人，具备登录态来源 {len(applicant_ready)} 个。")
+            add_check("8个申请人账号", "READY", f"已识别 {len(applicant_uids)} 个申请人，具备可用凭证 {len(applicant_ready)} 个。")
         else:
-            add_check("8个申请人账号", "NEEDS_DATA", f"需要8个申请人；当前识别 {len(applicant_uids)} 个，具备登录态来源 {len(applicant_ready)} 个。", "补齐 applicant CSV 或账号CSV的 ticket/password/redis_uid")
+            add_check("8个申请人账号", "NEEDS_DATA", f"需要8个申请人；当前识别 {len(applicant_uids)} 个，具备可用凭证 {len(applicant_ready)} 个。", "补齐 applicant CSV 或账号CSV的 ticket/password")
         applicant_pairs = sorted({
             (str(x.get("countryCode") or x.get("country_code") or "").strip(), str(x.get("currency") or "").strip())
             for x in applicants
@@ -2351,8 +2957,7 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         for country_code, currency in applicant_pairs:
             matched = [
                 x for x in proxy_rows
-                if str(x.get("countryCode") or x.get("country_code") or "").strip() == country_code
-                and currency in str(x.get("supportCurrencies") or x.get("support_currencies") or x.get("currency") or "")
+                if currency in str(x.get("supportCurrencies") or x.get("support_currencies") or "")
                 and str(x.get("enabled", "true")).strip().lower() not in ("0", "false", "no", "off")
             ]
             proxy_matches.append({"countryCode": country_code, "currency": currency, "matched": len(matched), "proxy_uids": [x.get("proxy_uid") or x.get("uid") for x in matched[:5]]})
@@ -2360,17 +2965,24 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         details["proxy_matches"] = proxy_matches
         missing_pairs = [x for x in proxy_matches if not x["matched"]]
         if missing_pairs:
-            add_check("代理国家币种匹配", "NEEDS_DATA", f"存在 {len(missing_pairs)} 组申请人国家/币种未在代理CSV命中。", "同步数据库白名单到代理CSV，或补齐对应代理")
+            add_check("代理收款币种匹配", "NEEDS_DATA", f"存在 {len(missing_pairs)} 组申请人收款币种未在代理CSV的support_currencies命中。", "同步数据库白名单到代理CSV，或补齐对应代理")
         else:
-            add_check("代理国家币种匹配", "READY", f"申请人国家/币种组合 {len(applicant_pairs)} 组均能在代理CSV匹配。")
-        proxy_ready = [x for x in proxy_rows if _ticket_source_ready(x, "proxy_")]
+            add_check("代理收款币种匹配", "READY", f"申请人收款币种组合 {len(applicant_pairs)} 组均能在代理CSV的support_currencies匹配。")
+        proxy_ready = [
+            x for x in proxy_rows
+            if _credential_input_detection(x, "proxy_")["usable"]
+        ]
         details["credential_sources"]["proxy_ready"] = len(proxy_ready)
         details["credential_sources"]["proxy_total"] = len(proxy_rows)
         details["credential_sources"]["proxy_ready_uids"] = [str(x.get("proxy_uid") or x.get("uid") or "").strip() for x in proxy_ready[:20]]
-        if proxy_ready:
-            add_check("代理登录态来源", "READY", f"代理CSV中 {len(proxy_ready)} 个代理具备 ticket/password/redis_uid 来源。")
+        if applicant_ready and proxy_ready:
+            add_check("凭证输入检测", "READY", "已按当前需求包识别 uid+ticket/password；未启用 Redis 作为默认来源。")
         else:
-            add_check("代理登录态来源", "NEEDS_DATA", "代理CSV未识别到可用 ticket/password/redis_uid。", "补齐代理登录态或配置Redis登录缓存读取")
+            add_check("凭证输入检测", "NEEDS_DATA", "存在角色缺少 uid+ticket/password。", "补齐当前需求包声明的账号数据来源")
+        if proxy_ready:
+            add_check("代理凭证来源", "READY", f"代理CSV中 {len(proxy_ready)} 个代理具备 uid+ticket/password 来源。")
+        else:
+            add_check("代理凭证来源", "NEEDS_DATA", "代理CSV未识别到可用 uid+ticket/password。", "补齐代理CSV中的真实凭证")
         if applicant_uids:
             uid_list = ",".join(sorted(applicant_uids))
             runtime_sql_checks.append({
@@ -2383,12 +2995,15 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
             runtime_sql_checks.append({
                 "name": "代理白名单实时检查",
                 "source": "mysql_runtime_preflight",
-                "sql_template": "SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND country_code=${countryCode} AND support_currencies LIKE CONCAT('%', ${currency}, '%') LIMIT 5;",
-                "expectation": "每个申请人国家和收款币种都能匹配至少一个可用代理。",
+                "sql_template": "SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND FIND_IN_SET('${currency}', support_currencies) > 0 LIMIT 5;",
+                "expectation": "每个申请人的收款币种都能在代理白名单 support_currencies 中匹配至少一个可用代理。",
             })
         add_check("业务库执行前检查", "NEEDS_LIVE_CHECK", f"已生成 {len(runtime_sql_checks)} 条运行前只读SQL检查模板。", "执行JMeter前由DB连接器读取真实订单和白名单状态")
     else:
-        add_check("通用运行数据", "READY_WITH_WARNINGS", "当前需求包不是工资交易，已按通用结构化用例做静态就绪判断。")
+        enabled = sorted((account_model.get("data_sources") or {}).keys()) if isinstance(account_model, dict) else []
+        details["input_detection"]["enabled_sources"] = enabled
+        details["input_detection"]["disabled_by_default"] = ["csv", "redis", "mysql", "login_api"]
+        add_check("通用运行数据", "READY_WITH_WARNINGS", "当前需求包按 account_model.yaml 声明的数据来源做静态判断，不默认强制CSV、Redis或DB。")
 
     scenario_preflight = _scenario_data_preflight(package_id, package_root, details)
     details["scenario_preflight"] = scenario_preflight
@@ -2409,6 +3024,26 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         )
     else:
         add_check("场景数据准备", "READY", f"{scenario_summary.get('ready', 0)} 个场景数据准备静态检查通过。")
+
+    resource_preflight = requirement_resource_preflight(project_id, package_id)
+    details["resource_preflight"] = resource_preflight
+    resource_summary = resource_preflight.get("summary") or {}
+    if resource_preflight.get("status") == "BLOCKED":
+        add_check(
+            "需求资源预检",
+            "NEEDS_DATA",
+            f"发现 {resource_summary.get('blocked', 0)} 个运行阻断、{resource_summary.get('warnings', 0)} 个提醒。",
+            "进入当前需求包的资源与预检，补齐账号、数据文件或变量依赖",
+        )
+    elif resource_preflight.get("status") == "READY_WITH_WARNINGS":
+        add_check(
+            "需求资源预检",
+            "WARNING",
+            f"无运行阻断；有 {resource_summary.get('warnings', 0)} 个提醒、{resource_summary.get('suggestions', 0)} 个建议。",
+            "确认资源登记或对非必要项执行确认忽略",
+        )
+    else:
+        add_check("需求资源预检", "READY", "当前需求包登记的运行与证据资源已通过静态检查。")
 
     return {
         "status": status,
@@ -3326,15 +3961,25 @@ def _newman_summary_for_report(payload):
     }
 
 
-def _jmeter_summary_from_reports(package_root, package_id):
+def _jmeter_summary_from_reports(package_root, package_id, run_payload=None):
     mapping = _read_json_asset(Path(package_root) / "outputs" / "case-jmeter-mapping.json")
     manifest = _read_json_asset(Path(package_root) / "outputs" / "jmeter" / f"{package_id}-case-jmeter-manifest.json")
+    run_payload = run_payload or {}
+    run_summary = run_payload.get("summary") or {}
     return {
-        "status": "READY" if mapping or manifest else "PENDING",
+        "status": run_payload.get("status") or ("READY" if mapping or manifest else "PENDING"),
         "mapped_cases": deep_get(mapping, "summary.jmeter_targets", 0),
         "script_ready": deep_get(mapping, "summary.script_ready", 0),
         "evidence_pending": deep_get(mapping, "summary.evidence_pending", 0),
+        "requests": run_summary.get("requests", 0),
+        "errors": run_summary.get("errors", 0),
+        "error_rate": run_summary.get("error_rate", 0),
+        "p95_ms": run_summary.get("p95_ms", 0),
+        "throughput_rps": run_summary.get("throughput_rps", 0),
+        "failed_labels": run_summary.get("failed_labels", [])[:10],
         "jmx": deep_get(manifest, "jmx.path", "") or deep_get(manifest, "jmx_file", ""),
+        "jtl": run_payload.get("jtl_path") or "",
+        "html_report": run_payload.get("html_report") or "",
         "manifest": str(Path(package_root) / "outputs" / "jmeter" / f"{package_id}-case-jmeter-manifest.json") if manifest else "",
     }
 
@@ -3386,7 +4031,8 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
     newman_item = latest_reports.get("REQUIREMENT_PACKAGE_NEWMAN_RUN") or {}
     newman_payload = newman_item.get("payload") or {}
     newman_summary = _newman_summary_for_report(newman_payload) if newman_payload else {"status": "PENDING", "requests": 0, "assertions": 0, "failed_assertions": 0, "failures": []}
-    jmeter_summary = _jmeter_summary_from_reports(package_root, package_id)
+    jmeter_item = latest_reports.get("REQUIREMENT_PACKAGE_JMETER_RUN") or {}
+    jmeter_summary = _jmeter_summary_from_reports(package_root, package_id, jmeter_item.get("payload") or {})
     source_reports = []
     for item in latest_reports.values():
         payload = item.get("payload") or {}
@@ -3816,7 +4462,7 @@ def _review_category(text, status=""):
     merged = f"{status} {text}".lower()
     if any(word in merged for word in ("401", "403", "authentication", "ticket", "token", "鉴权", "认证", "登录态")):
         return "authentication"
-    if any(word in merged for word in ("50017", "ongoing", "processing", "处理中", "一个未处理", "未匹配", "白名单", "国家", "币种", "账号", "ticket/password/redis_uid")):
+    if any(word in merged for word in ("50017", "ongoing", "processing", "处理中", "一个未处理", "未匹配", "白名单", "国家", "币种", "账号", "ticket/password")):
         return "test_data"
     if any(word in merged for word in ("400", "404", "405", "422", "参数", "必填", "类型", "格式", "request contract")):
         return "request_contract"
@@ -10174,12 +10820,10 @@ def salary_trade_db_evidence_check(project_id, payload):
     whitelist_ok = False
     if whitelist_rows:
         for item in whitelist_rows:
-            item_country = str(item.get("country_code") or "")
             currencies = str(item.get("support_currencies") or "")
             status_ok = int(item.get("status") or 0) == 1
-            country_ok = not country or item_country == country
             currency_ok = not currency or currency in re.split(r"[,，\s]+", currencies.replace("[", "").replace("]", "").replace('"', "").replace("'", ""))
-            if status_ok and country_ok and currency_ok:
+            if status_ok and currency_ok:
                 whitelist_ok = True
                 break
 
@@ -10955,7 +11599,7 @@ def _correct_account_model_for_metadata(account_model, names):
     if changed:
         corrected["metadata_correction"] = {
             "status": "NEEDS_REVIEW",
-            "action": "未被元数据证实的登录态来源已从强凭证来源降级为待确认来源。",
+            "action": "未被元数据证实的凭证来源已从强凭证来源降级为待确认来源。",
             "unverified_references": names,
         }
     return corrected, changed
@@ -11299,6 +11943,27 @@ def list_generated_reports(project_id):
                     "summary": f"场景{summary.get('scenarios',0)}个 · 通过{summary.get('passed',0)} · 失败{summary.get('failed',0)} · 阻断{summary.get('blocked',0)} · 提醒{summary.get('warning',0)}",
                     "json_url": "/requirement-reports/" + summary_file.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
                     "html_url": "",
+                    "file_name": str(summary_file),
+                    "package_id": package_id,
+                })
+                continue
+            if payload.get("report_type") == "REQUIREMENT_PACKAGE_JMETER_RUN":
+                summary = payload.get("summary") or {}
+                html_path = Path(payload.get("html_report") or "")
+                html_url = ""
+                if html_path.is_file():
+                    try:
+                        html_url = "/requirement-reports/" + html_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+                    except ValueError:
+                        html_url = ""
+                result.append({
+                    "name": f"{package_name}JMeter执行报告",
+                    "kind": "JMeter",
+                    "status": payload.get("status", "UNKNOWN"),
+                    "created_at": payload.get("created_at") or datetime.fromtimestamp(summary_file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+                    "summary": f"{summary.get('requests',0)}次请求 · 错误{summary.get('errors',0)} · 错误率{summary.get('error_rate','-')}% · P95 {summary.get('p95_ms','-')}ms",
+                    "json_url": "/requirement-reports/" + summary_file.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
+                    "html_url": html_url,
                     "file_name": str(summary_file),
                     "package_id": package_id,
                 })
@@ -12204,6 +12869,10 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(requirement_package_catalog(m.group(1)))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/account-model", path)
             if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/resource-manifest", path)
+            if m: return self.send_json(requirement_resource_manifest(m.group(1), m.group(2), True))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/resource-preflight", path)
+            if m: return self.send_json(requirement_resource_preflight(m.group(1), m.group(2)))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/evidence-rules", path)
             if m: return self.send_json(requirement_evidence_rules(m.group(1), m.group(2)))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/execution-plan", path)
@@ -12412,6 +13081,10 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_requirement_package_tool_assets(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/account-model", path)
             if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/resource-manifest", path)
+            if m: return self.send_json(save_requirement_resource_manifest(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/resource-preflight", path)
+            if m: return self.send_json(requirement_resource_preflight(m.group(1), m.group(2)))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/execution-plan", path)
             if m: return self.send_json(generate_requirement_execution_plan(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/newman/run", path)

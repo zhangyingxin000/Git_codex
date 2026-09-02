@@ -1,0 +1,30 @@
+schema_version: '1.0'
+package_id: wealth-level
+updated_at: '2026-09-02T14:28:17+08:00'
+policy: 资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。
+credentials:
+- role: wealth_user
+  min_count: 1
+  required_fields:
+  - uid
+  - ticket
+  sources:
+  - type: csv
+    path: data/wealth-level-runtime.csv
+  - type: runtime
+    path: ''
+  - type: login_api
+    path: ''
+  - type: redis
+    path: ''
+datasets:
+- id: wealth_user_accounts
+  role: wealth_user
+  type: csv
+  path: data/wealth-level-runtime.csv
+  purpose: wealth_user账号与参数数据
+mysql_tables: []
+redis_patterns: []
+runtime_parameters: []
+variable_extractions: []
+confirmed_ignored: []

@@ -115,11 +115,36 @@ AutoTest AI 的定位是 AI 自动化质量中枢，不是替代 JMeter、Postma
 1. 选择或新建需求包，导入需求资料和接口文档。
 2. 生成测试点、测试用例和结构化测试用例。
 3. 生成当前需求包的 `account_model.yaml`，判断单账号、多角色、多流程槽位和 CSV/运行参数策略。
-4. 按 JMeter Skill 规则生成 Newman、JMeter、pytest 执行资产。
-5. 执行 Newman/JMeter，并把原始报告回收到当前需求包。
-6. 用接口响应、DB/Redis证据、JMeter/Newman结果生成 AI 复盘。
+4. 维护 `resource_manifest.yaml` 并执行资源预检，确认账号文件、数据库表、Redis Key、运行参数和接口变量依赖是否齐全。
+5. 按 JMeter Skill 规则生成 Newman、JMeter、pytest 执行资产。
+6. 执行 Newman/JMeter，并把原始报告回收到当前需求包。
+7. 用接口响应、DB/Redis证据、JMeter/Newman结果生成 AI 复盘。
 
 这条链路的原则是：测试用例决定“测什么”，账号模型决定“用谁测”，JMeter/Newman/pytest 负责“怎么执行”，DB/Redis 元数据负责“证据是否真实存在”，AI 复盘负责“把失败原因讲清楚”。
+
+## 需求资源登记与预检
+
+每个需求包拥有独立的 `resource_manifest.yaml`。它只登记当前需求真正使用的账号来源、CSV/Excel 数据集、数据库表、Redis Key 模式、运行参数和接口变量提取规则，不把某个需求的数据源强加给其他需求。
+
+平台根据账号模型、测试用例、场景计划和正式证据规则生成 `outputs/resource-preflight-check.json`，并把缺口分为：
+
+- `BLOCKED`：缺少后无法执行，或执行结果没有可信身份和依赖变量。
+- `WARNING`：接口可以执行，但数据证据或结论不完整。
+- `SUGGESTION`：建议补充的测试能力，例如长时间过期流程的时间控制入口。
+- `CONFIRMED_IGNORED`：测试已确认当前需求不需要，不再重复提醒。
+
+工作台的“资源与预检”入口可以维护资源登记、重新检查缺口并确认忽略。Redis 只有在需求、用例或证据规则明确涉及缓存语义时才建议登记；明确声明不使用 Redis 的需求不会被强制提醒。
+
+## 需求包四层状态
+
+需求包不再用一个 `READY` 同时表示“文件已生成”和“质量已通过”。平台分别输出：
+
+- `asset_status`：需求资料、测试用例和工具资产是否成形。
+- `preflight_status`：账号、CSV、数据库、Redis、运行参数和变量依赖是否可执行。
+- `latest_execution_status`：Newman、JMeter、pytest 等真实工具最近一轮执行结论；生成计划和 AI 复盘不算真实执行。
+- `quality_status`：综合资产、预检、真实执行和复盘证据形成最终质量结论。
+
+因此“资产 READY、执行 FAILED”会明确显示为质量 `FAILED`，不会再被顶部 READY 掩盖。
 
 ## YAML 环境配置
 
@@ -199,6 +224,8 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 
 - `GET /api/projects/{project_id}/requirement-packages`：读取需求包目录和资产状态。
 - `POST /api/projects/{project_id}/requirement-packages`：新建独立需求包并生成可迁移目录。
+- `GET/POST /api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest`：读取或维护当前需求包资源登记。
+- `GET/POST /api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight`：按当前用例和场景重新执行资源预检。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/execution-plan`：生成场景级执行计划，把 Newman、JMeter、pytest 和人工复核按业务场景归拢。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/tool-assets`：按需求包生成 Newman、JMeter、pytest 资产。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/newman/run`：运行当前需求包的 Newman 轻量接口回归。

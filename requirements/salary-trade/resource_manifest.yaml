@@ -1,0 +1,72 @@
+schema_version: '1.0'
+package_id: salary-trade
+updated_at: '2026-09-02T14:28:17+08:00'
+policy: 资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。
+credentials:
+- role: applicant
+  min_count: 8
+  required_fields:
+  - uid
+  - ticket
+  sources:
+  - type: csv
+    path: data/salary-trade-applicants.csv
+  - type: runtime
+    path: ''
+  - type: login_api
+    path: ''
+- role: proxy
+  min_count: 1
+  required_fields:
+  - uid
+  - ticket
+  sources:
+  - type: csv
+    path: data/salary-trade-proxies.csv
+- role: operator
+  min_count: 1
+  required_fields:
+  - uid
+  - ticket
+  sources:
+  - type: runtime
+    path: ''
+  - type: login_api
+    path: ''
+datasets:
+- id: applicant_accounts
+  role: applicant
+  type: csv
+  path: data/salary-trade-applicants.csv
+  purpose: applicant账号与参数数据
+- id: proxy_accounts
+  role: proxy
+  type: csv
+  path: data/salary-trade-proxies.csv
+  purpose: proxy账号与参数数据
+mysql_tables:
+- name: anchor_salary_trade_agent_whitelist
+  purpose: 当前需求包业务证据
+  required: true
+- name: anchor_salary_trade_order
+  purpose: 当前需求包业务证据
+  required: true
+- name: anchor_salary_trade_order_log
+  purpose: 当前需求包业务证据
+  required: true
+- name: anchor_salary_trade_evidence
+  purpose: 当前需求包业务证据
+  required: true
+redis_patterns: []
+runtime_parameters: []
+variable_extractions:
+- variable: salary_order_no
+  source: 创建订单响应
+  json_paths:
+  - $.data.orderNo
+  - $.data.order_no
+  - $.data.id
+  required: true
+disabled_resources:
+- redis
+confirmed_ignored: []

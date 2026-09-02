@@ -143,6 +143,98 @@ def create_app() -> FastAPI:
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
+    @api.get("/api/projects/{project_id}/requirement-packages", tags=["Assets"], summary="需求包目录")
+    def requirement_packages(project_id: str) -> dict[str, Any]:
+        return legacy.requirement_package_catalog(project_id)
+
+    @api.post("/api/projects/{project_id}/requirement-packages", status_code=201, tags=["Assets"], summary="创建需求包")
+    def create_requirement_package(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.create_requirement_package(project_id, payload)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/account-model", tags=["Assets"], summary="需求包账号模型")
+    def requirement_account_model(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.generate_requirement_account_model(project_id, package_id, True)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/account-model", tags=["Assets"], summary="生成需求包账号模型")
+    def generate_requirement_account_model(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.generate_requirement_account_model(project_id, package_id, True)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest", tags=["Data Validation"], summary="需求包资源登记")
+    def resource_manifest(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.requirement_resource_manifest(project_id, package_id, True)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest", tags=["Data Validation"], summary="保存需求包资源登记")
+    def save_resource_manifest(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.save_requirement_resource_manifest(project_id, package_id, payload)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight", tags=["Data Validation"], summary="需求包资源预检")
+    def resource_preflight(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.requirement_resource_preflight(project_id, package_id)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight", tags=["Data Validation"], summary="重新执行需求包资源预检")
+    def rerun_resource_preflight(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.requirement_resource_preflight(project_id, package_id)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/evidence-rules", tags=["Data Validation"], summary="需求包证据规则")
+    def requirement_evidence_rules(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.requirement_evidence_rules(project_id, package_id)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan", tags=["Execution"], summary="需求包场景计划")
+    def requirement_execution_plan(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.generate_requirement_execution_plan(project_id, package_id, {})
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan", tags=["Execution"], summary="生成需求包场景计划")
+    def generate_requirement_execution_plan(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_requirement_execution_plan(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/tool-assets", tags=["Execution"], summary="生成需求包工具资产")
+    def requirement_tool_assets(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_requirement_package_tool_assets(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/newman/run", tags=["Execution"], summary="运行需求包Newman")
+    def requirement_newman_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.run_requirement_package_newman(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/pytest/run", tags=["Execution"], summary="运行需求包pytest证据复核")
+    def requirement_pytest_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.run_requirement_package_pytest(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/scenario-report", tags=["Reports"], summary="生成需求包统一场景报告")
+    def requirement_scenario_report(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_requirement_package_unified_scenario_report(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/ai-review", tags=["Reports"], summary="生成需求包AI复盘")
+    def requirement_ai_review(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_requirement_package_ai_review(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/structured-test-cases", tags=["Assets"], summary="生成结构化测试用例")
+    def structured_test_cases(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_structured_test_cases(project_id, payload)
+
+    @api.post("/api/projects/{project_id}/candidate-evidence-rules", tags=["Data Validation"], summary="生成候选证据规则")
+    def candidate_evidence_rules(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_candidate_evidence_rules(project_id, payload)
+
+    @api.post("/api/projects/{project_id}/accept-candidate-evidence-rules", tags=["Data Validation"], summary="采纳候选证据规则")
+    def accept_candidate_evidence_rules(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.accept_candidate_evidence_rules(project_id, payload)
+
+    @api.post("/api/projects/{project_id}/business-evidence-plan", tags=["Data Validation"], summary="生成业务证据计划")
+    def business_evidence_plan(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_business_evidence_plan(project_id, payload)
+
+    @api.post("/api/projects/{project_id}/business-evidence-run", tags=["Data Validation"], summary="执行业务证据规则")
+    def business_evidence_run(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.run_business_evidence_rules(project_id, payload)
+
+    @api.post("/api/projects/{project_id}/metadata-hallucination-audit", tags=["Data Validation"], summary="AI输出元数据静态校验")
+    def metadata_hallucination_audit(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.metadata_hallucination_audit(project_id, payload)
+
+    @api.post("/api/projects/{project_id}/metadata-hallucination-correction", tags=["Data Validation"], summary="生成一次元数据修正版")
+    def metadata_hallucination_correction(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.metadata_hallucination_correction(project_id, payload)
+
     @api.get("/api/projects/{project_id}/quality-profile", tags=["Projects"], summary="项目配置画像")
     def quality_profile(project_id: str) -> dict[str, Any]:
         try:
