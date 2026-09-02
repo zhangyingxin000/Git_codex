@@ -54,8 +54,21 @@
 首次迁移到一台新电脑时，先初始化项目 Python 环境：
 
 ```powershell
-cd C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI
+cd <AutoTest-AI项目目录>
 powershell -ExecutionPolicy Bypass -File ".\setup-env.ps1"
+```
+
+网络访问官方 PyPI 较慢时，不需要修改项目文件，可临时指定镜像：
+
+```powershell
+$env:AUTOTEST_PIP_INDEX_URL = "https://pypi.tuna.tsinghua.edu.cn/simple"
+powershell -ExecutionPolicy Bypass -File ".\setup-env.ps1"
+```
+
+也可以明确指定创建虚拟环境使用的 Python：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".\setup-env.ps1" -PythonExecutable "C:\Python312\python.exe"
 ```
 
 如果你希望一个依赖一个依赖地确认，也可以在项目目录按下面命令安装：
@@ -76,13 +89,13 @@ powershell -ExecutionPolicy Bypass -File ".\setup-env.ps1"
 依赖验证：
 
 ```powershell
-.\.venv\Scripts\python.exe -c "import fastapi, uvicorn, pydantic, yaml; print('OK')"
+powershell -ExecutionPolicy Bypass -File ".\verify-migration.ps1" -RunTests
 ```
 
 之后日常启动：
 
 ```powershell
-cd C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI
+cd <AutoTest-AI项目目录>
 .\start.ps1
 ```
 
@@ -90,9 +103,12 @@ cd C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI
 
 启动顺序：
 
-1. 优先使用项目内 `.venv\Scripts\python.exe`。
-2. 没有 `.venv` 时，尝试系统 Python `3.12`、`3.13`、`3.14`。
-3. 依赖缺失时不会再直接报一串 `No module named uvicorn`，而是提示先运行 `setup-env.ps1`。
+1. `setup-env.ps1` 只使用系统 Python 创建项目 `.venv`，所有依赖安装到项目目录内。
+2. `start.ps1`、`start-fastapi.ps1` 和 `start-legacy.ps1` 只允许使用 `.venv\Scripts\python.exe`，不会静默回退到系统 Python。
+3. `.venv`、运行凭证、CSV账号数据、数据库环境变量和报告均被 Git 忽略，不随仓库迁移。
+4. 依赖版本来源统一由 `requirements.txt` 和 `pyproject.toml` 管理；安装镜像通过 `AUTOTEST_PIP_INDEX_URL` 临时注入，不写死到仓库。
+5. 安装后会在 `.venv/autotest-environment.json` 记录 Python 版本和依赖清单哈希，便于判断迁移环境是否一致。
+6. 迁移完成后运行 `verify-migration.ps1 -RunTests`，同时检查虚拟环境、依赖、关键配置模板、代码导入和平台回归测试。
 
 ## 当前平台定位
 

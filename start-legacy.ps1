@@ -1,20 +1,9 @@
 $ErrorActionPreference = "Stop"
 $venvPython = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
-if (Test-Path $venvPython) {
-  $python = $venvPython
-} else {
-  $python = $null
-  foreach ($version in @("3.12", "3.13", "3.14")) {
-    try {
-      $candidate = & py "-$version" -c "import sys; print(sys.executable)" 2>$null
-      if ($LASTEXITCODE -eq 0 -and $candidate) {
-        $python = $candidate.Trim()
-        break
-      }
-    } catch {}
-  }
-  if (-not $python) { $python = "python" }
+if (-not (Test-Path -LiteralPath $venvPython)) {
+  throw "Project .venv is missing. Run setup-env.ps1 before start-legacy.ps1."
 }
+$python = $venvPython
 Write-Host "Starting AutoTest AI legacy backend at http://127.0.0.1:8765" -ForegroundColor Yellow
 $env:AUTOTEST_ALLOW_MUTATIONS = "true"
 $env:AUTOTEST_ALLOW_HIGH_RISK = "true"
