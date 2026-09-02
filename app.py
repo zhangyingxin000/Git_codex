@@ -2170,6 +2170,122 @@ def _ticket_source_ready(row_data, prefix=""):
     return any(_truthy_csv_value(row_data.get(name)) for name in names)
 
 
+def _scenario_evidence_rule_ids(scenario):
+    rule_ids = []
+    for rule_id in scenario.get("evidence_rules") or []:
+        if rule_id:
+            rule_ids.append(str(rule_id))
+    for task in scenario.get("tool_tasks") or []:
+        for rule_id in task.get("evidence_rules") or []:
+            if rule_id:
+                rule_ids.append(str(rule_id))
+    return sorted(set(rule_ids))
+
+
+def _scenario_case_ids(scenario):
+    case_ids = []
+    for case in scenario.get("cases") or []:
+        case_id = case.get("id") if isinstance(case, dict) else case
+        if case_id:
+            case_ids.append(str(case_id))
+    for task in scenario.get("tool_tasks") or []:
+        for case_id in task.get("cases") or []:
+            if case_id:
+                case_ids.append(str(case_id))
+    return sorted(set(case_ids))
+
+
+def _slot_number(value):
+    match = re.search(r"(\d+)$", str(value or ""))
+    return int(match.group(1)) if match else 0
+
+
+def _scenario_data_preflight(package_id, package_root, details):
+    plan = _read_json_asset(Path(package_root) / "outputs" / "execution-plan.json")
+    scenarios = plan.get("scenarios") if isinstance(plan, dict) else []
+    rules_payload = _load_yaml_file(Path(package_root) / "evidence_rules.yaml")
+    official_rule_ids = {
+        str(rule.get("id") or rule.get("name") or "").strip()
+        for rule in (rules_payload.get("rules") or [])
+        if isinstance(rule, dict) and str(rule.get("id") or rule.get("name") or "").strip()
+    }
+    if not scenarios:
+        return {
+            "status": "READY_WITH_WARNINGS",
+            "summary": {"scenarios": 0, "ready": 0, "warnings": 1, "blocked": 0},
+            "scenarios": [],
+            "message": "未生成正式场景计划，数据准备只能按通用检查执行。",
+        }
+    applicant_rows = details.get("applicants") or []
+    proxy_matches = details.get("proxy_matches") or []
+    results = []
+    ready = warnings = blocked = 0
+    for scenario in scenarios:
+        case_ids = _scenario_case_ids(scenario)
+        rule_ids = _scenario_evidence_rule_ids(scenario)
+        blockers = []
+        attentions = []
+        account_slot = scenario.get("account_slot") or ""
+        applicant = {}
+        if package_id == "salary-trade" and account_slot:
+            index = _slot_number(account_slot)
+            if index and len(applicant_rows) >= index:
+                applicant = applicant_rows[index - 1]
+                if not applicant.get("credential_ready"):
+                    blockers.append(f"账号槽位 {account_slot} 的申请人缺少 ticket/password/redis_uid")
+                country = applicant.get("countryCode") or applicant.get("country_code") or ""
+                currency = applicant.get("currency") or ""
+                if country and currency:
+                    matched = [
+                        item for item in proxy_matches
+                        if item.get("countryCode") == country and item.get("currency") == currency and item.get("matched", 0)
+                    ]
+                    if not matched:
+                        blockers.append(f"账号槽位 {account_slot} 未匹配到代理：{country}/{currency}")
+                else:
+                    blockers.append(f"账号槽位 {account_slot} 缺少国家或币种")
+            else:
+                blockers.append(f"缺少账号槽位 {account_slot} 对应的申请人")
+        if not case_ids:
+            blockers.append("场景未绑定测试用例")
+        missing_rules = [rule_id for rule_id in rule_ids if rule_id not in official_rule_ids]
+        if missing_rules:
+            attentions.append("场景绑定了尚未采纳的候选证据规则：" + ",".join(missing_rules))
+        if not rule_ids:
+            attentions.append("场景未绑定证据规则，将退回执行需求包通用证据规则")
+        for item in scenario.get("tool_tasks") or []:
+            attentions.extend(item.get("blockers") or [])
+        if blockers:
+            status = "BLOCKED"
+            blocked += 1
+        elif attentions:
+            status = "READY_WITH_WARNINGS"
+            warnings += 1
+        else:
+            status = "READY"
+            ready += 1
+        results.append({
+            "scenario_id": scenario.get("scenario_id") or scenario.get("id") or scenario.get("name"),
+            "name": scenario.get("name"),
+            "status": status,
+            "account_slot": account_slot,
+            "applicant_uid": applicant.get("uid") or "",
+            "countryCode": applicant.get("countryCode") or "",
+            "currency": applicant.get("currency") or "",
+            "case_count": len(case_ids),
+            "evidence_rule_ids": rule_ids,
+            "blockers": blockers,
+            "attentions": attentions[:5],
+        })
+    status = "BLOCKED" if blocked else "READY_WITH_WARNINGS" if warnings else "READY"
+    return {
+        "status": status,
+        "summary": {"scenarios": len(results), "ready": ready, "warnings": warnings, "blocked": blocked},
+        "scenarios": results,
+        "message": "按场景检查账号槽位、用例绑定和证据规则绑定。",
+    }
+
+
 def _structured_case_data_preflight(project_id, package_id, package_root):
     account_model_path = Path(package_root) / "account_model.yaml"
     account_model = _load_yaml_file(account_model_path)
@@ -2274,10 +2390,31 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
     else:
         add_check("通用运行数据", "READY_WITH_WARNINGS", "当前需求包不是工资交易，已按通用结构化用例做静态就绪判断。")
 
+    scenario_preflight = _scenario_data_preflight(package_id, package_root, details)
+    details["scenario_preflight"] = scenario_preflight
+    scenario_summary = scenario_preflight.get("summary") or {}
+    if scenario_preflight.get("status") == "BLOCKED":
+        add_check(
+            "场景数据准备",
+            "NEEDS_DATA",
+            f"场景预检发现 {scenario_summary.get('blocked', 0)} 个场景存在数据阻断。",
+            "先按场景补齐账号槽位、证据规则或代理匹配",
+        )
+    elif scenario_preflight.get("status") == "READY_WITH_WARNINGS":
+        add_check(
+            "场景数据准备",
+            "WARNING",
+            f"场景预检有 {scenario_summary.get('warnings', 0)} 个场景需要关注。",
+            "确认未绑定证据规则或人工/定时流程是否符合预期",
+        )
+    else:
+        add_check("场景数据准备", "READY", f"{scenario_summary.get('ready', 0)} 个场景数据准备静态检查通过。")
+
     return {
         "status": status,
         "checks": checks,
         "runtime_sql_checks": runtime_sql_checks,
+        "scenario_preflight": scenario_preflight,
         "details": details,
     }
 
@@ -3116,6 +3253,280 @@ def _package_output_context(package_root):
     }
 
 
+def _report_status_rank(status):
+    status = str(status or "UNKNOWN").upper()
+    return {
+        "FAILED": 5,
+        "ERROR": 5,
+        "BLOCKED": 4,
+        "NEEDS_DATA": 4,
+        "READY_WITH_WARNINGS": 3,
+        "NEEDS_REVIEW": 3,
+        "ATTENTION": 3,
+        "UNKNOWN": 2,
+        "PENDING": 2,
+        "READY": 1,
+        "PASSED": 0,
+    }.get(status, 2)
+
+
+def _aggregate_scenario_status(statuses):
+    normalized = [str(item or "UNKNOWN").upper() for item in statuses if item]
+    if any(item in {"FAILED", "ERROR"} for item in normalized):
+        return "FAILED"
+    if any(item in {"BLOCKED", "NEEDS_DATA"} for item in normalized):
+        return "BLOCKED"
+    if any(item in {"READY_WITH_WARNINGS", "NEEDS_REVIEW", "ATTENTION"} for item in normalized):
+        return "READY_WITH_WARNINGS"
+    if normalized and all(item in {"PASSED", "READY"} for item in normalized):
+        return "PASSED"
+    return "UNKNOWN" if normalized else "PENDING"
+
+
+def _latest_package_reports_by_type(package_root):
+    latest = {}
+    for item in _package_report_summaries(package_root):
+        payload = item.get("payload") or {}
+        report_type = payload.get("report_type") or "UNKNOWN"
+        if report_type not in latest:
+            latest[report_type] = item
+    return latest
+
+
+def _pytest_scenario_index(payload):
+    indexed = {}
+    for scenario in _pytest_scenarios_from_payload(payload):
+        scenario_id = str(scenario.get("scenario_id") or scenario.get("id") or "").strip()
+        if scenario_id:
+            indexed[scenario_id] = scenario
+    return indexed
+
+
+def _scenario_preflight_index(payload):
+    preflight = payload.get("scenario_preflight") or deep_get(payload, "details.scenario_preflight", {}) or {}
+    indexed = {}
+    for scenario in preflight.get("scenarios") or []:
+        scenario_id = str(scenario.get("scenario_id") or scenario.get("id") or "").strip()
+        if scenario_id:
+            indexed[scenario_id] = scenario
+    return indexed
+
+
+def _newman_summary_for_report(payload):
+    summary = payload.get("summary") or {}
+    failures = payload.get("failures") or []
+    return {
+        "status": payload.get("status") or "PENDING",
+        "requests": summary.get("requests", 0),
+        "assertions": summary.get("assertions", 0),
+        "failed_assertions": summary.get("failed_assertions", 0),
+        "failures": failures[:10],
+        "summary_path": payload.get("summary_path") or "",
+        "json_report": payload.get("json_report") or "",
+    }
+
+
+def _jmeter_summary_from_reports(package_root, package_id):
+    mapping = _read_json_asset(Path(package_root) / "outputs" / "case-jmeter-mapping.json")
+    manifest = _read_json_asset(Path(package_root) / "outputs" / "jmeter" / f"{package_id}-case-jmeter-manifest.json")
+    return {
+        "status": "READY" if mapping or manifest else "PENDING",
+        "mapped_cases": deep_get(mapping, "summary.jmeter_targets", 0),
+        "script_ready": deep_get(mapping, "summary.script_ready", 0),
+        "evidence_pending": deep_get(mapping, "summary.evidence_pending", 0),
+        "jmx": deep_get(manifest, "jmx.path", "") or deep_get(manifest, "jmx_file", ""),
+        "manifest": str(Path(package_root) / "outputs" / "jmeter" / f"{package_id}-case-jmeter-manifest.json") if manifest else "",
+    }
+
+
+def _write_unified_scenario_report_markdown(path, report):
+    lines = [
+        f"# {report.get('package_name') or report.get('package_id')} 统一场景报告",
+        "",
+        f"- 状态：{report.get('status')}",
+        f"- 场景：{deep_get(report, 'summary.scenarios', 0)}",
+        f"- 通过/失败/阻断/提醒：{deep_get(report, 'summary.passed', 0)}/{deep_get(report, 'summary.failed', 0)}/{deep_get(report, 'summary.blocked', 0)}/{deep_get(report, 'summary.warning', 0)}",
+        "",
+        "## 场景明细",
+        "",
+    ]
+    for scenario in report.get("scenarios") or []:
+        tools = scenario.get("tools") or {}
+        lines += [
+            f"### {scenario.get('name') or scenario.get('scenario_id')}",
+            "",
+            f"- 场景ID：{scenario.get('scenario_id')}",
+            f"- 状态：{scenario.get('status')}",
+            f"- 数据准备：{deep_get(scenario, 'data_preflight.status', 'PENDING')}",
+            f"- Newman：{deep_get(tools, 'newman.status', 'PENDING')}",
+            f"- JMeter：{deep_get(tools, 'jmeter.status', 'PENDING')}",
+            f"- pytest：{deep_get(tools, 'pytest.status', 'PENDING')}",
+            "",
+        ]
+        for target in scenario.get("maintenance_targets") or []:
+            lines.append(f"- 维护点：{target}")
+        lines.append("")
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def generate_requirement_package_unified_scenario_report(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    plan = _read_json_asset(package_root / "outputs" / "execution-plan.json")
+    if not plan.get("scenarios"):
+        plan = generate_requirement_execution_plan(project_id, package_id, options)
+    data_preflight = _read_json_asset(package_root / "outputs" / "data-preflight-check.json")
+    preflight_by_scenario = _scenario_preflight_index(data_preflight)
+    latest_reports = _latest_package_reports_by_type(package_root)
+    pytest_item = latest_reports.get("REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN") or latest_reports.get("PYTEST_DEEP_EVIDENCE_REVIEW") or {}
+    pytest_payload = pytest_item.get("payload") or {}
+    pytest_by_scenario = _pytest_scenario_index(pytest_payload)
+    newman_item = latest_reports.get("REQUIREMENT_PACKAGE_NEWMAN_RUN") or {}
+    newman_payload = newman_item.get("payload") or {}
+    newman_summary = _newman_summary_for_report(newman_payload) if newman_payload else {"status": "PENDING", "requests": 0, "assertions": 0, "failed_assertions": 0, "failures": []}
+    jmeter_summary = _jmeter_summary_from_reports(package_root, package_id)
+    source_reports = []
+    for item in latest_reports.values():
+        payload = item.get("payload") or {}
+        source_reports.append({
+            "report_type": payload.get("report_type") or "UNKNOWN",
+            "status": payload.get("status") or "UNKNOWN",
+            "created_at": payload.get("created_at") or payload.get("generated_at") or "",
+            "path": item.get("path") or "",
+        })
+    scenarios = []
+    status_counts = {"passed": 0, "failed": 0, "blocked": 0, "warning": 0, "pending": 0}
+    for scenario in plan.get("scenarios") or []:
+        scenario_id = str(scenario.get("scenario_id") or scenario.get("id") or "").strip()
+        preflight = preflight_by_scenario.get(scenario_id, {})
+        pytest_scenario = pytest_by_scenario.get(scenario_id, {})
+        tool_names = {str(task.get("tool") or "").lower() for task in scenario.get("tool_tasks") or []}
+        pytest_status = pytest_scenario.get("status") or ("PENDING" if "pytest" in tool_names else "NOT_APPLICABLE")
+        newman_status = newman_summary.get("status") if "newman" in tool_names else "NOT_APPLICABLE"
+        jmeter_status = jmeter_summary.get("status") if "jmeter" in tool_names else "NOT_APPLICABLE"
+        scenario_status = _aggregate_scenario_status([
+            preflight.get("status"),
+            pytest_status if pytest_status != "NOT_APPLICABLE" else "",
+            newman_status if newman_status != "NOT_APPLICABLE" else "",
+            jmeter_status if jmeter_status != "NOT_APPLICABLE" else "",
+        ])
+        if scenario_status == "PASSED":
+            status_counts["passed"] += 1
+        elif scenario_status == "FAILED":
+            status_counts["failed"] += 1
+        elif scenario_status == "BLOCKED":
+            status_counts["blocked"] += 1
+        elif scenario_status == "READY_WITH_WARNINGS":
+            status_counts["warning"] += 1
+        else:
+            status_counts["pending"] += 1
+        evidence_results = pytest_scenario.get("evidence_results") or []
+        scenarios.append({
+            "scenario_id": scenario_id,
+            "name": scenario.get("name") or scenario_id,
+            "business_goal": scenario.get("business_goal") or "",
+            "priority": scenario.get("priority") or "",
+            "status": scenario_status,
+            "plan_status": scenario.get("status") or "UNKNOWN",
+            "account_slot": scenario.get("account_slot") or "",
+            "order_variable": scenario.get("order_variable") or "",
+            "cases": scenario.get("cases") or [],
+            "data_preflight": {
+                "status": preflight.get("status") or "PENDING",
+                "applicant_uid": preflight.get("applicant_uid") or "",
+                "countryCode": preflight.get("countryCode") or "",
+                "currency": preflight.get("currency") or "",
+                "blockers": preflight.get("blockers") or [],
+                "attentions": preflight.get("attentions") or [],
+                "evidence_rule_ids": preflight.get("evidence_rule_ids") or _scenario_evidence_rule_ids(scenario),
+            },
+            "tools": {
+                "newman": {
+                    **newman_summary,
+                    "status": newman_status,
+                    "scope": "package_level" if "newman" in tool_names else "not_applicable",
+                },
+                "jmeter": {
+                    **jmeter_summary,
+                    "status": jmeter_status,
+                    "scope": "scenario_mapping" if "jmeter" in tool_names else "not_applicable",
+                },
+                "pytest": {
+                    "status": pytest_status,
+                    "http_cases": pytest_scenario.get("http_cases", 0),
+                    "http_failed": pytest_scenario.get("http_failed", 0),
+                    "evidence_failed": sum(1 for item in evidence_results if item.get("status") == "FAILED"),
+                    "evidence_blocked": sum(1 for item in evidence_results if item.get("status") == "BLOCKED"),
+                    "evidence_rule_ids": pytest_scenario.get("evidence_rule_ids") or _scenario_evidence_rule_ids(scenario),
+                    "failed_http": [
+                        {
+                            "id": item.get("id"),
+                            "title": item.get("title"),
+                            "status": item.get("status"),
+                            "business_code": item.get("business_code"),
+                            "message": item.get("business_message") or item.get("response_preview", "")[:300],
+                        }
+                        for item in (pytest_scenario.get("http_results") or [])
+                        if item.get("status") != item.get("expected_status") or str(item.get("business_code") or "200") != "200"
+                    ][:8],
+                    "evidence_problems": [
+                        {
+                            "id": item.get("id"),
+                            "name": item.get("name"),
+                            "status": item.get("status"),
+                            "blockers": item.get("blockers") or [],
+                        }
+                        for item in evidence_results
+                        if item.get("status") in {"FAILED", "BLOCKED"}
+                    ][:8],
+                },
+            },
+            "maintenance_targets": deep_get(scenario, "human_review.maintenance_targets", []) or [
+                "当前场景对应的测试用例",
+                "当前场景账号槽位与数据准备",
+                "当前场景证据规则",
+                "当前场景关联的外部工具脚本",
+            ],
+        })
+    overall = _aggregate_scenario_status([item.get("status") for item in scenarios])
+    if overall == "PASSED" and not pytest_by_scenario:
+        overall = "READY_WITH_WARNINGS"
+    report = {
+        "schema_version": "1.0",
+        "report_type": "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": overall,
+        "created_at": now(),
+        "summary": {
+            "scenarios": len(scenarios),
+            **status_counts,
+            "source_reports": len(source_reports),
+            "newman_status": newman_summary.get("status"),
+            "jmeter_status": jmeter_summary.get("status"),
+            "pytest_scenarios": len(pytest_by_scenario),
+        },
+        "scenarios": scenarios,
+        "source_reports": source_reports,
+        "business_value": "把同一需求包下 Newman、JMeter、pytest、数据准备和人工维护点统一到业务场景，人工复核时按流程看，不按工具散着找。",
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out_dir = package_root / "reports" / f"scenario-report-{stamp}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    summary_path = out_dir / "summary.json"
+    markdown_path = out_dir / "scenario-report.md"
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    _write_unified_scenario_report_markdown(markdown_path, report)
+    report["summary_path"] = str(summary_path)
+    report["markdown_path"] = str(markdown_path)
+    report["json_url"] = "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    report["markdown_url"] = "/requirement-reports/" + markdown_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    return report
+
+
 def _case_brief(case):
     return {
         "id": case.get("id"),
@@ -3471,6 +3882,67 @@ def _review_owner_for_failure(text, status=""):
     return "测试先复现并补齐请求、响应和数据证据，再按失败类型分派。"
 
 
+def _pytest_scenarios_from_payload(payload):
+    if not isinstance(payload, dict):
+        return []
+    scenarios = payload.get("scenarios")
+    if isinstance(scenarios, list):
+        return scenarios
+    evidence_report = payload.get("evidence_report")
+    if isinstance(evidence_report, dict) and isinstance(evidence_report.get("scenarios"), list):
+        return evidence_report.get("scenarios")
+    return []
+
+
+def _pytest_scenario_signals(payload):
+    scenarios = _pytest_scenarios_from_payload(payload)
+    signals = {
+        "pytest_reports": 0,
+        "pytest_scenarios": len(scenarios),
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "pytest_scenario_http_failed": 0,
+        "pytest_scenario_evidence_failed": 0,
+        "pytest_scenario_evidence_blocked": 0,
+    }
+    findings = []
+    if not scenarios:
+        return signals, findings
+    signals["pytest_reports"] = 1
+    for scenario in scenarios:
+        status = str(scenario.get("status") or "UNKNOWN")
+        if status == "FAILED":
+            signals["pytest_scenarios_failed"] += 1
+        if status == "BLOCKED":
+            signals["pytest_scenarios_blocked"] += 1
+        http_failed = int(scenario.get("http_failed") or 0)
+        evidence_results = scenario.get("evidence_results") or []
+        evidence_failed = sum(1 for item in evidence_results if item.get("status") == "FAILED")
+        evidence_blocked = sum(1 for item in evidence_results if item.get("status") == "BLOCKED")
+        signals["pytest_scenario_http_failed"] += http_failed
+        signals["pytest_scenario_evidence_failed"] += evidence_failed
+        signals["pytest_scenario_evidence_blocked"] += evidence_blocked
+        if status in {"FAILED", "BLOCKED"} or http_failed or evidence_failed or evidence_blocked:
+            detail = (
+                f"{scenario.get('name') or scenario.get('scenario_id')}："
+                f"状态={status}，HTTP失败={http_failed}，"
+                f"证据失败={evidence_failed}，证据阻断={evidence_blocked}。"
+            )
+            blockers = []
+            for item in evidence_results:
+                if item.get("status") in {"FAILED", "BLOCKED"}:
+                    blockers.extend(item.get("blockers") or [])
+            if blockers:
+                detail += " 证据问题：" + "；".join(str(x) for x in blockers[:5])
+            findings.append({
+                "level": "P0" if status == "FAILED" else "P1",
+                "title": "pytest场景证据复盘未通过",
+                "detail": detail,
+                "status": status,
+            })
+    return signals, findings
+
+
 def generate_requirement_package_ai_review(project_id, package_id, options=None):
     options = options or {}
     package = requirement_package_by_id(project_id, package_id)
@@ -3507,6 +3979,13 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
         "related_reports": len(related_global),
         "newman_reports": 0,
         "jmeter_reports": 0,
+        "pytest_reports": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "pytest_scenario_http_failed": 0,
+        "pytest_scenario_evidence_failed": 0,
+        "pytest_scenario_evidence_blocked": 0,
         "business_evidence_reports": 0,
         "structured_case_reports": 0,
     }
@@ -3520,6 +3999,12 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
         statuses.append(status)
         if payload.get("report_type") == "REQUIREMENT_PACKAGE_NEWMAN_RUN":
             execution_signals["newman_reports"] += 1
+        if payload.get("report_type") in {"REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN", "PYTEST_DEEP_EVIDENCE_REVIEW"}:
+            pytest_signals, pytest_findings = _pytest_scenario_signals(payload)
+            for key, value in pytest_signals.items():
+                execution_signals[key] = execution_signals.get(key, 0) + value
+            for finding in pytest_findings[:20]:
+                _review_add_finding(findings, finding["level"], finding["title"], finding["detail"], item["path"], finding["status"])
         if "jmeter" in str(payload.get("report_type") or "").lower() or any((x.get("tool") == "JMeter") for x in payload.get("results") or [] if isinstance(x, dict)):
             execution_signals["jmeter_reports"] += 1
         failures = payload.get("failures") or []
@@ -3603,6 +4088,9 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
             "p1": p1,
             "http_runs": execution_signals["http_runs"],
             "http_failed": execution_signals["http_failed"],
+            "pytest_scenarios": execution_signals["pytest_scenarios"],
+            "pytest_scenarios_failed": execution_signals["pytest_scenarios_failed"],
+            "pytest_scenarios_blocked": execution_signals["pytest_scenarios_blocked"],
             "root_cause_categories": category_counts,
         },
         "conclusion": "暂无执行数据，无法复盘。" if status == "NO_RUN_DATA" else "存在阻断失败，先处理P0。" if p0 else "有待确认项，但不阻断继续演示。" if p1 else "当前需求包执行证据暂未发现阻断问题。",
@@ -10801,6 +11289,20 @@ def list_generated_reports(project_id):
                     "package_id": package_id,
                 })
                 continue
+            if payload.get("report_type") == "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT":
+                summary = payload.get("summary") or {}
+                result.append({
+                    "name": f"{package_name}统一场景报告",
+                    "kind": "场景总报告",
+                    "status": payload.get("status", "UNKNOWN"),
+                    "created_at": payload.get("created_at") or datetime.fromtimestamp(summary_file.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+                    "summary": f"场景{summary.get('scenarios',0)}个 · 通过{summary.get('passed',0)} · 失败{summary.get('failed',0)} · 阻断{summary.get('blocked',0)} · 提醒{summary.get('warning',0)}",
+                    "json_url": "/requirement-reports/" + summary_file.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
+                    "html_url": "",
+                    "file_name": str(summary_file),
+                    "package_id": package_id,
+                })
+                continue
             tool = "Newman" if payload.get("report_type") == "REQUIREMENT_PACKAGE_NEWMAN_RUN" else "需求包执行"
             result.append({
                 "name": f"{package_name}{tool}报告",
@@ -11918,6 +12420,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(run_requirement_package_pytest(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/ai-review", path)
             if m: return self.send_json(generate_requirement_package_ai_review(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/scenario-report", path)
+            if m: return self.send_json(generate_requirement_package_unified_scenario_report(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/jmeter/open-gui", path)
             if m: return self.send_json(open_jmeter_gui(m.group(1),self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/jmeter/harvest-gui-report", path)

@@ -204,12 +204,15 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/newman/run`：运行当前需求包的 Newman 轻量接口回归。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/pytest/run`：运行当前需求包的 pytest 深度证据复核，发起接口请求并输出 HTTP、JMeter/Newman、DB/Redis 证据 JSON。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/ai-review`：汇总当前需求包报告、外部工具结果和数据证据，生成 AI 复盘报告。
+- `POST /api/projects/{project_id}/requirement-packages/{package_id}/scenario-report`：生成统一场景报告，把 Newman、JMeter、pytest、数据准备和维护点按同一批业务场景汇总。
 - `POST /api/projects/{project_id}/jmeter/open-gui`：传入 `package_id` 或 `script_key` 后打开对应 JMeter 脚本。
 - `POST /api/projects/{project_id}/structured-test-cases`：按当前需求包生成结构化测试用例增强版。
 
 这个设计的目的不是把所有需求塞到一个执行中心里，也不是简单把用例按工具拆开。平台会先生成“场景级执行计划”：一个业务场景下面再挂 Newman 预检、JMeter 主流程、pytest 数据证据和人工复核动作。这样人工维护时仍然按需求和场景看问题，而不是在多个工具报告之间来回找线索。
 
 同一份需求和接口资产可以生成不同工具脚本：Newman 跑轻量接口回归，JMeter 跑复杂流程和性能，pytest 做深度校验和复盘。新增需求时应新增或识别独立需求包，避免覆盖已有需求的 JMX、CSV 或报告。
+
+统一场景报告归档在 `requirements/<package_id>/reports/scenario-report-*`。它不是新的执行工具，而是把已经存在的执行计划、数据准备、Newman、JMeter 和 pytest 结果按场景合并，回答“这个业务流程有没有跑、失败在哪、下一步维护哪个文件”。报告中心会把它显示为“场景总报告”。
 
 AI 复盘不是替代测试判断，而是把原始执行结果变成可读结论：识别鉴权、参数契约、业务断言、数据证据、环境网络和服务异常，并给出下一步应由测试、产品、后端、DBA 或环境负责人确认的方向。
 
@@ -240,6 +243,8 @@ pytest 报告会优先读取 `manifest.json` 里声明的 `orchestration.primary
 - 数据准备检查、执行前只读 SQL 模板、DB/Redis 证据执行报告。
 
 复盘报告会输出 `summary.json` 和 `review.md`，归档在 `requirements/<package_id>/reports/ai-review-*`。复盘只给结论、根因分类和修改建议，不自动修改脚本或业务数据。根因分类包括鉴权、请求契约、业务断言、测试数据、数据证据、性能、环境和服务异常。
+
+当存在 pytest 场景证据报告时，AI 复盘会读取其中的 `scenarios`：按场景统计 HTTP 失败、DB/Redis 证据失败和阻断项，并把失败场景转成可读 finding。这样复盘结论能定位到具体业务流程，而不是只说总失败数。
 
 ## 多账号标准化
 
