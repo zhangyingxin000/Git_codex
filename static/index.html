@@ -9,9 +9,10 @@
   <link rel="stylesheet" href="/reports.css?v=__BUILD_ID__">
   <link rel="stylesheet" href="/report-sidebar.css?v=__BUILD_ID__">
   <link rel="stylesheet" href="/quality-hub.css?v=__BUILD_ID__">
-  <style>.toolbar{gap:12px;min-width:0}.toolbar>div:last-child{display:flex;gap:6px;flex:none;align-items:center}.tabs{display:flex;overflow-x:auto;min-width:0;scrollbar-width:thin}.tabs button{white-space:nowrap;flex:none;padding-left:13px;padding-right:13px}</style>
+  <style>.toolbar{gap:12px;min-width:0}.toolbar>div:last-child{display:flex;gap:6px;flex:none;align-items:center}.tabs{display:flex;overflow-x:auto;min-width:0;scrollbar-width:thin}.tabs button{white-space:nowrap;flex:none;padding-left:13px;padding-right:13px}#demoModeBanner{position:fixed;z-index:50;top:0;left:0;right:0;padding:8px 16px;text-align:center;background:#fff1b8;color:#533f00;border-bottom:1px solid #d8b84a;font-size:13px;font-weight:700}body.demo-mode{padding-top:34px}</style>
 </head>
 <body>
+  <div id="demoModeBanner" class="hidden">演示模式：仅使用合成数据和 localhost，外部写操作已禁用</div>
   <aside>
     <div class="brand"><span class="logo">A</span><div><b>AutoTest AI</b><small>质量工程平台</small></div></div>
     <button class="new" onclick="showNewProject()">＋ 新建测试项目</button>

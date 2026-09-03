@@ -1,0 +1,23 @@
+schema_version: "1.0"
+package_id: demo-salary-trade
+resources:
+  - id: demo_accounts
+    kind: csv
+    path: data/accounts.csv
+    required: true
+  - id: demo_contract
+    kind: openapi
+    path: openapi.json
+    required: true
+  - id: demo_replay
+    kind: replay
+    path: replay/scenarios.json
+    required: true
+  - id: demo_database
+    kind: sqlite
+    path: seed.sqlite
+    generated: true
+safety:
+  network: localhost_only
+  mutations: local_sqlite_only
+  credentials: synthetic_only

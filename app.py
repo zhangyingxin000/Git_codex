@@ -15330,9 +15330,9 @@ def execute_case(case_id, overrides=None, context=None):
     run_id, started = uid("run"), time.perf_counter()
     path_blob = f"{case['path']} {case['title']}".lower()
     high_hits = [x for x in HIGH_RISK_WORDS if x in path_blob]
-    if high_hits and os.getenv("AUTOTEST_ALLOW_HIGH_RISK", "true").lower() != "true":
+    if high_hits and os.getenv("AUTOTEST_ALLOW_HIGH_RISK", "false").lower() != "true":
         status, http_status, response, error = "BLOCKED", None, "", "安全策略阻止高风险接口：" + ", ".join(high_hits[:4])
-    elif case["method"] in {"POST", "PUT", "PATCH", "DELETE"} and os.getenv("AUTOTEST_ALLOW_MUTATIONS", "true").lower() != "true":
+    elif case["method"] in {"POST", "PUT", "PATCH", "DELETE"} and os.getenv("AUTOTEST_ALLOW_MUTATIONS", "false").lower() != "true":
         status, http_status, response, error = "BLOCKED", None, "", "安全模式默认禁止可能改变数据的请求"
     elif not case["method"] or not case["path"]:
         status, http_status, response, error = "SKIPPED", None, "", "该用例是设计用例，尚未绑定可执行接口"

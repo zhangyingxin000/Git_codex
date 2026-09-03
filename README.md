@@ -87,6 +87,8 @@ powershell -ExecutionPolicy Bypass -File ".\setup-env.ps1" -PythonExecutable "C:
 .\.venv\Scripts\python.exe -m pip install -r .\requirements.txt
 ```
 
+`requirements.txt` 是直接依赖的唯一人工维护入口，`requirements.lock` 固定已验证环境的完整版本。`setup-env.ps1` 会优先使用锁文件安装，测试会检查 `pyproject.toml`、`requirements.txt` 与锁文件没有漏项。
+
 依赖验证：
 
 ```powershell
@@ -107,7 +109,10 @@ cd <AutoTest-AI项目目录>
 ```powershell
 .\platform.cmd setup
 .\platform.cmd check
+.\platform.cmd demo
 ```
+
+`platform.cmd demo` 是面试与现场演示入口。它会强制进入演示模式，加载 `requirements/demo/salary-trade/seed.sqlite`，启动临时 localhost 服务，使用 8 个合成申请人运行 8 条工资交易流程并生成场景报告。该模式不读取真实 ticket，不连接测试服，也不允许任何外部写操作。
 
 需要临时更换监听端口时：
 
@@ -120,7 +125,7 @@ cd <AutoTest-AI项目目录>
 1. `setup-env.ps1` 只使用系统 Python 创建项目 `.venv`，所有依赖安装到项目目录内。
 2. `platform.ps1` 是正式统一入口，`platform.cmd` 是免执行策略配置的短命令；旧 `start.ps1` 仅保留兼容并转交给统一入口。
 3. `.venv`、运行凭证、CSV账号数据、数据库环境变量和报告均被 Git 忽略，不随仓库迁移。
-4. 依赖版本来源统一由 `requirements.txt` 和 `pyproject.toml` 管理；安装镜像通过 `AUTOTEST_PIP_INDEX_URL` 临时注入，不写死到仓库。
+4. 直接依赖由 `requirements.txt` 统一维护，`pyproject.toml` 保持同一清单，`requirements.lock` 固定完整可复现版本；安装镜像通过 `AUTOTEST_PIP_INDEX_URL` 临时注入，不写死到仓库。
 5. 安装后会在 `.venv/autotest-environment.json` 记录 Python 版本和依赖清单哈希，便于判断迁移环境是否一致。
 6. 迁移完成后运行 `verify-migration.ps1 -RunTests`，同时检查虚拟环境、依赖、关键配置模板、代码导入和平台回归测试。
 

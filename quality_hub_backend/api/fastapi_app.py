@@ -64,12 +64,20 @@ def create_app() -> FastAPI:
 
     @api.get("/api/health", tags=["System"], summary="平台健康检查")
     def health() -> dict[str, Any]:
+        demo_mode = os.getenv("AUTOTEST_DEMO_MODE", "false").lower() == "true"
         return {
             "ok": True,
             "time": legacy.now(),
             "build": legacy.BUILD_ID,
             "frontend_build": legacy.BUILD_ID,
             "backend": "fastapi",
+            "demo_mode": demo_mode,
+            "external_mutations_allowed": os.getenv("AUTOTEST_ALLOW_MUTATIONS", "false").lower() == "true",
+            "allowed_hosts": [
+                item.strip()
+                for item in os.getenv("AUTOTEST_ALLOWED_HOSTS", "").split(",")
+                if item.strip()
+            ],
         }
 
     @api.get("/api/system/storage-policy", tags=["System"], summary="查看平台存储与只读边界")

@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "scenarios": [
+    {
+      "id": "FLOW-A",
+      "name": "创建后申请人取消",
+      "applicant_uid": 910001,
+      "actions": [{"name": "applicant_cancel", "status": "CANCELLED"}],
+      "expected_status": "CANCELLED"
+    },
+    {
+      "id": "FLOW-B",
+      "name": "创建后代理拒绝",
+      "applicant_uid": 910002,
+      "actions": [{"name": "proxy_reject", "status": "REJECTED"}],
+      "expected_status": "REJECTED"
+    },
+    {
+      "id": "FLOW-C",
+      "name": "代理接受转账后申请人确认",
+      "applicant_uid": 910003,
+      "actions": [
+        {"name": "proxy_accept", "status": "ACCEPTED"},
+        {"name": "proxy_mark_paid", "status": "PAID"},
+        {"name": "applicant_confirm", "status": "COMPLETED"}
+      ],
+      "expected_status": "COMPLETED"
+    },
+    {
+      "id": "FLOW-D",
+      "name": "申请人投诉失败后完成",
+      "applicant_uid": 910004,
+      "actions": [
+        {"name": "proxy_accept", "status": "ACCEPTED"},
+        {"name": "proxy_mark_paid", "status": "PAID"},
+        {"name": "appeal_create", "status": "APPEALING"},
+        {"name": "appeal_rejected", "status": "COMPLETED"}
+      ],
+      "expected_status": "COMPLETED"
+    },
+    {
+      "id": "FLOW-E",
+      "name": "申请人投诉成功后退款取消",
+      "applicant_uid": 910005,
+      "actions": [
+        {"name": "proxy_accept", "status": "ACCEPTED"},
+        {"name": "proxy_mark_paid", "status": "PAID"},
+        {"name": "appeal_create", "status": "APPEALING"},
+        {"name": "appeal_approved", "status": "CANCELLED"}
+      ],
+      "expected_status": "CANCELLED"
+    },
+    {
+      "id": "FLOW-F",
+      "name": "代理未处理导致订单过期",
+      "applicant_uid": 910006,
+      "actions": [{"name": "created_timeout", "status": "CANCELLED"}],
+      "expected_status": "CANCELLED"
+    },
+    {
+      "id": "FLOW-G",
+      "name": "代理接受后超时未转账",
+      "applicant_uid": 910007,
+      "actions": [
+        {"name": "proxy_accept", "status": "ACCEPTED"},
+        {"name": "payment_timeout", "status": "CANCELLED"}
+      ],
+      "expected_status": "CANCELLED"
+    },
+    {
+      "id": "FLOW-H",
+      "name": "代理转账后申请人超时未确认",
+      "applicant_uid": 910008,
+      "actions": [
+        {"name": "proxy_accept", "status": "ACCEPTED"},
+        {"name": "proxy_mark_paid", "status": "PAID"},
+        {"name": "confirmation_timeout", "status": "COMPLETED"}
+      ],
+      "expected_status": "COMPLETED"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "package_id": "demo-salary-trade",
+  "name": "工资交易离线演示包",
+  "mode": "synthetic_offline_demo",
+  "entrypoint": "platform.cmd demo",
+  "accounts": "data/accounts.csv",
+  "openapi": "openapi.json",
+  "replay": "replay/scenarios.json",
+  "database": "seed.sqlite",
+  "latest_report": "reports/latest/demo-summary.json",
+  "safety": {
+    "external_writes": false,
+    "real_credentials": false,
+    "allowed_hosts": ["127.0.0.1", "localhost"]
+  }
+}

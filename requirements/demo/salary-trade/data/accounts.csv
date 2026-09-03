@@ -1,0 +1,12 @@
+uid,role,country_code,currency,ticket
+910001,applicant,EG,EGP,demo-applicant-01
+910002,applicant,MA,USD,demo-applicant-02
+910003,applicant,SA,SAR,demo-applicant-03
+910004,applicant,EG,USD,demo-applicant-04
+910005,applicant,MA,MAD,demo-applicant-05
+910006,applicant,SA,USD,demo-applicant-06
+910007,applicant,EG,EGP,demo-applicant-07
+910008,applicant,MA,USD,demo-applicant-08
+920001,proxy,EG,"EGP,USD",demo-proxy-eg
+920002,proxy,MA,"MAD,USD",demo-proxy-ma
+920003,proxy,SA,"SAR,USD",demo-proxy-sa

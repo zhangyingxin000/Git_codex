@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from app.adapters.tool_runner import ToolResult, ToolRunner
+from .tool_runner import ToolResult, ToolRunner
 
 
 class JMeterAdapter:

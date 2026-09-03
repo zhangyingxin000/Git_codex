@@ -1,0 +1,17 @@
+schema_version: "1.0"
+package_id: demo-salary-trade
+mode: synthetic
+roles:
+  applicant:
+    count: 8
+    unique_processing_order: true
+    source: data/accounts.csv
+  proxy:
+    count: 3
+    reusable: true
+    source: data/accounts.csv
+matching:
+  country_field: country_code
+  currency_field: currency
+  proxy_currency_field: support_currencies
+  rule: applicant country must match proxy country and requested currency must be included

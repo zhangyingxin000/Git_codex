@@ -1,0 +1,45 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "Salary Trade Offline Demo", "version": "1.0.0"},
+  "servers": [{"url": "http://127.0.0.1:{port}", "variables": {"port": {"default": "0"}}}],
+  "paths": {
+    "/salary/trade/order/create": {
+      "post": {
+        "summary": "Create a synthetic salary trade order",
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CreateOrder"}}}
+        },
+        "responses": {"200": {"description": "Created"}, "400": {"description": "Invalid demo data"}}
+      }
+    },
+    "/salary/trade/order/action": {
+      "post": {
+        "summary": "Advance a synthetic order through one state transition",
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OrderAction"}}}
+        },
+        "responses": {"200": {"description": "Transition applied"}, "400": {"description": "Invalid transition input"}}
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateOrder": {
+        "type": "object",
+        "required": ["scenario_id", "applicant_uid"],
+        "properties": {"scenario_id": {"type": "string"}, "applicant_uid": {"type": "integer"}}
+      },
+      "OrderAction": {
+        "type": "object",
+        "required": ["order_no", "action", "target_status"],
+        "properties": {
+          "order_no": {"type": "string"},
+          "action": {"type": "string"},
+          "target_status": {"type": "string"}
+        }
+      }
+    }
+  }
+}
