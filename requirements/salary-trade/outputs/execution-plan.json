@@ -1,0 +1,1686 @@
+{
+  "schema_version": "1.1",
+  "report_type": "REQUIREMENT_PACKAGE_SCENARIO_EXECUTION_PLAN",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "package_name": "工资代理快速结算",
+  "status": "BLOCKED",
+  "generated_at": "2026-09-02T18:49:56+08:00",
+  "source": {
+    "skill": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\test-tool-routing\\SKILL.md",
+    "basis": "结构化测试用例、JMeter映射、账号模型、证据规则和需求包资产"
+  },
+  "summary": {
+    "scenarios": 8,
+    "cases": 170,
+    "status_counts": {
+      "READY": 1,
+      "READY_WITH_WARNINGS": 4,
+      "BLOCKED": 3
+    },
+    "tool_counts": {
+      "newman": 8,
+      "jmeter": 8,
+      "pytest": 8,
+      "manual": 3
+    },
+    "structured_case_status": {
+      "cases": 170,
+      "with_db_checks": 143,
+      "with_redis_checks": 0,
+      "with_optional_redis_suggestions": 28,
+      "quality_counts": {
+        "READY": 38,
+        "NEEDS_EVIDENCE": 8,
+        "NEEDS_EVIDENCE_REVIEW": 110,
+        "MANUAL_ONLY": 14
+      },
+      "readiness_counts": {
+        "SCRIPT_GENERATION_READY": 38,
+        "SCRIPTABLE_EVIDENCE_PENDING": 118,
+        "MANUAL_ONLY": 14
+      },
+      "tool_counts": {
+        "newman": 20,
+        "jmeter": 136,
+        "manual": 14
+      },
+      "exception_counts": {
+        "data_constraint_exception": 16,
+        "state_machine_exception": 42,
+        "api_contract_exception": 88
+      },
+      "official_rules": 6,
+      "candidate_rules": 21
+    },
+    "data_preflight_status": "READY_WITH_WARNINGS"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "salary_flow_a_cancel_by_applicant",
+      "name": "创建后申请人取消",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P0",
+      "status": "READY",
+      "account_slot": "applicant_01",
+      "order_variable": "flow_a_order_no",
+      "cases": [
+        {
+          "id": "tc_4a361f2e73",
+          "title": "取消待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_9cce4f325a",
+          "title": "取消待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_fd3c65bfca",
+          "title": "取消待代理处理订单：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_ea40bd1230",
+          "title": "取消待代理处理订单：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_5e834a4d16",
+          "title": "取消待代理处理订单：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_9f5be4623d",
+          "title": "取消待代理处理订单：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_0517361e1a",
+          "title": "取消待代理处理订单：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_432f1720e0",
+          "title": "取消待代理处理订单：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [],
+          "case_count": 0,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_4a361f2e73",
+            "tc_9cce4f325a",
+            "tc_fd3c65bfca",
+            "tc_ea40bd1230",
+            "tc_5e834a4d16",
+            "tc_9f5be4623d",
+            "tc_0517361e1a",
+            "tc_432f1720e0"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程A：创建后申请人取消",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_4a361f2e73",
+            "tc_9cce4f325a",
+            "tc_fd3c65bfca",
+            "tc_ea40bd1230",
+            "tc_5e834a4d16",
+            "tc_9f5be4623d",
+            "tc_0517361e1a",
+            "tc_432f1720e0"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_a_cancel_by_applicant"
+      }
+    },
+    {
+      "scenario_id": "salary_flow_b_reject_by_proxy",
+      "name": "创建后代理拒绝",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P0",
+      "status": "READY_WITH_WARNINGS",
+      "account_slot": "applicant_02",
+      "order_variable": "flow_b_order_no",
+      "cases": [
+        {
+          "id": "tc_d1023be903",
+          "title": "拒绝待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_36f4222004",
+          "title": "拒绝待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ae8f94bb13",
+          "title": "拒绝待代理处理订单：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_e7f828e13a",
+          "title": "拒绝待代理处理订单：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_e3fe32d890",
+          "title": "拒绝待代理处理订单：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_45166545a3",
+          "title": "拒绝待代理处理订单：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_73f8c0f05a",
+          "title": "拒绝待代理处理订单：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_c1da29bb4c",
+          "title": "拒绝待代理处理订单：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [],
+          "case_count": 0,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_d1023be903",
+            "tc_36f4222004",
+            "tc_ae8f94bb13",
+            "tc_e7f828e13a",
+            "tc_e3fe32d890",
+            "tc_45166545a3",
+            "tc_73f8c0f05a",
+            "tc_c1da29bb4c"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程B：创建后代理拒绝",
+          "evidence_rules": [
+            "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_d1023be903",
+            "tc_36f4222004",
+            "tc_ae8f94bb13",
+            "tc_e7f828e13a",
+            "tc_e3fe32d890",
+            "tc_45166545a3",
+            "tc_73f8c0f05a",
+            "tc_c1da29bb4c"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+          ],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_b_reject_by_proxy"
+      }
+    },
+    {
+      "scenario_id": "salary_flow_c_finish",
+      "name": "接受并转账后申请人确认完成",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P0",
+      "status": "READY_WITH_WARNINGS",
+      "account_slot": "applicant_03",
+      "order_variable": "flow_c_order_no",
+      "cases": [
+        {
+          "id": "tc_be228a1cd1",
+          "title": "待确认收款时提交投诉：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_3fea7697b2",
+          "title": "标记已完成线下转账：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_343e941fe3",
+          "title": "待确认收款时提交投诉：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_a38fbdd48f",
+          "title": "待确认收款时提交投诉：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_27de387073",
+          "title": "标记已完成线下转账：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_3c1ef0b151",
+          "title": "待确认收款时提交投诉：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_60ad3df5c9",
+          "title": "待确认收款时提交投诉：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_78189ffc40",
+          "title": "待确认收款时提交投诉：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_ac39a4c15e",
+          "title": "待确认收款时提交投诉：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_7b351242d9",
+          "title": "标记已完成线下转账：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_81ca4518aa",
+          "title": "标记已完成线下转账：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_cecc2e452e",
+          "title": "标记已完成线下转账：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_63b49481af",
+          "title": "待确认收款时提交投诉：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_9703f0d4b0",
+          "title": "待确认收款时提交投诉：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_6d43b840fc",
+          "title": "待确认收款时提交投诉：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_c4b5e635f7",
+          "title": "待确认收款时提交投诉：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_ce9183787a",
+          "title": "待确认收款时提交投诉：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_6f03ba81cf",
+          "title": "待确认收款时提交投诉：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_d17c532894",
+          "title": "标记已完成线下转账：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_27dd9da1a1",
+          "title": "标记已完成线下转账：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_c240887ef3",
+          "title": "标记已完成线下转账：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_150ccec0dd",
+          "title": "待确认收款时提交投诉：缺失必填参数",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_050931dc62",
+          "title": "待确认收款时提交投诉：字段边界与类型错误",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_e28e6a08e2",
+          "title": "待确认收款时提交投诉：重复提交与幂等性",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/appeal",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [],
+          "case_count": 0,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_be228a1cd1",
+            "tc_3fea7697b2",
+            "tc_343e941fe3",
+            "tc_a38fbdd48f",
+            "tc_27de387073",
+            "tc_3c1ef0b151",
+            "tc_60ad3df5c9",
+            "tc_78189ffc40",
+            "tc_ac39a4c15e",
+            "tc_7b351242d9",
+            "tc_81ca4518aa",
+            "tc_cecc2e452e",
+            "tc_63b49481af",
+            "tc_9703f0d4b0",
+            "tc_6d43b840fc",
+            "tc_c4b5e635f7",
+            "tc_ce9183787a",
+            "tc_6f03ba81cf",
+            "tc_d17c532894",
+            "tc_27dd9da1a1",
+            "tc_c240887ef3",
+            "tc_150ccec0dd",
+            "tc_050931dc62",
+            "tc_e28e6a08e2"
+          ],
+          "case_count": 24,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程C：完整成交",
+          "evidence_rules": [
+            "salary_trade_appeal_evidence_created",
+            "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist",
+            "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist",
+            "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_be228a1cd1",
+            "tc_3fea7697b2",
+            "tc_343e941fe3",
+            "tc_a38fbdd48f",
+            "tc_27de387073",
+            "tc_3c1ef0b151",
+            "tc_60ad3df5c9",
+            "tc_78189ffc40",
+            "tc_ac39a4c15e",
+            "tc_7b351242d9",
+            "tc_81ca4518aa",
+            "tc_cecc2e452e",
+            "tc_63b49481af",
+            "tc_9703f0d4b0",
+            "tc_6d43b840fc",
+            "tc_c4b5e635f7",
+            "tc_ce9183787a",
+            "tc_6f03ba81cf",
+            "tc_d17c532894",
+            "tc_27dd9da1a1",
+            "tc_c240887ef3",
+            "tc_150ccec0dd",
+            "tc_050931dc62",
+            "tc_e28e6a08e2"
+          ],
+          "case_count": 24,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_appeal_evidence_created",
+            "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist",
+            "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist",
+            "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_c_finish"
+      }
+    },
+    {
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "name": "转账后申请人投诉，投诉失败",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P0",
+      "status": "READY_WITH_WARNINGS",
+      "account_slot": "applicant_04",
+      "order_variable": "flow_d_order_no",
+      "cases": [
+        {
+          "id": "tc_3c2aa3f293",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "GET",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_c4f56bbedb",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE"
+        },
+        {
+          "id": "tc_cb0f14e257",
+          "title": "按国家和币种选择代理用户：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/agents",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ddc2782339",
+          "title": "提交收款信息并创建待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_2c8302c8bf",
+          "title": "查看本人快速结算订单列表：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/page",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ed495e60ee",
+          "title": "查看本人订单详情：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/detail",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_4a361f2e73",
+          "title": "取消待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_da1f72545f",
+          "title": "确认已收到代理转账：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/confirm",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee"
+          ],
+          "case_count": 3,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程D：投诉失败",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_d_appeal_failed"
+      }
+    },
+    {
+      "scenario_id": "salary_flow_e_appeal_success",
+      "name": "转账后申请人投诉，投诉成功",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P0",
+      "status": "READY_WITH_WARNINGS",
+      "account_slot": "applicant_05",
+      "order_variable": "flow_e_order_no",
+      "cases": [
+        {
+          "id": "tc_3c2aa3f293",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "GET",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_c4f56bbedb",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE"
+        },
+        {
+          "id": "tc_cb0f14e257",
+          "title": "按国家和币种选择代理用户：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/agents",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ddc2782339",
+          "title": "提交收款信息并创建待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_2c8302c8bf",
+          "title": "查看本人快速结算订单列表：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/page",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ed495e60ee",
+          "title": "查看本人订单详情：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/detail",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_4a361f2e73",
+          "title": "取消待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_da1f72545f",
+          "title": "确认已收到代理转账：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/confirm",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee"
+          ],
+          "case_count": 3,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程E：投诉成功",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_e_appeal_success"
+      }
+    },
+    {
+      "scenario_id": "salary_flow_f_create_timeout",
+      "name": "创建后代理不处理直到订单过期",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P1",
+      "status": "BLOCKED",
+      "account_slot": "applicant_06",
+      "order_variable": "flow_f_order_no",
+      "cases": [
+        {
+          "id": "tc_3c2aa3f293",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "GET",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_c4f56bbedb",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE"
+        },
+        {
+          "id": "tc_cb0f14e257",
+          "title": "按国家和币种选择代理用户：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/agents",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ddc2782339",
+          "title": "提交收款信息并创建待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_2c8302c8bf",
+          "title": "查看本人快速结算订单列表：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/page",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ed495e60ee",
+          "title": "查看本人订单详情：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/detail",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_4a361f2e73",
+          "title": "取消待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_da1f72545f",
+          "title": "确认已收到代理转账：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/confirm",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee"
+          ],
+          "case_count": 3,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程F：待接单超时",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [
+            "需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。"
+          ]
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "manual",
+          "purpose": "人工复核运营处理、后台定时任务或长等待结果。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": [
+            "需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。"
+          ]
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。",
+          "确认测试环境是否支持缩短或触发定时任务。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_f_create_timeout"
+      }
+    },
+    {
+      "scenario_id": "salary_flow_g_accept_timeout",
+      "name": "代理接受后不转账，12小时过期取消",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P1",
+      "status": "BLOCKED",
+      "account_slot": "applicant_07",
+      "order_variable": "flow_g_order_no",
+      "cases": [
+        {
+          "id": "tc_3c2aa3f293",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "GET",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_c4f56bbedb",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE"
+        },
+        {
+          "id": "tc_cb0f14e257",
+          "title": "按国家和币种选择代理用户：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/agents",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ddc2782339",
+          "title": "提交收款信息并创建待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_2c8302c8bf",
+          "title": "查看本人快速结算订单列表：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/page",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ed495e60ee",
+          "title": "查看本人订单详情：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/detail",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_4a361f2e73",
+          "title": "取消待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_da1f72545f",
+          "title": "确认已收到代理转账：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/confirm",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee"
+          ],
+          "case_count": 3,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程G：已接受未转账超时",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [
+            "需要测试环境可控过期时间或后台定时任务触发入口。"
+          ]
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "manual",
+          "purpose": "人工复核运营处理、后台定时任务或长等待结果。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": [
+            "需要测试环境可控过期时间或后台定时任务触发入口。"
+          ]
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。",
+          "确认测试环境是否支持缩短或触发定时任务。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_g_accept_timeout"
+      }
+    },
+    {
+      "scenario_id": "salary_flow_h_confirm_timeout",
+      "name": "代理已转账后申请人24小时不确认，订单自动完成",
+      "business_goal": "验证工资交易订单从创建到目标状态的完整业务流转，订单号在本场景内贯穿使用。",
+      "priority": "P1",
+      "status": "BLOCKED",
+      "account_slot": "applicant_08",
+      "order_variable": "flow_h_order_no",
+      "cases": [
+        {
+          "id": "tc_3c2aa3f293",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "GET",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_c4f56bbedb",
+          "title": "返回工资快速结算创建入口开关：正常请求",
+          "method": "POST",
+          "path": "/union/getAnchorApplyRecord",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE"
+        },
+        {
+          "id": "tc_cb0f14e257",
+          "title": "按国家和币种选择代理用户：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/agents",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ddc2782339",
+          "title": "提交收款信息并创建待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_2c8302c8bf",
+          "title": "查看本人快速结算订单列表：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/page",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_ed495e60ee",
+          "title": "查看本人订单详情：正常请求",
+          "method": "GET",
+          "path": "/userserv/salary/trade/order/detail",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPTABLE_EVIDENCE_PENDING",
+          "quality_status": "NEEDS_EVIDENCE_REVIEW"
+        },
+        {
+          "id": "tc_4a361f2e73",
+          "title": "取消待代理处理订单：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_da1f72545f",
+          "title": "确认已收到代理转账：正常请求",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/confirm",
+          "coverage_tool": "jmeter",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee"
+          ],
+          "case_count": 3,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        },
+        {
+          "tool": "jmeter",
+          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "工资交易流程H：已转账未确认超时完成",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [
+            "需要测试环境可控24小时超时或后台任务触发入口。"
+          ]
+        },
+        {
+          "tool": "pytest",
+          "purpose": "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": []
+        },
+        {
+          "tool": "manual",
+          "purpose": "人工复核运营处理、后台定时任务或长等待结果。",
+          "cases": [
+            "tc_3c2aa3f293",
+            "tc_c4f56bbedb",
+            "tc_cb0f14e257",
+            "tc_ddc2782339",
+            "tc_2c8302c8bf",
+            "tc_ed495e60ee",
+            "tc_4a361f2e73",
+            "tc_da1f72545f"
+          ],
+          "case_count": 8,
+          "asset": "",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": [
+            "需要测试环境可控24小时超时或后台任务触发入口。"
+          ]
+        }
+      ],
+      "human_review": {
+        "review_question": "这个场景是否按需求进入了目标订单状态，并且资金、日志、凭证证据一致？",
+        "human_actions": [
+          "查看本场景 orderNo 的接口响应和 JMeter 采样标签。",
+          "核对 anchor_salary_trade_order 当前状态、金额和关键时间字段。",
+          "核对 anchor_salary_trade_order_log 是否记录完整流转。",
+          "确认测试环境是否支持缩短或触发定时任务。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=salary_flow_h_confirm_timeout"
+      }
+    }
+  ],
+  "business_value": "以业务场景为维护单位，把 Newman、JMeter、pytest 和人工复核收在同一个场景下，避免报告按工具散落。",
+  "next_actions": [
+    "先按场景查看 READY/BLOCKED/NEEDS_REVIEW，确认哪些能自动跑。",
+    "脚本生成器优先消费本计划里的 JMeter 场景和 pytest 证据任务。",
+    "人工维护时只改当前场景关联的用例、账号模型、证据规则和脚本资产。"
+  ]
+}

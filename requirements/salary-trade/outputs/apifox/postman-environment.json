@@ -1,0 +1,195 @@
+{
+  "id": "06b639f1-3e17-464a-b1a8-b649acfd6d76",
+  "name": "工资代理快速结算 - Apifox环境模板",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "https://test2westarlive.gzxchate.com/",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "mockBaseUrl",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "deviceType",
+      "value": "0",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "systemLanguage",
+      "value": "zh",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "appVersion",
+      "value": "100.1.5.6",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "os",
+      "value": "android",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "netType",
+      "value": "2",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "channel",
+      "value": "google",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "appsflyerId",
+      "value": "1787889409378-5852177650651460260",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "language",
+      "value": "en",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "appCode",
+      "value": "100156",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "deviceId",
+      "value": "8fcce1f1-5153-3207-9786-0240140a524a",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "version",
+      "value": "100.1.5.6",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "osVersion",
+      "value": "16",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "isVpnConnected",
+      "value": "0",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "appid",
+      "value": "soulfree",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "model",
+      "value": "SM-A546B",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "packageName",
+      "value": "com.soulfree.happiness",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "ispType",
+      "value": "4",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "organic",
+      "value": "Organic",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "countryCode",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "currency",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "orderNo",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "t",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "applicant_uid",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "applicant_ticket",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "proxy_uid",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "proxy_ticket",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "agentUid",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "proxyUid",
+      "value": "",
+      "enabled": true,
+      "type": "default"
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2026-09-03T16:20:53+08:00",
+  "_postman_exported_using": "AutoTest-AI Apifox exporter"
+}

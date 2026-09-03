@@ -1,9 +1,9 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
-  "generated_at": "2026-09-01T16:59:05+08:00",
-  "status": "BLOCKED",
+  "generated_at": "2026-09-02T18:53:39+08:00",
+  "status": "READY_WITH_WARNINGS",
   "checks": [
     {
       "name": "账号模型",
@@ -14,26 +14,44 @@
     {
       "name": "8个申请人账号",
       "status": "READY",
-      "detail": "已识别 8 个申请人，具备登录态来源 9 个。",
+      "detail": "已识别 8 个申请人，具备可用凭证 9 个。",
       "next_action": ""
     },
     {
-      "name": "代理国家币种匹配",
-      "status": "NEEDS_DATA",
-      "detail": "存在 2 组申请人国家/币种未在代理CSV命中。",
-      "next_action": "同步数据库白名单到代理CSV，或补齐对应代理"
+      "name": "代理收款币种匹配",
+      "status": "READY",
+      "detail": "申请人收款币种组合 5 组均能在代理CSV的support_currencies匹配。",
+      "next_action": ""
     },
     {
-      "name": "代理登录态来源",
-      "status": "NEEDS_DATA",
-      "detail": "代理CSV未识别到可用 ticket/password/redis_uid。",
-      "next_action": "补齐代理登录态或配置Redis登录缓存读取"
+      "name": "凭证输入检测",
+      "status": "READY",
+      "detail": "已按当前需求包识别 uid+ticket/password；未启用 Redis 作为默认来源。",
+      "next_action": ""
+    },
+    {
+      "name": "代理凭证来源",
+      "status": "READY",
+      "detail": "代理CSV中 6 个代理具备 uid+ticket/password 来源。",
+      "next_action": ""
     },
     {
       "name": "业务库执行前检查",
       "status": "NEEDS_LIVE_CHECK",
       "detail": "已生成 2 条运行前只读SQL检查模板。",
       "next_action": "执行JMeter前由DB连接器读取真实订单和白名单状态"
+    },
+    {
+      "name": "场景数据准备",
+      "status": "WARNING",
+      "detail": "场景预检有 8 个场景需要关注。",
+      "next_action": "确认未绑定证据规则或人工/定时流程是否符合预期"
+    },
+    {
+      "name": "需求资源预检",
+      "status": "WARNING",
+      "detail": "无运行阻断；有 0 个提醒、1 个建议。",
+      "next_action": "确认资源登记或对非必要项执行确认忽略"
     }
   ],
   "runtime_sql_checks": [
@@ -46,8 +64,670 @@
     {
       "name": "代理白名单实时检查",
       "source": "mysql_runtime_preflight",
-      "sql_template": "SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND country_code=${countryCode} AND support_currencies LIKE CONCAT('%', ${currency}, '%') LIMIT 5;",
-      "expectation": "每个申请人国家和收款币种都能匹配至少一个可用代理。"
+      "sql_template": "SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND FIND_IN_SET('${currency}', support_currencies) > 0 LIMIT 5;",
+      "expectation": "每个申请人的收款币种都能在代理白名单 support_currencies 中匹配至少一个可用代理。"
     }
-  ]
+  ],
+  "scenario_preflight": {
+    "status": "READY_WITH_WARNINGS",
+    "summary": {
+      "scenarios": 8,
+      "ready": 0,
+      "warnings": 8,
+      "blocked": 0
+    },
+    "scenarios": [
+      {
+        "scenario_id": "salary_flow_a_cancel_by_applicant",
+        "name": "创建后申请人取消",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_01",
+        "applicant_uid": "1454696",
+        "countryCode": "MA",
+        "currency": "USD",
+        "case_count": 8,
+        "evidence_rule_ids": [
+          "salary_trade_cancelled",
+          "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+        ]
+      },
+      {
+        "scenario_id": "salary_flow_b_reject_by_proxy",
+        "name": "创建后代理拒绝",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_02",
+        "applicant_uid": "1455141",
+        "countryCode": "SA",
+        "currency": "SAR",
+        "case_count": 8,
+        "evidence_rule_ids": [
+          "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+        ]
+      },
+      {
+        "scenario_id": "salary_flow_c_finish",
+        "name": "接受并转账后申请人确认完成",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_03",
+        "applicant_uid": "1454724",
+        "countryCode": "QA",
+        "currency": "QAR",
+        "case_count": 24,
+        "evidence_rule_ids": [
+          "salary_trade_appeal_evidence_created",
+          "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist",
+          "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist",
+          "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist,salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist,salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+        ]
+      },
+      {
+        "scenario_id": "salary_flow_d_appeal_failed",
+        "name": "转账后申请人投诉，投诉失败",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_04",
+        "applicant_uid": "1454744",
+        "countryCode": "USD",
+        "currency": "USD",
+        "case_count": 8,
+        "evidence_rule_ids": [
+          "salary_trade_cancelled",
+          "salary_trade_finished",
+          "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+          "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+          "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+          "salary_trade_order_created",
+          "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+        ]
+      },
+      {
+        "scenario_id": "salary_flow_e_appeal_success",
+        "name": "转账后申请人投诉，投诉成功",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_05",
+        "applicant_uid": "1454723",
+        "countryCode": "QA",
+        "currency": "QAR",
+        "case_count": 8,
+        "evidence_rule_ids": [
+          "salary_trade_cancelled",
+          "salary_trade_finished",
+          "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+          "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+          "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+          "salary_trade_order_created",
+          "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+        ]
+      },
+      {
+        "scenario_id": "salary_flow_f_create_timeout",
+        "name": "创建后代理不处理直到订单过期",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_06",
+        "applicant_uid": "1455185",
+        "countryCode": "MA",
+        "currency": "USD",
+        "case_count": 8,
+        "evidence_rule_ids": [
+          "salary_trade_cancelled",
+          "salary_trade_finished",
+          "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+          "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+          "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+          "salary_trade_order_created",
+          "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order",
+          "需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。",
+          "需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。"
+        ]
+      },
+      {
+        "scenario_id": "salary_flow_g_accept_timeout",
+        "name": "代理接受后不转账，12小时过期取消",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_07",
+        "applicant_uid": "1454617",
+        "countryCode": "SA",
+        "currency": "USD",
+        "case_count": 8,
+        "evidence_rule_ids": [
+          "salary_trade_cancelled",
+          "salary_trade_finished",
+          "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+          "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+          "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+          "salary_trade_order_created",
+          "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order",
+          "需要测试环境可控过期时间或后台定时任务触发入口。",
+          "需要测试环境可控过期时间或后台定时任务触发入口。"
+        ]
+      },
+      {
+        "scenario_id": "salary_flow_h_confirm_timeout",
+        "name": "代理已转账后申请人24小时不确认，订单自动完成",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "applicant_08",
+        "applicant_uid": "1455113",
+        "countryCode": "USD",
+        "currency": "USD",
+        "case_count": 8,
+        "evidence_rule_ids": [
+          "salary_trade_cancelled",
+          "salary_trade_finished",
+          "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+          "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+          "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+          "salary_trade_order_created",
+          "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+          "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+        ],
+        "blockers": [],
+        "attentions": [
+          "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order",
+          "需要测试环境可控24小时超时或后台任务触发入口。",
+          "需要测试环境可控24小时超时或后台任务触发入口。"
+        ]
+      }
+    ],
+    "message": "按场景检查账号槽位、用例绑定和证据规则绑定。"
+  },
+  "details": {
+    "applicants": [
+      {
+        "uid": "1454696",
+        "countryCode": "MA",
+        "currency": "USD",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1455141",
+        "countryCode": "SA",
+        "currency": "SAR",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1454724",
+        "countryCode": "QA",
+        "currency": "QAR",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1454744",
+        "countryCode": "USD",
+        "currency": "USD",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1454723",
+        "countryCode": "QA",
+        "currency": "QAR",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1455185",
+        "countryCode": "MA",
+        "currency": "USD",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1454617",
+        "countryCode": "SA",
+        "currency": "USD",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1455113",
+        "countryCode": "USD",
+        "currency": "USD",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+ticket"
+        ],
+        "source": "applicant_csv"
+      },
+      {
+        "uid": "1454696",
+        "countryCode": "MA",
+        "currency": "USD",
+        "credential_ready": true,
+        "credential_sources": [
+          "uid+login_password"
+        ],
+        "source": "account_csv"
+      }
+    ],
+    "country_currency_pairs": [
+      {
+        "countryCode": "MA",
+        "currency": "USD"
+      },
+      {
+        "countryCode": "QA",
+        "currency": "QAR"
+      },
+      {
+        "countryCode": "SA",
+        "currency": "SAR"
+      },
+      {
+        "countryCode": "SA",
+        "currency": "USD"
+      },
+      {
+        "countryCode": "USD",
+        "currency": "USD"
+      }
+    ],
+    "proxy_matches": [
+      {
+        "countryCode": "MA",
+        "currency": "USD",
+        "matched": 6,
+        "proxy_uids": [
+          "1454342",
+          "1455156",
+          "1454428",
+          "1454924",
+          "1454097"
+        ]
+      },
+      {
+        "countryCode": "QA",
+        "currency": "QAR",
+        "matched": 1,
+        "proxy_uids": [
+          "1455156"
+        ]
+      },
+      {
+        "countryCode": "SA",
+        "currency": "SAR",
+        "matched": 3,
+        "proxy_uids": [
+          "1454342",
+          "1454428",
+          "1455038"
+        ]
+      },
+      {
+        "countryCode": "SA",
+        "currency": "USD",
+        "matched": 6,
+        "proxy_uids": [
+          "1454342",
+          "1455156",
+          "1454428",
+          "1454924",
+          "1454097"
+        ]
+      },
+      {
+        "countryCode": "USD",
+        "currency": "USD",
+        "matched": 6,
+        "proxy_uids": [
+          "1454342",
+          "1455156",
+          "1454428",
+          "1454924",
+          "1454097"
+        ]
+      }
+    ],
+    "credential_sources": {
+      "applicant_ready": 9,
+      "applicant_total": 8,
+      "proxy_ready": 6,
+      "proxy_total": 6,
+      "proxy_ready_uids": [
+        "1454342",
+        "1455156",
+        "1454428",
+        "1454924",
+        "1454097",
+        "1455038"
+      ]
+    },
+    "input_detection": {
+      "policy": "按当前需求包 account_model.yaml 和测试用例字段检测数据来源；不默认强加 CSV、Redis 或登录接口。",
+      "enabled_sources": [
+        "applicant_csv",
+        "proxy_csv",
+        "login_api_if_password_present",
+        "mysql_readonly_evidence"
+      ],
+      "disabled_by_default": [
+        "redis"
+      ],
+      "roles": {
+        "applicant": {
+          "required": [
+            "uid",
+            "ticket 或 password_encrypted"
+          ],
+          "total": 9,
+          "uid_ready": 9,
+          "credential_ready": 9,
+          "usable": 9,
+          "sources": [
+            "uid+login_password",
+            "uid+ticket"
+          ]
+        },
+        "proxy": {
+          "required": [
+            "uid",
+            "ticket 或 password_encrypted"
+          ],
+          "total": 6,
+          "uid_ready": 6,
+          "credential_ready": 6,
+          "usable": 6,
+          "sources": [
+            "uid+ticket"
+          ]
+        },
+        "mysql": {
+          "required": [
+            "anchor_salary_trade_agent_whitelist",
+            "anchor_salary_trade_order",
+            "anchor_salary_trade_order_log",
+            "anchor_salary_trade_evidence"
+          ],
+          "purpose": "只读检查代理资格、订单主状态、状态日志和投诉凭证。"
+        }
+      }
+    },
+    "scenario_preflight": {
+      "status": "READY_WITH_WARNINGS",
+      "summary": {
+        "scenarios": 8,
+        "ready": 0,
+        "warnings": 8,
+        "blocked": 0
+      },
+      "scenarios": [
+        {
+          "scenario_id": "salary_flow_a_cancel_by_applicant",
+          "name": "创建后申请人取消",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_01",
+          "applicant_uid": "1454696",
+          "countryCode": "MA",
+          "currency": "USD",
+          "case_count": 8,
+          "evidence_rule_ids": [
+            "salary_trade_cancelled",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order"
+          ]
+        },
+        {
+          "scenario_id": "salary_flow_b_reject_by_proxy",
+          "name": "创建后代理拒绝",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_02",
+          "applicant_uid": "1455141",
+          "countryCode": "SA",
+          "currency": "SAR",
+          "case_count": 8,
+          "evidence_rule_ids": [
+            "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
+          ]
+        },
+        {
+          "scenario_id": "salary_flow_c_finish",
+          "name": "接受并转账后申请人确认完成",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_03",
+          "applicant_uid": "1454724",
+          "countryCode": "QA",
+          "currency": "QAR",
+          "case_count": 24,
+          "evidence_rule_ids": [
+            "salary_trade_appeal_evidence_created",
+            "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist",
+            "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist",
+            "salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist,salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist,salary_trade_post_userserv_salary_trade_order_appeal_anchor_salary_trade_order"
+          ]
+        },
+        {
+          "scenario_id": "salary_flow_d_appeal_failed",
+          "name": "转账后申请人投诉，投诉失败",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_04",
+          "applicant_uid": "1454744",
+          "countryCode": "USD",
+          "currency": "USD",
+          "case_count": 8,
+          "evidence_rule_ids": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ]
+        },
+        {
+          "scenario_id": "salary_flow_e_appeal_success",
+          "name": "转账后申请人投诉，投诉成功",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_05",
+          "applicant_uid": "1454723",
+          "countryCode": "QA",
+          "currency": "QAR",
+          "case_count": 8,
+          "evidence_rule_ids": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ]
+        },
+        {
+          "scenario_id": "salary_flow_f_create_timeout",
+          "name": "创建后代理不处理直到订单过期",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_06",
+          "applicant_uid": "1455185",
+          "countryCode": "MA",
+          "currency": "USD",
+          "case_count": 8,
+          "evidence_rule_ids": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order",
+            "需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。",
+            "需要可控时间策略、后台任务触发方式或测试环境缩短超时时间。"
+          ]
+        },
+        {
+          "scenario_id": "salary_flow_g_accept_timeout",
+          "name": "代理接受后不转账，12小时过期取消",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_07",
+          "applicant_uid": "1454617",
+          "countryCode": "SA",
+          "currency": "USD",
+          "case_count": 8,
+          "evidence_rule_ids": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order",
+            "需要测试环境可控过期时间或后台定时任务触发入口。",
+            "需要测试环境可控过期时间或后台定时任务触发入口。"
+          ]
+        },
+        {
+          "scenario_id": "salary_flow_h_confirm_timeout",
+          "name": "代理已转账后申请人24小时不确认，订单自动完成",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "applicant_08",
+          "applicant_uid": "1455113",
+          "countryCode": "USD",
+          "currency": "USD",
+          "case_count": 8,
+          "evidence_rule_ids": [
+            "salary_trade_cancelled",
+            "salary_trade_finished",
+            "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist",
+            "salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order",
+            "salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order",
+            "salary_trade_order_created",
+            "salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
+            "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
+          ],
+          "blockers": [],
+          "attentions": [
+            "场景绑定了尚未采纳的候选证据规则：salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist,salary_trade_get_userserv_salary_trade_order_detail_anchor_salary_trade_order,salary_trade_get_userserv_salary_trade_order_page_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_cancel_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order,salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order",
+            "需要测试环境可控24小时超时或后台任务触发入口。",
+            "需要测试环境可控24小时超时或后台任务触发入口。"
+          ]
+        }
+      ],
+      "message": "按场景检查账号槽位、用例绑定和证据规则绑定。"
+    },
+    "resource_preflight": {
+      "schema_version": "1.1",
+      "package_id": "salary-trade",
+      "package_name": "工资代理快速结算",
+      "generated_at": "2026-09-02T18:53:39+08:00",
+      "status": "READY_WITH_WARNINGS",
+      "summary": {
+        "blocked": 0,
+        "warnings": 0,
+        "suggestions": 1,
+        "confirmed_ignored": 0,
+        "registered_datasets": 2,
+        "registered_mysql_tables": 4,
+        "registered_redis_patterns": 0
+      },
+      "policy": "资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。",
+      "findings": [
+        {
+          "id": "runtime:time_control",
+          "status": "SUGGESTION",
+          "title": "存在超时流程但未登记时间控制资源",
+          "reason": "自然等待12/24小时不适合自动化回归，通常需要测试环境时间偏移或定时任务触发入口。",
+          "next_action": "登记时间偏移参数、任务触发接口，或保留为人工场景。",
+          "resource_type": "runtime_parameter",
+          "registered": []
+        }
+      ],
+      "resource_manifest_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\resource_manifest.yaml",
+      "report_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\resource-preflight-check.json"
+    }
+  }
 }

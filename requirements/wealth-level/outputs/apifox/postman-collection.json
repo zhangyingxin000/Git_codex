@@ -1,0 +1,114 @@
+{
+  "info": {
+    "name": "财富等级 - Apifox可导入集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://test2westarlive.gzxchate.com/"
+    }
+  ],
+  "item": [
+    {
+      "name": "异常参数与鉴权失败",
+      "description": "覆盖缺少参数、无效凭证、边界值和错误码契约。",
+      "item": [
+        {
+          "name": "缺失UID参数",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "t",
+                "value": "{{t}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?currency={{currency}}&ticket={{ticket}}&countryCode={{countryCode}}&orderNo={{orderNo}}&orderId={{orderId}}",
+            "description": "平台用例ID：tc_08201fc35e\n业务场景：异常参数与鉴权失败\n预期结果：拒绝非法请求或不泄露其他用户数据"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP状态码为 400\", function () { pm.response.to.have.status(400); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "function findValue(node, key) {",
+                  "  if (!node || typeof node !== 'object') return undefined;",
+                  "  if (Object.prototype.hasOwnProperty.call(node, key) && node[key] !== null && node[key] !== '') return node[key];",
+                  "  for (const name of Object.keys(node)) { const found = findValue(node[name], key); if (found !== undefined) return found; }",
+                  "  return undefined;",
+                  "}",
+                  "if (responseJson) {",
+                  "  const orderNo = findValue(responseJson, 'orderNo');",
+                  "  const orderId = findValue(responseJson, 'orderId');",
+                  "  const accessToken = findValue(responseJson, 'access_token');",
+                  "  if (orderNo !== undefined) { pm.environment.set('orderNo', String(orderNo)); pm.environment.set(\"orderNo\", String(orderNo)); }",
+                  "  if (orderId !== undefined) pm.environment.set('orderId', String(orderId));",
+                  "  if (accessToken !== undefined) pm.environment.set('ticket', String(accessToken));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "非法UID类型",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "t",
+                "value": "{{t}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?currency={{currency}}&ticket={{ticket}}&countryCode={{countryCode}}&orderNo={{orderNo}}&uid=not-a-number&orderId={{orderId}}",
+            "description": "平台用例ID：tc_2370c6482c\n业务场景：异常参数与鉴权失败\n预期结果：拒绝非法请求或不泄露其他用户数据"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP状态码为 400\", function () { pm.response.to.have.status(400); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "function findValue(node, key) {",
+                  "  if (!node || typeof node !== 'object') return undefined;",
+                  "  if (Object.prototype.hasOwnProperty.call(node, key) && node[key] !== null && node[key] !== '') return node[key];",
+                  "  for (const name of Object.keys(node)) { const found = findValue(node[name], key); if (found !== undefined) return found; }",
+                  "  return undefined;",
+                  "}",
+                  "if (responseJson) {",
+                  "  const orderNo = findValue(responseJson, 'orderNo');",
+                  "  const orderId = findValue(responseJson, 'orderId');",
+                  "  const accessToken = findValue(responseJson, 'access_token');",
+                  "  if (orderNo !== undefined) { pm.environment.set('orderNo', String(orderNo)); pm.environment.set(\"orderNo\", String(orderNo)); }",
+                  "  if (orderId !== undefined) pm.environment.set('orderId', String(orderId));",
+                  "  if (accessToken !== undefined) pm.environment.set('ticket', String(accessToken));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "x-autotest-scenario": {
+        "scenario_id": "wealth_exception_contract",
+        "name": "异常参数与鉴权失败",
+        "description": "覆盖缺少参数、无效凭证、边界值和错误码契约。",
+        "order_variable": "orderNo",
+        "case_ids": [
+          "tc_08201fc35e",
+          "tc_2370c6482c"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.1",
+  "package_id": "salary-trade",
+  "generated_at": "2026-09-03T16:20:53+08:00",
+  "collection": "postman-collection.json",
+  "environment": "postman-environment.json",
+  "scenario_count": 10,
+  "scenarios": [
+    {
+      "scenario_id": "salary_flow_a_cancel_by_applicant",
+      "name": "创建后申请人取消",
+      "case_count": 4,
+      "order_variable": "flow_a_order_no"
+    },
+    {
+      "scenario_id": "salary_flow_b_reject_by_proxy",
+      "name": "创建后代理拒绝",
+      "case_count": 4,
+      "order_variable": "flow_b_order_no"
+    },
+    {
+      "scenario_id": "salary_flow_c_finish",
+      "name": "接受并转账后申请人确认完成",
+      "case_count": 12,
+      "order_variable": "flow_c_order_no"
+    },
+    {
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "name": "转账后申请人投诉，投诉失败",
+      "case_count": 8,
+      "order_variable": "flow_d_order_no"
+    },
+    {
+      "scenario_id": "salary_flow_e_appeal_success",
+      "name": "转账后申请人投诉，投诉成功",
+      "case_count": 8,
+      "order_variable": "flow_e_order_no"
+    },
+    {
+      "scenario_id": "salary_flow_f_create_timeout",
+      "name": "创建后代理不处理直到订单过期",
+      "case_count": 8,
+      "order_variable": "flow_f_order_no"
+    },
+    {
+      "scenario_id": "salary_flow_g_accept_timeout",
+      "name": "代理接受后不转账，12小时过期取消",
+      "case_count": 8,
+      "order_variable": "flow_g_order_no"
+    },
+    {
+      "scenario_id": "salary_flow_h_confirm_timeout",
+      "name": "代理已转账后申请人24小时不确认，订单自动完成",
+      "case_count": 8,
+      "order_variable": "flow_h_order_no"
+    },
+    {
+      "scenario_id": "fallback:正常请求",
+      "name": "正常请求",
+      "case_count": 10,
+      "order_variable": ""
+    },
+    {
+      "scenario_id": "fallback:接口契约",
+      "name": "接口契约",
+      "case_count": 41,
+      "order_variable": ""
+    }
+  ],
+  "capabilities": [
+    "scenario_folders",
+    "http_assertion",
+    "business_code_assertion",
+    "response_variable_extraction",
+    "environment_parameterization"
+  ]
+}

@@ -8,7 +8,7 @@ from typing import Any
 
 from fastapi import Body, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from ..schemas.requests import (
@@ -191,6 +191,18 @@ def create_app() -> FastAPI:
     def requirement_tool_assets(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
         return legacy.generate_requirement_package_tool_assets(project_id, package_id, payload)
 
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/runs", tags=["Execution"], summary="创建需求包统一运行批次")
+    def create_requirement_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.create_requirement_run_context(project_id, package_id, payload)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/runs", tags=["Execution"], summary="需求包运行批次")
+    def requirement_runs(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.list_requirement_run_contexts(project_id, package_id)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/runs/{run_id}", tags=["Execution"], summary="需求包运行批次详情")
+    def requirement_run(project_id: str, package_id: str, run_id: str) -> dict[str, Any]:
+        return legacy.get_requirement_run_context(project_id, package_id, run_id)
+
     @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/newman/run", tags=["Execution"], summary="运行需求包Newman")
     def requirement_newman_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
         return legacy.run_requirement_package_newman(project_id, package_id, payload)
@@ -199,13 +211,49 @@ def create_app() -> FastAPI:
     def requirement_pytest_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
         return legacy.run_requirement_package_pytest(project_id, package_id, payload)
 
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/pipeline/run", tags=["Execution"], summary="一键执行当前需求包闭环")
+    def requirement_pipeline_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.run_requirement_package_pipeline(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/salary-trade/jmeter-harvest", tags=["Execution"], summary="回收工资交易JMeter执行报告")
+    def salary_trade_jmeter_harvest(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.harvest_salary_trade_jmeter_mapping(project_id, payload)
+
     @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/scenario-report", tags=["Reports"], summary="生成需求包统一场景报告")
     def requirement_scenario_report(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
         return legacy.generate_requirement_package_unified_scenario_report(project_id, package_id, payload)
 
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/report-index", tags=["Reports"], summary="需求包运行批次与报告索引")
+    def requirement_report_index(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.requirement_package_report_index(project_id, package_id, True)
+
+    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/schema-audit", tags=["Assets"], summary="需求包Schema校验")
+    def requirement_schema_audit(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.validate_requirement_package_schemas(project_id, package_id, True)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/schema-upgrade", tags=["Assets"], summary="需求包Schema兼容升级")
+    def requirement_schema_upgrade(project_id: str, package_id: str) -> dict[str, Any]:
+        return legacy.upgrade_requirement_package_schemas(project_id, package_id)
+
     @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/ai-review", tags=["Reports"], summary="生成需求包AI复盘")
     def requirement_ai_review(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
         return legacy.generate_requirement_package_ai_review(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/performance-ai-review", tags=["Reports"], summary="生成当前批次性能报告AI分析")
+    def requirement_performance_ai_review(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_requirement_performance_ai_review(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/newman-analysis", tags=["Reports"], summary="生成当前批次Newman接口冒烟分析")
+    def requirement_newman_analysis(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_requirement_newman_analysis(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-plan", tags=["Execution"], summary="生成可执行JMeter持续压测预案")
+    def requirement_jmeter_load_plan(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.generate_requirement_jmeter_load_plan(project_id, package_id, payload)
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run", tags=["Execution"], summary="执行JMeter持续压测阶梯并回收JTL与HTML")
+    def requirement_jmeter_load_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.run_requirement_jmeter_load_stage(project_id, package_id, payload)
 
     @api.post("/api/projects/{project_id}/structured-test-cases", tags=["Assets"], summary="生成结构化测试用例")
     def structured_test_cases(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
@@ -275,10 +323,24 @@ def create_app() -> FastAPI:
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
-    @api.post("/api/projects/{project_id}/apipost-package", tags=["Assets"], summary="生成 Apipost 协同包")
-    def apipost_package(project_id: str) -> dict[str, Any]:
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/apifox-export", tags=["Assets"], summary="生成当前需求包Apifox交换包")
+    def apifox_package(project_id: str, package_id: str) -> dict[str, Any]:
         try:
-            return legacy.build_apipost_collaboration_package(project_id)
+            return legacy.build_apifox_collaboration_package(project_id, package_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/apifox/openapi/import", tags=["Assets"], summary="导入Apifox OpenAPI并生成pytest基础层")
+    def apifox_openapi_import(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        try:
+            return legacy.import_apifox_openapi_to_package(project_id, package_id, payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/apifox-cli/run", tags=["Execution"], summary="运行Apifox CLI发布冒烟并回收报告")
+    def apifox_cli_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        try:
+            return legacy.run_requirement_package_apifox_cli(project_id, package_id, payload)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -906,14 +968,19 @@ def create_app() -> FastAPI:
     static_dir = legacy.ROOT / "static"
     if reports_dir.exists():
         api.mount("/reports", StaticFiles(directory=reports_dir), name="reports")
+    requirement_reports_dir = legacy.REQUIREMENT_PACKAGE_ROOT
+    if requirement_reports_dir.exists():
+        api.mount("/requirement-reports", StaticFiles(directory=requirement_reports_dir), name="requirement-reports")
 
     @api.get("/{path:path}", include_in_schema=False)
-    def static_files(path: str = "") -> FileResponse:
+    def static_files(path: str = "") -> Response:
         target = static_dir / (path or "index.html")
         headers = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
         if target.is_file() and static_dir.resolve() in target.resolve().parents:
+            if target.resolve() == (static_dir / "index.html").resolve():
+                return HTMLResponse(legacy.render_static_index(), headers=headers)
             return FileResponse(target, headers=headers)
-        return FileResponse(static_dir / "index.html", headers=headers)
+        return HTMLResponse(legacy.render_static_index(), headers=headers)
 
     return api
 

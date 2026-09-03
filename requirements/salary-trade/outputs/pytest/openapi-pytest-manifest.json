@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.1",
+  "report_type": "APIFOX_OPENAPI_PYTEST_GENERATION",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "generated_at": "2026-09-03T17:20:24+08:00",
+  "status": "READY",
+  "source_of_truth": "apifox",
+  "source_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\apifox\\openapi.json",
+  "source_hash": "4b74b36a805cb39cbc7d17e3f15e1f56d8bc790b6f59f2b137ce667c325a3ca1",
+  "source_changed": false,
+  "selection_mode": "full_openapi_with_case_mapping",
+  "summary": {
+    "openapi_paths": 18,
+    "pytest_operations": 18
+  },
+  "generated_files": [
+    "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\generated\\test_openapi_contract.py"
+  ],
+  "protected_paths": [
+    "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\business",
+    "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\apifox\\cli-profile.yaml"
+  ],
+  "rule": "只覆盖generated目录；business目录由人工维护。"
+}

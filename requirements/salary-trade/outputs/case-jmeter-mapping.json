@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
-  "generated_at": "2026-09-01T16:59:05+08:00",
+  "generated_at": "2026-09-02T18:53:39+08:00",
   "summary": {
     "cases": 170,
     "jmeter_targets": 136,
@@ -54,13 +54,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/quota",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
@@ -78,13 +77,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agents",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
@@ -291,13 +289,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
@@ -315,13 +312,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
@@ -339,13 +335,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -363,13 +358,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
@@ -387,13 +381,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
@@ -411,13 +404,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -435,13 +427,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -459,13 +450,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -483,13 +473,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
@@ -564,13 +553,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/quota",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
@@ -588,13 +576,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agents",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
@@ -801,13 +788,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
@@ -825,13 +811,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
@@ -849,13 +834,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -873,13 +857,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
@@ -897,13 +880,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
@@ -921,13 +903,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -945,13 +926,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -969,13 +949,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -993,13 +972,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "根据接口资料样例验证核心成功路径",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
@@ -1133,13 +1111,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/quota",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
@@ -1157,13 +1134,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/quota",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
@@ -1181,13 +1157,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agents",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
@@ -1205,13 +1180,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agents",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
@@ -1770,13 +1744,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/logs",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
@@ -1794,13 +1767,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/logs",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
@@ -1818,13 +1790,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
@@ -1842,13 +1813,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
@@ -1866,13 +1836,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -1890,13 +1859,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -1914,13 +1882,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -1946,13 +1913,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
@@ -1970,13 +1936,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
@@ -1994,13 +1959,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
@@ -2018,13 +1982,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
@@ -2042,13 +2005,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -2066,13 +2028,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -2090,13 +2051,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -2122,13 +2082,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -2146,13 +2105,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -2170,13 +2128,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -2202,13 +2159,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -2226,13 +2182,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -2250,13 +2205,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -2282,13 +2236,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
@@ -2306,13 +2259,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
@@ -2330,13 +2282,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
@@ -2456,13 +2407,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "系统行为与规则一致：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_case_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_case_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_case_anchor_salary_trade_agent_whitelist"
@@ -2674,13 +2624,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/quota",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
@@ -2698,13 +2647,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/quota",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist"
@@ -2722,13 +2670,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agents",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
@@ -2746,13 +2693,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agents",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist"
@@ -3311,13 +3257,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/logs",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
@@ -3335,13 +3280,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/logs",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist"
@@ -3359,13 +3303,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
@@ -3383,13 +3326,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/notice",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist"
@@ -3407,13 +3349,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -3431,13 +3372,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -3455,13 +3395,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/notice/save",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist"
@@ -3487,13 +3426,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
@@ -3511,13 +3449,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/page",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist"
@@ -3535,13 +3472,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
@@ -3559,13 +3495,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "GET /userserv/salary/trade/agent/order/detail",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist"
@@ -3583,13 +3518,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -3607,13 +3541,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -3631,13 +3564,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/accept",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist"
@@ -3663,13 +3595,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -3687,13 +3618,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -3711,13 +3641,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/reject",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist"
@@ -3743,13 +3672,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -3767,13 +3695,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -3791,13 +3718,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/paid",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist"
@@ -3823,13 +3749,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证必填字段校验：",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
@@ -3847,13 +3772,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证长度、数值、类型和空值边界",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"
@@ -3871,13 +3795,12 @@
       "matched_flow_id": "",
       "jmeter_sampler": "POST /userserv/salary/trade/agent/order/appeal",
       "variables": [
-        "country_code",
         "currency",
         "proxy_uid"
       ],
       "assertions": [
         "验证重复操作不会破坏数据一致性",
-        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
+        "DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。"
       ],
       "db_evidence_rules": [
         "salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist"

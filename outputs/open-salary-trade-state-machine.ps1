@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Ticket = "",
     [string]$ApplicantTicket = "",
     [string]$ProxyTicket = "",
@@ -7,11 +7,6 @@ param(
     [string]$CountryCode = "",
     [string]$Currency = "",
     [string]$SalaryAmount = "",
-    [string]$RedisHost = "47.237.139.110",
-    [int]$RedisPort = 6450,
-    [int]$RedisDb = 0,
-    [string]$RedisPassword = "",
-    [bool]$RequireRedis = $false,
     [switch]$NoOpen,
     [string]$LoginBaseUrl = "https://test2westarlive.gzxchate.com"
 )
@@ -21,7 +16,7 @@ $ErrorActionPreference = "Stop"
 function Test-JwtLikeTicket {
     param([string]$Name, [string]$Value)
     if ([string]::IsNullOrWhiteSpace($Value)) {
-        throw "$Name is required. Provide account login data, paste a real ticket, or explicitly enable Redis lookup."
+        throw "$Name is required. Provide account login data, paste a real ticket, or fill the role CSV."
     }
     $dotCount = ([regex]::Matches($Value, '\.')).Count
     if ($dotCount -ne 2 -or $Value.Length -lt 80) {
@@ -86,100 +81,6 @@ function Get-AccountRow {
     return $null
 }
 
-function Read-RedisResponse {
-    param([System.IO.Stream]$Stream)
-
-    function Read-ByteRequired {
-        $value = $Stream.ReadByte()
-        if ($value -lt 0) { throw "Redis closed the connection while reading response." }
-        return [byte]$value
-    }
-
-    function Read-RedisLine {
-        $bytes = New-Object System.Collections.Generic.List[byte]
-        while ($true) {
-            $b = Read-ByteRequired
-            if ($b -eq 13) {
-                $next = Read-ByteRequired
-                if ($next -ne 10) { throw "Invalid Redis response line ending." }
-                break
-            }
-            $bytes.Add($b)
-        }
-        return [Text.Encoding]::UTF8.GetString($bytes.ToArray())
-    }
-
-    $prefix = [char](Read-ByteRequired)
-    $line = Read-RedisLine
-    if ($prefix -eq '-') { throw "Redis error: $line" }
-    if ($prefix -eq '+') { return $line }
-    if ($prefix -eq ':') { return $line }
-    if ($prefix -eq '$') {
-        $length = [int]$line
-        if ($length -lt 0) { return "" }
-        $buffer = New-Object byte[] $length
-        $offset = 0
-        while ($offset -lt $length) {
-            $read = $Stream.Read($buffer, $offset, $length - $offset)
-            if ($read -le 0) { throw "Redis closed the connection while reading bulk data." }
-            $offset += $read
-        }
-        $cr = Read-ByteRequired
-        $lf = Read-ByteRequired
-        if ($cr -ne 13 -or $lf -ne 10) { throw "Invalid Redis bulk response ending." }
-        return [Text.Encoding]::UTF8.GetString($buffer)
-    }
-    throw "Unsupported Redis response prefix: $prefix"
-}
-
-function Send-RedisCommand {
-    param(
-        [System.IO.Stream]$Stream,
-        [string[]]$Parts
-    )
-    $builder = New-Object System.Text.StringBuilder
-    [void]$builder.Append("*$($Parts.Count)`r`n")
-    foreach ($part in $Parts) {
-        $bytes = [Text.Encoding]::UTF8.GetBytes($part)
-        [void]$builder.Append("`$$($bytes.Length)`r`n")
-        [void]$builder.Append($part)
-        [void]$builder.Append("`r`n")
-    }
-    $payload = [Text.Encoding]::UTF8.GetBytes($builder.ToString())
-    $Stream.Write($payload, 0, $payload.Length)
-    $Stream.Flush()
-    return Read-RedisResponse -Stream $Stream
-}
-
-function Get-RedisAccessToken {
-    param(
-        [string]$HostName,
-        [int]$Port,
-        [int]$Db,
-        [string]$Password,
-        [string]$Uid
-    )
-    if ([string]::IsNullOrWhiteSpace($Uid)) { return "" }
-    $client = New-Object System.Net.Sockets.TcpClient
-    $client.ReceiveTimeout = 5000
-    $client.SendTimeout = 5000
-    try {
-        $client.Connect($HostName, $Port)
-        $stream = $client.GetStream()
-        if (![string]::IsNullOrWhiteSpace($Password)) {
-            [void](Send-RedisCommand -Stream $stream -Parts @("AUTH", $Password))
-        }
-        if ($Db -ne 0) {
-            [void](Send-RedisCommand -Stream $stream -Parts @("SELECT", [string]$Db))
-        }
-        return (Send-RedisCommand -Stream $stream -Parts @("HGET", "user_login_info:$Uid", "access_token")).Trim()
-    } catch {
-        throw "Redis token lookup failed for uid=${Uid}: $($_.Exception.Message)"
-    } finally {
-        $client.Close()
-    }
-}
-
 function Join-FormBody {
     param([hashtable]$Values)
     $parts = New-Object System.Collections.Generic.List[string]
@@ -239,6 +140,8 @@ $JMeterHome = "D:\apache-jmeter-5.6.3\bin"
 $RuntimeProperties = Join-Path $ProjectRoot "work\salary-trade-runtime.properties"
 $ApplicantCsv = Join-Path $ProjectRoot "data\salary-trade-applicants.csv"
 $AccountCsv = Join-Path $ProjectRoot "data\salary-trade-accounts.csv"
+$ProxyCsv = Join-Path $ProjectRoot "data\salary-trade-proxies.csv"
+$ProxyCsvForJMeter = $ProxyCsv.Replace('\', '/')
 $DatabaseEnv = Join-Path $ProjectRoot "database.env"
 
 if (!(Test-Path -LiteralPath $Jmx)) { throw "Salary trade JMX not found: $Jmx" }
@@ -295,29 +198,6 @@ if (Test-Path -LiteralPath $AccountCsv) { $AccountRows = @(Import-Csv -LiteralPa
 $ApplicantAccount = Get-AccountRow -Rows $AccountRows -Role "applicant" -Country $CountryCode -TradeCurrency $Currency -TargetUid $ApplicantUid
 $ProxyAccount = Get-AccountRow -Rows $AccountRows -Role "proxy" -Country $CountryCode -TradeCurrency $Currency -TargetUid $ProxyUid
 
-if ($RequireRedis) {
-    $ApplicantRedisTicket = ""
-    $ProxyRedisTicket = ""
-    if (![string]::IsNullOrWhiteSpace($ApplicantUid)) {
-        $ApplicantRedisTicket = Get-RedisAccessToken -HostName $RedisHost -Port $RedisPort -Db $RedisDb -Password $RedisPassword -Uid $ApplicantUid
-    }
-    if (![string]::IsNullOrWhiteSpace($ProxyUid)) {
-        $ProxyRedisTicket = Get-RedisAccessToken -HostName $RedisHost -Port $RedisPort -Db $RedisDb -Password $RedisPassword -Uid $ProxyUid
-    }
-    if ([string]::IsNullOrWhiteSpace($ApplicantRedisTicket)) {
-        throw "Redis did not return applicant access_token for user_login_info:${ApplicantUid}."
-    }
-    if (![string]::IsNullOrWhiteSpace($ProxyUid) -and [string]::IsNullOrWhiteSpace($ProxyRedisTicket)) {
-        throw "Redis did not return proxy access_token for user_login_info:${ProxyUid}."
-    }
-    if (![string]::IsNullOrWhiteSpace($ApplicantRedisTicket)) {
-        $ApplicantTicket = $ApplicantRedisTicket
-    }
-    if (![string]::IsNullOrWhiteSpace($ProxyRedisTicket)) {
-        $ProxyTicket = $ProxyRedisTicket
-    }
-}
-
 if ([string]::IsNullOrWhiteSpace($ApplicantTicket) -and $ApplicantAccount -and ![string]::IsNullOrWhiteSpace([string]$ApplicantAccount.password)) {
     $login = Invoke-MobileLogin -BaseUrl $LoginBaseUrl -Account $ApplicantAccount -Common $Common
     if ($login) { $ApplicantTicket = $login.ticket; $ApplicantUid = $login.uid }
@@ -358,6 +238,7 @@ $PropertyLines = @(
     "netType=$($Common.netType)",
     "channel=$($Common.channel)",
     "appsflyerId=$($Common.appsflyerId)",
+    "salary_proxies_csv=$ProxyCsvForJMeter",
     "language=$($Common.language)",
     "appCode=$($Common.appCode)",
     "deviceId=$($Common.deviceId)",
@@ -373,11 +254,6 @@ $PropertyLines = @(
     "proxy_ticket=",
     "applicant_ticket_uid=$ApplicantTicketUid",
     "proxy_ticket_uid=",
-    "redis_host=$RedisHost",
-    "redis_port=$RedisPort",
-    "redis_db=$RedisDb",
-    "redis_password=$RedisPassword",
-    "redis_login_key_prefix=user_login_info:",
     "mysql_jdbc_url=jdbc:mysql://$($DatabaseConfig["AUTOTEST_DB_HOST"]):$($DatabaseConfig["AUTOTEST_DB_PORT"])/$($DatabaseConfig["AUTOTEST_DB_NAME"])?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai",
     "mysql_jdbc_user=$($DatabaseConfig["AUTOTEST_DB_USER"])",
     "mysql_jdbc_password=$($DatabaseConfig["AUTOTEST_DB_PASSWORD"])"
@@ -397,7 +273,7 @@ Write-Host "Applicant uid used: $ApplicantUid"
 Write-Host "Proxy uid source: JMeter JDBC query anchor_salary_trade_agent_whitelist"
 Write-Host "Country/currency used: $CountryCode/$Currency"
 if ([string]::IsNullOrWhiteSpace($ProxyTicket)) {
-    Write-Host "Ticket state: applicant=ready, proxy=resolved inside JMeter after JDBC agent lookup"
+    Write-Host "Ticket state: applicant=ready, proxy=resolved from salary-trade-proxies.csv after JDBC agent lookup"
 } else {
     Write-Host "Ticket state: applicant=ready, proxy=ready"
 }
@@ -410,18 +286,9 @@ if ($NoOpen) {
         "-Jmysql_jdbc_url=jdbc:mysql://$($DatabaseConfig["AUTOTEST_DB_HOST"]):$($DatabaseConfig["AUTOTEST_DB_PORT"])/$($DatabaseConfig["AUTOTEST_DB_NAME"])?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai",
         "-Jmysql_jdbc_user=$($DatabaseConfig["AUTOTEST_DB_USER"])",
         "-Jmysql_jdbc_password=$($DatabaseConfig["AUTOTEST_DB_PASSWORD"])",
-        "-Jredis_host=$RedisHost",
-        "-Jredis_port=$RedisPort",
-        "-Jredis_db=$RedisDb",
-        "-Jredis_password=$RedisPassword",
-        "-Jredis_login_key_prefix=user_login_info:",
+        "-Jsalary_proxies_csv=$ProxyCsvForJMeter",
         "-Jsample_variables=flow_a_order_no,flow_b_order_no,flow_c_order_no,flow_d_order_no,flow_e_order_no,flow_f_order_no,flow_g_order_no,flow_h_order_no,salary_order_no,applicant_uid,proxy_uid,agent_uid,countryCode,currency",
         "-Jsalary_result_jtl=$ResultDir\工资代理结算-result.jtl",
         "-t", $Jmx
     ) -WorkingDirectory $JMeterHome
 }
-
-
-
-
-

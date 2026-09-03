@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "project_id": "prj_e3515817c4",
   "package_id": "wealth-level",
   "name": "财富等级",
@@ -21,6 +21,12 @@
     "回收JTL/HTML报告",
     "结合财富等级、钱包、账单数据复盘"
   ],
+  "orchestration": {
+    "primary_plan": "outputs/execution-plan.json",
+    "kind": "scenario_execution_plan",
+    "fallback": "structured test case scenario_type",
+    "rule": "需求包可以声明自己的主编排文件；未声明时默认使用场景执行计划，未来可替换为更高级编排资产。"
+  },
   "counts": {
     "sources": 9,
     "test_points": 198,
@@ -30,12 +36,17 @@
     "account_model": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml",
       "exists": true,
-      "updated_at": "2026-09-01T12:22:15+08:00"
+      "updated_at": "2026-09-03T15:09:48+08:00"
+    },
+    "resource_manifest": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+      "exists": true,
+      "updated_at": "2026-09-02T17:17:31+08:00"
     },
     "jmeter": {
-      "path": "D:\\apache-jmeter-5.6.3\\jmx\\20260826\\性能基线.jmx",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\jmeter\\wealth-level-performance.jmx",
       "exists": true,
-      "updated_at": "2026-08-31T15:01:24+08:00"
+      "updated_at": "2026-08-20T17:04:06+08:00"
     },
     "runtime_csv": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\wealth-level-runtime.csv",
@@ -43,9 +54,9 @@
       "updated_at": ""
     },
     "jtl": {
-      "path": "D:\\apache-jmeter-5.6.3\\jmx\\20260826\\性能基线-result.jtl",
-      "exists": true,
-      "updated_at": "2026-08-31T15:10:07+08:00"
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\reports\\latest\\wealth-level-result.jtl",
+      "exists": false,
+      "updated_at": ""
     },
     "skill": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\SKILL.md",
@@ -60,5 +71,5 @@
     "outputs": "Newman/JMeter/pytest生成物",
     "reports": "执行报告和AI复盘"
   },
-  "updated_at": "2026-09-01T12:35:06+08:00"
+  "updated_at": "2026-09-03T15:09:48+08:00"
 }

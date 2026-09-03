@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.1",
+  "report_type": "REQUIREMENT_PACKAGE_SCHEMA_AUDIT",
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "package_name": "财富等级",
+  "status": "READY",
+  "created_at": "2026-09-03T15:46:08+08:00",
+  "summary": {
+    "assets": 9,
+    "failed": 0,
+    "warnings": 0
+  },
+  "assets": [
+    {
+      "asset": "manifest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\manifest.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "resource_manifest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "account_model",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "structured_test_cases",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "case_jmeter_mapping",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\case-jmeter-mapping.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "execution_plan",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\execution-plan.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "data_preflight",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\data-preflight-check.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "resource_preflight",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\resource-preflight-check.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "tool_assets_manifest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\tool-assets-manifest.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    }
+  ]
+}

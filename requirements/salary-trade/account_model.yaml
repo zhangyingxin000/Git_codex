@@ -1,13 +1,13 @@
-schema_version: '1.0'
+schema_version: '1.1'
 package_id: salary-trade
 package_name: 工资代理快速结算
-generated_at: '2026-09-01T12:35:06+08:00'
+generated_at: '2026-09-02T18:50:02+08:00'
 source:
   skill: C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\skills\account-model-generation\SKILL.md
   decision_basis: 需求包测试用例、接口参数、业务角色、账号互斥和数据证据规则
 mode: multi_flow_slots
 csv_required: true
-data_carrier: csv_plus_db_redis
+data_carrier: csv_plus_db
 variable_namespace: salary_trade_*
 roles:
 - name: applicant
@@ -19,7 +19,6 @@ roles:
   - runtime.ticket
   - csv.ticket
   - login_api
-  - redis:user_login_info:{uid}.access_token
   match_rules:
   - countryCode
   - currency
@@ -33,13 +32,9 @@ roles:
   - db:anchor_salary_trade_agent_whitelist
   - csv
   credential_sources:
-  - runtime.ticket
   - csv.ticket
-  - login_api
-  - redis:user_login_info:{uid}.access_token
   match_rules:
-  - countryCode
-  - currency
+  - support_currencies contains currency
   required_fields:
   - uid
   - ticket
@@ -49,31 +44,27 @@ roles:
   candidate_sources:
   - runtime
   - csv
-  - redis
   credential_sources:
   - runtime.ticket
   - csv.ticket
   - login_api
-  - redis:user_login_info:{uid}.access_token
   match_rules: []
   required_fields:
   - uid
   - ticket
 credential_resolution_order:
 - 运行时显式传入 ticket/password
-- 角色CSV中填写 ticket/password/redis_uid
+- 角色CSV中填写 ticket/password
 - 登录接口按 shortId + password_encrypted 获取 access_token
-- Redis只读读取 user_login_info:{uid}.access_token
 - 仍未取得则阻断，不伪造身份认证
 data_sources:
   runtime: 测试执行时显式传入的非持久化参数
   csv: 仅在多账号、多角色、多流程或数据矩阵需求启用
   login_api: 用 shortId + password_encrypted 前置登录，提取 access_token
-  redis: 只读读取 user_login_info:{uid}.access_token 或缓存证据
   mysql: 只读查询业务候选和执行证据，不保存ticket
 blocking_rules:
 - 申请人由用例流程槽位决定，不能所有流程复用同一个申请人。
-- 代理人先按申请人国家和收款币种在DB白名单匹配候选，再用CSV或Redis补齐该代理的真实登录态。
+- 工资交易代理人先从DB白名单匹配候选，资格判断以 support_currencies 是否包含收款币种为准，再用代理CSV补齐该代理的真实ticket。
 - JWT解析出的uid必须等于当前角色uid，否则直接阻断，避免拿错人的ticket导致401。
 - 数据库只证明代理资格和订单证据，不保存ticket，也不替代登录态。
 readiness:

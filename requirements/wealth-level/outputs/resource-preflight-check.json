@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.1",
+  "package_id": "wealth-level",
+  "package_name": "财富等级",
+  "generated_at": "2026-09-03T15:46:07+08:00",
+  "status": "READY_WITH_WARNINGS",
+  "summary": {
+    "blocked": 0,
+    "warnings": 1,
+    "suggestions": 0,
+    "confirmed_ignored": 0,
+    "registered_datasets": 1,
+    "registered_mysql_tables": 0,
+    "registered_redis_patterns": 0
+  },
+  "policy": "资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。",
+  "findings": [
+    {
+      "id": "redis:unregistered",
+      "status": "WARNING",
+      "title": "用例涉及缓存语义但未登记Redis资源",
+      "reason": "平台不会猜测Redis Key；缺少Key模式时仍可执行HTTP，但缓存结论不完整。",
+      "next_action": "让研发提供Key模式，或确认该需求不检查Redis。",
+      "resource_type": "redis_pattern",
+      "registered": []
+    }
+  ],
+  "resource_manifest_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml"
+}

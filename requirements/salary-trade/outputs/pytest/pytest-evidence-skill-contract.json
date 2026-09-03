@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.1",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "generated_at": "2026-09-02T18:50:02+08:00",
+  "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md",
+  "contract": {
+    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md",
+    "skill": "pytest-evidence-review",
+    "purpose": "从需求包场景计划、运行变量、HTTP结果和DB/Redis证据规则生成pytest深度复核资产",
+    "inputs": [
+      "manifest.json",
+      "manifest.orchestration.primary_plan",
+      "outputs/execution-plan.json",
+      "outputs/structured-test-cases.json",
+      "evidence_rules.yaml",
+      "account_model.yaml",
+      "runtime_aliases.yaml",
+      "JMeter JTL / Newman JSON运行结果"
+    ],
+    "outputs": [
+      "outputs/pytest/pytest_api_cases.py",
+      "reports/pytest-evidence-*/summary.json"
+    ],
+    "principles": [
+      "pytest负责执行后深度证据复核，不替代JMeter状态机主流程",
+      "主编排入口由需求包manifest声明，execution-plan.json只是默认值",
+      "运行变量从环境、场景计划、账号模型和前序响应中提取",
+      "DB/Redis证据只读校验，缺变量标记BLOCKED，不编造字段",
+      "报告按需求包和场景归档，方便人工复核和维护"
+    ],
+    "source_preview": "---\nname: pytest-evidence-review\ndescription: Generate or improve pytest deep evidence review assets for requirement packages, using scenario plans, runtime variable extraction, HTTP results, DB/Redis evidence rules, and human-readable JSON reports.\nmetadata:\n  short-description: Generate pytest deep evidence review from requirement scenarios\n---\n\n# pytest Evidence Review Skill\n\n## Purpose\n\nGenerate a portable pytest review layer for a requirement package.\n\npytest is not the main state-machine runner. Newman is still good for lightweight API regression, and JMeter is still better for complex workflow execution and performance. pytest owns the post-execution review layer:\n\n- run or replay HTTP checks when needed\n- read JMeter JTL and Newman JSON when provided\n- extract runtime variables from API responses\n- query DB/Redis evidence rules\n- output a structured JSON report for AI review and human maintenance\n\n## General Model\n\nDo not hard-code one business requirement into the pytest runner.\n\nUse this abstraction:\n\n```text\nrequirement package\n-> manifest orchestration entry\n-> scenario execution plan or future orchestration asset\n-> ordered test cases\n-> runtime variables\n-> HTTP results\n-> evidence_rules.yaml\n-> DB/Redis read checks\n-> pytest evidence JSON\n```\n\nSalary trade is only a reference sample because it has useful complexity: multiple roles, multiple scenarios, order state transitions, runtime identifiers, DB evidence, Redis login/cache evidence, and manual timing flows. Future requirements may have more roles, more scenarios, or different business identifiers, so generated pytest must stay driven by package-local rules and data.\n\n## Inputs\n\nPrefer package-local assets:\n\n- `manifest.json` for package identity and the current orchestration entry\n- the manifest `orchestration.primary_plan` file for scenario grouping and human review context; default to `outputs/execution-plan.json`\n- `outputs/structured-test-cases.json` for case definitions and quality status\n- `evidence_rules.yaml` for DB/Redis checks\n- `account_model.yaml` for roles, credential sources, and blocking rules\n- optional `runtime_aliases.yaml` for project-specific variable aliases\n- optional JMeter JTL path and Newman JSON path from runtime environment\n\nIf a formal orchestration asset is missing, degrade gracefully to case `scenario_type` grouping and explain the fallback in the pytest evidence report instead of silently inventing fields. Do not treat `outputs/execution-plan.json` as a permanent global priority; it is the default package orchestration asset until the package manifest points to a more specific one.\n\n## Runtime Variable Rules\n\nThe runner should maintain a runtime state while executing cases.\n\nFor scenario-driven execution, reset temporary runtime state at the start of each scenario while preserving environment-level values such as base URL, credentials, device context, and explicit runtime JSON. Identifiers produced inside one scenario, such as `orderNo`, `flowId`,"
+  },
+  "usage": "pytest证据复盘必须遵守本契约；复杂需求优先消费manifest声明的主编排文件、账号模型、运行别名和证据规则，不把业务流程写死在全局代码。"
+}

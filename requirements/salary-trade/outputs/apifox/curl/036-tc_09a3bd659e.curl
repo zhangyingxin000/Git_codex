@@ -1,0 +1,3 @@
+curl --request GET \
+  --url "{{baseUrl}}/userserv/salary/trade/order/page?deviceType=0&appid=soulfree&model=SM-A546B&isVpnConnected=0&agentUid={{proxy_uid}}&currency={{currency}}&appVersion=100.1.5.6&proxyUid={{proxy_uid}}&ticket={{applicant_ticket}}&language=en&os=android&systemLanguage=zh&packageName=com.soulfree.happiness&appCode=100156&ispType=4&osVersion=16&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.6&organic=Organic&appsflyerId=1787889409378-5852177650651460260&netType=2&countryCode={{countryCode}}&orderNo={{orderNo}}&uid=not-a-number&channel=google&orderId={{orderId}}" \
+  --header "t: {{t}}"

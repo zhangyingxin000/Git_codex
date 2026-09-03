@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T12:35:06+08:00",
+  "generated_at": "2026-09-02T18:50:02+08:00",
   "project_id": "prj_e3515817c4",
   "requirement": "工资代理快速结算",
   "source": "test_cases_to_jmeter_model",
@@ -11,7 +11,7 @@
   },
   "yaml_config": {
     "status": "READY",
-    "build": "20260831.10",
+    "build": "20260902.a69fd081",
     "env_name": "test",
     "env_file": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\config\\env.test.yaml",
     "yaml_backend": "PyYAML",

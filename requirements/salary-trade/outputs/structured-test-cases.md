@@ -1,6 +1,6 @@
 # 工资代理快速结算 - 结构化测试用例
 
-- 生成时间：2026-09-01T16:59:05+08:00
+- 生成时间：2026-09-02T18:53:39+08:00
 - 用例数：170
 - 带DB校验：143
 - 带Redis校验：0
@@ -11,20 +11,23 @@
 
 ## 生成前数据准备检查
 
-- 状态：BLOCKED
+- 状态：READY_WITH_WARNINGS
 
 - 账号模型：READY；已读取 C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\requirements\salary-trade\account_model.yaml
-- 8个申请人账号：READY；已识别 8 个申请人，具备登录态来源 9 个。
-- 代理国家币种匹配：NEEDS_DATA；存在 2 组申请人国家/币种未在代理CSV命中。；下一步：同步数据库白名单到代理CSV，或补齐对应代理
-- 代理登录态来源：NEEDS_DATA；代理CSV未识别到可用 ticket/password/redis_uid。；下一步：补齐代理登录态或配置Redis登录缓存读取
+- 8个申请人账号：READY；已识别 8 个申请人，具备可用凭证 9 个。
+- 代理收款币种匹配：READY；申请人收款币种组合 5 组均能在代理CSV的support_currencies匹配。
+- 凭证输入检测：READY；已按当前需求包识别 uid+ticket/password；未启用 Redis 作为默认来源。
+- 代理凭证来源：READY；代理CSV中 6 个代理具备 uid+ticket/password 来源。
 - 业务库执行前检查：NEEDS_LIVE_CHECK；已生成 2 条运行前只读SQL检查模板。；下一步：执行JMeter前由DB连接器读取真实订单和白名单状态
+- 场景数据准备：WARNING；场景预检有 8 个场景需要关注。；下一步：确认未绑定证据规则或人工/定时流程是否符合预期
+- 需求资源预检：WARNING；无运行阻断；有 0 个提醒、1 个建议。；下一步：确认资源登记或对非必要项执行确认忽略
 
 ### 执行前只读SQL检查模板
 
 - 申请人处理中订单检查：每个申请人在执行前没有处理中订单，否则创建订单会触发50017或业务阻断。
   `SELECT uid, order_no, status FROM anchor_salary_trade_order WHERE uid IN (1454617,1454696,1454723,1454724,1454744,1455113,1455141,1455185) AND status IN (10,20,30) ORDER BY created_time DESC;`
-- 代理白名单实时检查：每个申请人国家和收款币种都能匹配至少一个可用代理。
-  `SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND country_code=${countryCode} AND support_currencies LIKE CONCAT('%', ${currency}, '%') LIMIT 5;`
+- 代理白名单实时检查：每个申请人的收款币种都能在代理白名单 support_currencies 中匹配至少一个可用代理。
+  `SELECT uid, country_code, support_currencies, status FROM anchor_salary_trade_agent_whitelist WHERE status=1 AND FIND_IN_SET('${currency}', support_currencies) > 0 LIMIT 5;`
 
 ## 用例到 JMeter 映射总览
 
@@ -145,7 +148,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
@@ -155,7 +158,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -167,7 +170,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -179,7 +182,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
@@ -189,7 +192,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -201,7 +204,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -487,7 +490,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -497,7 +500,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -509,7 +512,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -520,7 +523,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -530,7 +533,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -542,7 +545,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -553,7 +556,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -563,7 +566,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -575,7 +578,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -586,7 +589,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -596,7 +599,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -608,7 +611,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -619,7 +622,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -629,7 +632,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -641,7 +644,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -652,7 +655,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -662,7 +665,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -674,7 +677,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -685,7 +688,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -695,7 +698,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -707,7 +710,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -718,7 +721,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -728,7 +731,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -740,7 +743,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -752,7 +755,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -762,7 +765,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -774,7 +777,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -880,7 +883,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
@@ -890,7 +893,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -902,7 +905,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -914,7 +917,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：data_constraint_exception
@@ -924,7 +927,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -936,7 +939,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1222,7 +1225,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -1232,7 +1235,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1244,7 +1247,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1255,7 +1258,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -1265,7 +1268,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1277,7 +1280,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1288,7 +1291,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -1298,7 +1301,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1310,7 +1313,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1321,7 +1324,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -1331,7 +1334,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1343,7 +1346,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1354,7 +1357,7 @@
 - 场景类型：正常请求
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / newman
 - 异常来源：-
@@ -1364,7 +1367,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1376,7 +1379,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1387,7 +1390,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -1397,7 +1400,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1409,7 +1412,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1420,7 +1423,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -1430,7 +1433,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1442,7 +1445,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1453,7 +1456,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -1463,7 +1466,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1475,7 +1478,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1487,7 +1490,7 @@
 - 场景类型：正常请求
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -1497,7 +1500,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1509,7 +1512,7 @@
 
 ### 预期结果
 - 根据接口资料样例验证核心成功路径
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1709,7 +1712,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -1719,7 +1722,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1731,7 +1734,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1743,7 +1746,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -1753,7 +1756,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1765,7 +1768,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1777,7 +1780,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -1787,7 +1790,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1799,7 +1802,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -1811,7 +1814,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -1821,7 +1824,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -1833,7 +1836,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2580,7 +2583,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2590,7 +2593,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2602,7 +2605,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2614,7 +2617,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2624,7 +2627,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2636,7 +2639,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2648,7 +2651,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2658,7 +2661,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2670,7 +2673,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2682,7 +2685,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2692,7 +2695,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2704,7 +2707,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2716,7 +2719,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2726,7 +2729,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2738,7 +2741,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2750,7 +2753,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2760,7 +2763,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2772,7 +2775,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2784,7 +2787,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -2794,7 +2797,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2806,7 +2809,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2817,7 +2820,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2827,7 +2830,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2839,7 +2842,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2851,7 +2854,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2861,7 +2864,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2873,7 +2876,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2885,7 +2888,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2895,7 +2898,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2907,7 +2910,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2919,7 +2922,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2929,7 +2932,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2941,7 +2944,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2953,7 +2956,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2963,7 +2966,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -2975,7 +2978,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -2987,7 +2990,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -2997,7 +3000,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3009,7 +3012,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3021,7 +3024,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -3031,7 +3034,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3043,7 +3046,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3054,7 +3057,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -3064,7 +3067,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3076,7 +3079,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3088,7 +3091,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -3098,7 +3101,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3110,7 +3113,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3122,7 +3125,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -3132,7 +3135,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3144,7 +3147,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3155,7 +3158,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -3165,7 +3168,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3177,7 +3180,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3189,7 +3192,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -3199,7 +3202,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3211,7 +3214,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3223,7 +3226,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -3233,7 +3236,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3245,7 +3248,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3257,7 +3260,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -3267,7 +3270,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3279,7 +3282,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3291,7 +3294,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -3301,7 +3304,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3313,7 +3316,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3325,7 +3328,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -3335,7 +3338,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3347,7 +3350,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3491,7 +3494,7 @@
 - 场景类型：设计用例
 - 接口：- 
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：MANUAL_ONLY
 - 脚本生成就绪：MANUAL_ONLY / manual
 - 异常来源：data_constraint_exception
@@ -3501,7 +3504,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3512,7 +3515,7 @@
 
 ### 预期结果
 - 系统行为与规则一致：即使返回 `true`，申请用户创建订单时仍需通过公会关系、工资额度、代理白名单、国家/币种和工资发放账号余额等校验。
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_case_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_case_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 缺少可直接执行的接口 method/path。
@@ -3824,7 +3827,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -3834,7 +3837,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3846,7 +3849,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3858,7 +3861,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/quota
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -3868,7 +3871,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3880,7 +3883,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_quota_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3892,7 +3895,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -3902,7 +3905,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3914,7 +3917,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -3926,7 +3929,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agents
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, data_constraint_exception
@@ -3936,7 +3939,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -3948,7 +3951,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agents_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4695,7 +4698,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4705,7 +4708,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4717,7 +4720,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4729,7 +4732,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/logs
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4739,7 +4742,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4751,7 +4754,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_logs_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4763,7 +4766,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4773,7 +4776,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4785,7 +4788,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4797,7 +4800,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/notice
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4807,7 +4810,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4819,7 +4822,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_notice_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4831,7 +4834,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4841,7 +4844,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4853,7 +4856,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4865,7 +4868,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4875,7 +4878,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4887,7 +4890,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4899,7 +4902,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/notice/save
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -4909,7 +4912,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4921,7 +4924,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_notice_save_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4932,7 +4935,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4942,7 +4945,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4954,7 +4957,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -4966,7 +4969,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/page
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -4976,7 +4979,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -4988,7 +4991,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_page_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5000,7 +5003,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -5010,7 +5013,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5022,7 +5025,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5034,7 +5037,7 @@
 - 场景类型：接口契约
 - 接口：GET /userserv/salary/trade/agent/order/detail
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -5044,7 +5047,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5056,7 +5059,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_get_userserv_salary_trade_agent_order_detail_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5068,7 +5071,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -5078,7 +5081,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5090,7 +5093,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5102,7 +5105,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -5112,7 +5115,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5124,7 +5127,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5136,7 +5139,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/accept
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -5146,7 +5149,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5158,7 +5161,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_accept_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5169,7 +5172,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -5179,7 +5182,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5191,7 +5194,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5203,7 +5206,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception
@@ -5213,7 +5216,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5225,7 +5228,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5237,7 +5240,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/reject
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：-
@@ -5247,7 +5250,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5259,7 +5262,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_reject_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5270,7 +5273,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -5280,7 +5283,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5292,7 +5295,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5304,7 +5307,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -5314,7 +5317,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5326,7 +5329,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5338,7 +5341,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/paid
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -5348,7 +5351,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5360,7 +5363,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_paid_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5372,7 +5375,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -5382,7 +5385,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5394,7 +5397,7 @@
 
 ### 预期结果
 - 验证必填字段校验：
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5406,7 +5409,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：api_contract_exception, state_machine_exception
@@ -5416,7 +5419,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5428,7 +5431,7 @@
 
 ### 预期结果
 - 验证长度、数值、类型和空值边界
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。
@@ -5440,7 +5443,7 @@
 - 场景类型：接口契约
 - 接口：POST /userserv/salary/trade/agent/order/appeal
 - 接口字段：-
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 质量分级：NEEDS_EVIDENCE_REVIEW
 - 脚本生成就绪：SCRIPTABLE_EVIDENCE_PENDING / jmeter
 - 异常来源：state_machine_exception
@@ -5450,7 +5453,7 @@
 ### 前置条件
 - 需求包：工资代理快速结算
 - 已准备当前用例所需账号、ticket、设备参数和运行变量。
-- 运行变量：country_code, currency, proxy_uid
+- 运行变量：currency, proxy_uid
 - 数据范围：anchor_salary_trade_agent_whitelist, anchor_salary_trade_order, anchor_salary_trade_order_log, anchor_salary_trade_evidence
 
 ### 操作步骤
@@ -5462,7 +5465,7 @@
 
 ### 预期结果
 - 验证重复操作不会破坏数据一致性
-- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 country_code, status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
+- DB校验：anchor_salary_trade_agent_whitelist WHERE uid = ${proxy_uid}，字段 status, support_currencies, uid 符合规则 salary_trade_post_userserv_salary_trade_agent_order_appeal_anchor_salary_trade_agent_whitelist。
 
 ### 分级原因
 - 仅命中候选证据规则，需要采纳后再作为正式校验。

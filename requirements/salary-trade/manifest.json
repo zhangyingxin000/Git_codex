@@ -1,39 +1,33 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
   "name": "工资代理快速结算",
   "domain": "工资交易",
-  "description": "多申请人、多代理、订单状态流转、DB白名单和Redis登录态校验。",
+  "description": "多申请人、多代理、订单状态流转、DB白名单和订单证据校验。",
   "status": "READY",
   "primary_tool": "JMeter",
   "tool_strategy": {
     "newman": "读接口、鉴权和参数回归",
     "jmeter": "多账号订单状态机和性能观察",
-    "pytest": "接口结果、DB、Redis证据复盘"
+    "pytest": "接口结果、DB证据复盘"
   },
-  "data_policy": "申请人/代理身份走CSV或Redis；数据库只负责代理资格和订单证据，不保存ticket。",
-  "data_scope": {
-    "mysql_tables": [
-      "anchor_salary_trade_agent_whitelist",
-      "anchor_salary_trade_order",
-      "anchor_salary_trade_order_log",
-      "anchor_salary_trade_evidence"
-    ],
-    "redis_patterns": [
-      "user_login_info:{uid}"
-    ],
-    "scope_reason": "工资代理结算只围绕代理白名单、订单主表、订单日志和投诉凭证取证；登录态只读取对应用户缓存。"
-  },
+  "data_policy": "申请人/代理身份走CSV；数据库负责代理资格和订单、日志、投诉凭证证据，不保存ticket。",
   "base_url": "https://test2westarlive.gzxchate.com/",
   "workflow": [
     "导入需求文档和接口文档",
     "生成正常/异常/边界测试用例",
     "按用例生成独立JMeter状态机",
     "JMeter按申请人CSV读取8条流程",
-    "DB匹配代理白名单，CSV/Redis补身份认证",
-    "回收JTL并结合DB/Redis复盘"
+    "DB按 support_currencies 匹配代理白名单，CSV补身份认证",
+    "回收JTL并结合DB证据复盘"
   ],
+  "orchestration": {
+    "primary_plan": "outputs/execution-plan.json",
+    "kind": "scenario_execution_plan",
+    "fallback": "structured test case scenario_type",
+    "rule": "需求包可以声明自己的主编排文件；未声明时默认使用场景执行计划，未来可替换为更高级编排资产。"
+  },
   "counts": {
     "sources": 9,
     "test_points": 162,
@@ -43,7 +37,12 @@
     "account_model": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
       "exists": true,
-      "updated_at": "2026-09-01T12:35:06+08:00"
+      "updated_at": "2026-09-02T18:50:02+08:00"
+    },
+    "resource_manifest": {
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\resource_manifest.yaml",
+      "exists": true,
+      "updated_at": "2026-09-02T17:17:32+08:00"
     },
     "test_cases": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-manual-test-cases.md",
@@ -53,17 +52,17 @@
     "jmeter": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-state-machine.jmx",
       "exists": true,
-      "updated_at": "2026-08-31T20:06:02+08:00"
+      "updated_at": "2026-09-02T11:51:39+08:00"
     },
     "launcher": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\open-salary-trade-state-machine.ps1",
       "exists": true,
-      "updated_at": "2026-08-31T19:18:27+08:00"
+      "updated_at": "2026-09-02T19:27:37+08:00"
     },
     "manifest": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-jmeter-manifest.json",
       "exists": true,
-      "updated_at": "2026-09-01T12:35:06+08:00"
+      "updated_at": "2026-09-02T18:50:02+08:00"
     },
     "applicant_csv": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
@@ -73,12 +72,12 @@
     "proxy_csv": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-proxies.csv",
       "exists": true,
-      "updated_at": "2026-08-31T16:57:03+08:00"
+      "updated_at": "2026-09-02T11:32:16+08:00"
     },
     "jtl": {
-      "path": "D:\\apache-jmeter-5.6.3\\jmx\\20260826\\工资代理结算-result.jtl",
-      "exists": true,
-      "updated_at": "2026-08-31T19:23:10+08:00"
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\reports\\latest\\salary-trade-result.jtl",
+      "exists": false,
+      "updated_at": ""
     }
   },
   "portable_layout": {
@@ -88,5 +87,15 @@
     "outputs": "Newman/JMeter/pytest生成物",
     "reports": "执行报告和AI复盘"
   },
-  "updated_at": "2026-09-01T12:35:06+08:00"
+  "data_scope": {
+    "mysql_tables": [
+      "anchor_salary_trade_agent_whitelist",
+      "anchor_salary_trade_order",
+      "anchor_salary_trade_order_log",
+      "anchor_salary_trade_evidence"
+    ],
+    "redis_patterns": [],
+    "scope_reason": "工资代理结算只围绕代理白名单、订单主表、订单日志和投诉凭证取证；身份认证由申请人/代理CSV或登录接口提供，Redis不参与本需求执行。"
+  },
+  "updated_at": "2026-09-02T19:28:49+08:00"
 }

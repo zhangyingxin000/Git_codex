@@ -17,6 +17,7 @@
 - AI业务流程归纳：按模块生成 setup/action/verify 有序步骤
 - 流程串行执行、失败停止/继续策略和流程级报告
 - 接口/用例搜索筛选、详情查看和完整测试资产导出
+- 按需求包导入 Apifox OpenAPI、生成受保护的 pytest 基础层，并回收 Apifox CLI 发布冒烟报告
 - 需求与接口文档关联、接口版本基线和增量变更分析
 - 自动识别新增/修改/删除/未变接口，只生成受影响测试资产
 - 接口自动化套件、批量执行和套件级统计
@@ -92,19 +93,32 @@ powershell -ExecutionPolicy Bypass -File ".\setup-env.ps1" -PythonExecutable "C:
 powershell -ExecutionPolicy Bypass -File ".\verify-migration.ps1" -RunTests
 ```
 
-之后日常启动：
+之后日常启动，统一使用平台入口：
 
 ```powershell
 cd <AutoTest-AI项目目录>
-.\start.ps1
+.\platform.cmd
 ```
 
 浏览器打开 <http://127.0.0.1:8765>。
 
+平台入口还提供环境安装和完整自检：
+
+```powershell
+.\platform.cmd setup
+.\platform.cmd check
+```
+
+需要临时更换监听端口时：
+
+```powershell
+.\platform.cmd start -Port 8877
+```
+
 启动顺序：
 
 1. `setup-env.ps1` 只使用系统 Python 创建项目 `.venv`，所有依赖安装到项目目录内。
-2. `start.ps1`、`start-fastapi.ps1` 和 `start-legacy.ps1` 只允许使用 `.venv\Scripts\python.exe`，不会静默回退到系统 Python。
+2. `platform.ps1` 是正式统一入口，`platform.cmd` 是免执行策略配置的短命令；旧 `start.ps1` 仅保留兼容并转交给统一入口。
 3. `.venv`、运行凭证、CSV账号数据、数据库环境变量和报告均被 Git 忽略，不随仓库迁移。
 4. 依赖版本来源统一由 `requirements.txt` 和 `pyproject.toml` 管理；安装镜像通过 `AUTOTEST_PIP_INDEX_URL` 临时注入，不写死到仓库。
 5. 安装后会在 `.venv/autotest-environment.json` 记录 Python 版本和依赖清单哈希，便于判断迁移环境是否一致。
@@ -122,6 +136,7 @@ AutoTest AI 的定位是 AI 自动化质量中枢，不是替代 JMeter、Postma
 - AI 幻觉校验与一次修正：AI 生成测试点、用例和数据断言后，会用真实接口文档、DB元数据、Redis Key规则做静态校验；发现未证实引用时，只生成一次候选修正版，不自动覆盖正式资产。
 - 结构化测试用例：把接口字段、运行变量、DB表字段、Redis Key证据自动写入用例前置条件、步骤和预期结果，减少人工梳理映射关系。
 - 企业工具编排：接口链路交给 Postman/Newman，性能和复杂链路交给 JMeter，结果回收到报告中心。
+- Apifox 协同：接口文档、Mock、单接口调试和发布冒烟留在 Apifox；平台导入 OpenAPI、生成 pytest 基础层、调用 CLI 并回收报告。
 - 报告复盘：执行结果结合接口响应、JMeter指标、DB/Redis只读证据做复盘分析，而不是只展示图表。
 
 ## 主线工作流
@@ -203,6 +218,31 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 - JMeter 脚本：适合复杂业务流、状态流、并发、持续压测和性能指标采集。
 - 结构化测试用例：适合评审、手工测试、缺陷定位和 AI 复盘输入。
 
+## Apifox 企业链路
+
+企业已经维护 Apifox 时，Apifox 是接口定义真相源，平台不重复维护另一份接口文档。工作台先选择需求包，再走两条独立但可汇总的链路。
+
+### OpenAPI 3.0 → pytest 基础层
+
+1. 在 Apifox 完整导出 OpenAPI 3.0 JSON/YAML。
+2. 在工作台“Apifox企业链路”导入文件。
+3. 平台保存到 `requirements/<package_id>/apifox/openapi.json`，接口变化时自动归档旧版本。
+4. 平台按当前需求包用例筛选接口，并生成 `outputs/pytest/generated/test_openapi_contract.py`。
+5. 人工业务断言、DB/Redis证据和复杂流程放在 `outputs/pytest/business/`；重新导入时不会覆盖。
+
+生成层只负责 URL、方法、参数、基础状态码和响应类型校验。复杂业务逻辑继续由 pytest 维护，避免把发布冒烟脚本写成难维护的业务自动化平台。
+
+### Apifox CLI → 发布冒烟 → 报告回收
+
+1. 在 Apifox 自动化测试中维护核心发布冒烟套件。
+2. 把 CI/CD 页面生成的命令配置到 `requirements/<package_id>/apifox/cli-profile.yaml`。
+3. 把 access token 放入 `APIFOX_ACCESS_TOKEN` 环境变量，不写入 YAML、Git 或报告。
+4. 需要回收 Apifox 原生 JSON/HTML 时，在 `report_globs` 中填写相对需求包的文件模式。
+5. 工作台执行发布冒烟后，原始输出、匹配到的原生报告和 `summary.json` 归档到当前需求包 `reports/apifox-smoke-*`。
+6. 结果进入同一 `run_id` 的报告中心、统一场景报告和 AI 复盘。
+
+职责边界：Apifox CLI 做版本发布前快速冒烟；pytest 做全量回归和深度数据证据；JMeter 做复杂状态流、并发和性能。平台仍保留反向生成 OpenAPI/Postman/cURL 交换包的兼容能力，仅用于企业没有完整 Apifox 资产时补建基线，不作为主流程。
+
 结构化测试用例不会覆盖原始用例，会写入当前需求包自己的 `outputs/structured-test-cases.json` 和 `outputs/structured-test-cases.md`。生成时会读取当前需求包的测试用例、正式 `evidence_rules.yaml` 和候选 `evidence_rules.candidates.yaml`，把接口字段、 `${变量}`、数据库只读校验、Redis 证据校验补进前置条件、操作步骤和预期结果。
 
 每条结构化用例会额外给出质量分级和脚本生成就绪状态：
@@ -248,6 +288,9 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/pytest/run`：运行当前需求包的 pytest 深度证据复核，发起接口请求并输出 HTTP、JMeter/Newman、DB/Redis 证据 JSON。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/ai-review`：汇总当前需求包报告、外部工具结果和数据证据，生成 AI 复盘报告。
 - `POST /api/projects/{project_id}/requirement-packages/{package_id}/scenario-report`：生成统一场景报告，把 Newman、JMeter、pytest、数据准备和维护点按同一批业务场景汇总。
+- `GET /api/projects/{project_id}/requirement-packages/{package_id}/report-index`：生成或读取需求包报告索引，区分运行批次、最新报告、历史报告和保留策略。
+- `GET /api/projects/{project_id}/requirement-packages/{package_id}/schema-audit`：校验需求包 YAML/JSON 资产是否符合当前 Schema。
+- `POST /api/projects/{project_id}/requirement-packages/{package_id}/schema-upgrade`：对旧版资产做兼容升级；写入前会备份原文件，只补版本信息和类型标记，不重写业务内容。
 - `POST /api/projects/{project_id}/jmeter/open-gui`：传入 `package_id` 或 `script_key` 后打开对应 JMeter 脚本。
 - `POST /api/projects/{project_id}/structured-test-cases`：按当前需求包生成结构化测试用例增强版。
 
@@ -255,9 +298,41 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 
 同一份需求和接口资产可以生成不同工具脚本：Newman 跑轻量接口回归，JMeter 跑复杂流程和性能，pytest 做深度校验和复盘。新增需求时应新增或识别独立需求包，避免覆盖已有需求的 JMX、CSV 或报告。
 
+### 一键运行当前需求包
+
+执行中心提供“一键运行当前需求包”。它会创建或复用当前 `run_id`，并按下面顺序收口一次执行：
+
+1. 重新执行资源预检和 Schema 校验。
+2. 复用当前需求包已经存在的结构化用例、场景计划和工具资产，不默认覆盖人工维护内容。
+3. 真实运行 Newman 接口冒烟和 pytest 深度证据复核。
+4. 生成 Newman 接口问题分析、JMeter 安全压测预案、统一场景报告和 AI 执行复盘。
+5. 刷新当前需求包报告索引，所有结果只进入同一个需求包和运行批次。
+
+JMeter 持续压测不会被一键执行静默启动。测试人员必须在压测预案中明确选择阶梯，平台才会执行对应 JMX，并回收原始 JTL、JMeter HTML 和性能分析。这样可以减少普通回归操作，同时保留对并发数、持续时间和真实负载的人工控制。
+
+后端入口：`POST /api/projects/{project_id}/requirement-packages/{package_id}/pipeline/run`。
+
+可选参数包括 `run_id`、`run_newman`、`run_pytest`、`create_load_plan`、`jmeter_stage`，以及显式重新生成资产的开关。默认策略是复用正式资产，只补缺失文件。
+
 统一场景报告归档在 `requirements/<package_id>/reports/scenario-report-*`。它不是新的执行工具，而是把已经存在的执行计划、数据准备、Newman、JMeter 和 pytest 结果按场景合并，回答“这个业务流程有没有跑、失败在哪、下一步维护哪个文件”。报告中心会把它显示为“场景总报告”。
 
 AI 复盘不是替代测试判断，而是把原始执行结果变成可读结论：识别鉴权、参数契约、业务断言、数据证据、环境网络和服务异常，并给出下一步应由测试、产品、后端、DBA 或环境负责人确认的方向。
+
+## 报告批次与保留策略
+
+需求包报告按运行批次保存到 `requirements/<package_id>/reports/<tool>-<timestamp>`。平台会生成 `requirements/<package_id>/reports/report-index.json`，把报告分成：
+
+- 最新报告：每种 `report_type` 只认最近一份，用于需求包状态和统一场景报告。
+- 历史归档：保留每次 Newman、JMeter、pytest、AI 复盘、场景报告的批次。
+- 保留建议：默认每种报告保留最近 5 份，14 天后标记为归档候选，默认不自动删除。
+
+保留策略配置在 `config/env.example.yaml` 的 `reports` 段。迁移到新机器时可以复制为 `config/env.test.yaml` 后按环境调整。
+
+## Schema 校验与升级
+
+需求包正式资产包含 `manifest.json`、`resource_manifest.yaml`、`account_model.yaml`、`outputs/structured-test-cases.json`、`outputs/case-jmeter-mapping.json` 和 `outputs/execution-plan.json`。平台会用 Schema 审计检查必填字段、基础类型和版本号。
+
+当前资产版本为 `1.1`。旧版 `1.0` 资产仍可读取；执行 `schema-upgrade` 时会先把原文件复制到 `requirements/<package_id>/outputs/schema-upgrade-backups/<timestamp>/`，再只补 `schema_version`、`schema_kind` 和迁移标记，不覆盖用例、证据规则、账号模型或脚本内容。
 
 ## pytest 深度证据复核
 
@@ -266,6 +341,8 @@ pytest 在这套体系里负责执行后的深度校验。它会读取当前需�
 这层的定位不是替代 JMeter 状态机，也不是只看 HTTP 状态码，而是回答“接口跑完之后，业务数据是否真的符合预期”：订单是否落库、状态是否正确、日志是否可追溯、Redis 缓存是否匹配。默认只允许只读 SQL，业务写入仍由接口请求产生。
 
 pytest 复盘层按通用规则运行，不绑定某个业务需求。它会从接口响应 JSON 中自动提取常见业务标识字段，并把这些变量补给后续请求和证据规则。遇到新项目的新字段时，可以在 `requirements/<package_id>/runtime_aliases.yaml` 增加别名映射，模板见 `data/templates/runtime-aliases.example.yaml`，不需要改 pytest 主逻辑。
+
+`runtime_aliases.yaml` 也可以保存当前需求包确认过的非敏感公共请求参数，例如 `appVersion`、`appCode`、设备类型和语言。账号 `uid/ticket` 仍从运行时输入或角色 CSV 读取，不能写进该 YAML。运行器按接口路径切换申请人/代理身份，避免工资交易继承财富等级的账号或版本参数。
 
 pytest 证据复盘规则已沉淀为 `skills/pytest-evidence-review/SKILL.md`。生成当前需求包工具资产时，平台会同步输出 `outputs/pytest/pytest-evidence-skill-contract.json`，用于说明本次 pytest 应该消费哪些需求包资产、如何处理运行变量、如何读取 DB/Redis 证据，以及报告必须如何归档。
 
@@ -309,13 +386,15 @@ pytest 报告会优先读取 `manifest.json` 里声明的 `orchestration.primary
 首次提交可在本机 PowerShell 执行：
 
 ```powershell
-cd C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI
+cd <AutoTest-AI项目目录>
 git status --short --ignored
-git add .
+git add README.md app.py quality_hub_backend/api/fastapi_app.py config/env.example.yaml tests/test_package_status_model.py
 git commit -m "chore: initialize portable quality hub baseline"
 ```
 
 提交前重点确认这些文件仍然被忽略：`database.env`、`data/*.bin`、`data/salary-trade-applicants.csv`、`data/salary-trade-accounts.csv`、`data/salary-trade-proxies.csv`、`reports/`、`work/`。这些属于本机运行态，不应该进入仓库。
+
+发布或迁移前按 `docs/release-checklist.md` 完成验收。该清单区分平台本身、需求包资产、真实测试环境和敏感运行数据，避免把“平台可运行”和“某次业务测试通过”混成一个结论。
 
 ## 数据位置
 

@@ -1,0 +1,617 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "工资代理快速结算 - Apifox接口基线",
+    "version": "2026.09.03.1620",
+    "description": "由质量中枢根据 OpenAPI、HAR 抓包和人工维护接口资产生成。敏感示例值已脱敏。"
+  },
+  "servers": [
+    {
+      "url": "https://test2westarlive.gzxchate.com/"
+    }
+  ],
+  "paths": {
+    "/union/getAnchorApplyRecord": {
+      "get": {
+        "summary": "返回工资快速结算创建入口开关",
+        "tags": [
+          "union"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "medium",
+          "reason": "可能改变业务状态",
+          "danger_score": 5,
+          "danger_warning": "低危险系数 5/100"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_3c2aa3f293",
+          "tc_a29da10d78",
+          "tc_931a51df47"
+        ]
+      },
+      "post": {
+        "summary": "返回工资快速结算创建入口开关",
+        "tags": [
+          "union"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "medium",
+          "reason": "可能改变业务状态",
+          "danger_score": 25,
+          "danger_warning": "低危险系数 25/100"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_c4f56bbedb",
+          "tc_4186d63f07",
+          "tc_25bb4b4110",
+          "tc_ffe359e00e"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/evidence/upload": {
+      "post": {
+        "summary": "补充上传付款或投诉凭证",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary, 付款",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_aaf3603a09",
+          "tc_a252cf3ccf",
+          "tc_4754618c13",
+          "tc_8f0fbfb1e9"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/notice": {
+      "get": {
+        "summary": "查看自己的交易公告编辑页信息",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_8038c2a2f7",
+          "tc_148e1062ae",
+          "tc_970acf530c"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/notice/save": {
+      "post": {
+        "summary": "保存自己的交易公告",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_92bfaeecaf",
+          "tc_aa5fd1ad97",
+          "tc_456ee46651",
+          "tc_5754cedeaa"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/order/accept": {
+      "post": {
+        "summary": "接受待代理处理订单",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_e07f18ed5f",
+          "tc_d5b812d9bc",
+          "tc_2cbdc73c2a",
+          "tc_6d0fa5869e"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/order/appeal": {
+      "post": {
+        "summary": "待确认收款时提交投诉",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_343e941fe3",
+          "tc_63b49481af",
+          "tc_9703f0d4b0",
+          "tc_6d43b840fc"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/order/detail": {
+      "get": {
+        "summary": "查看代理侧订单详情",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_b05f2ae271",
+          "tc_67d008fb3c",
+          "tc_13d2898449"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/order/page": {
+      "get": {
+        "summary": "查看可处理或已承接的订单列表",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_6e4c0c21e9",
+          "tc_92de8ee503",
+          "tc_f96f0a6e7c"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/order/paid": {
+      "post": {
+        "summary": "标记已完成线下转账",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary, 转账",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_3fea7697b2",
+          "tc_7b351242d9",
+          "tc_81ca4518aa",
+          "tc_cecc2e452e"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agent/order/reject": {
+      "post": {
+        "summary": "拒绝待代理处理订单",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_d1023be903",
+          "tc_ae8f94bb13",
+          "tc_e7f828e13a",
+          "tc_e3fe32d890"
+        ]
+      }
+    },
+    "/userserv/salary/trade/agents": {
+      "get": {
+        "summary": "按国家和币种选择代理用户",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_cb0f14e257",
+          "tc_520d95529f",
+          "tc_09f5709402"
+        ]
+      }
+    },
+    "/userserv/salary/trade/evidence/list": {
+      "get": {
+        "summary": "查看本人订单凭证",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_3b931425b2",
+          "tc_894bfa0bef",
+          "tc_44f440f8ec"
+        ]
+      }
+    },
+    "/userserv/salary/trade/evidence/upload": {
+      "post": {
+        "summary": "补充上传本人订单凭证",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_8ea08e4145",
+          "tc_6501f71533",
+          "tc_2e9af91fa2",
+          "tc_92a0e95d19"
+        ]
+      }
+    },
+    "/userserv/salary/trade/logs": {
+      "get": {
+        "summary": "查看本人订单流转记录",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_634b8077e8",
+          "tc_204821a151",
+          "tc_3995b1037b"
+        ]
+      }
+    },
+    "/userserv/salary/trade/order/appeal": {
+      "post": {
+        "summary": "待确认收款时提交投诉",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_be228a1cd1",
+          "tc_60ad3df5c9",
+          "tc_78189ffc40",
+          "tc_ac39a4c15e"
+        ]
+      }
+    },
+    "/userserv/salary/trade/order/cancel": {
+      "post": {
+        "summary": "取消待代理处理订单",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_4a361f2e73",
+          "tc_fd3c65bfca",
+          "tc_ea40bd1230",
+          "tc_5e834a4d16"
+        ]
+      }
+    },
+    "/userserv/salary/trade/order/confirm": {
+      "post": {
+        "summary": "确认已收到代理转账",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary, 转账",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_da1f72545f",
+          "tc_82c425f44c",
+          "tc_d280272aef",
+          "tc_d5cae5cd7e"
+        ]
+      }
+    },
+    "/userserv/salary/trade/order/create": {
+      "post": {
+        "summary": "提交收款信息并创建待代理处理订单",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 70,
+          "danger_warning": "高危险系数 70/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_ddc2782339",
+          "tc_9e9ab12cdd",
+          "tc_e2826cb5f1",
+          "tc_7b37235a8c"
+        ]
+      }
+    },
+    "/userserv/salary/trade/order/detail": {
+      "get": {
+        "summary": "查看本人订单详情",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_ed495e60ee",
+          "tc_040bef7520",
+          "tc_1c37a1d263"
+        ]
+      }
+    },
+    "/userserv/salary/trade/order/page": {
+      "get": {
+        "summary": "查看本人快速结算订单列表",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_2c8302c8bf",
+          "tc_cec2930031",
+          "tc_09a3bd659e"
+        ]
+      }
+    },
+    "/userserv/salary/trade/quota": {
+      "get": {
+        "summary": "进入入口时查询可结算额度",
+        "tags": [
+          "userserv"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "high",
+          "reason": "命中高风险业务关键词：salary",
+          "danger_score": 50,
+          "danger_warning": "中危险系数 50/100：涉及资金或结算"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "x-autotest-case-ids": [
+          "tc_586b91c352",
+          "tc_71d4c8f02c",
+          "tc_43c6c779d8"
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "capturedOrConfiguredAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "平台只保留脱敏后的认证占位，不导出真实 Cookie、Token、Ticket 或账号密码。"
+      }
+    }
+  },
+  "x-autotest-security": {
+    "raw_har_saved": false,
+    "sensitive_fields_redacted": true,
+    "business_datasource_readonly": true,
+    "note": "导出文档来自平台接口资产库，不包含原始抓包敏感值。"
+  },
+  "x-autotest-package": {
+    "package_id": "salary-trade",
+    "generated_at": "2026-09-03T16:20:53+08:00"
+  }
+}

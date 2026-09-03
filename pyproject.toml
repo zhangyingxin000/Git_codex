@@ -19,7 +19,7 @@ line-length = 100
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--basetemp=.test-tmp -p no:cacheprovider"
+addopts = "-p no:cacheprovider"
 
 [tool.setuptools.packages.find]
 include = ["quality_hub_backend*"]

@@ -1,4 +1,4 @@
-schema_version: '1.0'
+schema_version: '1.1'
 package_id: salary-trade
 updated_at: '2026-09-02T14:28:17+08:00'
 policy: 资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。
@@ -70,3 +70,6 @@ variable_extractions:
 disabled_resources:
 - redis
 confirmed_ignored: []
+schema_migrated_from: '1.0'
+schema_kind: resource_manifest
+schema_updated_at: '2026-09-02T17:17:32+08:00'

@@ -14,8 +14,14 @@
       "name": "缺失UID参数",
       "request": {
         "method": "GET",
-        "header": [],
-        "url": "https://test2westarlive.gzxchate.com/level/exeperience/v2/get"
+        "header": [
+          {
+            "key": "t",
+            "value": "1788419167290",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/level/exeperience/v2/get?appVersion=100.1.5.4&organic=Organic&systemLanguage=zh&language=en&packageName=com.soulfree.happiness&deviceType=0&isVpnConnected=0&ispType=4&model=SM-A546B&appsflyerId=1787628595990-5267637366511328587&netType=2&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.4&osVersion=16&channel=google&appCode=100154&appid=soulfree&os=android"
       },
       "event": [
         {
@@ -33,8 +39,14 @@
       "name": "非法UID类型",
       "request": {
         "method": "GET",
-        "header": [],
-        "url": "https://test2westarlive.gzxchate.com/level/exeperience/v2/get"
+        "header": [
+          {
+            "key": "t",
+            "value": "1788419167290",
+            "type": "text"
+          }
+        ],
+        "url": "https://test2westarlive.gzxchate.com/level/exeperience/v2/get?appVersion=100.1.5.4&organic=Organic&systemLanguage=zh&language=en&packageName=com.soulfree.happiness&deviceType=0&isVpnConnected=0&ispType=4&model=SM-A546B&appsflyerId=1787628595990-5267637366511328587&netType=2&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&version=100.1.5.4&osVersion=16&channel=google&appCode=100154&appid=soulfree&os=android&uid=not-a-number"
       },
       "event": [
         {

@@ -1,0 +1,1206 @@
+{
+  "schema_version": "1.1",
+  "report_type": "REQUIREMENT_PACKAGE_SCENARIO_EXECUTION_PLAN",
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "package_name": "财富等级",
+  "status": "READY_WITH_WARNINGS",
+  "generated_at": "2026-09-03T14:29:39+08:00",
+  "source": {
+    "skill": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\test-tool-routing\\SKILL.md",
+    "basis": "结构化测试用例、JMeter映射、账号模型、证据规则和需求包资产"
+  },
+  "summary": {
+    "scenarios": 7,
+    "cases": 195,
+    "status_counts": {
+      "NEEDS_REVIEW": 7
+    },
+    "tool_counts": {
+      "newman": 3,
+      "jmeter": 2,
+      "pytest": 1,
+      "manual": 1
+    },
+    "structured_case_status": {
+      "cases": 195,
+      "with_db_checks": 0,
+      "with_redis_checks": 0,
+      "with_optional_redis_suggestions": 152,
+      "quality_counts": {
+        "MANUAL_ONLY": 190,
+        "READY": 5
+      },
+      "readiness_counts": {
+        "MANUAL_ONLY": 190,
+        "SCRIPT_GENERATION_READY": 5
+      },
+      "tool_counts": {
+        "manual": 190,
+        "newman": 5
+      },
+      "exception_counts": {
+        "data_constraint_exception": 135,
+        "requirement_exception": 28,
+        "api_contract_exception": 137,
+        "state_machine_exception": 2
+      },
+      "official_rules": 0,
+      "candidate_rules": 0
+    },
+    "data_preflight_status": "READY_WITH_WARNINGS"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "wealth_auth_context",
+      "name": "登录态与公共参数",
+      "business_goal": "确认财富等级接口执行前的 uid、ticket 和公共移动端参数可用。",
+      "priority": "P0",
+      "status": "NEEDS_REVIEW",
+      "account_slot": "wealth_user",
+      "cases": [
+        {
+          "id": "tc_05d9690ca7",
+          "title": "个人等级区域完整展示",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7775ff7b25",
+          "title": "用户ID与登录账号一致",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_4527814ef5",
+          "title": "登录UID与财富UID一致",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_bf4d12a36f",
+          "title": "缺失Token",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_517ed20f15",
+          "title": "无效Token",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_11663aaefa",
+          "title": "过期Token",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_18be03f23c",
+          "title": "Token UID与参数UID不一致",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_cdf388f130",
+          "title": "真实登录到财富页面",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_0dd34a92db",
+          "title": "财富等级矩阵：Lv.1奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_8acae5f343",
+          "title": "财富等级矩阵：Lv.2奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_08acc16184",
+          "title": "财富等级矩阵：Lv.3奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_1250f7a9a7",
+          "title": "财富等级矩阵：Lv.4奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_8c4d74c230",
+          "title": "财富等级矩阵：Lv.5奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7289cc2110",
+          "title": "财富等级矩阵：Lv.6奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_6cd0bae0cc",
+          "title": "财富等级矩阵：Lv.7奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_04d2f14423",
+          "title": "财富等级矩阵：Lv.8奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7f1250c83e",
+          "title": "财富等级矩阵：Lv.9奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_b6aa79069b",
+          "title": "财富等级矩阵：Lv.10奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_21749752c9",
+          "title": "财富等级矩阵：Lv.11奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_2b215236ff",
+          "title": "财富等级矩阵：Lv.12奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_995adab6d7",
+          "title": "财富等级矩阵：Lv.13奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_a8a0f1b627",
+          "title": "财富等级矩阵：Lv.14奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_8805cfa24b",
+          "title": "财富等级矩阵：Lv.15奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_4e3817f59d",
+          "title": "财富等级矩阵：Lv.16奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_ec48033823",
+          "title": "财富等级矩阵：Lv.17奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_2c0e2a2982",
+          "title": "财富等级矩阵：Lv.18奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_45c74a1ed3",
+          "title": "财富等级矩阵：Lv.19奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7740873a2a",
+          "title": "财富等级矩阵：Lv.20奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_9292adc9cc",
+          "title": "财富等级矩阵：Lv.21奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_48466c3093",
+          "title": "财富等级矩阵：Lv.22奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_ad4b659b94",
+          "title": "财富等级矩阵：Lv.23奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_c0672b93d8",
+          "title": "财富等级矩阵：Lv.24奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_e3bd3542ce",
+          "title": "财富等级矩阵：Lv.25奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7a1b170e02",
+          "title": "财富等级矩阵：Lv.26奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_847c06db48",
+          "title": "财富等级矩阵：Lv.27奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_d36453700b",
+          "title": "财富等级矩阵：Lv.28奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_3a53c09257",
+          "title": "财富等级矩阵：Lv.29奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_dd511c32c7",
+          "title": "财富等级矩阵：Lv.30奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_cf8ed41463",
+          "title": "财富等级矩阵：Lv.31奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_5fefa76422",
+          "title": "财富等级矩阵：Lv.32奖励明细正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "轻量接口回归、鉴权和响应契约检查。",
+          "cases": [
+            "tc_89aa5650e3",
+            "tc_473504bd41",
+            "tc_d439db777f"
+          ],
+          "case_count": 3,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "该财富等级场景的接口结果、经验变化、钱包和账单证据是否共同符合需求？",
+        "human_actions": [
+          "查看当前场景关联用例和原始报告。",
+          "按需要核对财富经验、钱包余额、账单或Redis经验快照。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=wealth_auth_context"
+      }
+    },
+    {
+      "scenario_id": "wealth_snapshot_contract",
+      "name": "财富等级快照契约",
+      "business_goal": "校验财富等级查询响应的核心字段、类型、等级边界和展示字段。",
+      "priority": "P0",
+      "status": "NEEDS_REVIEW",
+      "account_slot": "wealth_user",
+      "cases": [
+        {
+          "id": "tc_78564c7ba8",
+          "title": "当前等级展示与数据库一致",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_f87a6304a1",
+          "title": "当前经验位于等级区间中间值",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_ec3efc314f",
+          "title": "经验等于当前等级起点",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7b99341fb1",
+          "title": "距离下一等级只差1经验",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_92b7e73135",
+          "title": "经验刚好达到升级阈值",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7cf6fc8fd7",
+          "title": "经验超过升级阈值但等级未更新",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_ea1e756791",
+          "title": "最高等级100",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_67f4e0ba41",
+          "title": "经验换算规则",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_ce35ae4ce6",
+          "title": "每个等级段权益数组正确",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_6b8bca5264",
+          "title": "接口等级与MySQL一致",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_01247bd294",
+          "title": "接口经验与MySQL一致",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_e734064f38",
+          "title": "Redis等级缓存与MySQL一致",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_e7c8f9afd0",
+          "title": "数据库更新但缓存未刷新",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_7e3e7168bf",
+          "title": "送礼增加经验但未升级",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_0d4a18c67c",
+          "title": "送礼触发等级升级",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_0b7c3b0812",
+          "title": "当前勋章与等级对应",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_ec58fc412b",
+          "title": "个人区域接口失败",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_cd1786c4e7",
+          "title": "最低等级经验",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_8abaa0f0c4",
+          "title": "经验为0",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_a6615698b4",
+          "title": "经验为负数",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_030bc3252c",
+          "title": "经验超出最大配置",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_71a7e1ffa6",
+          "title": "升级所需经验文案",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_b374f6d931",
+          "title": "大经验值显示精度",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_96dd2f08c8",
+          "title": "连续升级多个等级",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_a2b3790f6a",
+          "title": "默认定位当前等级段",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_904f976a97",
+          "title": "等级段从低到高可完整浏览",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_dfc287f60c",
+          "title": "相邻等级段切换",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_6fe633d70c",
+          "title": "快速连续切换等级段",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_60d78ca2c9",
+          "title": "等级段边界9到10",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_a38b45922e",
+          "title": "等级段边界99到100",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_46e920eeee",
+          "title": "未解锁区间状态",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_9975c5a0a9",
+          "title": "已解锁区间状态",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_5082221ae5",
+          "title": "当前区间状态",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_803a7e7121",
+          "title": "列表滚动到末端",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_dfed7fb743",
+          "title": "列表刷新后保持位置",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_6c822846bc",
+          "title": "等级勋章权益",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_9694282eaf",
+          "title": "房间图片消息权益",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_92e5a5dea3",
+          "title": "等级礼物权益",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_6d45cb278a",
+          "title": "特殊ID权益",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_ca1b7b6748",
+          "title": "权益重复配置",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "轻量接口回归、鉴权和响应契约检查。",
+          "cases": [
+            "tc_78564c7ba8",
+            "tc_f87a6304a1",
+            "tc_ec3efc314f",
+            "tc_7b99341fb1",
+            "tc_92b7e73135",
+            "tc_7cf6fc8fd7",
+            "tc_ea1e756791",
+            "tc_67f4e0ba41",
+            "tc_ce35ae4ce6",
+            "tc_6b8bca5264",
+            "tc_01247bd294",
+            "tc_e734064f38",
+            "tc_e7c8f9afd0",
+            "tc_7e3e7168bf",
+            "tc_0d4a18c67c",
+            "tc_0b7c3b0812",
+            "tc_ec58fc412b",
+            "tc_cd1786c4e7",
+            "tc_8abaa0f0c4",
+            "tc_a6615698b4",
+            "tc_030bc3252c",
+            "tc_71a7e1ffa6",
+            "tc_b374f6d931",
+            "tc_96dd2f08c8",
+            "tc_a2b3790f6a",
+            "tc_904f976a97",
+            "tc_dfc287f60c",
+            "tc_6fe633d70c",
+            "tc_60d78ca2c9",
+            "tc_a38b45922e",
+            "tc_46e920eeee",
+            "tc_9975c5a0a9",
+            "tc_5082221ae5",
+            "tc_803a7e7121",
+            "tc_dfed7fb743",
+            "tc_6c822846bc",
+            "tc_9694282eaf",
+            "tc_92e5a5dea3",
+            "tc_6d45cb278a",
+            "tc_ca1b7b6748",
+            "tc_ce20fd1be3",
+            "tc_7bd3ecd254",
+            "tc_30d34d0008",
+            "tc_b15e34123b",
+            "tc_fcc99f8ee8",
+            "tc_2f95ee777e",
+            "tc_a76f014a7d",
+            "tc_2f415ba578",
+            "tc_ccdc41befd",
+            "tc_4864d26b85",
+            "tc_5e5c8f6ac3",
+            "tc_8862f0efdd"
+          ],
+          "case_count": 52,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "该财富等级场景的接口结果、经验变化、钱包和账单证据是否共同符合需求？",
+        "human_actions": [
+          "查看当前场景关联用例和原始报告。",
+          "按需要核对财富经验、钱包余额、账单或Redis经验快照。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=wealth_snapshot_contract"
+      }
+    },
+    {
+      "scenario_id": "wealth_gift_experience_growth",
+      "name": "送礼后经验增长",
+      "business_goal": "执行送礼闭环并确认经验值、消费金币和业务账单按需求变化。",
+      "priority": "P0",
+      "status": "NEEDS_REVIEW",
+      "account_slot": "wealth_user",
+      "cases": [],
+      "tool_tasks": [
+        {
+          "tool": "jmeter",
+          "purpose": "闭环流程、变量传递或性能基线执行。",
+          "cases": [],
+          "case_count": 0,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "财富等级性能基线",
+          "evidence_rules": [],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "该财富等级场景的接口结果、经验变化、钱包和账单证据是否共同符合需求？",
+        "human_actions": [
+          "查看当前场景关联用例和原始报告。",
+          "按需要核对财富经验、钱包余额、账单或Redis经验快照。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=wealth_gift_experience_growth"
+      }
+    },
+    {
+      "scenario_id": "wealth_wallet_bill_consistency",
+      "name": "钱包与账单一致性",
+      "business_goal": "执行后复核钱包余额、账单记录和财富经验结果是否互相支撑。",
+      "priority": "P1",
+      "status": "NEEDS_REVIEW",
+      "account_slot": "wealth_user",
+      "cases": [],
+      "tool_tasks": [
+        {
+          "tool": "pytest",
+          "purpose": "执行后结合 HTTP、财富经验、钱包、账单和可选Redis证据做深度校验。",
+          "cases": [],
+          "case_count": 0,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\pytest\\pytest_api_cases.py",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "该财富等级场景的接口结果、经验变化、钱包和账单证据是否共同符合需求？",
+        "human_actions": [
+          "查看当前场景关联用例和原始报告。",
+          "按需要核对财富经验、钱包余额、账单或Redis经验快照。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=wealth_wallet_bill_consistency"
+      }
+    },
+    {
+      "scenario_id": "wealth_exception_contract",
+      "name": "异常参数与鉴权失败",
+      "business_goal": "覆盖缺少参数、无效凭证、边界值和错误码契约。",
+      "priority": "P1",
+      "status": "NEEDS_REVIEW",
+      "account_slot": "wealth_user",
+      "cases": [
+        {
+          "id": "tc_08201fc35e",
+          "title": "缺失UID参数",
+          "method": "GET",
+          "path": "/level/exeperience/v2/get",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_2370c6482c",
+          "title": "非法UID类型",
+          "method": "GET",
+          "path": "/level/exeperience/v2/get",
+          "coverage_tool": "newman",
+          "readiness": "SCRIPT_GENERATION_READY",
+          "quality_status": "READY"
+        },
+        {
+          "id": "tc_a43ccc45ad",
+          "title": "列表未加载完成时点击My Level",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "newman",
+          "purpose": "轻量接口回归、鉴权和响应契约检查。",
+          "cases": [
+            "tc_08201fc35e",
+            "tc_2370c6482c"
+          ],
+          "case_count": 2,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\newman\\postman-collection.json",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "该财富等级场景的接口结果、经验变化、钱包和账单证据是否共同符合需求？",
+        "human_actions": [
+          "查看当前场景关联用例和原始报告。",
+          "按需要核对财富经验、钱包余额、账单或Redis经验快照。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=wealth_exception_contract"
+      }
+    },
+    {
+      "scenario_id": "wealth_performance_baseline",
+      "name": "财富接口性能基线",
+      "business_goal": "用 JMeter 固化财富等级接口性能基线和可回收报告。",
+      "priority": "P1",
+      "status": "NEEDS_REVIEW",
+      "account_slot": "wealth_user",
+      "cases": [],
+      "tool_tasks": [
+        {
+          "tool": "jmeter",
+          "purpose": "闭环流程、变量传递或性能基线执行。",
+          "cases": [],
+          "case_count": 0,
+          "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\jmeter-plan.jmx",
+          "thread_group": "财富等级性能基线",
+          "evidence_rules": [],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "该财富等级场景的接口结果、经验变化、钱包和账单证据是否共同符合需求？",
+        "human_actions": [
+          "查看当前场景关联用例和原始报告。",
+          "按需要核对财富经验、钱包余额、账单或Redis经验快照。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\case-jmeter-mapping.json",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=wealth_performance_baseline"
+      }
+    },
+    {
+      "scenario_id": "wealth_unclassified_cases",
+      "name": "待归类财富等级用例",
+      "business_goal": "保留暂未匹配到固定场景的用例，避免生成资产时丢失覆盖。",
+      "priority": "P2",
+      "status": "NEEDS_REVIEW",
+      "account_slot": "wealth_user",
+      "cases": [
+        {
+          "id": "tc_ceeb6ea498",
+          "title": "Level 0展示规则",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_597bec9dd5",
+          "title": "超长昵称展示",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_c176a8d236",
+          "title": "进度条比例计算",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_a96aa87ac8",
+          "title": "进场特效权益",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        },
+        {
+          "id": "tc_929a8c0f2e",
+          "title": "聊天气泡权益",
+          "method": "",
+          "path": "",
+          "coverage_tool": "manual",
+          "readiness": "MANUAL_ONLY",
+          "quality_status": "MANUAL_ONLY"
+        }
+      ],
+      "tool_tasks": [
+        {
+          "tool": "manual",
+          "purpose": "人工确认这些用例应该归入哪个财富等级场景。",
+          "cases": [
+            "tc_ceeb6ea498",
+            "tc_597bec9dd5",
+            "tc_c176a8d236",
+            "tc_a96aa87ac8",
+            "tc_929a8c0f2e"
+          ],
+          "case_count": 5,
+          "asset": "",
+          "thread_group": "",
+          "evidence_rules": [],
+          "blockers": []
+        }
+      ],
+      "human_review": {
+        "review_question": "这些用例是否需要新增财富等级场景或扩展匹配规则？",
+        "human_actions": [
+          "补充 scenario_type 或扩展财富等级场景规则。"
+        ],
+        "maintenance_targets": [
+          "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json"
+        ]
+      },
+      "reports": {
+        "newman": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\newman-*",
+        "jmeter": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\jmeter-*",
+        "pytest": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\pytest-*",
+        "ai_review": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\reports\\ai-review-*",
+        "scenario_trace": "scenario_id=wealth_unclassified_cases"
+      }
+    }
+  ],
+  "business_value": "以业务场景为维护单位，把 Newman、JMeter、pytest 和人工复核收在同一个场景下，避免报告按工具散落。",
+  "next_actions": [
+    "先按场景查看 READY/BLOCKED/NEEDS_REVIEW，确认哪些能自动跑。",
+    "脚本生成器优先消费本计划里的 JMeter 场景和 pytest 证据任务。",
+    "人工维护时只改当前场景关联的用例、账号模型、证据规则和脚本资产。"
+  ]
+}

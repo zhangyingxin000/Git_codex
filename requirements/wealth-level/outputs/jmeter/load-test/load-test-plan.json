@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.1",
+  "report_type": "REQUIREMENT_PACKAGE_JMETER_LOAD_PLAN",
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "package_name": "财富等级",
+  "run_id": "acceptance-live-wealth-20260903-r5",
+  "run_context_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\runs\\acceptance-live-wealth-20260903-r5\\run-context.json",
+  "status": "READY",
+  "created_at": "2026-09-03T15:46:28+08:00",
+  "summary": {
+    "safe_endpoints": 3,
+    "excluded_mutations": 0,
+    "stages": 4
+  },
+  "safe_endpoints": [
+    {
+      "method": "GET",
+      "path": "/purse/query?deviceType={{deviceType}}&systemLanguage={{systemLanguage}}&appVersion={{appVersion}}&os={{os}}&language={{language}}&appCode={{appCode}}&appid={{appid}}&version={{version}}&channel={{channel}}&ticket={{ticket}}&uid={{uid}}",
+      "name": "查询当前用户钱包余额：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/billrecord/get?deviceType={{deviceType}}&systemLanguage={{systemLanguage}}&appVersion={{appVersion}}&os={{os}}&language={{language}}&appCode={{appCode}}&appid={{appid}}&version={{version}}&channel={{channel}}&ticket={{ticket}}&uid={{uid}}&date={{current_time_ms}}&netType={{netType}}&appsflyerId={{appsflyerId}}&deviceId={{deviceId}}&osVersion={{osVersion}}&isVpnConnected={{isVpnConnected}}&model={{model}}&packageName={{packageName}}&ispType={{ispType}}&organic={{organic}}&pageNo=1&pageSize=50&type=1",
+      "name": "查询送礼账单记录：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/level/exeperience/v2/get?deviceType=0&systemLanguage=zh&appVersion=100.1.5.4&os=android&ticket={{ticket}}&language=en&appCode=100154&uid={{uid}}&appid=soulfree",
+      "name": "登录后查询真实财富等级"
+    }
+  ],
+  "excluded_mutations": [],
+  "stages": [
+    {
+      "code": "baseline",
+      "name": "基线",
+      "threads": 2,
+      "rampup_seconds": 30,
+      "duration_seconds": 180,
+      "stage": 1,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\load-test\\stage-01-baseline.jmx",
+      "jtl_property": "load_result_jtl"
+    },
+    {
+      "code": "light-load",
+      "name": "轻负载",
+      "threads": 5,
+      "rampup_seconds": 60,
+      "duration_seconds": 300,
+      "stage": 2,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\load-test\\stage-02-light-load.jmx",
+      "jtl_property": "load_result_jtl"
+    },
+    {
+      "code": "target-load",
+      "name": "目标负载",
+      "threads": 10,
+      "rampup_seconds": 120,
+      "duration_seconds": 600,
+      "stage": 3,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\load-test\\stage-03-target-load.jmx",
+      "jtl_property": "load_result_jtl"
+    },
+    {
+      "code": "capacity-search",
+      "name": "容量探索",
+      "threads": 20,
+      "rampup_seconds": 180,
+      "duration_seconds": 900,
+      "stage": 4,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\load-test\\stage-04-capacity-search.jmx",
+      "jtl_property": "load_result_jtl"
+    }
+  ],
+  "thresholds": {
+    "max_error_rate": 1.0,
+    "max_p95_ms": 2000.0,
+    "max_p99_ms": 4000.0,
+    "min_throughput_rps": 0.0
+  },
+  "stop_conditions": [
+    "错误率超过阈值",
+    "P95或P99连续两个观察窗口超过阈值",
+    "测试环境出现明显不可用",
+    "业务方或运维要求停止"
+  ],
+  "capacity_rule": "最后一个满足错误率、P95/P99和吞吐量门槛的阶梯视为当前可接受容量；首次持续越界的阶梯作为容量拐点候选，不直接等同生产极限。",
+  "execution_pipeline": [
+    "平台选择压测场景",
+    "生成可执行JMX",
+    "JMeter持续运行",
+    "回收JTL和HTML",
+    "自动生成性能分析"
+  ],
+  "report_contract": {
+    "raw_jtl": "必须保留",
+    "jmeter_html": "必须生成并提供原地址",
+    "ai_analysis": "引用同一批JTL/HTML，不替代原始报告"
+  },
+  "plan_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\load-test\\load-test-plan.json"
+}

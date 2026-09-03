@@ -160,9 +160,9 @@ function compactAssetsWorkspace(){let reqs=data.requirement_items||[],points=dat
 function showTraceCoverageModal(){$('#modalBody').innerHTML=`<h2>需求与接口覆盖明细</h2>${traceCoverageHtml()}`;$('#modal').classList.remove('hidden')}
 function showSourceModal(){let kindOptions='<option value="requirement">需求文档/描述</option><option value="openapi">OpenAPI / Swagger</option><option value="har">HAR 抓包文件</option><option value="rules">测试规则与约束</option>';$('#modalBody').innerHTML=`<h2>添加资料</h2><label>资料名称</label><input id="srcName" placeholder="例如：工资代理快速结算"><label>资料类型</label><select id="srcKind">${kindOptions}</select><label>需求/文档链接（可选）</label><input id="srcUrl" placeholder="https://docs.example.com/requirement"><label>资料内容</label><textarea id="srcContent" placeholder="粘贴需求描述、OpenAPI JSON/YAML、HAR 或测试规则"></textarea><label>或读取本地文件</label><input type="file" id="srcFile" accept=".txt,.md,.json,.yaml,.yml,.har,.docx,.pdf,.png,.jpg,.jpeg,.webp,.zip"><p class="policy-note">HTML原型请上传 ZIP 包，保留 HTML 与 images 文件夹，平台会自动做图文联合识别。</p><div id="sourceImportStatus" style="margin:10px 0 12px"></div><button id="sourceSaveButton" class="primary" onclick="addSource()">保存并分析</button>`;$('#modal').classList.remove('hidden');bindFile()}
 function showInterfaceDocModal(){showSourceModal();$('#modalBody h2').textContent='导入接口文档';$('#srcKind').value='openapi';$('#srcName').placeholder='例如：Soulfree测试服接口基线';$('#srcUrl').placeholder='Swagger / OpenAPI 文档地址';$('#srcContent').placeholder='粘贴 OpenAPI JSON/YAML、Swagger JSON、Markdown接口清单，或 HAR 抓包内容';$('#srcFile').setAttribute('accept','.json,.yaml,.yml,.har,.md,.txt');$('.policy-note').textContent='支持 OpenAPI/Swagger、HAR 和普通 Markdown 接口表格；抓包导入后会沉淀为接口资产，后续生成测试点、用例、链路和JMeter脚本。'}
-function professionalReportCenter(){let reports=data.generated_reports||[],assertions=allReportAssertions(),failed=assertions.filter(x=>!x.passed),perf=reports.filter(x=>x.kind==='JMeter'),dataRules=assertions.filter(x=>/redis|threshold|门槛|excel|起始经验|下一等级/i.test(x.name||''));let latest=reports[0];return `<div class="card quality-hero"><span class="tag">REPORTS</span><h2>报告中心</h2><p>按企业汇报方式归纳结果：先看总览和结论，再按需打开接口、性能、数据一致性、缺陷风险和完整证据。原始 JSON 与 JMeter HTML 可追溯。</p></div><div class="metrics"><div class="metric"><span>报告数</span><b>${reports.length}</b></div><div class="metric"><span>断言规则</span><b>${assertions.length}</b></div><div class="metric"><span>失败风险</span><b>${failed.length}</b></div><div class="metric"><span>性能报告</span><b>${perf.length}</b></div></div><div class="card"><h2>结果归纳</h2>${[['测试总览',latest?`${latest.name} · ${latest.summary}`:'尚未生成报告','overview'],['接口测试',`${assertions.length-dataRules.length}条接口/链路断言归纳`,'functional'],['性能测试',perf.length?`${perf[0].summary}`:'暂无JMeter性能报告','performance'],['数据一致性',`${dataRules.length}条数据相关断言，${((data.consistency||{}).runs||[]).length}次规则执行`,'data'],['缺陷与风险',failed.length?`${failed.length}条失败断言需要确认`:'当前无失败断言','risk'],['完整证据',`${data.gift_latest?.assertions?.length||0}条原始执行证据`,'evidence']].map(x=>`<div class="summary-panel"><b>${x[0]}</b><p>${esc(x[1])}</p><button class="small" onclick="showReportCategory('${x[2]}')">查看</button></div>`).join('')}</div>`}
+function legacyProjectReportCenterRemovedA(){return ''}
 function showReportCategory(kind){let assertions=allReportAssertions(),failed=assertions.filter(x=>!x.passed),reports=data.generated_reports||[],perf=reports.filter(x=>x.kind==='JMeter'),dataRules=assertions.filter(x=>/redis|threshold|门槛|excel|起始经验|下一等级/i.test(x.name||''));let html={overview:tableReports(),functional:assertionTable(assertions.filter(x=>!dataRules.includes(x))),performance:perf.length?`<div class="card">${perf.map(x=>`<p><b>${esc(x.name)}</b><br>${esc(x.summary)} ${x.html_url?`<button class="small" onclick="openReport('${esc(x.html_url)}')">查看JMeter HTML</button>`:''}</p>`).join('')}</div>`:'<div class="empty"><b>暂无JMeter性能报告</b></div>',data:assertionTable(dataRules),risk:assertionTable(failed,'当前没有失败断言'),evidence:fullEvidenceAuditHtml()}[kind]||tableReports();$('#modalBody').innerHTML=`<h2>报告明细</h2>${html}`;$('#modal').classList.remove('hidden')}
-function professionalizeWorkspace(){professionalLabels();if($('#overview'))$('#overview').innerHTML=tableQualityHub()+enterpriseDirectory();if($('#sources'))$('#sources').innerHTML=compactAssetsWorkspace();if($('#dataquality'))$('#dataquality').innerHTML=dataQualityClosure();if($('#automation'))$('#automation').innerHTML=executionCenter();if($('#reports'))$('#reports').innerHTML=professionalReportCenter();if(data?.project){switchTab($('.side-tab.active')?.dataset.tab||'overview')}}
+function professionalizeWorkspace(){professionalLabels();if($('#overview'))$('#overview').innerHTML=tableQualityHub()+enterpriseDirectory();if($('#sources'))$('#sources').innerHTML=compactAssetsWorkspace();if($('#dataquality'))$('#dataquality').innerHTML=dataQualityClosure();if($('#automation'))$('#automation').innerHTML=executionCenter();if($('#reports'))$('#reports').innerHTML=packageReportCenter();if(data?.project){switchTab($('.side-tab.active')?.dataset.tab||'overview')}}
 const renderWithQualityHub=render;render=function(){renderWithQualityHub();professionalizeWorkspace()};
 async function navigateWorkspace(id){if(!current){if(projects.length){await openProject(projects[0].id);switchTab(id)}else toast('请先创建测试项目','warning');return}switchTab(id)}
 $$('.tabs button').forEach(x=>x.onclick=()=>switchTab(x.dataset.tab));$$('.side-tab').forEach(x=>x.onclick=()=>navigateWorkspace(x.dataset.tab));mountAssistant();checkPlatformVersion();loadProjects().then(()=>{if(projects.length===1&&!current)openProject(projects[0].id)});
@@ -203,16 +203,21 @@ async function saveExecutionProfile(){let runtime={};try{runtime=JSON.parse($('#
 function toolchainPanel(){let t=data.toolchain||{},tools=t.tools||[],arts=t.artifacts||[],blockers=t.blockers||[],readyAssets=arts.length&&arts.every(x=>x.status==='READY'),profile=data.execution_profile||{},perf=profile.performance||{},runTools=profile.tools||{},runtimeSample=runtimeProfileJson();return `${executionProfilePanel()}<div class="card"><div class="diagnosis-head"><div><h2>企业测试工具链</h2><p>平台先读取运行配置，再完成预检和标准资产生成，最后交给 Newman、JMeter、pytest、JMeter 报告执行归档。</p></div><span class="tag ${t.status==='READY'?'PASSED':'P1'}">${esc(t.status||'PENDING')}</span></div>${blockers.length?`<div class="gap-list">${blockers.map(x=>`<div class="gap-item P1"><span class="tag P1">待补</span><div><b>${esc(x)}</b><p>补齐后即可进入外部工具执行阶段。</p></div></div>`).join('')}</div>`:''}<div class="endpoint-matrix">${tools.map(x=>`<div class="endpoint-card"><span class="tag ${x.status==='READY'?'PASSED':'P1'}">${esc(x.status)}</span><h3>${esc(x.name)}</h3><code>${esc(x.command||'未发现')}</code><p style="font-size:12px;color:var(--muted)">${esc(x.version||x.install_hint||'')}</p></div>`).join('')}</div><div class="summary-panel"><b>执行策略</b><p>登录接口只做前置提取；业务接口使用平台同步后的 ticket、uid、设备上下文和运行参数。</p><select id="toolLoginStrategy"><option value="auto">自动：有登录参数就刷新，否则复用</option><option value="force">强制重新登录</option><option value="reuse">仅复用本机凭证</option></select><div class="formrow"><input id="toolLoginT" placeholder="登录请求头 t（可空，自动生成时间戳）"><input id="toolLoginSn" placeholder="登录请求头 sn（可空；如接口要求签名需补齐）"></div><input id="toolLoginPassword" type="password" placeholder="登录请求体加密密码；重新登录时填写，留空则复用本机凭证"><label>业务运行参数</label><textarea id="toolRuntimeParams" spellcheck="false">${esc(runtimeSample)}</textarea><div class="formrow"><label><input id="toolRunNewman" type="checkbox" ${runTools.run_newman!==false?'checked':''}> Newman</label><label><input id="toolRunJmeter" type="checkbox" ${runTools.run_jmeter!==false?'checked':''}> JMeter</label><label><input id="toolRunPytest" type="checkbox" ${runTools.run_pytest!==false?'checked':''}> pytest</label></div><label>JMeter 压测模型</label><div class="formrow"><input id="toolJmeterThreads" type="number" min="1" max="200" value="${esc(perf.jmeter_threads||2)}" placeholder="线程数"><input id="toolJmeterLoops" type="number" min="1" max="1000" value="${esc(perf.jmeter_loops||5)}" placeholder="每线程循环"><input id="toolJmeterRampup" type="number" min="0" max="600" value="${esc(perf.jmeter_rampup||2)}" placeholder="Ramp-up秒"><input id="toolJmeterTimeout" type="number" min="30" max="3600" value="${esc(perf.jmeter_timeout||180)}" placeholder="超时秒"></div><label>性能准入策略</label><div class="formrow"><select id="toolPerfProfile"><option value="smoke" ${perf.profile==='smoke'?'selected':''}>冒烟验证</option><option value="baseline" ${perf.profile==='baseline'?'selected':''}>基准压测</option><option value="load" ${perf.profile==='load'?'selected':''}>阶梯负载</option><option value="stability" ${perf.profile==='stability'?'selected':''}>稳定性</option></select><input id="toolMaxErrorRate" type="number" min="0" max="100" step="0.1" value="${esc(perf.max_error_rate??0)}" placeholder="最大错误率%"><input id="toolMaxP95" type="number" min="1" value="${esc(perf.max_p95_ms||3000)}" placeholder="P95阈值ms"><input id="toolMaxP99" type="number" min="1" value="${esc(perf.max_p99_ms||5000)}" placeholder="P99阈值ms"><input id="toolMinThroughput" type="number" min="0" step="0.1" value="${esc(perf.min_throughput_rps??0)}" placeholder="最小吞吐req/s"></div><button class="primary" onclick="generateToolAssets()">生成资产</button> <button id="toolchainRunButton" class="small" onclick="runEnterpriseToolchain()" ${readyAssets?'':'disabled'}>执行工具链</button><div id="toolchainRunStatus" style="margin-top:12px"></div></div><div class="evidence-list">${arts.map(x=>`<div class="evidence-item"><b>${esc(x.name)}</b><small>${esc(x.status)}</small>${x.url?`<button class="small" onclick="openReport('${esc(x.url)}')">打开</button>`:''}</div>`).join('')}</div></div>`}
 
 function openDownload(url){if(!url)return;window.open(url,'_blank')}
-async function createApipostPackage(){try{toast('正在生成 Apipost 协同包…');let x=await api(`/api/projects/${current}/apipost-package`,{method:'POST',body:'{}'});toast('Apipost 协同包已生成','success');showPackageResult('Apipost 协同包',x)}catch(e){toast(e.message,'error')}}
+async function createApifoxPackage(){let packageId=selectedRequirementPackageId(),pkg=currentRequirementPackage();if(!packageId)return toast('请先选择需求包','warning');try{toast(`正在生成 ${pkg.name} 的 Apifox 交换包…`);let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/apifox-export`,{method:'POST',body:'{}'});let s=x.summary||{};$('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · Apifox交换包</h2><p class="policy-note">只导出当前需求包。真实ticket、token、密码和数据库凭证不会写入文件。</p><div class="metrics"><div class="metric"><span>接口</span><b>${esc(s.interfaces||0)}</b></div><div class="metric"><span>用例</span><b>${esc(s.cases||0)}</b></div><div class="metric"><span>cURL</span><b>${esc(s.curl_files||0)}</b></div></div><div class="formrow"><button class="primary" onclick="openDownload('${esc(x.zip_url||'')}')">下载交换包</button><button class="small" onclick="openReport('${esc(x.openapi_url||'')}')">OpenAPI</button><button class="small" onclick="openReport('${esc(x.postman_url||'')}')">请求集合</button><button class="small" onclick="openReport('${esc(x.environment_url||'')}')">环境模板</button><button class="small" onclick="openReport('${esc(x.mapping_url||'')}')">用例映射</button></div><label>输出目录</label><code>${esc(x.zip_path||'')}</code><h3>包内文件</h3><div class="evidence-list">${(x.files||[]).map(f=>`<div class="evidence-item"><b>${esc(f)}</b><small>Apifox可维护资产</small></div>`).join('')}</div>`;$('#modal').classList.remove('hidden');toast('Apifox交换包已生成','success')}catch(e){toast(e.message,'error')}}
+function showApifoxEnterpriseFlow(){let pkg=currentRequirementPackage();if(!pkg)return toast('请先选择需求包','warning');$('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · Apifox企业链路</h2><p class="policy-note">Apifox是接口文档真相源。完整导出OpenAPI 3.0后在这里导入；平台只覆盖pytest generated目录，不覆盖人工business目录。</p><label>Apifox OpenAPI 3.0文件</label><input id="apifoxOpenapiFile" type="file" accept=".json,.yaml,.yml"><div class="formrow"><button class="primary" onclick="importApifoxOpenapi()">导入并生成pytest基础层</button><button class="small" onclick="runApifoxCliSmoke()">运行发布冒烟</button></div><div id="apifoxFlowResult"></div><p class="policy-note">CLI首次使用：把Apifox CI/CD页面生成的命令写入当前需求包 apifox/cli-profile.yaml，access token只配置为系统环境变量。</p>`;$('#modal').classList.remove('hidden')}
+async function importApifoxOpenapi(){let packageId=selectedRequirementPackageId(),file=$('#apifoxOpenapiFile')?.files?.[0];if(!file)return toast('请选择Apifox导出的OpenAPI文件','warning');try{let content=await file.text();toast('正在解析OpenAPI并生成pytest基础层…');let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/apifox/openapi/import`,{method:'POST',body:JSON.stringify({name:file.name,content})}),s=x.summary||{};$('#apifoxFlowResult').innerHTML=`<div class="summary-panel"><b>${esc(x.status)} · ${esc(x.selection_mode)}</b><p>OpenAPI路径 ${esc(s.openapi_paths||0)} · pytest接口 ${esc(s.pytest_operations||0)} · ${x.source_changed?'检测到接口变化':'接口定义未变化'}</p><button class="small" onclick="openReport('${esc(x.generated_url||'')}')">查看生成脚本</button></div>`;toast('pytest基础层已生成','success')}catch(e){toast(e.message,'error')}}
+async function runApifoxCliSmoke(){let packageId=selectedRequirementPackageId();try{toast('正在运行Apifox发布冒烟…');let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/apifox-cli/run`,{method:'POST',body:JSON.stringify({run_id:activeRequirementRunId()||''})}),s=x.summary||{};$('#apifoxFlowResult').innerHTML=`<div class="summary-panel"><b>${esc(x.status)}</b><p>退出码 ${esc(s.exit_code??'-')} · 请求 ${esc(s.requests||0)} · 失败 ${esc(s.failures||0)} · ${esc(s.duration_ms||0)}ms</p>${(x.blockers||[]).map(v=>`<small>${esc(v)}</small><br>`).join('')}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看冒烟报告</button>`:''}</div>`;toast(x.status==='PASSED'?'Apifox冒烟通过':'Apifox冒烟需要处理',x.status==='PASSED'?'success':'warning');await openProject(current)}catch(e){toast(e.message,'error')}}
 async function createDeliveryPackage(){try{toast('正在生成测试资产交付包…');let x=await api(`/api/projects/${current}/delivery-package`,{method:'POST',body:'{}'});toast('测试资产交付包已生成','success');showPackageResult('测试资产交付包',x)}catch(e){toast(e.message,'error')}}
 function showPackageResult(title,x){let summary=x.summary?`<div class="metrics">${Object.entries(x.summary).map(([k,v])=>`<div class="metric"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`:'';$('#modalBody').innerHTML=`<h2>${esc(title)}</h2><p class="policy-note">已生成可迁移交付文件；敏感凭证不会导出，MySQL/Redis 仍按只读证据源处理。</p>${summary}<label>包内文件</label><div class="evidence-list">${(x.files||[]).map(f=>`<div class="evidence-item"><b>${esc(f)}</b><small>已归档</small></div>`).join('')}</div><button class="primary" onclick="openDownload('${esc(x.zip_url||'')}')">下载 ZIP</button>`;$('#modal').classList.remove('hidden')}
-function collaborationPackagePanel(){let endpoints=(data.endpoints||[]).length,cases=(data.cases||[]).length,points=(data.points||[]).length,rules=((data.consistency||{}).rules||[]).length,reports=(data.generated_reports||[]).length;return `<div class="card"><div class="diagnosis-head"><div><h2>协同与交付</h2><p>面向企业团队协作和项目展示：Apipost 用于接口协同，交付包用于迁移、评审和复盘。</p></div><span class="tag PASSED">EXPORT READY</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">APIPOST</span><h3>Apipost 协同入口</h3><p style="font-size:12px;color:var(--muted)">生成可导入的 OpenAPI 基线、Postman 兼容集合、环境变量模板和导入说明。单接口调试仍交给 Apipost。</p><button class="primary" onclick="createApipostPackage()">生成协同包</button></div><div class="endpoint-card"><span class="tag PASSED">DELIVERY</span><h3>测试资产交付包</h3><p style="font-size:12px;color:var(--muted)">打包接口文档、测试点、测试用例、追踪关系、数据规则、运行配置、外部工具脚本和报告索引。</p><button class="primary" onclick="createDeliveryPackage()">生成交付包</button></div></div><div class="metrics" style="margin-top:16px"><div class="metric"><span>接口</span><b>${endpoints}</b></div><div class="metric"><span>测试点</span><b>${points}</b></div><div class="metric"><span>用例</span><b>${cases}</b></div><div class="metric"><span>规则/报告</span><b>${rules}/${reports}</b></div></div></div>`}
+function collaborationPackagePanel(){let endpoints=(data.endpoints||[]).length,cases=(data.cases||[]).length,points=(data.points||[]).length,rules=((data.consistency||{}).rules||[]).length,reports=(data.generated_reports||[]).length;return `<div class="card"><div class="diagnosis-head"><div><h2>协同与交付</h2><p>Apifox维护接口真相和发布冒烟，平台生成pytest、回收执行结果并完成复盘。</p></div><span class="tag PASSED">ENTERPRISE FLOW</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">APIFOX</span><h3>Apifox企业链路</h3><p style="font-size:12px;color:var(--muted)">导入企业Apifox的OpenAPI生成pytest基础层，或运行Apifox CLI发布冒烟。</p><button class="primary" onclick="showApifoxEnterpriseFlow()">进入</button></div><div class="endpoint-card"><span class="tag PASSED">DELIVERY</span><h3>测试资产交付包</h3><p style="font-size:12px;color:var(--muted)">打包接口文档、测试点、测试用例、追踪关系、数据规则、运行配置、外部工具脚本和报告索引。</p><button class="primary" onclick="createDeliveryPackage()">生成交付包</button></div></div><div class="metrics" style="margin-top:16px"><div class="metric"><span>接口</span><b>${endpoints}</b></div><div class="metric"><span>测试点</span><b>${points}</b></div><div class="metric"><span>用例</span><b>${cases}</b></div><div class="metric"><span>规则/报告</span><b>${rules}/${reports}</b></div></div></div>`}
 function compactAssetsWorkspace(){let reqs=data.requirement_items||[],sources=data.sources||[],endpoints=data.endpoints||[],cases=data.cases||[],points=data.points||[],selected=(data.trace_links||[]).filter(x=>+x.selected===1).length;return `<div class="card quality-hero"><span class="tag">ASSETS</span><h2>需求与测试资产</h2><p>资料、需求、接口、测试点和测试用例统一归纳；从这里查看明细、维护覆盖、协同交付和启动生成。</p><div class="quality-flow">${[['资料',sources.length,sources.length+'份输入'],['需求',reqs.length,reqs.length+'条需求'],['测试点',points.length,points.length+'个测试点'],['用例',cases.length,cases.length+'条用例']].map(x=>`<button class="quality-step ${x[1]?'':'pending'}" onclick="${x[0]==='测试点'?'showTestPointsModal()':x[0]==='用例'?'showTestCasesModal()':'showTraceCoverageModal()'}">${hubStatus(x[1])}<b>${x[0]}</b><small>${esc(x[2])}</small></button>`).join('')}</div></div>${collaborationPackagePanel()}<div class="closure-grid"><div class="card"><h2>资产操作</h2><div class="summary-panel"><b>新增需求资料</b><p>需求描述、原型链接、图片、HTML原型包统一从这里导入。</p><button class="primary" onclick="showSourceModal()">添加需求</button></div><div class="summary-panel"><b>导入接口文档</b><p>上传或粘贴 OpenAPI/Swagger/HAR，形成接口基线并同步进入覆盖矩阵。</p><button class="primary" onclick="showInterfaceDocModal()">导入接口</button></div><div class="summary-panel"><b>生成与补齐</b><p>生成测试点、用例、接口覆盖、链路和数据验证规则。缺原始接口文档时会提示补齐，不再中断。</p><button class="small" onclick="runPipeline()">启动生成</button></div><div class="summary-panel"><b>接口文档基线</b><p>把当前接口资产导出为脱敏 OpenAPI；抓包导入后也会同步沉淀。</p><button class="small" onclick="downloadInterfaceDocument()">导出</button></div></div><div><div class="card"><h2>覆盖摘要</h2><div class="evidence-list"><button class="evidence-item asset-row" onclick="showTraceCoverageModal()"><b>需求覆盖</b><small>${reqs.length}条需求，${selected}条已选追踪关系</small></button><button class="evidence-item asset-row" onclick="showEndpointAssetsModal()"><b>接口覆盖</b><small>${endpoints.length?endpoints.map(x=>x.method+' '+x.path).join(' · '):'暂无接口资产'}</small></button></div></div>${groupedTestAssets()}</div></div>`}
 
 function collectJmeterWorkbenchPayload(){
   let runtime_params={};
   try{runtime_params=JSON.parse($('#toolRuntimeParams')?.value.trim()||'{}')}catch{throw new Error('运行参数必须是合法 JSON')}
   return {
+    package_id:selectedRequirementPackageId(),
+    run_id:activeRequirementRunId(),
     runtime_params,
     login_t:$('#toolLoginT')?.value.trim()||'',
     login_sn:$('#toolLoginSn')?.value.trim()||'',
@@ -242,7 +247,10 @@ async function openJmeterWorkbench(){
 async function harvestJmeterGuiReport(){
   try{
     toast('正在回收 JMeter GUI 执行结果…');
-    let x=await api(`/api/projects/${current}/jmeter/harvest-gui-report`,{method:'POST',body:JSON.stringify(collectJmeterWorkbenchPayload())});
+    let runId=await ensureRequirementRunContext(),payload=collectJmeterWorkbenchPayload();
+    payload.run_id=runId;
+    payload.package_id=selectedRequirementPackageId();
+    let x=await api(`/api/projects/${current}/jmeter/harvest-gui-report`,{method:'POST',body:JSON.stringify(payload)});
     let s=x.summary||{},g=x.performance_gate||{},d=x.performance_diagnosis||{};
     $('#modalBody').innerHTML=`<h2>JMeter GUI 报告已回收</h2><p class="policy-note">平台已读取固定 JTL，生成性能摘要、准入判断和瓶颈诊断，并归档到报告中心。</p><div class="metrics"><div class="metric"><span>请求数</span><b>${esc(s.requests||0)}</b></div><div class="metric"><span>错误率</span><b>${esc(s.error_rate??'-')}%</b></div><div class="metric"><span>P95 / P99</span><b>${esc(s.p95_ms??'-')} / ${esc(s.p99_ms??'-')}ms</b></div><div class="metric"><span>平均 / 中位</span><b>${esc(s.average_ms??'-')} / ${esc(s.p50_ms??'-')}ms</b></div><div class="metric"><span>准入</span><b>${esc(g.status||x.status)}</b></div></div>${performanceDiagnosisHtml(d,s)}<button class="primary" onclick="openReport('${esc(x.report_url||'')}')">查看JSON</button> ${x.html_url?`<button class="small" onclick="openReport('${esc(x.html_url)}')">查看HTML</button>`:''}`;
     $('#modal').classList.remove('hidden');
@@ -252,7 +260,7 @@ async function harvestJmeterGuiReport(){
   }catch(e){toast(e.message,'error')}
 }
 function performanceDiagnosisHtml(d,s){d=d||{};s=s||{};let findings=d.findings||[],b=d.bottlenecks||[],slow=d.slowest_samples||[];return `<div class="card"><h3>性能诊断结论 <span class="tag ${findings.some(x=>x.severity==='P0')?'FAILED':findings.length?'P1':'PASSED'}">${esc(d.sample_grade||'OBSERVE')}</span></h3><p>${esc(d.conclusion||s.tail_note||'暂无自动诊断')}</p>${findings.length?`<div class="gap-list">${findings.map(x=>`<div class="gap-item ${x.severity==='P0'?'P0':x.severity==='P1'?'P1':'PASSED'}"><span class="tag ${x.severity==='P0'?'FAILED':x.severity==='P1'?'P1':'PASSED'}">${esc(x.severity)}</span><div><b>${esc(x.title)}</b><p>${esc(x.detail)}</p></div></div>`).join('')}</div>`:''}${b.length?`<h3>慢接口 Top</h3><table><thead><tr><th>接口/步骤</th><th>样本</th><th>平均</th><th>P95</th><th>最大</th></tr></thead><tbody>${b.map(x=>`<tr><td>${esc(x.label)}</td><td>${esc(x.samples)}</td><td>${esc(x.average_ms)}ms</td><td>${esc(x.p95_ms)}ms</td><td>${esc(x.max_ms)}ms</td></tr>`).join('')}</tbody></table>`:''}${slow.length?`<h3>最慢样本</h3><table><thead><tr><th>步骤</th><th>耗时</th><th>响应码</th><th>结果</th></tr></thead><tbody>${slow.slice(0,5).map(x=>`<tr><td>${esc(x.label)}</td><td>${esc(x.elapsed_ms)}ms</td><td>${esc(x.response_code)}</td><td><span class="tag ${x.success?'PASSED':'FAILED'}">${x.success?'成功':'失败'}</span></td></tr>`).join('')}</tbody></table>`:''}</div>`}
-function toolchainPanel(){let t=data.toolchain||{},tools=t.tools||[],arts=t.artifacts||[],blockers=t.blockers||[],readyAssets=arts.length&&arts.every(x=>x.status==='READY'),profile=data.execution_profile||{},perf=profile.performance||{},runTools=profile.tools||{},runtimeSample=runtimeProfileJson();return `${executionProfilePanel()}<div class="card"><div class="diagnosis-head"><div><h2>企业测试工具链</h2><p>平台生成可维护脚本，调起 Apipost / JMeter / Newman / pytest 等外部工具，并把执行报告归档回工作台。</p></div><span class="tag ${t.status==='READY'?'PASSED':'P1'}">${esc(t.status||'PENDING')}</span></div>${blockers.length?`<div class="gap-list">${blockers.map(x=>`<div class="gap-item P1"><span class="tag P1">待补</span><div><b>${esc(x)}</b><p>补齐后即可进入外部工具执行阶段。</p></div></div>`).join('')}</div>`:''}<div class="endpoint-matrix">${tools.map(x=>`<div class="endpoint-card"><span class="tag ${x.status==='READY'?'PASSED':'P1'}">${esc(x.status)}</span><h3>${esc(x.name)}</h3><code>${esc(x.command||'未发现')}</code><p style="font-size:12px;color:var(--muted)">${esc(x.version||x.install_hint||'')}</p></div>`).join('')}</div><div class="summary-panel"><b>执行策略</b><p>登录接口只做前置提取；业务接口使用平台同步后的 ticket、uid、设备上下文和运行参数。</p><select id="toolLoginStrategy"><option value="auto">自动：有登录参数就刷新，否则复用</option><option value="force">强制重新登录</option><option value="reuse">仅复用本机凭证</option></select><div class="formrow"><input id="toolLoginT" placeholder="登录请求头 t（可空，自动生成时间戳）"><input id="toolLoginSn" placeholder="登录请求头 sn（可空；如接口要求签名需补齐）"></div><input id="toolLoginPassword" type="password" placeholder="登录请求体加密密码；重新登录时填写，留空则复用本机凭证"><label>业务运行参数</label><textarea id="toolRuntimeParams" spellcheck="false">${esc(runtimeSample)}</textarea><div class="formrow"><label><input id="toolRunNewman" type="checkbox" ${runTools.run_newman!==false?'checked':''}> Newman</label><label><input id="toolRunJmeter" type="checkbox" ${runTools.run_jmeter!==false?'checked':''}> JMeter</label><label><input id="toolRunPytest" type="checkbox" ${runTools.run_pytest!==false?'checked':''}> pytest</label></div><label>JMeter 压测模型</label><div class="formrow"><input id="toolJmeterThreads" type="number" min="1" max="200" value="${esc(perf.jmeter_threads||2)}" placeholder="线程数"><input id="toolJmeterLoops" type="number" min="1" max="1000" value="${esc(perf.jmeter_loops||5)}" placeholder="每线程循环"><input id="toolJmeterRampup" type="number" min="0" max="600" value="${esc(perf.jmeter_rampup||2)}" placeholder="Ramp-up秒"><input id="toolJmeterTimeout" type="number" min="30" max="3600" value="${esc(perf.jmeter_timeout||180)}" placeholder="超时秒"></div><label>性能准入策略</label><div class="formrow"><select id="toolPerfProfile"><option value="smoke" ${perf.profile==='smoke'?'selected':''}>冒烟验证</option><option value="baseline" ${perf.profile==='baseline'?'selected':''}>基准压测</option><option value="load" ${perf.profile==='load'?'selected':''}>阶梯负载</option><option value="stability" ${perf.profile==='stability'?'selected':''}>稳定性</option></select><input id="toolMaxErrorRate" type="number" min="0" max="100" step="0.1" value="${esc(perf.max_error_rate??0)}" placeholder="最大错误率%"><input id="toolMaxP95" type="number" min="1" value="${esc(perf.max_p95_ms||3000)}" placeholder="P95阈值ms"><input id="toolMaxP99" type="number" min="1" value="${esc(perf.max_p99_ms||5000)}" placeholder="P99阈值ms"><input id="toolMinThroughput" type="number" min="0" step="0.1" value="${esc(perf.min_throughput_rps??0)}" placeholder="最小吞吐req/s"></div><button class="primary" onclick="generateToolAssets()">生成资产</button> <button class="small" onclick="showJmeterScriptChooser()">选择 JMeter 脚本</button> <button id="toolchainRunButton" class="small" onclick="runEnterpriseToolchain()" ${readyAssets?'':'disabled'}>执行工具链</button><div id="toolchainRunStatus" style="margin-top:12px"></div></div><div class="evidence-list">${arts.map(x=>`<div class="evidence-item"><b>${esc(x.name)}</b><small>${esc(x.status)}</small>${x.url?`<button class="small" onclick="openReport('${esc(x.url)}')">打开</button>`:''}</div>`).join('')}</div></div>`}
+function toolchainPanel(){let t=data.toolchain||{},tools=t.tools||[],arts=t.artifacts||[],blockers=t.blockers||[],readyAssets=arts.length&&arts.every(x=>x.status==='READY'),profile=data.execution_profile||{},perf=profile.performance||{},runTools=profile.tools||{},runtimeSample=runtimeProfileJson();return `${executionProfilePanel()}<div class="card"><div class="diagnosis-head"><div><h2>企业测试工具链</h2><p>平台生成可维护脚本，调起 Apifox / JMeter / Newman / pytest 等外部工具，并把执行报告归档回工作台。</p></div><span class="tag ${t.status==='READY'?'PASSED':'P1'}">${esc(t.status||'PENDING')}</span></div>${blockers.length?`<div class="gap-list">${blockers.map(x=>`<div class="gap-item P1"><span class="tag P1">待补</span><div><b>${esc(x)}</b><p>补齐后即可进入外部工具执行阶段。</p></div></div>`).join('')}</div>`:''}<div class="endpoint-matrix">${tools.map(x=>`<div class="endpoint-card"><span class="tag ${x.status==='READY'?'PASSED':'P1'}">${esc(x.status)}</span><h3>${esc(x.name)}</h3><code>${esc(x.command||'未发现')}</code><p style="font-size:12px;color:var(--muted)">${esc(x.version||x.install_hint||'')}</p></div>`).join('')}</div><div class="summary-panel"><b>执行策略</b><p>登录接口只做前置提取；业务接口使用平台同步后的 ticket、uid、设备上下文和运行参数。</p><select id="toolLoginStrategy"><option value="auto">自动：有登录参数就刷新，否则复用</option><option value="force">强制重新登录</option><option value="reuse">仅复用本机凭证</option></select><div class="formrow"><input id="toolLoginT" placeholder="登录请求头 t（可空，自动生成时间戳）"><input id="toolLoginSn" placeholder="登录请求头 sn（可空；如接口要求签名需补齐）"></div><input id="toolLoginPassword" type="password" placeholder="登录请求体加密密码；重新登录时填写，留空则复用本机凭证"><label>业务运行参数</label><textarea id="toolRuntimeParams" spellcheck="false">${esc(runtimeSample)}</textarea><div class="formrow"><label><input id="toolRunNewman" type="checkbox" ${runTools.run_newman!==false?'checked':''}> Newman</label><label><input id="toolRunJmeter" type="checkbox" ${runTools.run_jmeter!==false?'checked':''}> JMeter</label><label><input id="toolRunPytest" type="checkbox" ${runTools.run_pytest!==false?'checked':''}> pytest</label></div><label>JMeter 压测模型</label><div class="formrow"><input id="toolJmeterThreads" type="number" min="1" max="200" value="${esc(perf.jmeter_threads||2)}" placeholder="线程数"><input id="toolJmeterLoops" type="number" min="1" max="1000" value="${esc(perf.jmeter_loops||5)}" placeholder="每线程循环"><input id="toolJmeterRampup" type="number" min="0" max="600" value="${esc(perf.jmeter_rampup||2)}" placeholder="Ramp-up秒"><input id="toolJmeterTimeout" type="number" min="30" max="3600" value="${esc(perf.jmeter_timeout||180)}" placeholder="超时秒"></div><label>性能准入策略</label><div class="formrow"><select id="toolPerfProfile"><option value="smoke" ${perf.profile==='smoke'?'selected':''}>冒烟验证</option><option value="baseline" ${perf.profile==='baseline'?'selected':''}>基准压测</option><option value="load" ${perf.profile==='load'?'selected':''}>阶梯负载</option><option value="stability" ${perf.profile==='stability'?'selected':''}>稳定性</option></select><input id="toolMaxErrorRate" type="number" min="0" max="100" step="0.1" value="${esc(perf.max_error_rate??0)}" placeholder="最大错误率%"><input id="toolMaxP95" type="number" min="1" value="${esc(perf.max_p95_ms||3000)}" placeholder="P95阈值ms"><input id="toolMaxP99" type="number" min="1" value="${esc(perf.max_p99_ms||5000)}" placeholder="P99阈值ms"><input id="toolMinThroughput" type="number" min="0" step="0.1" value="${esc(perf.min_throughput_rps??0)}" placeholder="最小吞吐req/s"></div><button class="primary" onclick="generateToolAssets()">生成资产</button> <button class="small" onclick="showJmeterScriptChooser()">选择 JMeter 脚本</button> <button id="toolchainRunButton" class="small" onclick="runEnterpriseToolchain()" ${readyAssets?'':'disabled'}>执行工具链</button><div id="toolchainRunStatus" style="margin-top:12px"></div></div><div class="evidence-list">${arts.map(x=>`<div class="evidence-item"><b>${esc(x.name)}</b><small>${esc(x.status)}</small>${x.url?`<button class="small" onclick="openReport('${esc(x.url)}')">打开</button>`:''}</div>`).join('')}</div></div>`}
 const toolchainPanelWithGuiHarvest=toolchainPanel;
 toolchainPanel=function(){return toolchainPanelWithGuiHarvest().replace('<button id="toolchainRunButton"','<button class="small" onclick="harvestJmeterGuiReport()">回收 GUI 报告</button> <button id="toolchainRunButton"')}
 function jmeterGuiFlowPanel(){
@@ -289,13 +297,13 @@ function deliveryReadinessHtml(m){
   ];
   return `<div class="card delivery-readiness"><div class="diagnosis-head"><div><h2>交付完整度</h2><p>按企业测试交付物检查当前项目是否能形成可迁移、可复盘、可验收的材料。</p></div><div class="diagnosis-score"><b>${ready.filter(x=>x[1]).length}/${ready.length}</b><span>已具备</span></div></div><div class="readiness-list">${ready.map(x=>`<div class="readiness-row ${x[1]?'ready':'pending'}"><span>${deliveryStatusTag(x[1]?'PASSED':'P1',x[1]?'已齐':'待补')}</span><b>${esc(x[0])}</b><p>${esc(x[1]?x[2]:x[3])}</p></div>`).join('')}</div>${gaps.length?`<div class="summary-panel"><b>平台建议下一步</b><p>${esc(gaps[0].title)}：${esc(gaps[0].desc)}</p><button class="small" onclick="switchTab('${esc(gaps[0].tab||'overview')}')">${esc(gaps[0].action||'处理')}</button></div>`:''}</div>`
 }
-function professionalReportCenter(){
+function legacyProjectReportCenterRemovedB(){
   let m=deliveryReportModel(),p=m.latestPerf.performance_summary||{},gate=m.latestPerf.performance_gate||{},riskCount=m.failed.length+m.runFailed.length+m.perfFindings.length;
   return `<div class="card delivery-hero"><div><span class="tag ${m.status}">ACCEPTANCE</span><h2>企业交付物中心</h2><p>按测试交付物归档：先看验收结论，再进入方案、用例、执行、风险、报告和原始证据。</p></div><button class="primary" onclick="createDeliveryPackage()">生成交付包</button></div><div class="card acceptance-card"><div><span>本次验收结论</span><h2>${esc(m.conclusion)}</h2><p>${m.reports.length?esc(m.latest.summary||'最新报告已归档'):'完成一次工具链或回收 JMeter GUI 报告后，这里会形成正式结论。'}</p></div><div class="acceptance-metrics"><div><b>${m.reports.length}</b><small>报告</small></div><div><b>${m.assertions.length}</b><small>断言</small></div><div><b>${riskCount}</b><small>风险</small></div><div><b>${m.perf.length}</b><small>性能</small></div></div></div>${deliveryReadinessHtml(m)}<div class="delivery-grid">${deliveryArtifactCard('plan','测试方案','PASSED',m.reqs.length+m.endpoints.length,`需求 ${m.reqs.length} 条，接口 ${m.endpoints.length} 个，运行配置与准入策略统一沉淀。`,'需求、范围、环境、SLA、工具策略')}${deliveryArtifactCard('cases','测试用例',m.blocked.length?'P1':'PASSED',m.cases.length,`用例 ${m.cases.length} 条，测试点 ${m.points.length} 个，待补齐 ${m.blocked.length} 条。`,'测试点、用例、覆盖关系')}${deliveryArtifactCard('execution','执行记录',m.runFailed.length?'FAILED':m.runs.length?'PASSED':'P1',m.runs.length,`真实执行记录 ${m.runs.length} 条，异常 ${m.runFailed.length} 条。`,'接口、链路、JMeter、pytest/Newman')}${deliveryArtifactCard('risk','缺陷风险',riskCount?'FAILED':'PASSED',riskCount, riskCount?`发现 ${riskCount} 个需要处理或复核的风险。`:'当前没有归纳到失败断言或执行异常。','失败断言、错误采样、待确认差异')}${deliveryArtifactCard('report','测试报告',m.reports.length?'PASSED':'P1',m.reports.length,`正式报告 ${m.reports.length} 份；${m.latestPerf.summary||'性能报告待回收或待执行'}。`,'验收摘要、性能准入、HTML/JSON')}${deliveryArtifactCard('evidence','原始证据','PASSED',m.reports.length+(data.gift_latest?.assertions?.length||0),`保留 JMeter HTML、JSON、断言证据和脱敏执行明细。`,'审计追溯、原始文件、明细证据')}</div>${m.latestPerf.summary?`<div class="card"><h2>性能准入摘要</h2><div class="metrics"><div class="metric"><span>错误率</span><b>${esc((m.latestPerf.performance_summary||{}).error_rate??'-')}%</b></div><div class="metric"><span>P95 / P99</span><b style="font-size:20px">${esc((m.latestPerf.performance_summary||{}).p95_ms??'-')} / ${esc((m.latestPerf.performance_summary||{}).p99_ms??'-')}ms</b></div><div class="metric"><span>请求数</span><b>${esc((m.latestPerf.performance_summary||{}).requests??'-')}</b></div><div class="metric"><span>准入</span><b style="font-size:20px">${esc(gate.status||m.latestPerf.status||'-')}</b></div></div><p>${esc(m.diag.conclusion||m.latestPerf.summary||'')}</p><button class="small" onclick="showDeliveryArtifact('report')">查看正式报告</button></div>`:''}`
 }
 function showDeliveryArtifact(kind){
   let m=deliveryReportModel(),html='',title='交付物明细';
-  if(kind==='plan'){title='测试方案';html=`<div class="card"><h2>范围与策略</h2><table><tbody><tr><td>需求范围</td><td>${m.reqs.length} 条需求</td><td>接口范围</td><td>${m.endpoints.length} 个接口</td></tr><tr><td>测试工具</td><td>JMeter / Newman / pytest / Apipost</td><td>数据源</td><td>MySQL、Redis 只读取证据</td></tr><tr><td>性能模型</td><td>${esc((data.execution_profile?.performance||{}).profile||'smoke')}</td><td>敏感信息</td><td>运行时使用，报告脱敏</td></tr></tbody></table></div>${typeof traceCoverageHtml==='function'?traceCoverageHtml():''}`}
+  if(kind==='plan'){title='测试方案';html=`<div class="card"><h2>范围与策略</h2><table><tbody><tr><td>需求范围</td><td>${m.reqs.length} 条需求</td><td>接口范围</td><td>${m.endpoints.length} 个接口</td></tr><tr><td>测试工具</td><td>JMeter / Newman / pytest / Apifox</td><td>数据源</td><td>MySQL、Redis 只读取证据</td></tr><tr><td>性能模型</td><td>${esc((data.execution_profile?.performance||{}).profile||'smoke')}</td><td>敏感信息</td><td>运行时使用，报告脱敏</td></tr></tbody></table></div>${typeof traceCoverageHtml==='function'?traceCoverageHtml():''}`}
   if(kind==='cases'){title='测试用例';html=`${blockedCaseSummary()}${assertionTable(m.assertions,'暂无已执行断言')}<div class="card"><button class="primary" onclick="showTestCasesModal()">查看全部用例</button> <button class="small" onclick="showTestPointsModal()">查看测试点</button></div>`}
   if(kind==='execution'){title='执行记录';html=m.runs.length?`<div class="card"><table><thead><tr><th>时间</th><th>用例</th><th>状态</th><th>HTTP</th><th>耗时</th></tr></thead><tbody>${m.runs.slice(0,300).map(x=>`<tr><td>${esc((x.executed_at||x.created_at||'').replace('T',' '))}</td><td>${esc(x.case_title||x.name||'-')}</td><td>${deliveryStatusTag(x.status,x.status)}</td><td>${esc(x.http_status??'-')}</td><td>${esc(x.duration_ms??'-')}ms</td></tr>`).join('')}</tbody></table></div>`:'<div class="card empty"><b>暂无执行记录</b></div>'}
   if(kind==='risk'){title='缺陷风险';html=`${assertionTable(m.failed,'当前没有失败断言')}${m.perfFindings.length?`<div class="card"><h2>性能风险</h2><div class="gap-list">${m.perfFindings.map(x=>`<div class="gap-item ${x.severity==='P0'?'P0':'P1'}"><span class="tag ${x.severity==='P0'?'FAILED':'P1'}">${esc(x.severity)}</span><div><b>${esc(x.title)}</b><p>${esc(x.detail)}</p></div></div>`).join('')}</div></div>`:''}`}
@@ -334,7 +342,7 @@ dataQualityClosure=function(){
 }
 connectorOverviewPanel=function(){
   let db=(data.db_tables||[]).length,maps=(data.mappings||[]).length,redis=(data.redis_sources||[]),redisReady=redis.some(x=>x.status==='connected'),rules=((data.consistency||{}).rules||[]).length;
-  return `<div class="card"><div class="diagnosis-head"><div><h2>外部连接器</h2><p>它们是平台的四肢，不是工作台主体。主流程只保留任务和结论，需要执行时才调起外部软件或只读数据源。</p></div><span class="tag PASSED">按需调起</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">接口协同</span><h3>Apipost / Postman</h3><p>导出接口基线和集合，单接口调试交给专业工具。</p><button class="small" onclick="createApipostPackage()">生成协同包</button></div><div class="endpoint-card"><span class="tag PASSED">性能执行</span><h3>JMeter</h3><p>平台生成 JMX、打开 GUI、回收报告，不在工作台重做 JMeter。</p><button class="small" onclick="showJmeterScriptChooser()">选择脚本</button></div><div class="endpoint-card"><span class="tag ${db?'PASSED':'P1'}">数据取证</span><h3>MySQL / Redis</h3><p>${db||redisReady?`MySQL ${db} 张表 · ${maps}条候选 · Redis ${redisReady?'可调用':'按需'}`:'需要数据证据时再接入'}</p><button class="small" onclick="switchTab('dataquality')">自动核查</button></div></div></div>`
+  return `<div class="card"><div class="diagnosis-head"><div><h2>外部连接器</h2><p>它们是平台的四肢，不是工作台主体。主流程只保留任务和结论，需要执行时才调起外部软件或只读数据源。</p></div><span class="tag PASSED">按需调起</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">接口协同</span><h3>Apifox</h3><p>导入企业接口基线，生成pytest基础层并执行发布冒烟。</p><button class="small" onclick="showApifoxEnterpriseFlow()">进入企业链路</button></div><div class="endpoint-card"><span class="tag PASSED">性能执行</span><h3>JMeter</h3><p>平台生成 JMX、打开 GUI、回收报告，不在工作台重做 JMeter。</p><button class="small" onclick="showJmeterScriptChooser()">选择脚本</button></div><div class="endpoint-card"><span class="tag ${db?'PASSED':'P1'}">数据取证</span><h3>MySQL / Redis</h3><p>${db||redisReady?`MySQL ${db} 张表 · ${maps}条候选 · Redis ${redisReady?'可调用':'按需'}`:'需要数据证据时再接入'}</p><button class="small" onclick="switchTab('dataquality')">自动核查</button></div></div></div>`
 }
 tableTaskCommandCenter=function(){let req=(data.requirement_items||[]).length,eps=(data.endpoints||[]).length,cases=(data.cases||[]).length,flows=(data.workflows||[]).length,latest=wealthLastResult||data.wealth_latest||{},hasReport=latest&&Object.keys(latest).length;return `<div class="card" style="background:linear-gradient(135deg,#123d2b,#24704e);color:white"><span style="color:var(--lime);font-size:11px">AI TEST ORCHESTRATION</span><h2 style="font-size:28px;margin:10px 0 6px">从需求到报告，只在这里操作</h2><p style="color:#c9ded3">主干只保留资料接入、AI生成、链路确认、外部工具执行和报告输出；数据源按需自动取证。</p><div class="grid2" style="margin-top:20px"><button class="card" style="text-align:left;cursor:pointer" onclick="switchTab('sources')"><b>① 导入需求与接口</b><br><small>${req}条需求 · ${eps}个接口<br>上传需求文档、图文链接和OpenAPI</small></button><button class="card" style="text-align:left;cursor:pointer" onclick="switchTab('points')"><b>② 查看AI测试资产</b><br><small>${cases}条用例<br>检查测试点、预期结果和覆盖缺口</small></button><button class="card" style="text-align:left;cursor:pointer" onclick="switchTab('flows')"><b>③ 确认跨接口链路</b><br><small>${flows}条业务链路<br>核对登录、变量提取和下游接口</small></button><button class="card" style="text-align:left;cursor:pointer" onclick="switchTab('automation')"><b>④ 执行并归档报告</b><br><small>调起外部工具；需要时自动调用只读数据证据</small></button></div><div style="margin-top:16px"><button class="primary" onclick="switchTab('sources')">开始测试任务</button> <button class="small" onclick="switchTab('dataquality')">自动核查数据</button> ${hasReport?`<button class="small" onclick="switchTab('reports')">查看报告</button>`:''}</div></div>`}
 
@@ -358,13 +366,13 @@ professionalLabels=function(){
 }
 function connectorOverviewPanel(){
   let db=(data.db_tables||[]).length,maps=(data.mappings||[]).length,redis=(data.redis_sources||[]),redisReady=redis.some(x=>x.status==='connected'),rules=((data.consistency||{}).rules||[]).length;
-  return `<div class="card"><div class="diagnosis-head"><div><h2>外部连接器</h2><p>这些不是工作台主体，只在需要证据时被平台调起：接口单测交给 Apipost/Postman，压测交给 JMeter，数据核对交给只读 MySQL/Redis。</p></div><span class="tag PASSED">按需启用</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">接口协同</span><h3>Apipost / Postman</h3><p>导出接口基线、环境模板和集合；平台不替代单接口工具。</p><button class="small" onclick="createApipostPackage()">生成协同包</button></div><div class="endpoint-card"><span class="tag PASSED">性能执行</span><h3>JMeter</h3><p>生成可维护 JMX，打开真实 JMeter，回收 JTL/HTML 报告。</p><button class="small" onclick="showJmeterScriptChooser()">选择脚本</button></div><div class="endpoint-card"><span class="tag ${db?'PASSED':'P1'}">只读</span><h3>MySQL</h3><p>${db?`${db} 张表结构 · ${maps} 条候选映射`:'需要核对状态、金额、流水时再接入 Schema'}</p><button class="small" onclick="switchTab('dataquality')">查看</button></div><div class="endpoint-card"><span class="tag ${redisReady?'PASSED':'P1'}">只读</span><h3>Redis</h3><p>${redisReady?'已连接，只读取 Key 快照':'需要缓存证据时再连接，不作为必填项'}</p><button class="small" onclick="switchTab('dataquality')">查看</button></div></div></div>`
+  return `<div class="card"><div class="diagnosis-head"><div><h2>外部连接器</h2><p>这些不是工作台主体，只在需要时被平台调起：接口基线和发布冒烟来自 Apifox，压测交给 JMeter，数据核对交给只读 MySQL/Redis。</p></div><span class="tag PASSED">按需启用</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">接口协同</span><h3>Apifox</h3><p>导入OpenAPI生成pytest基础层，执行CLI发布冒烟。</p><button class="small" onclick="showApifoxEnterpriseFlow()">进入企业链路</button></div><div class="endpoint-card"><span class="tag PASSED">性能执行</span><h3>JMeter</h3><p>生成可维护 JMX，打开真实 JMeter，回收 JTL/HTML 报告。</p><button class="small" onclick="showJmeterScriptChooser()">选择脚本</button></div><div class="endpoint-card"><span class="tag ${db?'PASSED':'P1'}">只读</span><h3>MySQL</h3><p>${db?`${db} 张表结构 · ${maps} 条候选映射`:'需要核对状态、金额、流水时再接入 Schema'}</p><button class="small" onclick="switchTab('dataquality')">查看</button></div><div class="endpoint-card"><span class="tag ${redisReady?'PASSED':'P1'}">只读</span><h3>Redis</h3><p>${redisReady?'已连接，只读取 Key 快照':'需要缓存证据时再连接，不作为必填项'}</p><button class="small" onclick="switchTab('dataquality')">查看</button></div></div></div>`
 }
 tableQualityHub=function(){
   let req=(data.requirement_items||[]).length,points=(data.points||[]).length,cases=(data.cases||[]).length,endpoints=(data.endpoints||[]).length,workflows=(data.workflows||[]).length,reports=(data.generated_reports||[]).length,maturity=trunkMaturity();
   let executable=(data.cases||[]).filter(x=>x.method&&x.path).length;
   let steps=[['需求资产',req||points,`${req}条需求 · ${points}个测试点`,'sources'],['接口与用例',endpoints||cases,`${endpoints}个接口 · ${cases}条用例 · ${executable}条可执行`,'sources'],['执行编排',workflows,`${workflows}条流程 · 外部工具按需调起`,'automation'],['报告交付',reports,`${reports}份报告与原始证据`,'reports']];
-  return `<div class="card quality-hero"><span class="tag">QUALITY HUB</span><h2>质量中枢</h2><p>工作台只保留主干：理解需求、沉淀接口与用例、编排外部工具执行、归档报告证据。数据库、Redis、JMeter、Apipost 都作为连接器按需接入。</p><div class="quality-flow">${steps.map(x=>`<button class="quality-step ${x[1]?'':'pending'}" onclick="switchTab('${x[3]}')">${hubStatus(x[1])}<b>${x[0]}</b><small>${esc(x[2])}</small></button>`).join('')}</div></div>${qualityProfilePanel()}${aiControlPlanePanel()}${gapDiagnosisPanel(5)}${connectorOverviewPanel()}<div class="closure-grid"><div class="card"><h2>主干能力</h2>${[['需求理解','需求、图片、接口文档、HAR 被统一沉淀成可追踪资产'],['测试设计','测试点、测试用例、接口覆盖和业务链路统一归纳'],['执行编排','平台生成脚本并调起外部标准工具，不自己冒充测试工具'],['报告交付','结果、风险、性能和原始证据集中归档']].map(x=>`<div class="closure-row"><b>${x[0]}</b><p>${x[1]}</p><span class="tag PASSED">主干</span></div>`).join('')}</div><div class="card"><div class="maturity-score"><div><b>${maturity}%</b><span>主干成熟度</span></div></div><div class="tool-badges"><span>需求</span><span>接口</span><span>用例</span><span>执行</span><span>报告</span></div></div></div>`
+  return `<div class="card quality-hero"><span class="tag">QUALITY HUB</span><h2>质量中枢</h2><p>工作台只保留主干：理解需求、沉淀接口与用例、编排外部工具执行、归档报告证据。数据库、Redis、JMeter、Apifox 都作为连接器按需接入。</p><div class="quality-flow">${steps.map(x=>`<button class="quality-step ${x[1]?'':'pending'}" onclick="switchTab('${x[3]}')">${hubStatus(x[1])}<b>${x[0]}</b><small>${esc(x[2])}</small></button>`).join('')}</div></div>${qualityProfilePanel()}${aiControlPlanePanel()}${gapDiagnosisPanel(5)}${connectorOverviewPanel()}<div class="closure-grid"><div class="card"><h2>主干能力</h2>${[['需求理解','需求、图片、接口文档、HAR 被统一沉淀成可追踪资产'],['测试设计','测试点、测试用例、接口覆盖和业务链路统一归纳'],['执行编排','平台生成脚本并调起外部标准工具，不自己冒充测试工具'],['报告交付','结果、风险、性能和原始证据集中归档']].map(x=>`<div class="closure-row"><b>${x[0]}</b><p>${x[1]}</p><span class="tag PASSED">主干</span></div>`).join('')}</div><div class="card"><div class="maturity-score"><div><b>${maturity}%</b><span>主干成熟度</span></div></div><div class="tool-badges"><span>需求</span><span>接口</span><span>用例</span><span>执行</span><span>报告</span></div></div></div>`
 }
 enterpriseDirectory=function(){
   return `<div class="card"><h2>工作区结构</h2><div class="directory-grid">${[['需求资产','资料、接口、测试点、测试用例、覆盖关系统一归纳','进入','sources'],['执行中心','生成脚本、调起外部工具、执行链路和回收报告','进入','automation'],['证据连接','MySQL、Redis、后台配置等只读证据源按需接入','进入','dataquality'],['报告中心','方案、用例、执行、风险、报告和原始证据集中交付','进入','reports']].map(x=>`<div class="directory-card"><h3>${x[0]}</h3><p>${x[1]}</p><button class="small" onclick="switchTab('${x[3]}')">${x[2]}</button></div>`).join('')}</div></div>`
@@ -470,7 +478,7 @@ dataQualityClosure=function(){
 }
 connectorOverviewPanel=function(){
   let s=dataEvidenceStatus();
-  return `<div class="card"><div class="diagnosis-head"><div><h2>外部连接器</h2><p>它们是平台的四肢：接口协同、性能执行、数据取证都在需要时调起；工作台不维护固定表名或Key清单。</p></div><span class="tag PASSED">按需调起</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">接口协同</span><h3>Apipost / Postman</h3><p>导出接口基线和集合，单接口调试交给专业工具。</p><button class="small" onclick="createApipostPackage()">生成协同包</button></div><div class="endpoint-card"><span class="tag PASSED">性能执行</span><h3>JMeter</h3><p>平台生成 JMX、打开 GUI、回收报告，不在工作台重做 JMeter。</p><button class="small" onclick="showJmeterScriptChooser()">选择脚本</button></div><div class="endpoint-card"><span class="tag ${(s.dbReady||s.redisReady)?'PASSED':'P1'}">数据取证</span><h3>只读数据源</h3><p>需要核查时自动选择证据位置，结果进入报告。</p><button class="small" onclick="switchTab('dataquality')">自动核查</button></div></div></div>`
+  return `<div class="card"><div class="diagnosis-head"><div><h2>外部连接器</h2><p>它们是平台的四肢：接口真相、性能执行、数据取证都在需要时调起；工作台不重复维护企业工具资产。</p></div><span class="tag PASSED">按需调起</span></div><div class="endpoint-matrix"><div class="endpoint-card"><span class="tag PASSED">接口协同</span><h3>Apifox</h3><p>读取企业OpenAPI并运行发布冒烟，平台负责pytest和报告。</p><button class="small" onclick="showApifoxEnterpriseFlow()">进入企业链路</button></div><div class="endpoint-card"><span class="tag PASSED">性能执行</span><h3>JMeter</h3><p>平台生成 JMX、打开 GUI、回收报告，不在工作台重做 JMeter。</p><button class="small" onclick="showJmeterScriptChooser()">选择脚本</button></div><div class="endpoint-card"><span class="tag ${(s.dbReady||s.redisReady)?'PASSED':'P1'}">数据取证</span><h3>只读数据源</h3><p>需要核查时自动选择证据位置，结果进入报告。</p><button class="small" onclick="switchTab('dataquality')">自动核查</button></div></div></div>`
 }
 
 function latestEvidenceReports(){
@@ -619,7 +627,7 @@ groupedTestAssets=function(){
 }
 compactAssetsWorkspace=function(){
   let reqs=data.requirement_items||[],sources=data.sources||[],endpoints=data.endpoints||[],cases=data.cases||[],points=data.points||[],selected=(data.trace_links||[]).filter(x=>+x.selected===1).length;
-  return `<div class="card quality-hero"><span class="tag">ASSETS</span><h2>需求与测试资产</h2><p>按需求包归纳资料、接口文档、测试点和测试用例；新旧需求分开管理，报告和执行结果再统一归档。</p><div class="quality-flow">${[['资料',sources.length,sources.length+'份输入'],['需求',reqs.length,reqs.length+'条需求'],['测试点',points.length,points.length+'个测试点'],['用例',cases.length,cases.length+'条用例']].map(x=>`<button class="quality-step ${x[1]?'':'pending'}" onclick="${x[0]==='测试点'?'showTestPointsModal()':x[0]==='用例'?'showTestCasesModal()':x[0]==='资料'?'showSourceModal()':'showTraceCoverageModal()'}">${hubStatus(x[1])}<b>${x[0]}</b><small>${esc(x[2])}</small></button>`).join('')}</div></div>${requirementAssetGroupCards()}${collaborationPackagePanel()}<div class="closure-grid"><div class="card"><h2>资产操作</h2><div class="summary-panel"><b>新增需求资料</b><p>需求描述、原型链接、图片、HTML原型包统一从这里导入。</p><button class="primary" onclick="showSourceModal()">添加需求</button></div><div class="summary-panel"><b>导入接口文档</b><p>上传或粘贴 OpenAPI/Swagger/HAR/Markdown 接口文档，形成对应需求包下的接口基线。</p><button class="primary" onclick="showInterfaceDocModal()">导入接口</button></div><div class="summary-panel"><b>生成与补齐</b><p>按当前资料生成测试点、用例、接口覆盖、链路和按需数据核查策略。</p><button class="small" onclick="runPipeline()">启动生成</button></div><div class="summary-panel"><b>接口文档基线</b><p>把当前接口资产导出为脱敏 OpenAPI，方便同步到 Apipost 或团队文档。</p><button class="small" onclick="downloadInterfaceDocument()">导出</button></div></div><div><div class="card"><h2>覆盖摘要</h2><div class="evidence-list"><button class="evidence-item asset-row" onclick="showTraceCoverageModal()"><b>需求覆盖</b><small>${reqs.length}条需求，${selected}条已选追踪关系</small></button><button class="evidence-item asset-row" onclick="showEndpointAssetsModal()"><b>接口文档</b><small>${endpoints.length}个接口，按需求包查看</small></button><button class="evidence-item asset-row" onclick="showTestPointsModal()"><b>测试点</b><small>${points.length}个测试点，按需求包查看</small></button><button class="evidence-item asset-row" onclick="showTestCasesModal()"><b>测试用例</b><small>${cases.length}条用例，按需求包查看</small></button></div></div>${groupedTestAssets()}</div></div>`
+  return `<div class="card quality-hero"><span class="tag">ASSETS</span><h2>需求与测试资产</h2><p>按需求包归纳资料、接口文档、测试点和测试用例；新旧需求分开管理，报告和执行结果再统一归档。</p><div class="quality-flow">${[['资料',sources.length,sources.length+'份输入'],['需求',reqs.length,reqs.length+'条需求'],['测试点',points.length,points.length+'个测试点'],['用例',cases.length,cases.length+'条用例']].map(x=>`<button class="quality-step ${x[1]?'':'pending'}" onclick="${x[0]==='测试点'?'showTestPointsModal()':x[0]==='用例'?'showTestCasesModal()':x[0]==='资料'?'showSourceModal()':'showTraceCoverageModal()'}">${hubStatus(x[1])}<b>${x[0]}</b><small>${esc(x[2])}</small></button>`).join('')}</div></div>${requirementAssetGroupCards()}${collaborationPackagePanel()}<div class="closure-grid"><div class="card"><h2>资产操作</h2><div class="summary-panel"><b>新增需求资料</b><p>需求描述、原型链接、图片、HTML原型包统一从这里导入。</p><button class="primary" onclick="showSourceModal()">添加需求</button></div><div class="summary-panel"><b>导入接口文档</b><p>上传或粘贴 OpenAPI/Swagger/HAR/Markdown 接口文档，形成对应需求包下的接口基线。</p><button class="primary" onclick="showInterfaceDocModal()">导入接口</button></div><div class="summary-panel"><b>生成与补齐</b><p>按当前资料生成测试点、用例、接口覆盖、链路和按需数据核查策略。</p><button class="small" onclick="runPipeline()">启动生成</button></div><div class="summary-panel"><b>接口文档基线</b><p>把当前接口资产导出为脱敏 OpenAPI，方便同步到 Apifox 或团队文档。</p><button class="small" onclick="downloadInterfaceDocument()">导出</button></div></div><div><div class="card"><h2>覆盖摘要</h2><div class="evidence-list"><button class="evidence-item asset-row" onclick="showTraceCoverageModal()"><b>需求覆盖</b><small>${reqs.length}条需求，${selected}条已选追踪关系</small></button><button class="evidence-item asset-row" onclick="showEndpointAssetsModal()"><b>接口文档</b><small>${endpoints.length}个接口，按需求包查看</small></button><button class="evidence-item asset-row" onclick="showTestPointsModal()"><b>测试点</b><small>${points.length}个测试点，按需求包查看</small></button><button class="evidence-item asset-row" onclick="showTestCasesModal()"><b>测试用例</b><small>${cases.length}条用例，按需求包查看</small></button></div></div>${groupedTestAssets()}</div></div>`
 }
 
 function caseToJmeterPanel(){
@@ -706,7 +714,7 @@ function groupRequirementSourceId(g){
 
 function requirementPackageMaintainHtml(g,index){
   let reqSourceId=groupRequirementSourceId(g),lastSource=(g.sources||[])[0],canGenerate=!!lastSource;
-  return `<div class="card package-maintain-card"><div class="diagnosis-head"><div><h2>维护需求包</h2><p>在当前需求包内追加需求、接口文档或抓包资料。保存后平台会按同一个业务主题重新归纳，不再散成新的孤立卡片。</p></div><span class="tag PASSED">PACKAGE</span></div><div class="package-maintain-grid"><div class="summary-panel"><b>追加需求资料</b><p>补充规则、异常场景、原型说明、验收口径或变更说明。</p><button class="primary" onclick="showPackageSourceEditor(${index},'requirement')">新增需求</button></div><div class="summary-panel"><b>追加接口文档</b><p>导入 OpenAPI、Swagger、Markdown接口清单或 HAR 抓包，自动关联到当前需求包。</p><button class="primary" onclick="showPackageSourceEditor(${index},'openapi')">新增接口</button></div><div class="summary-panel"><b>重新生成资产</b><p>基于当前资料重新生成测试点、用例、链路和脚本映射。</p><button class="small" ${canGenerate?'':'disabled'} onclick="generate('${esc(lastSource?.id||'')}')">重新生成</button></div><div class="summary-panel"><b>交付与同步</b><p>导出接口基线或测试资产包，用于 Apipost 协同、评审和迁移。</p><button class="small" onclick="downloadInterfaceDocument()">导出接口基线</button></div></div><h3>当前资料</h3><div class="table-scroll">${(g.sources||[]).length?`<table><thead><tr><th>资料</th><th>类型</th><th>时间</th></tr></thead><tbody>${g.sources.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(sourceDisplayKind(s.kind))}</td><td>${esc((s.created_at||'').replace('T',' '))}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>暂无资料</b></div>'}</div>${reqSourceId?`<p class="policy-note">接口文档会默认关联到当前需求资料：${esc((g.sources||[]).find(x=>x.id===reqSourceId)?.name||g.label)}</p>`:''}</div>`
+  return `<div class="card package-maintain-card"><div class="diagnosis-head"><div><h2>维护需求包</h2><p>在当前需求包内追加需求、接口文档或抓包资料。保存后平台会按同一个业务主题重新归纳，不再散成新的孤立卡片。</p></div><span class="tag PASSED">PACKAGE</span></div><div class="package-maintain-grid"><div class="summary-panel"><b>追加需求资料</b><p>补充规则、异常场景、原型说明、验收口径或变更说明。</p><button class="primary" onclick="showPackageSourceEditor(${index},'requirement')">新增需求</button></div><div class="summary-panel"><b>追加接口文档</b><p>导入 OpenAPI、Swagger、Markdown接口清单或 HAR 抓包，自动关联到当前需求包。</p><button class="primary" onclick="showPackageSourceEditor(${index},'openapi')">新增接口</button></div><div class="summary-panel"><b>重新生成资产</b><p>基于当前资料重新生成测试点、用例、链路和脚本映射。</p><button class="small" ${canGenerate?'':'disabled'} onclick="generate('${esc(lastSource?.id||'')}')">重新生成</button></div><div class="summary-panel"><b>交付与同步</b><p>导出接口基线或测试资产包，用于 Apifox 协同、评审和迁移。</p><button class="small" onclick="downloadInterfaceDocument()">导出接口基线</button></div></div><h3>当前资料</h3><div class="table-scroll">${(g.sources||[]).length?`<table><thead><tr><th>资料</th><th>类型</th><th>时间</th></tr></thead><tbody>${g.sources.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(sourceDisplayKind(s.kind))}</td><td>${esc((s.created_at||'').replace('T',' '))}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>暂无资料</b></div>'}</div>${reqSourceId?`<p class="policy-note">接口文档会默认关联到当前需求资料：${esc((g.sources||[]).find(x=>x.id===reqSourceId)?.name||g.label)}</p>`:''}</div>`
 }
 
 function showPackageSourceEditor(index,kind='requirement'){
@@ -804,7 +812,8 @@ async function harvestSalaryTradeJmeter(){
   let box=$('#salaryJmeterMappingResult');
   if(box)box.innerHTML='<div class="summary-panel"><b>正在回收 JMeter 结果</b><p>平台正在读取JTL、匹配流程和订单号，并调用MySQL证据核查。</p></div>';
   try{
-    let x=await api(`/api/projects/${current}/salary-trade/jmeter-harvest`,{method:'POST',body:'{}'});
+    let runId=await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/salary-trade/jmeter-harvest`,{method:'POST',body:JSON.stringify({run_id:runId})});
     let s=x.summary||{};
     if(box)box.innerHTML=`<div class="summary-panel"><b>${esc(x.status)} · 执行报告已归档</b><p>${esc(x.requirement||'当前需求包')} · 流程 ${esc(s.flows_passed||0)}/${esc(s.flows_total||0)} 通过 · DB证据 ${esc(s.db_passed||0)} 通过 · JMeter ${esc(s.jmeter_requests||0)} 次 · 错误率 ${esc(s.jmeter_error_rate||0)}%</p>${(x.warnings||[]).length?`<p>${esc((x.warnings||[]).join('；'))}</p>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">查看执行报告</button>`:''}</div>`;
     toast(`JMeter执行报告回收完成：${x.status}`,x.status==='PASSED'?'success':x.status==='FAILED'?'error':'warning');
@@ -859,7 +868,7 @@ function unifiedDataEvidenceSummary(){
 
 function unifiedDeliverySummary(){
   let c=hubCounts(),latest=(data.generated_reports||[])[0];
-  return `<div class="card"><div class="diagnosis-head"><div><h2>交付归档</h2><p>最后只看报告中心：测试结论、性能结果、数据证据、失败风险和原始文件统一归档。</p></div><span class="tag ${c.reports?'PASSED':'P1'}">${c.reports} 份</span></div><div class="summary-panel"><b>最新结论</b><p>${esc(latest?`${latest.name} · ${latest.summary}`:'暂无正式报告，完成一次执行或回收后生成。')}</p><button class="small" onclick="switchTab('reports')">进入</button></div><div class="hub-action-row"><button class="small" onclick="createDeliveryPackage()">生成交付包</button><button class="small" onclick="createApipostPackage()">生成协同包</button><button class="small" onclick="downloadExport()">导出资产</button></div></div>`
+  return `<div class="card"><div class="diagnosis-head"><div><h2>交付归档</h2><p>最后只看报告中心：测试结论、性能结果、数据证据、失败风险和原始文件统一归档。</p></div><span class="tag ${c.reports?'PASSED':'P1'}">${c.reports} 份</span></div><div class="summary-panel"><b>最新结论</b><p>${esc(latest?`${latest.name} · ${latest.summary}`:'暂无正式报告，完成一次执行或回收后生成。')}</p><button class="small" onclick="switchTab('reports')">进入</button></div><div class="hub-action-row"><button class="small" onclick="createDeliveryPackage()">生成交付包</button><button class="small" onclick="showApifoxEnterpriseFlow()">Apifox企业链路</button><button class="small" onclick="downloadExport()">导出资产</button></div></div>`
 }
 
 function unifiedQualityWorkspace(){
@@ -902,7 +911,7 @@ professionalizeWorkspace=function(){
   if($('#sources'))$('#sources').innerHTML=compactAssetsWorkspace();
   if($('#automation'))$('#automation').innerHTML=executionCenter();
   if($('#dataquality'))$('#dataquality').innerHTML=dataQualityClosure();
-  if($('#reports'))$('#reports').innerHTML=professionalReportCenter();
+  if($('#reports'))$('#reports').innerHTML=packageReportCenter();
   if(data?.project){switchTab($('.side-tab.active')?.dataset.tab||'overview')}
 }
 
@@ -954,9 +963,11 @@ openJmeterWorkbench=async function(scriptKey){
   }
   try{
     toast('正在打开真实 JMeter，并加载所选需求脚本…');
+    let runId=await ensureRequirementRunContext();
     let payload=collectJmeterWorkbenchPayload();
     payload.script_key=scriptKey;
-    payload.package_id=scriptKey;
+    payload.package_id=selectedRequirementPackageId();
+    payload.run_id=runId;
     let x=await api(`/api/projects/${current}/jmeter/open-gui`,{method:'POST',body:JSON.stringify(payload)});
     let s=x.summary||{},groups=s.groups||[];
     $('#modalBody').innerHTML=`<h2>JMeter 已打开</h2><p class="policy-note">已打开：${esc(x.script_name||'所选脚本')}。脚本、结果文件和报告会按需求包归档，不会和其他需求混在一起。</p><div class="metrics"><div class="metric"><span>线程组</span><b>${esc(s.thread_groups||0)}</b></div><div class="metric"><span>HTTP请求</span><b>${esc(s.http_samplers||0)}</b></div><div class="metric"><span>断言</span><b>${esc(s.assertions||0)}</b></div><div class="metric"><span>监听器</span><b>${esc(s.listeners||0)}</b></div></div>${groups.length?`<table><thead><tr><th>线程组</th><th>线程数</th><th>循环</th><th>爬升秒</th></tr></thead><tbody>${groups.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.threads)}</td><td>${esc(g.loops)}</td><td>${esc(g.rampup)}</td></tr>`).join('')}</tbody></table>`:''}<label>JMX</label><code>${esc(x.jmx_path||'')}</code><label>JTL</label><code>${esc(x.jtl_path||'')}</code>`;
@@ -1091,9 +1102,10 @@ function selectedRequirementPackageId(){
   return requirementPackageId(packages.find(pkg=>pkg.status==='READY')||packages[0]||{})
 }
 
-function setSelectedRequirementPackage(id){
+async function setSelectedRequirementPackage(id){
   if(!id)return;
   localStorage.setItem('autotest_selected_requirement_package',id);
+  await loadRequirementReportIndex(id);
   render();
   toast(`已选择需求包：${requirementPackageName(id)}`,'success')
 }
@@ -1111,6 +1123,95 @@ function requirementPackageOptionsHtml(selected){
 function currentRequirementPackage(){
   let id=selectedRequirementPackageId();
   return portableRequirementPackages().find(pkg=>requirementPackageId(pkg)===id)||portableRequirementPackages()[0]||{}
+}
+
+function requirementRunStorageKey(packageId){
+  return `autotest_requirement_run_${current||'project'}_${packageId}`
+}
+
+function reportRunStorageKey(packageId){
+  return `autotest_report_run_${current||'project'}_${packageId}`
+}
+
+function activeRequirementRunId(packageId=selectedRequirementPackageId()){
+  return localStorage.getItem(requirementRunStorageKey(packageId))||''
+}
+
+function selectedReportRunId(packageId=selectedRequirementPackageId()){
+  let saved=localStorage.getItem(reportRunStorageKey(packageId))||'';
+  let index=data?.requirement_report_indexes?.[packageId]||{},runs=index.runs||[];
+  return runs.some(x=>x.run_id===saved)?saved:(index.latest_run_id||runs[0]?.run_id||'')
+}
+
+function setSelectedReportRun(packageId,runId){
+  if(runId)localStorage.setItem(reportRunStorageKey(packageId),runId);
+  render();
+  switchTab('reports')
+}
+
+async function loadRequirementReportIndex(packageId=selectedRequirementPackageId()){
+  if(!current||!packageId)return null;
+  data.requirement_report_indexes=data.requirement_report_indexes||{};
+  try{
+    let index=await api(`/api/projects/${current}/requirement-packages/${packageId}/report-index`);
+    data.requirement_report_indexes[packageId]=index;
+    return index
+  }catch(e){
+    data.requirement_report_indexes[packageId]={status:'ERROR',runs:[],latest_reports:[],history:[],message:e.message};
+    return data.requirement_report_indexes[packageId]
+  }
+}
+
+let requirementReportPollBusy=false;
+
+function requirementReportFingerprint(index){
+  return JSON.stringify((index?.runs||[]).map(x=>[x.run_id,x.status,x.updated_at,x.report_count]))
+}
+
+async function pollRequirementReportChanges(){
+  let reports=$('#reports'),packageId=selectedRequirementPackageId();
+  if(requirementReportPollBusy||!current||!packageId||!reports||reports.classList.contains('hidden'))return;
+  requirementReportPollBusy=true;
+  try{
+    let before=requirementReportFingerprint(currentPackageReportIndex());
+    let index=await loadRequirementReportIndex(packageId);
+    let after=requirementReportFingerprint(index);
+    if(before!==after){
+      render();
+      switchTab('reports');
+      toast('当前运行批次已回收新的执行报告','success')
+    }
+  }catch{}finally{requirementReportPollBusy=false}
+}
+
+setInterval(pollRequirementReportChanges,8000);
+
+async function ensureRequirementRunContext(forceNew=false){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!packageId)throw new Error('当前没有可执行的需求包');
+  let runId=forceNew?'':activeRequirementRunId(packageId);
+  if(runId)return runId;
+  let context=await api(`/api/projects/${current}/requirement-packages/${packageId}/runs`,{method:'POST',body:JSON.stringify({name:`${pkg.name} · 手工执行批次`})});
+  localStorage.setItem(requirementRunStorageKey(packageId),context.run_id);
+  localStorage.setItem(reportRunStorageKey(packageId),context.run_id);
+  await loadRequirementReportIndex(packageId);
+  return context.run_id
+}
+
+async function startNewRequirementRun(){
+  try{
+    let runId=await ensureRequirementRunContext(true),pkg=currentRequirementPackage();
+    toast(`${pkg.name} 已创建空运行批次，请继续在执行中心运行工具生成报告`,'success');
+    render();
+    switchTab('automation')
+  }catch(e){toast(e.message,'error')}
+}
+
+const openProjectBeforePackageReportIndex=openProject;
+openProject=async function(id){
+  await openProjectBeforePackageReportIndex(id);
+  await Promise.all(portableRequirementPackages().map(pkg=>loadRequirementReportIndex(requirementPackageId(pkg))));
+  render()
 }
 
 async function generateSelectedRequirementPackageAssets(){
@@ -1188,7 +1289,8 @@ async function runSelectedRequirementPackageNewman(){
   if(!packageId)return toast('当前没有可执行的需求包','warning');
   try{
     toast(`正在运行 ${pkg.name} 的 Newman 回归…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/newman/run`,{method:'POST',body:JSON.stringify({timeout:180})});
+    let runId=await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/newman/run`,{method:'POST',body:JSON.stringify({timeout:180,run_id:runId})});
     let failures=x.failures||[],s=x.summary||{};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · Newman执行结果</h2><p class="policy-note">${esc(x.message||'Newman 已按当前需求包 collection 执行，结果归档到需求包 reports。')}</p><div class="metrics"><div class="metric"><span>状态</span><b>${esc(x.status)}</b></div><div class="metric"><span>请求</span><b>${esc(s.requests??'-')}</b></div><div class="metric"><span>断言失败</span><b>${esc(s.failed_assertions??failures.length)}</b></div><div class="metric"><span>耗时</span><b>${esc(x.duration_ms??'-')}ms</b></div></div>${x.install_command?`<div class="summary-panel"><b>需要安装 Newman</b><p><code>${esc(x.install_command)}</code></p></div>`:''}${failures.length?`<h3>失败接口</h3><table><thead><tr><th>接口/步骤</th><th>错误</th></tr></thead><tbody>${failures.map(f=>`<tr><td>${esc(f.source||'-')}</td><td>${esc(f.error||'-')}</td></tr>`).join('')}</tbody></table>`:''}<label>Collection</label><code>${esc(x.collection||'')}</code>${x.summary_path?`<label>执行摘要</label><code>${esc(x.summary_path)}</code>`:''}${x.json_report?`<label>Newman原始报告</label><code>${esc(x.json_report)}</code>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开报告</button>`:''}`;
     $('#modal').classList.remove('hidden');
@@ -1233,7 +1335,8 @@ async function generateSelectedRequirementScenarioReport(){
   if(!packageId)return toast('当前没有可汇总的需求包','warning');
   try{
     toast(`正在生成 ${pkg.name} 的统一场景报告…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/scenario-report`,{method:'POST',body:'{}'});
+    let runId=await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/scenario-report`,{method:'POST',body:JSON.stringify({run_id:runId})});
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 统一场景报告</h2><p class="policy-note">这份报告按业务流程收拢 Newman、JMeter、pytest 和数据准备结果，方便人工复核和后续维护。</p>${unifiedScenarioReportHtml(x)}<label>JSON报告</label><code>${esc(x.summary_path||'')}</code>${x.markdown_path?`<label>Markdown报告</label><code>${esc(x.markdown_path)}</code>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开JSON</button>`:''}`;
     $('#modal').classList.remove('hidden');
     toast(`${pkg.name} 场景总报告：${x.status}`,x.status==='FAILED'?'error':x.status==='BLOCKED'?'warning':'success');
@@ -1260,11 +1363,29 @@ async function runSelectedRequirementPackagePytest(){
   if(!packageId)return toast('当前没有可执行的需求包','warning');
   try{
     toast(`正在运行 ${pkg.name} 的 pytest 深度证据复核…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/pytest/run`,{method:'POST',body:JSON.stringify({timeout:240})});
+    let runId=await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/pytest/run`,{method:'POST',body:JSON.stringify({timeout:240,run_id:runId})});
     let report=x.evidence_report||{};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · pytest深度证据复核</h2><p class="policy-note">pytest 会按当前需求包主编排文件执行场景，并结合 HTTP、JMeter/Newman、DB/Redis 证据输出报告。</p>${pytestScenarioReportHtml(report)}<label>pytest脚本</label><code>${esc(x.pytest_file||'')}</code><label>证据报告</label><code>${esc(x.summary_path||'')}</code>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开JSON</button>`:''}`;
     $('#modal').classList.remove('hidden');
     toast(`${pkg.name} pytest证据：${x.status}`,x.status==='PASSED'?'success':x.status==='BLOCKED'?'warning':'error');
+    await openProject(current)
+  }catch(e){toast(e.message,'error')}
+}
+
+async function runSelectedRequirementPackagePipeline(){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!packageId)return toast('当前没有可执行的需求包','warning');
+  if(!confirm(`确认执行“${pkg.name}”的自动闭环吗？\n\n平台会真实运行可安全自动执行的 Newman 和 pytest，并生成接口分析、场景报告与 AI 复盘。包含写接口时只自动运行只读冒烟，JMeter 长压测和写流程不会静默启动。`))return;
+  try{
+    let runId=await ensureRequirementRunContext();
+    closeModal();
+    toast(`${pkg.name} 自动闭环已开始，请稍候…`);
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/pipeline/run`,{method:'POST',body:JSON.stringify({run_id:runId,run_newman:true,run_pytest:true,create_load_plan:true})});
+    let s=x.summary||{},steps=x.steps||[];
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 一键执行结果</h2><p class="policy-note">同一批次完成资源预检、工具执行、原始报告回收、接口分析、统一场景报告和 AI 复盘；JMeter 持续压测仍需明确选择阶梯。</p><div class="metrics"><div class="metric"><span>结论</span><b style="font-size:20px">${esc(x.status)}</b></div><div class="metric"><span>通过</span><b>${esc(s.passed||0)}</b></div><div class="metric"><span>失败</span><b>${esc(s.failed||0)}</b></div><div class="metric"><span>阻断/提醒</span><b>${esc(s.blocked||0)}/${esc(s.warnings||0)}</b></div></div><div class="gap-list">${steps.map(item=>`<div class="gap-item ${item.status==='FAILED'?'P0':item.status==='BLOCKED'?'P1':''}"><span class="tag ${statusTag(item.status)}">${esc(item.status)}</span><div><b>${esc(item.name)}</b><p>${esc(item.message||'')}</p>${item.json_url?`<button class="small" onclick="openReport('${esc(item.json_url)}')">查看报告</button>`:''}</div></div>`).join('')}</div><div class="hub-action-row"><button class="primary" onclick="switchTab('reports');closeModal()">进入报告中心</button>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">执行摘要JSON</button>`:''}</div>`;
+    $('#modal').classList.remove('hidden');
+    toast(`${pkg.name} 自动闭环：${x.status}`,x.status==='PASSED'?'success':x.status==='FAILED'?'error':'warning');
     await openProject(current)
   }catch(e){toast(e.message,'error')}
 }
@@ -1274,13 +1395,74 @@ async function generateSelectedRequirementPackageAiReview(){
   if(!packageId)return toast('当前没有可复盘的需求包','warning');
   try{
     toast(`正在复盘 ${pkg.name} 的执行证据…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/ai-review`,{method:'POST',body:'{}'});
+    let runId=await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/ai-review`,{method:'POST',body:JSON.stringify({run_id:runId})});
     let s=x.summary||{},findings=x.findings||[],actions=x.next_actions||[],cats=x.root_cause_categories||{},signals=x.execution_signals||{};
     let catLabels={authentication:'鉴权/登录态',request_contract:'请求契约',business_assertion:'业务断言',test_data:'测试数据',data_evidence:'DB/Redis证据',manual_or_timing:'人工/定时流程',performance:'性能',environment:'环境/工具',server:'服务异常',unknown:'待补证据'};
     let catText=Object.entries(cats).map(([k,v])=>`${catLabels[k]||k}:${v}`).join(' · ')||'-';
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · AI复盘</h2><p class="policy-note">${esc(x.business_value||'')}</p><div class="metrics"><div class="metric"><span>结论</span><b style="font-size:20px">${esc(x.status)}</b></div><div class="metric"><span>P0/P1</span><b>${esc(s.p0||0)}/${esc(s.p1||0)}</b></div><div class="metric"><span>HTTP失败</span><b>${esc(signals.http_failed||s.http_failed||0)}</b></div><div class="metric"><span>证据报告</span><b>${esc(signals.business_evidence_reports||0)}</b></div></div><div class="summary-panel"><b>复盘结论</b><p>${esc(x.conclusion||'')}</p><p>根因分布：${esc(catText)}</p></div>${findings.length?`<h3>问题归纳</h3><div class="gap-list">${findings.map(f=>`<div class="gap-item ${f.level==='P0'?'P0':'P1'}"><span class="tag ${f.level==='P0'?'FAILED':'P1'}">${esc(f.level)}</span><div><b>${esc(f.title)}</b><p>${esc(f.evidence||'')}</p><small>${esc(f.recommendation||f.owner||'')}</small></div></div>`).join('')}</div>`:'<div class="card empty"><b>暂无阻断问题</b></div>'}<h3>下一步</h3><ol>${actions.map(a=>`<li>${esc(a)}</li>`).join('')}</ol><label>复盘报告</label><code>${esc(x.summary_path||'')}</code>${x.markdown_path?`<label>Markdown报告</label><code>${esc(x.markdown_path)}</code>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开JSON</button>`:''}`;
     $('#modal').classList.remove('hidden');
     toast(`${pkg.name} AI复盘：${x.status}`,x.status==='FAILED'?'error':x.status==='NO_RUN_DATA'?'warning':'success');
+    await openProject(current)
+  }catch(e){toast(e.message,'error')}
+}
+
+async function generateSelectedRequirementPerformanceAiReview(runIdOverride=''){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!packageId)return toast('当前没有可分析的需求包','warning');
+  try{
+    toast(`正在分析 ${pkg.name} 的 JMeter 性能报告…`);
+    let runId=runIdOverride||await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/performance-ai-review`,{method:'POST',body:JSON.stringify({run_id:runId})});
+    let s=x.summary||{},a=x.analysis||{},findings=a.findings||[],recommendations=a.recommendations||[];
+    let source=x.source||{};
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 性能报告AI分析</h2><p class="policy-note">${esc(x.business_value||'')}</p><div class="metrics"><div class="metric"><span>错误率</span><b>${esc(s.error_rate??'-')}%</b></div><div class="metric"><span>P95 / P99</span><b>${esc(s.p95_ms??'-')} / ${esc(s.p99_ms??'-')}ms</b></div><div class="metric"><span>吞吐量</span><b>${esc(s.throughput_rps??'-')}</b><small>req/s</small></div><div class="metric"><span>风险</span><b>${esc(s.risk_level||'-')}</b></div></div><div class="summary-panel"><b>分析结论</b><p>${esc(a.conclusion||'')}</p><small>${a.mode==='configured_model'?'已使用平台配置模型':'使用内置性能分析规则'}</small></div>${findings.length?`<h3>性能发现</h3><div class="gap-list">${findings.map(f=>`<div class="gap-item ${['P0','FAILED'].includes(f.severity)?'P0':'P1'}"><span class="tag ${['P0','FAILED'].includes(f.severity)?'FAILED':'P1'}">${esc(f.severity||'P1')}</span><div><b>${esc(f.title||'性能提醒')}</b><p>${esc(f.detail||'')}</p></div></div>`).join('')}</div>`:''}<h3>处理建议</h3><ol>${recommendations.map(item=>`<li>${esc(item)}</li>`).join('')}</ol><h3>同批原始证据</h3><div class="hub-action-row">${source.jmeter_html_url?`<button class="small" onclick="openReport('${esc(source.jmeter_html_url)}')">JMeter HTML</button>`:''}${source.jmeter_jtl_url?`<button class="small" onclick="openReport('${esc(source.jmeter_jtl_url)}')">原始 JTL</button>`:''}${source.jmeter_json_url?`<button class="small" onclick="openReport('${esc(source.jmeter_json_url)}')">原始 JSON</button>`:''}</div><label>分析报告</label><code>${esc(x.summary_path||'')}</code>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开分析JSON</button>`:''}`;
+    $('#modal').classList.remove('hidden');
+    toast(`性能分析已生成：${x.status}`,x.status==='FAILED'?'error':'success');
+    await openProject(current)
+  }catch(e){toast(e.message,'error')}
+}
+
+async function generateSelectedRequirementNewmanAnalysis(runIdOverride=''){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!packageId)return toast('当前没有可分析的需求包','warning');
+  try{
+    let runId=runIdOverride||await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/newman-analysis`,{method:'POST',body:JSON.stringify({run_id:runId})});
+    let s=x.summary||{},incidents=x.incidents||[],source=x.source||{};
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · Newman接口冒烟分析</h2><p class="policy-note">${esc(x.business_value||'')}</p><div class="metrics"><div class="metric"><span>请求</span><b>${esc(s.requests||0)}</b></div><div class="metric"><span>接口</span><b>${esc(s.endpoints||0)}</b></div><div class="metric"><span>异常接口</span><b>${esc(s.failed_endpoints||0)}</b></div><div class="metric"><span>待分派</span><b>${esc(s.incidents||0)}</b></div></div><div class="summary-panel"><b>结论</b><p>${esc(x.conclusion||'')}</p></div>${incidents.length?`<h3>接口问题清单</h3><div class="gap-list">${incidents.slice(0,100).map(i=>`<div class="gap-item ${i.severity==='P0'?'P0':'P1'}"><span class="tag ${i.severity==='P0'?'FAILED':'P1'}">${esc(i.severity)}</span><div><b>${esc(i.method)} ${esc(i.path)}</b><p>${esc(i.interface)} · HTTP ${esc(i.http_status)} · ${esc(i.error)}</p><small>建议负责人：${esc(i.suggested_owner)}</small><br><small>复核动作：${esc(i.review_action)}</small></div></div>`).join('')}</div>`:'<div class="card empty"><b>本批次没有接口失败</b></div>'}<h3>原始证据</h3><div class="hub-action-row">${source.newman_json_url?`<button class="small" onclick="openReport('${esc(source.newman_json_url)}')">Newman原始JSON</button>`:''}${source.newman_summary_url?`<button class="small" onclick="openReport('${esc(source.newman_summary_url)}')">执行摘要</button>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">分析JSON</button>`:''}</div>`;
+    $('#modal').classList.remove('hidden');
+    toast(`接口冒烟分析：${x.status}`,x.status==='PASSED'?'success':'error');
+    await openProject(current)
+  }catch(e){toast(e.message,'error')}
+}
+
+async function generateSelectedRequirementLoadPlan(){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!packageId)return toast('当前没有可生成压测预案的需求包','warning');
+  try{
+    let runId=await ensureRequirementRunContext();
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/jmeter-load-plan`,{method:'POST',body:JSON.stringify({run_id:runId,max_error_rate:1,max_p95_ms:2000,max_p99_ms:4000})});
+    let s=x.summary||{},stages=x.stages||[];
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · JMeter持续压测预案</h2><p class="policy-note">默认只纳入可重复的只读GET接口；写接口不会被自动压测。</p><div class="metrics"><div class="metric"><span>安全接口</span><b>${esc(s.safe_endpoints||0)}</b></div><div class="metric"><span>排除写接口</span><b>${esc(s.excluded_mutations||0)}</b></div><div class="metric"><span>加压阶梯</span><b>${esc(s.stages||0)}</b></div><div class="metric"><span>状态</span><b>${esc(x.status)}</b></div></div><h3>可执行阶梯</h3><div class="gap-list">${stages.map(i=>`<div class="gap-item"><span class="tag PASSED">${esc(i.stage)}</span><div><b>${esc(i.name)} · ${esc(i.threads)}线程</b><p>升压 ${esc(i.rampup_seconds)}秒 · 持续 ${esc(i.duration_seconds)}秒</p><small>${esc(i.jmx_path)}</small><br><button class="small" onclick="runSelectedRequirementLoadStage(${Number(i.stage)||1},'${esc(i.name||'压测阶梯')}',${Number(i.duration_seconds)||60})">运行此阶梯</button></div></div>`).join('')}</div><div class="summary-panel"><b>容量判断</b><p>${esc(x.capacity_rule||'')}</p></div><h3>报告要求</h3><p>每个阶梯必须保留原始 JTL、JMeter HTML 和引用同批数据的性能分析报告。</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开预案JSON</button>`:''}`;
+    $('#modal').classList.remove('hidden');
+    toast('可执行JMeter压测预案已生成','success');
+    await openProject(current)
+  }catch(e){toast(e.message,'error')}
+}
+
+async function runSelectedRequirementLoadStage(stage,name,durationSeconds){
+  let pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg),minutes=Math.max(1,Math.ceil((durationSeconds||60)/60));
+  if(!confirm(`确认执行“${name}”吗？预计持续约 ${minutes} 分钟。平台只会压测预案中已筛选的只读接口。`))return;
+  try{
+    let runId=await ensureRequirementRunContext();
+    closeModal();
+    toast(`JMeter ${name} 已开始，完成后会自动生成JTL、HTML和性能分析…`);
+    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/jmeter-load-run`,{method:'POST',body:JSON.stringify({run_id:runId,stage})});
+    let s=x.summary||{},capacity=x.capacity_progress||{},analysis=x.performance_analysis||{};
+    $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · ${esc(name)}执行结果</h2><div class="metrics"><div class="metric"><span>请求</span><b>${esc(s.requests||0)}</b></div><div class="metric"><span>错误率</span><b>${esc(s.error_rate??'-')}%</b></div><div class="metric"><span>P95/P99</span><b>${esc(s.p95_ms??'-')}/${esc(s.p99_ms??'-')}ms</b></div><div class="metric"><span>吞吐量</span><b>${esc(s.throughput_rps??'-')}</b></div></div><div class="summary-panel"><b>容量进度</b><p>${esc(capacity.capacity_conclusion||'')}</p></div><div class="hub-action-row">${x.html_url?`<button class="small" onclick="openReport('${esc(x.html_url)}')">JMeter HTML</button>`:''}${x.jtl_url?`<button class="small" onclick="openReport('${esc(x.jtl_url)}')">原始JTL</button>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">执行JSON</button>`:''}${analysis.json_url?`<button class="small" onclick="openReport('${esc(analysis.json_url)}')">性能分析</button>`:''}</div>`;
+    $('#modal').classList.remove('hidden');
+    toast(`压测阶梯完成：${x.status}`,x.status==='PASSED'?'success':'error');
     await openProject(current)
   }catch(e){toast(e.message,'error')}
 }
@@ -1367,7 +1549,7 @@ function runRequirementWorkflowStage(code){
 }
 
 function requirementExecutionConsole(){
-  let pkg=currentRequirementPackage(),pid=requirementPackageId(pkg),isSalary=pid==='salary-trade',map=data.salary_trade_jmeter_mapping||{},m=data.case_jmeter_model||{},flows=isSalary?(m.flows||[]):[],ready=flows.filter(x=>x.automation_status==='ready').length;
+  let pkg=currentRequirementPackage(),pid=requirementPackageId(pkg),isSalary=pid==='salary-trade',map=data.salary_trade_jmeter_mapping||{},m=data.case_jmeter_model||{},flows=isSalary?(m.flows||[]):[],ready=flows.filter(x=>x.automation_status==='ready').length,activeRun=activeRequirementRunId(pid);
   if(!pid)return `<div class="card empty"><b>暂无需求包</b><p>先在需求资产里导入资料或新建需求包。</p></div>`;
   let wf=pkg.workflow_status||{},stages=wf.stages||[],next=wf.next_step||{},status=packageStatusModel(pkg);
   let fallback=[
@@ -1377,7 +1559,13 @@ function requirementExecutionConsole(){
     {code:'04',name:'回收并复盘',summary:isSalary?`${map.jtl_rows||0}条JTL采样`:'报告回到当前需求包',status:'PENDING'}
   ];
   let visibleStages=stages.length?stages:fallback;
-  return `<div class="execution-console"><div class="card package-focus"><div class="diagnosis-head"><div><h2>当前需求包</h2><p>执行中心只围绕这个需求包操作，脚本和报告不会串到别的需求。</p></div><span class="tag ${packageStatusClass(status.quality)}">质量 ${esc(status.quality)}</span></div><div class="package-title-block"><h3>${esc(pkg.name||pid)}</h3><p>${esc(pkg.description||'')}</p></div><div class="package-pills">${requirementPackagePills()}</div>${packageStatusStrip(pkg)}<div class="package-assets">${selectedPackageAssetLine(pkg)}</div><div class="summary-panel"><b>下一步：${esc(next.name||'继续执行')}</b><p>${esc(next.next_action||status.reason||'按当前需求包执行下一步。')}</p></div><div class="hub-action-row"><button class="small" onclick="showPortableRequirementPackage(portableRequirementPackages().findIndex(x=>requirementPackageId(x)===selectedRequirementPackageId()))">查看需求包</button><button class="small" onclick="showCreateRequirementPackageModal()">新建需求包</button><button class="small" onclick="showRequirementResourceCenter('${esc(pid)}')">资源与预检</button><button class="small" onclick="generateSelectedRequirementPackageAccountModel()">账号模型</button><button class="small" onclick="generateSelectedRequirementExecutionPlan()">场景计划</button></div><p class="policy-note">${esc(pkg.root||'')}</p></div><div class="card execution-focus"><div class="diagnosis-head"><div><h2>执行闭环</h2><p>按业务场景组织执行：一个场景里再放 Newman、JMeter、pytest 和人工复核。</p></div><span class="tag PASSED">PACKAGE RUN</span></div><div class="execution-steps">${visibleStages.map(x=>`<button class="execution-step" onclick="runRequirementWorkflowStage('${esc(x.code)}')"><span>${esc(x.code)}</span><b>${esc(x.name)}</b><small>${esc(x.summary||'')}</small><em class="tag ${packageStageTag(x.status)}">${esc(x.status||'PENDING')}</em></button>`).join('')}</div><div class="hub-action-row primary-actions"><button class="primary" onclick="generateSelectedRequirementExecutionPlan()">生成场景计划</button><button class="primary" onclick="generateSelectedRequirementPackageAssets()">生成本包脚本</button><button class="primary" onclick="openJmeterWorkbench('${esc(jmeterScriptKeyForPackage(pid))}')">打开本包JMeter</button><button class="small" onclick="runSelectedRequirementPackageNewman()">Newman</button><button class="small" onclick="runSelectedRequirementPackagePytest()">pytest证据</button><button class="small" onclick="generateSelectedRequirementScenarioReport()">场景总报告</button><button class="small" onclick="generateSelectedRequirementPackageAiReview()">AI复盘</button><button class="small" onclick="switchTab('reports')">报告中心</button></div><div id="salaryJmeterMappingResult"></div></div></div>${isSalary?`<details class="card compact-details"><summary><b>工资交易脚本明细</b><span>JMX、启动脚本、JTL位置</span></summary>${salaryTradeScriptPathCard()}</details>`:''}`
+  return `<div class="execution-console"><div class="card package-focus"><div class="diagnosis-head"><div><h2>当前需求包</h2><p>执行中心只围绕这个需求包操作，脚本和报告不会串到别的需求。</p></div><span class="tag ${packageStatusClass(status.quality)}">质量 ${esc(status.quality)}</span></div><div class="package-title-block"><h3>${esc(pkg.name||pid)}</h3><p>${esc(pkg.description||'')}</p></div><div class="package-pills">${requirementPackagePills()}</div>${packageStatusStrip(pkg)}<div class="package-assets">${selectedPackageAssetLine(pkg)}</div><div class="summary-panel"><b>运行批次：${esc(activeRun||'尚未开始')}</b><p>${activeRun?'本轮所有工具和报告会归到同一个批次。':'第一次执行时自动创建，也可以现在手动新建。'}</p><button class="small" onclick="startNewRequirementRun()">新建运行批次</button></div><div class="summary-panel"><b>下一步：${esc(next.name||'继续执行')}</b><p>${esc(next.next_action||status.reason||'按当前需求包执行下一步。')}</p></div><div class="hub-action-row"><button class="small" onclick="showPortableRequirementPackage(portableRequirementPackages().findIndex(x=>requirementPackageId(x)===selectedRequirementPackageId()))">查看需求包</button><button class="small" onclick="showCreateRequirementPackageModal()">新建需求包</button><button class="small" onclick="showRequirementResourceCenter('${esc(pid)}')">资源与预检</button><button class="small" onclick="generateSelectedRequirementPackageAccountModel()">账号模型</button><button class="small" onclick="generateSelectedRequirementExecutionPlan()">场景计划</button></div><p class="policy-note">${esc(pkg.root||'')}</p></div><div class="card execution-focus"><div class="diagnosis-head"><div><h2>执行闭环</h2><p>按业务场景组织执行：一个场景里再放 Newman、JMeter、pytest 和人工复核。</p></div><span class="tag PASSED">PACKAGE RUN</span></div><div class="execution-steps">${visibleStages.map(x=>`<button class="execution-step" onclick="runRequirementWorkflowStage('${esc(x.code)}')"><span>${esc(x.code)}</span><b>${esc(x.name)}</b><small>${esc(x.summary||'')}</small><em class="tag ${packageStageTag(x.status)}">${esc(x.status||'PENDING')}</em></button>`).join('')}</div><div class="hub-action-row primary-actions"><button class="primary" onclick="generateSelectedRequirementExecutionPlan()">生成场景计划</button><button class="primary" onclick="generateSelectedRequirementPackageAssets()">生成本包脚本</button><button class="primary" onclick="openJmeterWorkbench('${esc(jmeterScriptKeyForPackage(pid))}')">打开本包JMeter</button><button class="small" onclick="runSelectedRequirementPackageNewman()">Newman</button><button class="small" onclick="generateSelectedRequirementNewmanAnalysis()">接口分析</button><button class="small" onclick="runSelectedRequirementPackagePytest()">pytest证据</button><button class="small" onclick="generateSelectedRequirementLoadPlan()">压测预案</button><button class="small" onclick="generateSelectedRequirementPerformanceAiReview()">性能分析</button><button class="small" onclick="generateSelectedRequirementScenarioReport()">场景总报告</button><button class="small" onclick="generateSelectedRequirementPackageAiReview()">AI复盘</button><button class="small" onclick="switchTab('reports')">报告中心</button></div><div id="salaryJmeterMappingResult"></div></div></div>${isSalary?`<details class="card compact-details"><summary><b>工资交易脚本明细</b><span>JMX、启动脚本、JTL位置</span></summary>${salaryTradeScriptPathCard()}</details>`:''}`
+}
+
+const requirementExecutionConsoleWithPipeline=requirementExecutionConsole;
+requirementExecutionConsole=function(){
+  let html=requirementExecutionConsoleWithPipeline();
+  return html.replace('<div class="hub-action-row primary-actions">','<div class="hub-action-row primary-actions"><button class="primary" onclick="showApifoxEnterpriseFlow()">Apifox企业链路</button><button class="primary" onclick="runSelectedRequirementPackagePipeline()">一键运行当前需求包</button>')
 }
 
 unifiedExecutionFlow=function(){
@@ -1388,32 +1576,67 @@ function reportPackageId(report){
   return report?.package_id || 'general'
 }
 
-function selectedReportScope(){
-  return localStorage.getItem('autotest_report_scope') || 'current'
+function currentPackageReportIndex(){
+  return data?.requirement_report_indexes?.[selectedRequirementPackageId()]||{runs:[],latest_reports:[],history:[],summary:{}}
 }
 
-function setReportScope(scope){
-  localStorage.setItem('autotest_report_scope',scope);
-  render();
-  switchTab('reports')
+function currentPackageReportRun(){
+  let index=currentPackageReportIndex(),runId=selectedReportRunId();
+  return (index.runs||[]).find(x=>x.run_id===runId)||index.runs?.[0]||null
 }
 
-function filteredReportsForScope(){
-  let reports=data.generated_reports||[],scope=selectedReportScope(),pid=selectedRequirementPackageId();
-  return scope==='all'?reports:reports.filter(x=>reportPackageId(x)===pid)
+function latestPackageRunWithReports(){
+  return (currentPackageReportIndex().runs||[]).find(x=>(x.report_count||0)>0)||null
 }
 
-function packageReportRows(reports){
-  if(!reports.length)return `<div class="card empty"><b>当前范围暂无报告</b><p>执行或回收当前需求包后，报告会自动归档到这里。</p></div>`;
-  return `<div class="card report-table-card"><table><thead><tr><th>生成时间</th><th>报告</th><th>需求包</th><th>状态</th><th>摘要</th><th>操作</th></tr></thead><tbody>${reports.map(x=>`<tr><td>${esc((x.created_at||'').replace('T',' '))}</td><td><b>${esc(x.name)}</b><br><small>${esc(x.kind)} · ${esc(x.file_name)}</small></td><td><span class="tag">${esc(reportPackageId(x))}</span></td><td><span class="tag ${x.status==='PASSED'?'PASSED':x.status==='FAILED'?'FAILED':'P1'}">${esc(x.status)}</span></td><td>${esc(x.summary)}</td><td>${x.kind==='场景总报告'&&x.json_url?`<button class="small" onclick="showUnifiedScenarioReport('${esc(x.json_url)}')">场景</button> `:''}${x.kind==='pytest证据'&&x.json_url?`<button class="small" onclick="showPytestScenarioReport('${esc(x.json_url)}')">场景</button> `:''}${x.html_url?`<button class="small" onclick="openReport('${esc(x.html_url)}')">HTML</button> `:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">JSON</button>`:''}</td></tr>`).join('')}</tbody></table></div>`
+function packageReportCategoryConfig(){
+  return [
+    ['overview','测试总览','统一场景结论和本批次整体状态'],
+    ['interface','接口测试','Newman与pytest接口执行结果'],
+    ['performance','性能测试','JMeter请求、错误率与响应指标'],
+    ['data','数据一致性','DB、Redis及业务证据结果'],
+    ['risk','缺陷与风险','AI复盘、失败原因和处理建议'],
+    ['evidence','完整证据','当前批次全部原始报告文件']
+  ]
+}
+
+function reportsForCategory(reports,category){
+  return category==='evidence'?reports:reports.filter(x=>(x.category||'evidence')===category)
+}
+
+function packageReportActionButtons(report){
+  let type=report.report_type||'';
+  return `${type==='REQUIREMENT_PACKAGE_NEWMAN_RUN'?`<button class="small" onclick="generateSelectedRequirementNewmanAnalysis('${esc(report.run_id||'')}')">接口分析</button> `:''}${type==='REQUIREMENT_PACKAGE_JMETER_RUN'?`<button class="small" onclick="generateSelectedRequirementPerformanceAiReview('${esc(report.run_id||'')}')">AI分析</button> `:''}${type==='REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT'&&report.json_url?`<button class="small" onclick="showUnifiedScenarioReport('${esc(report.json_url)}')">场景</button> `:''}${['REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN','PYTEST_DEEP_EVIDENCE_REVIEW'].includes(type)&&report.json_url?`<button class="small" onclick="showPytestScenarioReport('${esc(report.json_url)}')">场景</button> `:''}${report.html_url?`<button class="small" onclick="openReport('${esc(report.html_url)}')">HTML</button> `:''}${report.jtl_url?`<button class="small" onclick="openReport('${esc(report.jtl_url)}')">JTL</button> `:''}${report.json_url?`<button class="small" onclick="openReport('${esc(report.json_url)}')">JSON</button>`:''}`
+}
+
+function packageReportLayer(report){
+  let type=report?.report_type||'';
+  if(['REQUIREMENT_PACKAGE_NEWMAN_RUN','REQUIREMENT_PACKAGE_JMETER_RUN','REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN'].includes(type))return ['原始执行','PASSED'];
+  if(['REQUIREMENT_PACKAGE_NEWMAN_ANALYSIS','REQUIREMENT_PACKAGE_PERFORMANCE_AI_REVIEW','REQUIREMENT_PACKAGE_AI_REVIEW'].includes(type))return ['自动分析','P1'];
+  if(type==='REQUIREMENT_PACKAGE_JMETER_LOAD_PLAN')return ['执行预案','P1'];
+  if(type.includes('EVIDENCE'))return ['数据证据','PASSED'];
+  if(type==='REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT')return ['汇总结论','PASSED'];
+  return ['原始证据',''];
+}
+
+function packageReportRows(reports,framed=true){
+  if(!reports.length)return `<div class="${framed?'card ':''}empty"><b>这个批次还没有报告</b><p>从执行中心运行工具或生成场景报告后，会归档到当前批次。</p></div>`;
+  return `<div class="${framed?'card ':''}report-table-card"><table><thead><tr><th>生成时间</th><th>层级</th><th>报告</th><th>状态</th><th>摘要</th><th>操作</th></tr></thead><tbody>${reports.map(x=>{let layer=packageReportLayer(x);return `<tr><td>${esc((x.created_at||'').replace('T',' '))}</td><td><span class="tag ${layer[1]}">${esc(layer[0])}</span></td><td><b>${esc(x.name||x.report_type)}</b><br><small>${esc(x.report_type||'')}</small></td><td><span class="tag ${statusTag(x.status)}">${esc(x.status)}</span></td><td>${esc(x.summary||'')}</td><td>${packageReportActionButtons(x)}</td></tr>`}).join('')}</tbody></table></div>`
+}
+
+function showPackageReportCategory(category){
+  let pkg=currentRequirementPackage(),run=currentPackageReportRun(),source=category==='evidence'?(run?.reports||[]):(run?.latest_reports||run?.reports||[]),reports=reportsForCategory(source,category),config=packageReportCategoryConfig().find(x=>x[0]===category)||['','报告明细',''];
+  $('#modalBody').innerHTML=`<h2>${esc(pkg.name||'需求包')} · ${esc(config[1])}</h2><p class="policy-note">运行批次：${esc(run?.run_id||'尚未运行')}。这里只显示这个需求包、这个批次的报告。</p>${packageReportRows(reports)}`;
+  $('#modal').classList.remove('hidden')
 }
 
 function packageReportCenter(){
-  let all=data.generated_reports||[],reports=filteredReportsForScope(),pkg=currentRequirementPackage(),pid=selectedRequirementPackageId(),scope=selectedReportScope();
-  let failed=reports.filter(x=>!['PASSED','READY','OPENED'].includes(x.status)),jmeter=reports.filter(x=>/JMeter|性能/.test(`${x.kind||''}${x.name||''}`)),dataEvidence=reports.filter(x=>/数据|证据|DB|Redis|映射/.test(`${x.kind||''}${x.name||''}${x.summary||''}`));
-  let byPackage={};
-  all.forEach(x=>{let key=reportPackageId(x);byPackage[key]=(byPackage[key]||0)+1});
-  return `<div class="card report-workbench"><div class="diagnosis-head"><div><span class="tag PASSED">REPORT WORKBENCH</span><h2>报告中心</h2><p>默认只看当前需求包报告；需要排查历史时再切到全部报告。</p></div><span class="tag ${scope==='current'?'PASSED':'P1'}">${scope==='current'?'当前需求包':'全部报告'}</span></div><div class="report-scope-row"><button class="${scope==='current'?'primary':'small'}" onclick="setReportScope('current')">当前需求包</button><button class="${scope==='all'?'primary':'small'}" onclick="setReportScope('all')">全部报告</button><select onchange="setSelectedRequirementPackage(this.value);setReportScope('current')">${requirementPackageOptionsHtml(pid)}</select></div><div class="metrics"><div class="metric"><span>需求包</span><b style="font-size:20px">${esc(pkg.name||pid||'-')}</b></div><div class="metric"><span>范围内报告</span><b>${reports.length}</b></div><div class="metric"><span>异常/待处理</span><b>${failed.length}</b></div><div class="metric"><span>JMeter/数据证据</span><b>${jmeter.length}/${dataEvidence.length}</b></div></div></div><div class="report-package-strip">${Object.entries(byPackage).map(([key,count])=>`<button class="package-pill ${key===pid&&scope==='current'?'active':''}" onclick="setSelectedRequirementPackage('${esc(key)}');setReportScope('current')"><b>${esc(requirementPackageName(key))}</b><span>${count}份报告</span></button>`).join('')}</div>${packageReportRows(reports)}`
+  let pkg=currentRequirementPackage(),pid=selectedRequirementPackageId(),index=currentPackageReportIndex(),runs=index.runs||[],run=currentPackageReportRun(),reports=run?.latest_reports||run?.reports||[],failed=reports.filter(x=>!['PASSED','READY'].includes(x.status)),latestReportedRun=latestPackageRunWithReports(),emptyCreatedRun=run&&!(run.report_count||0)&&run.status==='CREATED';
+  let packagePills=portableRequirementPackages().map(item=>{let key=requirementPackageId(item),idx=data?.requirement_report_indexes?.[key],count=idx?.summary?.runs??item?.status_model?.report_count??0;return `<button class="package-pill ${key===pid?'active':''}" onclick="setSelectedRequirementPackage('${esc(key)}')"><b>${esc(item.name)}</b><span>${esc(count)}个批次</span></button>`}).join('');
+  let categoryCards=packageReportCategoryConfig().map(([key,title,desc])=>{let count=reportsForCategory(reports,key).length;return `<button class="delivery-card" onclick="showPackageReportCategory('${key}')"><div><b>${title}</b><span class="tag ${count?'PASSED':'P1'}">${count}</span></div><p>${desc}</p><small>${count?'点击查看本批次明细':emptyCreatedRun?'当前批次尚未执行':'本批次暂无此类报告'}</small></button>`}).join('');
+  let runOptions=runs.map(x=>`<option value="${esc(x.run_id)}" ${x.run_id===run?.run_id?'selected':''}>${esc((x.created_at||'').replace('T',' ').slice(0,19))} · ${esc(x.status)} · ${esc(x.report_count||0)}份报告 · ${esc(x.name||x.run_id)}</option>`).join('');
+  let history=runs.filter(x=>x.run_id!==run?.run_id);
+  return `<div class="card report-workbench"><div class="diagnosis-head"><div><span class="tag PASSED">PACKAGE REPORTS</span><h2>报告中心</h2><p>先选需求包，再选运行批次。分类入口保留，但不同需求、不同批次不会混在一起。</p></div><span class="tag ${statusTag(run?.status)}">${esc(run?.status||'NOT_RUN')}</span></div><div class="report-package-strip">${packagePills}</div><div class="report-scope-row"><select onchange="setSelectedReportRun('${esc(pid)}',this.value)">${runOptions||'<option value="">尚无运行批次</option>'}</select><button class="small" onclick="startNewRequirementRun()">新建运行批次</button>${emptyCreatedRun&&latestReportedRun&&latestReportedRun.run_id!==run.run_id?`<button class="small" onclick="setSelectedReportRun('${esc(pid)}','${esc(latestReportedRun.run_id)}')">查看最近有报告批次</button>`:''}<button class="small" onclick="loadRequirementReportIndex().then(()=>render())">刷新报告</button></div>${emptyCreatedRun?`<div class="summary-panel"><b>当前批次只完成了创建，尚未执行</b><p>新建批次不会自动产生报告。请前往执行中心运行对应工具，或者切换到已有报告的历史批次查看结果。</p></div>`:''}<div class="metrics"><div class="metric"><span>当前需求包</span><b style="font-size:20px">${esc(pkg.name||pid||'-')}</b></div><div class="metric"><span>当前批次报告</span><b>${emptyCreatedRun?'尚未执行':reports.length}</b></div><div class="metric"><span>异常/待处理</span><b>${failed.length}</b></div><div class="metric"><span>历史批次</span><b>${history.length}</b></div></div></div><div class="delivery-grid">${categoryCards}</div>${run?`<div class="card"><div class="diagnosis-head"><div><h2>当前运行批次</h2><p>${esc(run.name||run.run_id)} · ${esc((run.created_at||'').replace('T',' '))}</p></div><code>${esc(run.run_id)}</code></div>${packageReportRows(reports,false)}</div>`:'<div class="card empty"><b>当前需求包还没有新运行报告</b><p>旧报告不再回退展示。请新建运行批次并重新执行。</p><button class="primary" onclick="startNewRequirementRun()">新建运行批次</button></div>'}${history.length?`<details class="card compact-details"><summary><b>历史运行批次</b><span>${history.length}个，仅按批次进入</span></summary><div class="evidence-list">${history.map(x=>`<button class="evidence-item asset-row" onclick="setSelectedReportRun('${esc(pid)}','${esc(x.run_id)}')"><b>${esc(x.name||x.run_id)}</b><small>${esc((x.created_at||'').replace('T',' '))} · ${esc(x.status)} · ${esc(x.report_count||0)}份报告</small></button>`).join('')}</div></details>`:''}`
 }
 
 enterpriseReportCenter=function(){

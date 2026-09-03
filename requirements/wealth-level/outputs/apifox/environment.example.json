@@ -1,0 +1,18 @@
+{
+  "name": "财富等级 - Apifox环境模板",
+  "variables": {
+    "baseUrl": "https://test2westarlive.gzxchate.com/",
+    "mockBaseUrl": "",
+    "uid": "",
+    "ticket": "",
+    "countryCode": "",
+    "currency": "",
+    "orderNo": "",
+    "orderId": "",
+    "t": ""
+  },
+  "security": {
+    "ticket": "请在 Apifox本地环境中填写或由登录前置脚本写入；平台导出包不包含真实ticket。",
+    "password": "不导出密码、sn、cookie、access_token 原值。"
+  }
+}

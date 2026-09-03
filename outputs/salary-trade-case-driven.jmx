@@ -299,7 +299,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -400,7 +484,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -715,7 +883,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -1204,7 +1456,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -1645,7 +1981,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -2086,7 +2506,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -2431,7 +2935,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -2891,7 +3479,91 @@ def pick = { key, fallback = '' -&gt;
     return String.valueOf(value ?: '').trim()
 }
 def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
-def proxyTicket = pick('proxy_ticket', '')
+def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }
+    def parseCsvLine = { line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {
+                    current.append((char) 34)
+                    i++
+                } else {
+                    quoted = !quoted
+                }
+            } else if (ch == ((char) 44) &amp;&amp; !quoted) {
+                values.add(current.toString())
+                current.setLength(0)
+            } else {
+                current.append(ch)
+            }
+        }
+        values.add(current.toString())
+        return values
+    }
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll { it != null &amp;&amp; it.trim() }
+    if (lines.size() &lt; 2) {
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }
+    def headers = parseCsvLine(lines[0]).collect { it.replace(&apos;﻿&apos;, &apos;&apos;).trim() }
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each { line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex { header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect { it.trim().toUpperCase() }
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {
+            try {
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            } catch (ignored) {
+                tokenUid = &apos;&apos;
+            }
+        }
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }
+    }
+    if (!candidates) {
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }
+    def sameCountry = candidates.findAll { String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}
+if (isBlankOrPlaceholder(proxyUid)) {
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}
 if (isBlankOrPlaceholder(applicantTicket)) {
     throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
@@ -3515,6 +4187,50 @@ vars.put('salary_order_id_found', found == null ? 'false' : 'true')</stringProp>
         </elementProp>
       </ThreadGroup>
       <hashTree />
+      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="AutoTest AI：测试结束自动回收JMeter报告" enabled="true">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </PostThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="通知平台回收本批次JTL与数据库证据" enabled="true">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="script">def callbackUrl = String.valueOf(props.get(&apos;platform_jmeter_callback_url&apos;) ?: &apos;&apos;).trim()
+def runId = String.valueOf(props.get(&apos;requirement_run_id&apos;) ?: &apos;&apos;).trim()
+if (!callbackUrl || !runId) {
+    SampleResult.setSuccessful(true)
+    SampleResult.setResponseMessage(&apos;未配置平台回调，本次仅保留本地JTL&apos;)
+    return
+}
+def resultJtl = String.valueOf(props.get(&apos;salary_result_jtl&apos;) ?: &apos;&apos;).trim()
+def payload = groovy.json.JsonOutput.toJson([run_id: runId, jtl_path: resultJtl])
+def connection = (java.net.HttpURLConnection) new URL(callbackUrl).openConnection()
+connection.setRequestMethod(&apos;POST&apos;)
+connection.setConnectTimeout(10000)
+connection.setReadTimeout(120000)
+connection.setDoOutput(true)
+connection.setRequestProperty(&apos;Content-Type&apos;, &apos;application/json; charset=UTF-8&apos;)
+connection.outputStream.withWriter(&apos;UTF-8&apos;) { writer -&gt; writer.write(payload) }
+def responseCode = connection.responseCode
+def stream = responseCode &gt;= 200 &amp;&amp; responseCode &lt; 300 ? connection.inputStream : connection.errorStream
+def responseText = stream == null ? &apos;&apos; : stream.getText(&apos;UTF-8&apos;)
+SampleResult.setResponseCode(String.valueOf(responseCode))
+SampleResult.setResponseData(responseText, &apos;UTF-8&apos;)
+SampleResult.setSuccessful(responseCode &gt;= 200 &amp;&amp; responseCode &lt; 300)
+if (!SampleResult.isSuccessful()) {
+    throw new IllegalStateException(&apos;平台自动回收失败：HTTP &apos; + responseCode + &apos; &apos; + responseText)
+}</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
     </hashTree>
   </hashTree>
 </jmeterTestPlan>

@@ -36,7 +36,8 @@ try {
 
   if ($RunTests) {
     Write-Host "Running platform regression tests..." -ForegroundColor Cyan
-    & $venvPython -m pytest -q
+    $pytestBaseTemp = Join-Path $PSScriptRoot (".pytest-run-" + [guid]::NewGuid().ToString("N"))
+    & $venvPython -m pytest -q --basetemp $pytestBaseTemp
     if ($LASTEXITCODE -ne 0) { throw "Platform regression tests failed." }
   }
 } finally {

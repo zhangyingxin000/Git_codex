@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.1",
+  "report_type": "REQUIREMENT_PACKAGE_SCHEMA_AUDIT",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "package_name": "工资代理快速结算",
+  "status": "READY",
+  "created_at": "2026-09-03T16:50:16+08:00",
+  "summary": {
+    "assets": 10,
+    "failed": 0,
+    "warnings": 0
+  },
+  "assets": [
+    {
+      "asset": "manifest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\manifest.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "resource_manifest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\resource_manifest.yaml",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "account_model",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "structured_test_cases",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\structured-test-cases.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "case_jmeter_mapping",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\case-jmeter-mapping.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "execution_plan",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\execution-plan.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "evidence_rules",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\evidence_rules.yaml",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "data_preflight",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\data-preflight-check.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "resource_preflight",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\resource-preflight-check.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    },
+    {
+      "asset": "tool_assets_manifest",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\tool-assets-manifest.json",
+      "status": "READY",
+      "schema_version": "1.1",
+      "issues": []
+    }
+  ]
+}

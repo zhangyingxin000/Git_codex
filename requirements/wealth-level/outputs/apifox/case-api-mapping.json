@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.1",
+  "package_id": "wealth-level",
+  "generated_at": "2026-09-03T16:20:53+08:00",
+  "mappings": [
+    {
+      "case_id": "tc_08201fc35e",
+      "title": "缺失UID参数",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "scenario_id": "wealth_exception_contract",
+      "scenario_name": "异常参数与鉴权失败",
+      "order_variable": "orderNo",
+      "scenario_ids": [
+        "wealth_exception_contract"
+      ],
+      "scenario_names": [
+        "异常参数与鉴权失败"
+      ],
+      "order_variables": [
+        "orderNo"
+      ],
+      "postman_item": "缺失UID参数",
+      "curl_file": "curl/001-tc_08201fc35e.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_2370c6482c",
+      "title": "非法UID类型",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "scenario_id": "wealth_exception_contract",
+      "scenario_name": "异常参数与鉴权失败",
+      "order_variable": "orderNo",
+      "scenario_ids": [
+        "wealth_exception_contract"
+      ],
+      "scenario_names": [
+        "异常参数与鉴权失败"
+      ],
+      "order_variables": [
+        "orderNo"
+      ],
+      "postman_item": "非法UID类型",
+      "curl_file": "curl/002-tc_2370c6482c.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    }
+  ]
+}

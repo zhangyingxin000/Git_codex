@@ -1,11 +1,46 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "project_id": "prj_e3515817c4",
   "package_id": "wealth-level",
   "package_name": "财富等级",
-  "generated_at": "2026-08-31T20:04:23+08:00",
+  "generated_at": "2026-09-03T15:09:48+08:00",
   "status": "READY",
+  "account_model": {
+    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml",
+    "mode": "single_account",
+    "csv_required": false,
+    "roles": [
+      "wealth_user"
+    ],
+    "rule": "先由需求包 account_model.yaml 决定账号模式，再生成 Newman/JMeter/pytest 资产。"
+  },
+  "jmeter_skill_contract": {
+    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\jmeter-skill-contract.json",
+    "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\rules.yaml",
+    "rule_count": 29,
+    "principle": "测试用例决定要测什么，JMeter Skill 决定如何稳定生成线程组、请求、CSV、断言、监听器和报告。"
+  },
+  "pytest_evidence_skill_contract": {
+    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\pytest\\pytest-evidence-skill-contract.json",
+    "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md",
+    "input_count": 8,
+    "principle": "pytest Skill 决定如何把HTTP、JMeter/Newman结果、DB/Redis证据和运行变量收敛成可复核JSON。"
+  },
   "generated": [
+    {
+      "tool": "Account Model",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml"
+    },
+    {
+      "tool": "JMeter Skill Contract",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\jmeter-skill-contract.json",
+      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\rules.yaml"
+    },
+    {
+      "tool": "pytest Evidence Skill Contract",
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\pytest\\pytest-evidence-skill-contract.json",
+      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md"
+    },
     {
       "tool": "Newman",
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\newman\\postman-collection.json"
@@ -20,8 +55,8 @@
     },
     {
       "tool": "JMeter",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\性能基线.jmx",
-      "source": "D:\\apache-jmeter-5.6.3\\jmx\\20260826\\性能基线.jmx"
+      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\jmeter\\wealth-level-performance.jmx",
+      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\jmeter\\wealth-level-performance.jmx"
     }
   ],
   "warnings": [],

@@ -1,0 +1,618 @@
+{
+  "schema_version": "1.1",
+  "report_type": "REQUIREMENT_PACKAGE_JMETER_LOAD_PLAN",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "package_name": "工资代理快速结算",
+  "run_id": "run-20260902-194100-0935f9",
+  "run_context_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\runs\\run-20260902-194100-0935f9\\run-context.json",
+  "status": "READY",
+  "created_at": "2026-09-03T16:50:32+08:00",
+  "summary": {
+    "safe_endpoints": 10,
+    "excluded_mutations": 96,
+    "stages": 4
+  },
+  "safe_endpoints": [
+    {
+      "method": "GET",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/quota",
+      "name": "进入入口时查询可结算额度：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/agents",
+      "name": "按国家和币种选择代理用户：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/page",
+      "name": "查看本人快速结算订单列表：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/detail",
+      "name": "查看本人订单详情：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/evidence/list",
+      "name": "查看本人订单凭证：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/logs",
+      "name": "查看本人订单流转记录：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/notice",
+      "name": "查看自己的交易公告编辑页信息：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/page",
+      "name": "查看可处理或已承接的订单列表：正常请求"
+    },
+    {
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/detail",
+      "name": "查看代理侧订单详情：正常请求"
+    }
+  ],
+  "excluded_mutations": [
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：正常请求"
+    },
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "name": "提交收款信息并创建待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "name": "取消待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "name": "确认已收到代理转账：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "name": "待确认收款时提交投诉：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "name": "补充上传本人订单凭证：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "name": "保存自己的交易公告：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "name": "接受待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "name": "拒绝待代理处理订单：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "name": "标记已完成线下转账：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "name": "待确认收款时提交投诉：重复提交与幂等性"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：缺失必填参数"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：字段边界与类型错误"
+    },
+    {
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "name": "补充上传付款或投诉凭证：重复提交与幂等性"
+    }
+  ],
+  "stages": [
+    {
+      "code": "baseline",
+      "name": "基线",
+      "threads": 2,
+      "rampup_seconds": 30,
+      "duration_seconds": 180,
+      "stage": 1,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-01-baseline.jmx",
+      "jtl_property": "load_result_jtl"
+    },
+    {
+      "code": "light-load",
+      "name": "轻负载",
+      "threads": 5,
+      "rampup_seconds": 60,
+      "duration_seconds": 300,
+      "stage": 2,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-02-light-load.jmx",
+      "jtl_property": "load_result_jtl"
+    },
+    {
+      "code": "target-load",
+      "name": "目标负载",
+      "threads": 10,
+      "rampup_seconds": 120,
+      "duration_seconds": 600,
+      "stage": 3,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-03-target-load.jmx",
+      "jtl_property": "load_result_jtl"
+    },
+    {
+      "code": "capacity-search",
+      "name": "容量探索",
+      "threads": 20,
+      "rampup_seconds": 180,
+      "duration_seconds": 900,
+      "stage": 4,
+      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-04-capacity-search.jmx",
+      "jtl_property": "load_result_jtl"
+    }
+  ],
+  "thresholds": {
+    "max_error_rate": 1.0,
+    "max_p95_ms": 2000.0,
+    "max_p99_ms": 4000.0,
+    "min_throughput_rps": 0.0
+  },
+  "stop_conditions": [
+    "错误率超过阈值",
+    "P95或P99连续两个观察窗口超过阈值",
+    "测试环境出现明显不可用",
+    "业务方或运维要求停止"
+  ],
+  "capacity_rule": "最后一个满足错误率、P95/P99和吞吐量门槛的阶梯视为当前可接受容量；首次持续越界的阶梯作为容量拐点候选，不直接等同生产极限。",
+  "execution_pipeline": [
+    "平台选择压测场景",
+    "生成可执行JMX",
+    "JMeter持续运行",
+    "回收JTL和HTML",
+    "自动生成性能分析"
+  ],
+  "report_contract": {
+    "raw_jtl": "必须保留",
+    "jmeter_html": "必须生成并提供原地址",
+    "ai_analysis": "引用同一批JTL/HTML，不替代原始报告"
+  },
+  "plan_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\load-test-plan.json"
+}

@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import io
 import concurrent.futures
+import copy
 import csv
 import statistics
 import math
@@ -17,6 +18,7 @@ import xml.etree.ElementTree as ET
 import subprocess
 import os
 import re
+import shlex
 import shutil
 import sqlite3
 import sys
@@ -35,14 +37,58 @@ from urllib.parse import parse_qs, urlparse
 
 
 ROOT = Path(__file__).resolve().parent
-BUILD_ID = "20260902.02"
 STATIC = ROOT / "static"
+
+
+def _static_build_id():
+    override = os.getenv("AUTOTEST_BUILD_ID", "").strip()
+    if override:
+        return override
+
+    assets = sorted(
+        path
+        for path in STATIC.rglob("*")
+        if path.is_file() and path.suffix.lower() in {".html", ".js", ".css"}
+    )
+    digest = hashlib.sha256()
+    latest_mtime = 0.0
+    for path in assets:
+        digest.update(path.relative_to(STATIC).as_posix().encode("utf-8"))
+        digest.update(path.read_bytes())
+        latest_mtime = max(latest_mtime, path.stat().st_mtime)
+    stamp = datetime.fromtimestamp(latest_mtime or time.time()).strftime("%Y%m%d")
+    return f"{stamp}.{digest.hexdigest()[:8]}"
+
+
+BUILD_ID = _static_build_id()
+
+
+def render_static_index():
+    return (STATIC / "index.html").read_text(encoding="utf-8").replace("__BUILD_ID__", BUILD_ID)
+
+
 DATA = ROOT / "data"
 DB_PATH = DATA / "autotest_ai.db"
 DATA.mkdir(exist_ok=True)
 CONFIG_DIR = ROOT / "config"
 SKILL_DIR = ROOT / "skills"
 YAML_BACKEND = "fallback"
+ASSET_SCHEMA_VERSION = "1.1"
+
+
+def _expand_config_value(value):
+    text = os.path.expandvars(str(value or "").strip())
+    if text.startswith("${") and text.endswith("}"):
+        return ""
+    return text
+
+
+def _path_from_config(value, default=""):
+    text = _expand_config_value(value or default)
+    if not text:
+        return Path("")
+    path = Path(text)
+    return path if path.is_absolute() else ROOT / path
 
 
 class _DataBlob(ctypes.Structure):
@@ -208,7 +254,7 @@ def percentile_value(values, percentile):
 def run_jmeter_wealth(ticket, login_uid, threads=2, loops=5, rampup=2):
     """Run the real JMeter plan with an in-memory token and return a safe summary."""
     threads=max(1,min(int(threads),50)); loops=max(1,min(int(loops),100)); rampup=max(0,min(int(rampup),300))
-    jmeter=Path(os.getenv("AUTOTEST_JMETER", r"D:\apache-jmeter-5.6.3\bin\jmeter.bat"))
+    jmeter=Path(str(_jmeter_command()))
     plan=ROOT/"jmeter"/"wealth-level-performance.jmx"
     if not jmeter.exists(): return {"status":"BLOCKED","message":"本机未找到 JMeter，请配置 AUTOTEST_JMETER","engine":"JMeter"}
     if not plan.exists(): return {"status":"BLOCKED","message":"JMeter 脚本不存在","engine":"JMeter"}
@@ -888,7 +934,7 @@ def generate_requirement_account_model(project_id, package_id, persist=True):
         if redis_step not in credential_resolution_order:
             credential_resolution_order.insert(-1 if credential_resolution_order else 0, redis_step)
     model = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "package_id": package_id,
         "package_name": package.get("name"),
         "generated_at": now(),
@@ -927,7 +973,201 @@ def _file_status(path):
     }
 
 
+ASSET_SCHEMAS = {
+    "manifest": {
+        "required": ["schema_version", "package_id", "name", "artifacts", "workflow"],
+        "properties": {"artifacts": dict, "workflow": list},
+    },
+    "resource_manifest": {
+        "required": ["schema_version", "package_id", "credentials", "datasets", "mysql_tables", "redis_patterns"],
+        "properties": {"credentials": list, "datasets": list, "mysql_tables": list, "redis_patterns": list},
+    },
+    "account_model": {
+        "required": ["schema_version", "package_id", "mode", "roles", "credential_resolution_order"],
+        "properties": {"roles": list, "credential_resolution_order": list},
+    },
+    "structured_test_cases": {
+        "required": ["schema_version", "package_id", "summary", "cases"],
+        "properties": {"summary": dict, "cases": list},
+    },
+    "case_jmeter_mapping": {
+        "required": ["schema_version", "package_id", "summary", "mappings"],
+        "properties": {"summary": dict, "mappings": list},
+    },
+    "execution_plan": {
+        "required": ["schema_version", "package_id", "summary", "scenarios"],
+        "properties": {"summary": dict, "scenarios": list},
+    },
+    "evidence_rules": {
+        "required": ["schema_version", "package_id", "rules"],
+        "properties": {"runtime_variables": dict, "rules": list},
+    },
+    "data_preflight": {
+        "required": ["schema_version", "package_id", "status", "checks"],
+        "properties": {"checks": list},
+    },
+    "resource_preflight": {
+        "required": ["schema_version", "package_id", "status", "findings"],
+        "properties": {"summary": dict, "findings": list},
+    },
+    "tool_assets_manifest": {
+        "required": ["schema_version", "package_id", "status", "generated"],
+        "properties": {"generated": list},
+    },
+}
+
+
+def _schema_asset_paths(package_root):
+    root = Path(package_root)
+    paths = {
+        "manifest": root / "manifest.json",
+        "resource_manifest": root / "resource_manifest.yaml",
+        "account_model": root / "account_model.yaml",
+        "structured_test_cases": root / "outputs" / "structured-test-cases.json",
+        "case_jmeter_mapping": root / "outputs" / "case-jmeter-mapping.json",
+        "execution_plan": root / "outputs" / "execution-plan.json",
+    }
+    optional_paths = {
+        "evidence_rules": root / "evidence_rules.yaml",
+        "data_preflight": root / "outputs" / "data-preflight-check.json",
+        "resource_preflight": root / "outputs" / "resource-preflight-check.json",
+        "tool_assets_manifest": root / "outputs" / "tool-assets-manifest.json",
+    }
+    paths.update({name: path for name, path in optional_paths.items() if path.is_file()})
+    return paths
+
+
+def _load_schema_asset(path):
+    path = Path(path)
+    if not path.is_file():
+        return {}
+    if path.suffix.lower() in {".yaml", ".yml"}:
+        return _load_yaml_file(path)
+    return _read_json_asset(path)
+
+
+def _backup_schema_asset(package_root, path, stamp):
+    package_root = Path(package_root)
+    path = Path(path)
+    try:
+        relative = path.relative_to(package_root)
+    except ValueError:
+        relative = Path(path.name)
+    backup = package_root / "outputs" / "schema-upgrade-backups" / stamp / relative
+    backup.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(path, backup)
+    return backup
+
+
+def _validate_schema_payload(asset_name, payload):
+    schema = ASSET_SCHEMAS.get(asset_name) or {}
+    issues = []
+    if not isinstance(payload, dict):
+        return [{"level": "ERROR", "message": "文件不是对象结构"}]
+    for key in schema.get("required") or []:
+        if key not in payload or payload.get(key) in (None, ""):
+            issues.append({"level": "ERROR", "field": key, "message": f"缺少必填字段 {key}"})
+    for key, expected_type in (schema.get("properties") or {}).items():
+        if key in payload and not isinstance(payload.get(key), expected_type):
+            issues.append({"level": "ERROR", "field": key, "message": f"{key} 类型应为 {expected_type.__name__}"})
+    version = str(payload.get("schema_version") or "").strip()
+    if version and version != ASSET_SCHEMA_VERSION:
+        issues.append({"level": "WARNING", "field": "schema_version", "message": f"当前版本 {version}，平台版本 {ASSET_SCHEMA_VERSION}，可执行兼容升级"})
+    return issues
+
+
+def validate_requirement_package_schemas(project_id, package_id, persist=True):
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    results = []
+    for asset_name, path in _schema_asset_paths(package_root).items():
+        payload = _load_schema_asset(path)
+        if not payload:
+            results.append({
+                "asset": asset_name,
+                "path": str(path),
+                "status": "MISSING",
+                "issues": [{"level": "ERROR", "message": "文件不存在或无法解析"}],
+            })
+            continue
+        issues = _validate_schema_payload(asset_name, payload)
+        has_error = any(item.get("level") == "ERROR" for item in issues)
+        has_warning = any(item.get("level") == "WARNING" for item in issues)
+        results.append({
+            "asset": asset_name,
+            "path": str(path),
+            "status": "FAILED" if has_error else "READY_WITH_WARNINGS" if has_warning else "READY",
+            "schema_version": str(payload.get("schema_version") or ""),
+            "issues": issues,
+        })
+    failed = sum(1 for item in results if item["status"] in {"FAILED", "MISSING"})
+    warnings = sum(1 for item in results if item["status"] == "READY_WITH_WARNINGS")
+    status = "FAILED" if failed else "READY_WITH_WARNINGS" if warnings else "READY"
+    report = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_SCHEMA_AUDIT",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": status,
+        "created_at": now(),
+        "summary": {"assets": len(results), "failed": failed, "warnings": warnings},
+        "assets": results,
+    }
+    if persist:
+        out = package_root / "outputs" / "schema-audit.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        report["report_path"] = str(out)
+    return report
+
+
+def upgrade_requirement_package_schemas(project_id, package_id):
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    changed = []
+    skipped = []
+    for asset_name, path in _schema_asset_paths(package_root).items():
+        payload = _load_schema_asset(path)
+        if not payload:
+            skipped.append({"asset": asset_name, "path": str(path), "reason": "missing_or_invalid"})
+            continue
+        old_version = str(payload.get("schema_version") or "")
+        if old_version == ASSET_SCHEMA_VERSION and payload.get("schema_kind"):
+            skipped.append({"asset": asset_name, "path": str(path), "reason": "already_current"})
+            continue
+        payload = dict(payload)
+        if old_version and old_version != ASSET_SCHEMA_VERSION:
+            payload.setdefault("schema_migrated_from", old_version)
+        payload["schema_version"] = ASSET_SCHEMA_VERSION
+        payload["schema_kind"] = asset_name
+        payload["schema_updated_at"] = now()
+        backup_path = _backup_schema_asset(package_root, path, stamp)
+        if path.suffix.lower() in {".yaml", ".yml"}:
+            path.write_text(_yaml_dump(payload), encoding="utf-8")
+        else:
+            path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        changed.append({
+            "asset": asset_name,
+            "path": str(path),
+            "backup_path": str(backup_path),
+            "from": old_version or "missing",
+            "to": ASSET_SCHEMA_VERSION,
+        })
+    audit = validate_requirement_package_schemas(project_id, package_id, True)
+    return {
+        "status": "READY_WITH_WARNINGS" if skipped else "READY",
+        "package_id": package_id,
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "changed": changed,
+        "skipped": skipped,
+        "audit": audit,
+    }
+
+
 PACKAGE_EXECUTION_REPORT_TYPES = {
+    "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN": "apifox",
     "REQUIREMENT_PACKAGE_NEWMAN_RUN": "newman",
     "REQUIREMENT_PACKAGE_JMETER_RUN": "jmeter",
     "REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN": "pytest",
@@ -939,6 +1179,171 @@ PACKAGE_REVIEW_REPORT_TYPES = {
     "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT",
     "REQUIREMENT_PACKAGE_AI_REVIEW",
 }
+
+RUN_CONTEXT_SCHEMA_VERSION = "1.0"
+RUN_CONTEXT_TOOLS = ("pipeline", "apifox", "newman", "newman_review", "jmeter", "load_test_plan", "pytest", "data_evidence", "performance_review", "scenario_report", "ai_review")
+
+
+def _safe_run_id(value):
+    run_id = re.sub(r"[^a-zA-Z0-9_.-]", "-", str(value or "").strip()).strip("-.")
+    if not run_id:
+        run_id = f"run-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
+    return run_id[:120]
+
+
+def _run_context_file(package_root, run_id):
+    return Path(package_root) / "runs" / _safe_run_id(run_id) / "run-context.json"
+
+
+def _run_context_scenarios(package_root):
+    plan = _read_json_asset(Path(package_root) / "outputs" / "execution-plan.json")
+    return [
+        {
+            "scenario_id": str(item.get("scenario_id") or item.get("id") or "").strip(),
+            "name": item.get("name") or item.get("scenario_id") or item.get("id") or "未命名场景",
+            "status": "NOT_RUN",
+        }
+        for item in plan.get("scenarios") or []
+        if str(item.get("scenario_id") or item.get("id") or "").strip()
+    ]
+
+
+def _run_context_status(context):
+    tools = context.get("tools") or {}
+    statuses = [
+        _normalized_package_status((tools.get(name) or {}).get("status"), "NOT_RUN")
+        for name in RUN_CONTEXT_TOOLS
+    ]
+    active = [status for status in statuses if status != "NOT_RUN"]
+    if any(status == "FAILED" for status in active):
+        return "FAILED"
+    if any(status == "BLOCKED" for status in active):
+        return "BLOCKED"
+    if any(status in {"RUNNING", "OPENED"} for status in active):
+        return "RUNNING"
+    review_status = _normalized_package_status((tools.get("ai_review") or {}).get("status"), "NOT_RUN")
+    scenario_status = _normalized_package_status((tools.get("scenario_report") or {}).get("status"), "NOT_RUN")
+    if review_status != "NOT_RUN":
+        return review_status
+    if scenario_status != "NOT_RUN":
+        return scenario_status
+    if active and all(status == "PASSED" for status in active):
+        return "PASSED"
+    return "IN_PROGRESS" if active else "CREATED"
+
+
+def create_requirement_run_context(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    run_id = _safe_run_id(options.get("run_id"))
+    path = _run_context_file(package["root"], run_id)
+    if path.is_file():
+        payload = _read_json_asset(path)
+        if payload:
+            payload["run_context_path"] = str(path)
+            return payload
+    created_at = now()
+    context = {
+        "schema_version": RUN_CONTEXT_SCHEMA_VERSION,
+        "run_id": run_id,
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "name": str(options.get("name") or options.get("label") or f"运行批次 {created_at.replace('T', ' ')[:19]}"),
+        "status": "CREATED",
+        "created_at": created_at,
+        "updated_at": created_at,
+        "scenarios": _run_context_scenarios(package["root"]),
+        "runtime_variables": options.get("runtime_variables") or {},
+        "tools": {name: {"status": "NOT_RUN", "reports": []} for name in RUN_CONTEXT_TOOLS},
+        "reports": [],
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(context, ensure_ascii=False, indent=2), encoding="utf-8")
+    context["run_context_path"] = str(path)
+    return context
+
+
+def _ensure_requirement_run_context(project_id, package_id, options=None):
+    options = options or {}
+    return create_requirement_run_context(project_id, package_id, options)
+
+
+def update_requirement_run_context(project_id, package_id, run_id, tool, status, report=None):
+    package = requirement_package_by_id(project_id, package_id)
+    path = _run_context_file(package["root"], run_id)
+    context = _read_json_asset(path)
+    if not context:
+        context = create_requirement_run_context(project_id, package_id, {"run_id": run_id})
+        context.pop("run_context_path", None)
+    tool = str(tool or "").strip().lower()
+    if tool not in RUN_CONTEXT_TOOLS:
+        raise ValueError(f"不支持的运行批次工具：{tool}")
+    tool_state = (context.setdefault("tools", {})).setdefault(tool, {"status": "NOT_RUN", "reports": []})
+    tool_state["status"] = _normalized_package_status(status, "ATTENTION")
+    tool_state["updated_at"] = now()
+    if report:
+        report_ref = {
+            "report_type": report.get("report_type") or "UNKNOWN",
+            "status": report.get("status") or status,
+            "summary_path": report.get("summary_path") or report.get("report") or "",
+            "json_url": report.get("json_url") or report.get("report_url") or "",
+            "html_url": report.get("html_url") or "",
+            "created_at": report.get("created_at") or report.get("executed_at") or now(),
+        }
+        refs = tool_state.setdefault("reports", [])
+        if not any(item.get("summary_path") == report_ref["summary_path"] for item in refs):
+            refs.append(report_ref)
+        all_refs = context.setdefault("reports", [])
+        if not any(item.get("summary_path") == report_ref["summary_path"] for item in all_refs):
+            all_refs.append({**report_ref, "tool": tool})
+    context["updated_at"] = now()
+    context["status"] = _run_context_status(context)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(context, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    context["run_context_path"] = str(path)
+    return context
+
+
+def list_requirement_run_contexts(project_id, package_id):
+    package = requirement_package_by_id(project_id, package_id)
+    contexts = _run_contexts_from_root(package["root"])
+    return {
+        "schema_version": RUN_CONTEXT_SCHEMA_VERSION,
+        "project_id": project_id,
+        "package_id": package.get("package_id") or package_id,
+        "package_name": package.get("name"),
+        "status": "READY" if contexts else "NOT_RUN",
+        "latest_run_id": contexts[0].get("run_id") if contexts else "",
+        "runs": contexts,
+    }
+
+
+def get_requirement_run_context(project_id, package_id, run_id):
+    package = requirement_package_by_id(project_id, package_id)
+    path = _run_context_file(package["root"], run_id)
+    payload = _read_json_asset(path)
+    if not payload:
+        raise ValueError("没有找到这个运行批次")
+    payload["status"] = _run_context_status(payload)
+    payload["run_context_path"] = str(path)
+    return payload
+
+
+def _run_contexts_from_root(package_root):
+    run_root = Path(package_root) / "runs"
+    contexts = []
+    if run_root.is_dir():
+        for path in run_root.glob("*/run-context.json"):
+            payload = _read_json_asset(path)
+            if not payload:
+                continue
+            payload["run_context_path"] = str(path)
+            payload["status"] = _run_context_status(payload)
+            contexts.append(payload)
+    contexts.sort(key=lambda item: item.get("created_at") or item.get("updated_at") or "", reverse=True)
+    return contexts
 
 
 def _normalized_package_status(value, default="ATTENTION"):
@@ -953,6 +1358,82 @@ def _normalized_package_status(value, default="ATTENTION"):
         "PENDING": "NOT_RUN",
     }
     return aliases.get(status, status or default)
+
+
+def _package_report_category(report_type):
+    report_type = str(report_type or "").upper()
+    if "UNIFIED_SCENARIO" in report_type or "PIPELINE" in report_type:
+        return "overview"
+    if "APIFOX" in report_type or "NEWMAN" in report_type or "PYTEST" in report_type or "HTTP" in report_type:
+        return "interface"
+    if "JMETER" in report_type or "PERFORMANCE" in report_type:
+        return "performance"
+    if "EVIDENCE" in report_type or "DB" in report_type or "REDIS" in report_type:
+        return "data"
+    if "AI_REVIEW" in report_type or "RISK" in report_type:
+        return "risk"
+    return "evidence"
+
+
+def _package_report_name(report_type):
+    return {
+        "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN": "Apifox CLI发布冒烟",
+        "REQUIREMENT_PACKAGE_NEWMAN_RUN": "Newman接口回归",
+        "REQUIREMENT_PACKAGE_NEWMAN_ANALYSIS": "Newman接口冒烟分析",
+        "REQUIREMENT_PACKAGE_JMETER_RUN": "JMeter流程与性能",
+        "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN": "JMeter持续压测执行",
+        "REQUIREMENT_PACKAGE_JMETER_LOAD_PLAN": "JMeter持续压测预案",
+        "REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN": "pytest深度证据",
+        "PYTEST_DEEP_EVIDENCE_REVIEW": "pytest深度证据",
+        "BUSINESS_EVIDENCE_RULE_RUN": "业务数据证据",
+        "REQUIREMENT_PACKAGE_DATA_EVIDENCE_RUN": "数据一致性证据",
+        "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT": "统一场景报告",
+        "REQUIREMENT_PACKAGE_PERFORMANCE_AI_REVIEW": "性能报告AI分析",
+        "REQUIREMENT_PACKAGE_AI_REVIEW": "AI复盘与风险",
+        "REQUIREMENT_PACKAGE_PIPELINE_RUN": "需求包一键执行",
+    }.get(str(report_type or "").upper(), str(report_type or "未知报告"))
+
+
+def _package_report_summary_text(payload):
+    summary = payload.get("summary") or {}
+    report_type = str(payload.get("report_type") or "").upper()
+    if report_type == "REQUIREMENT_PACKAGE_NEWMAN_RUN":
+        return f"请求{summary.get('requests', 0)} · 断言失败{summary.get('failed_assertions', 0)} · 失败{summary.get('failures', 0)}"
+    if report_type == "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN":
+        return f"请求{summary.get('requests', 0)} · 失败{summary.get('failures', 0)} · 退出码{summary.get('exit_code', '-')}"
+    if report_type == "REQUIREMENT_PACKAGE_PIPELINE_RUN":
+        return f"步骤{summary.get('steps', 0)} · 通过{summary.get('passed', 0)} · 失败{summary.get('failed', 0)} · 阻断{summary.get('blocked', 0)}"
+    if report_type == "REQUIREMENT_PACKAGE_NEWMAN_ANALYSIS":
+        return f"接口{summary.get('endpoints', 0)} · 异常接口{summary.get('failed_endpoints', 0)} · 待分派{summary.get('incidents', 0)}"
+    if report_type == "REQUIREMENT_PACKAGE_JMETER_LOAD_PLAN":
+        return f"安全接口{summary.get('safe_endpoints', 0)} · 排除写接口{summary.get('excluded_mutations', 0)} · 阶梯{summary.get('stages', 0)}级"
+    if report_type == "REQUIREMENT_PACKAGE_JMETER_RUN":
+        requests = summary.get("requests", summary.get("jmeter_requests", 0))
+        errors = summary.get("errors", summary.get("jmeter_errors", 0))
+        return f"请求{requests} · 错误{errors} · P95 {summary.get('p95_ms', deep_get(payload, 'performance_summary.p95_ms', '-'))}ms"
+    if report_type == "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN":
+        return f"阶梯{summary.get('stage', '-')} · 线程{summary.get('threads', '-')} · 请求{summary.get('requests', 0)} · 错误率{summary.get('error_rate', '-')}% · P95 {summary.get('p95_ms', '-')}ms"
+    if report_type in {"REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN", "PYTEST_DEEP_EVIDENCE_REVIEW"}:
+        return f"HTTP失败{summary.get('http_failed', 0)} · 证据失败{summary.get('rules_failed', 0)} · 阻断{summary.get('rules_blocked', 0)}"
+    if report_type == "REQUIREMENT_PACKAGE_DATA_EVIDENCE_RUN":
+        return f"DB通过{summary.get('db_passed', 0)} · 失败{summary.get('db_failed', 0)} · 阻断{summary.get('db_blocked', 0)}"
+    if report_type == "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT":
+        return f"场景{summary.get('scenarios', 0)} · 通过{summary.get('passed', 0)} · 失败{summary.get('failed', 0)} · 阻断{summary.get('blocked', 0)}"
+    if report_type == "REQUIREMENT_PACKAGE_PERFORMANCE_AI_REVIEW":
+        return f"错误率{summary.get('error_rate', '-')}% · P95 {summary.get('p95_ms', '-')}ms · 风险{summary.get('risk_level', '-')}"
+    if report_type == "REQUIREMENT_PACKAGE_AI_REVIEW":
+        return f"P0 {summary.get('p0', 0)} · P1 {summary.get('p1', 0)} · HTTP失败{summary.get('http_failed', 0)}"
+    return str(payload.get("message") or payload.get("conclusion") or "报告原始证据已归档")
+
+
+def _package_report_file_url(path):
+    path = Path(path) if path else None
+    if not path or not path.is_file():
+        return ""
+    try:
+        return "/requirement-reports/" + path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    except ValueError:
+        return ""
 
 
 def _package_report_records(package_root):
@@ -971,13 +1452,16 @@ def _package_report_records(package_root):
             "report_type": str(payload.get("report_type") or "").strip().upper(),
             "status": _normalized_package_status(payload.get("status")),
             "created_at": payload.get("created_at") or payload.get("generated_at") or "",
+            "run_id": str(payload.get("run_id") or "").strip(),
+            "category": _package_report_category(payload.get("report_type")),
             "payload": payload,
         })
     return sorted(records, key=lambda item: item["modified_at"], reverse=True)
 
 
 def _package_latest_report_status(package_root):
-    records = _package_report_records(package_root)
+    valid_run_ids = {item.get("run_id") for item in _run_contexts_from_root(package_root)}
+    records = [item for item in _package_report_records(package_root) if item.get("run_id") in valid_run_ids]
     if not records:
         return {"exists": False, "status": "NOT_RUN", "latest": "", "count": 0, "report_type": ""}
     latest = records[0]
@@ -988,6 +1472,139 @@ def _package_latest_report_status(package_root):
         "count": len(records),
         "report_type": latest["report_type"],
     }
+
+
+def _report_retention_policy():
+    config = load_environment_config()
+    reports = deep_get(config, "reports", {}) or {}
+    return {
+        "keep_latest_per_type": max(1, int(reports.get("keep_latest_per_type") or 5)),
+        "archive_after_days": max(0, int(reports.get("archive_after_days") or 14)),
+        "delete_after_days": max(0, int(reports.get("delete_after_days") or 0)),
+        "archive_mode": str(reports.get("archive_mode") or "index_only"),
+        "rule": "默认只生成索引和保留建议，不自动删除报告；需要清理时由人工确认。",
+    }
+
+
+def requirement_package_report_index(project_id, package_id, persist=True):
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    contexts = _run_contexts_from_root(package_root)
+    valid_run_ids = {item.get("run_id") for item in contexts}
+    all_records = _package_report_records(package_root)
+    records = [item for item in all_records if item.get("run_id") in valid_run_ids]
+    latest_by_type = {}
+    history = []
+    now_ts = time.time()
+    policy = _report_retention_policy()
+    for record in records:
+        report_type = record.get("report_type") or "UNKNOWN"
+        if report_type not in latest_by_type:
+            latest_by_type[report_type] = record
+    for record in records:
+        summary_path = Path(record["path"])
+        run_dir = summary_path.parent
+        report_type = record.get("report_type") or "UNKNOWN"
+        age_days = round((now_ts - record["modified_at"]) / 86400, 2)
+        same_type_sorted = [item for item in records if item.get("report_type") == report_type]
+        index_in_type = next((idx for idx, item in enumerate(same_type_sorted, start=1) if item["path"] == record["path"]), 0)
+        should_archive = index_in_type > policy["keep_latest_per_type"] or age_days >= policy["archive_after_days"]
+        should_delete = bool(policy["delete_after_days"] and age_days >= policy["delete_after_days"])
+        history.append({
+            "batch_id": run_dir.name,
+            "run_id": record.get("run_id") or "",
+            "report_type": report_type,
+            "category": record.get("category") or "evidence",
+            "status": record.get("status"),
+            "created_at": record.get("created_at") or datetime.fromtimestamp(record["modified_at"]).astimezone().isoformat(timespec="seconds"),
+            "summary_path": str(summary_path),
+            "relative_summary_path": summary_path.relative_to(package_root).as_posix(),
+            "name": _package_report_name(report_type),
+            "summary": _package_report_summary_text(record.get("payload") or {}),
+            "json_url": _package_report_file_url(summary_path),
+            "html_url": _package_report_file_url(
+                deep_get(record, "payload.html_report") or deep_get(record, "payload.source.html_report")
+            ),
+            "jtl_url": _package_report_file_url(
+                deep_get(record, "payload.source.archived_jtl") or deep_get(record, "payload.jtl_path")
+            ),
+            "is_latest_for_type": latest_by_type.get(report_type, {}).get("path") == record["path"],
+            "age_days": age_days,
+            "retention": {
+                "rank_in_type": index_in_type,
+                "should_archive": should_archive,
+                "should_delete": should_delete,
+                "reason": "超出同类型最新保留数量或达到归档天数" if should_archive else "保留为当前可见历史",
+            },
+        })
+    latest = [
+        {
+            "report_type": report_type,
+            "category": item.get("category") or "evidence",
+            "name": _package_report_name(report_type),
+            "summary": _package_report_summary_text(item.get("payload") or {}),
+            "status": item.get("status"),
+            "batch_id": Path(item["path"]).parent.name,
+            "run_id": item.get("run_id") or "",
+            "summary_path": item["path"],
+            "json_url": _package_report_file_url(item["path"]),
+            "created_at": item.get("created_at") or "",
+        }
+        for report_type, item in sorted(latest_by_type.items())
+    ]
+    records_by_run = {}
+    for item in history:
+        if item.get("run_id"):
+            records_by_run.setdefault(item["run_id"], []).append(item)
+    runs = []
+    for context in contexts:
+        run_id = context.get("run_id") or ""
+        run_reports = records_by_run.get(run_id, [])
+        latest_for_run = {}
+        for item in run_reports:
+            latest_for_run.setdefault(item.get("report_type") or "UNKNOWN", item)
+        runs.append({
+            "run_id": run_id,
+            "name": context.get("name") or run_id,
+            "status": context.get("status") or _run_context_status(context),
+            "created_at": context.get("created_at") or "",
+            "updated_at": context.get("updated_at") or "",
+            "scenario_count": len(context.get("scenarios") or []),
+            "tools": context.get("tools") or {},
+            "report_count": len(run_reports),
+            "latest_reports": list(latest_for_run.values()),
+            "reports": run_reports,
+        })
+    report = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_REPORT_INDEX",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "status": "READY" if records else "NOT_RUN",
+        "generated_at": now(),
+        "summary": {
+            "runs": len(runs),
+            "batches": len(history),
+            "report_types": len(latest_by_type),
+            "latest_reports": len(latest),
+            "ignored_legacy_reports": len(all_records) - len(records),
+            "archive_candidates": sum(1 for item in history if deep_get(item, "retention.should_archive")),
+            "delete_candidates": sum(1 for item in history if deep_get(item, "retention.should_delete")),
+        },
+        "retention_policy": policy,
+        "latest_run_id": runs[0].get("run_id") if runs else "",
+        "runs": runs,
+        "latest_reports": latest,
+        "history": history,
+    }
+    if persist:
+        out = package_root / "reports" / "report-index.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        report["report_path"] = str(out)
+        report["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    return report
 
 
 def _package_asset_status(counts, artifacts):
@@ -1043,9 +1660,10 @@ def _package_preflight_status(package_root):
 
 
 def _package_execution_status(package_root):
+    valid_run_ids = {item.get("run_id") for item in _run_contexts_from_root(package_root)}
     execution_records = [
         item for item in _package_report_records(package_root)
-        if item["report_type"] in PACKAGE_EXECUTION_REPORT_TYPES
+        if item["report_type"] in PACKAGE_EXECUTION_REPORT_TYPES and item.get("run_id") in valid_run_ids
     ]
     if not execution_records:
         return {
@@ -1090,9 +1708,10 @@ def _package_execution_status(package_root):
 
 
 def _package_review_status(package_root):
+    valid_run_ids = {item.get("run_id") for item in _run_contexts_from_root(package_root)}
     reviews = [
         item for item in _package_report_records(package_root)
-        if item["report_type"] in PACKAGE_REVIEW_REPORT_TYPES
+        if item["report_type"] in PACKAGE_REVIEW_REPORT_TYPES and item.get("run_id") in valid_run_ids
     ]
     if not reviews:
         return {"status": "NOT_RUN", "latest": "", "report_type": "", "count": 0}
@@ -1142,6 +1761,8 @@ def _requirement_package_status_model(package_root, counts, artifacts):
     execution = _package_execution_status(package_root)
     review = _package_review_status(package_root)
     quality = _package_quality_status(asset, preflight, execution, review)
+    report_index_path = Path(package_root) / "reports" / "report-index.json"
+    report_index = _read_json_asset(report_index_path)
     return {
         "asset_status": asset["status"],
         "preflight_status": preflight["status"],
@@ -1152,6 +1773,13 @@ def _requirement_package_status_model(package_root, counts, artifacts):
         "preflight": preflight,
         "execution": execution,
         "review": review,
+        "report_index": {
+            "path": str(report_index_path),
+            "exists": report_index_path.is_file(),
+            "batches": deep_get(report_index, "summary.batches", 0),
+            "latest_reports": deep_get(report_index, "summary.latest_reports", 0),
+            "archive_candidates": deep_get(report_index, "summary.archive_candidates", 0),
+        },
     }
 
 
@@ -1248,7 +1876,7 @@ def _requirement_package_template(project_id, key):
                 "manifest": ROOT / "outputs" / "salary-trade-case-jmeter-manifest.json",
                 "applicant_csv": ROOT / str(salary.get("applicant_csv_path") or "data/salary-trade-applicants.csv"),
                 "proxy_csv": ROOT / "data" / "salary-trade-proxies.csv",
-                "jtl": Path(str(salary.get("result_jtl_path") or "D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl")),
+                "jtl": ROOT / "reports" / "latest" / "salary-trade-result.jtl",
             },
             "workflow": [
                 "导入需求文档和接口文档",
@@ -1275,9 +1903,9 @@ def _requirement_package_template(project_id, key):
         "artifacts": {
             "account_model": REQUIREMENT_PACKAGE_ROOT / "wealth-level" / "account_model.yaml",
             "resource_manifest": REQUIREMENT_PACKAGE_ROOT / "wealth-level" / "resource_manifest.yaml",
-            "jmeter": Path("D:/apache-jmeter-5.6.3/jmx/20260826/性能基线.jmx"),
+            "jmeter": _path_from_config(wealth.get("jmeter_plan_path"), "jmeter/wealth-level-performance.jmx"),
             "runtime_csv": ROOT / str(wealth.get("runtime_csv_path") or "data/wealth-level-runtime.csv"),
-            "jtl": Path(str(wealth.get("result_jtl_path") or "D:/apache-jmeter-5.6.3/jmx/20260826/性能基线-result.jtl")),
+            "jtl": ROOT / "reports" / "latest" / "wealth-level-result.jtl",
             "skill": ROOT / "skills" / "jmeter-script-generation" / "SKILL.md",
         },
         "workflow": [
@@ -1327,7 +1955,7 @@ def ensure_requirement_package_manifest(project_id, package):
     asset_status = _package_asset_status(counts, artifacts)
     status = asset_status["status"]
     manifest = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package["id"],
         "name": package["name"],
@@ -1966,7 +2594,7 @@ def generate_candidate_evidence_rules(project_id, payload=None):
                 },
             })
     out_payload = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "package_id": package_id,
         "package_name": package.get("name"),
         "generated_at": now(),
@@ -2023,7 +2651,7 @@ def accept_candidate_evidence_rules(project_id, payload=None):
     official_payload = _load_yaml_file(official_path)
     if not isinstance(official_payload, dict) or not official_payload:
         official_payload = {
-            "schema_version": "1.0",
+            "schema_version": ASSET_SCHEMA_VERSION,
             "package_id": package_id,
             "package_name": package.get("name"),
             "purpose": "执行后用只读 MySQL 证据证明接口产生的业务结果真实落库、状态正确、流水可追溯。" if package_id == "salary-trade" else "执行后用只读 MySQL/Redis 证据证明接口产生的业务结果真实落库、状态正确、流水可追溯。",
@@ -2530,7 +3158,7 @@ def _default_requirement_resource_manifest(project_id, package_id, package):
             "required": True,
         })
     return {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "package_id": package_id,
         "updated_at": now(),
         "policy": "资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。",
@@ -2573,7 +3201,7 @@ def save_requirement_resource_manifest(project_id, package_id, payload=None):
                 current[key] = payload[key]
         if payload.get("policy"):
             current["policy"] = str(payload["policy"]).strip()
-    current["schema_version"] = str(current.get("schema_version") or "1.0")
+    current["schema_version"] = str(current.get("schema_version") or ASSET_SCHEMA_VERSION)
     current["package_id"] = package_id
     for item in current.get("datasets") or []:
         if isinstance(item, dict) and item.get("path"):
@@ -2727,7 +3355,7 @@ def requirement_resource_preflight(project_id, package_id):
     suggestions = sum(1 for x in active if x["status"] == "SUGGESTION")
     status = "BLOCKED" if blocked else "READY_WITH_WARNINGS" if warnings or suggestions else "READY"
     result = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "package_id": package_id,
         "package_name": package.get("name"),
         "generated_at": now(),
@@ -2829,7 +3457,10 @@ def _scenario_data_preflight(package_id, package_root, details):
             else:
                 blockers.append(f"缺少账号槽位 {account_slot} 对应的申请人")
         if not case_ids:
-            blockers.append("场景未绑定测试用例")
+            if str(scenario.get("status") or "").upper() == "BLOCKED":
+                blockers.append("场景未绑定测试用例")
+            else:
+                attentions.append("场景暂未绑定测试用例，保留为待补充或人工确认项")
         missing_rules = [rule_id for rule_id in rule_ids if rule_id not in official_rule_ids]
         if missing_rules:
             attentions.append("场景绑定了尚未采纳的候选证据规则：" + ",".join(missing_rules))
@@ -3046,6 +3677,7 @@ def _structured_case_data_preflight(project_id, package_id, package_root):
         add_check("需求资源预检", "READY", "当前需求包登记的运行与证据资源已通过静态检查。")
 
     return {
+        "schema_version": ASSET_SCHEMA_VERSION,
         "status": status,
         "checks": checks,
         "runtime_sql_checks": runtime_sql_checks,
@@ -3304,7 +3936,7 @@ def generate_structured_test_cases(project_id, payload=None):
     jmeter_mapping_path = out_dir / "case-jmeter-mapping.json"
     data_preflight_path = out_dir / "data-preflight-check.json"
     payload_out = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
@@ -3318,14 +3950,14 @@ def generate_structured_test_cases(project_id, payload=None):
     }
     json_path.write_text(json.dumps(payload_out, ensure_ascii=False, indent=2), encoding="utf-8")
     jmeter_mapping_path.write_text(json.dumps({
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package_id,
         "generated_at": payload_out["generated_at"],
         **jmeter_mapping,
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     data_preflight_path.write_text(json.dumps({
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package_id,
         "generated_at": payload_out["generated_at"],
@@ -3476,7 +4108,7 @@ def _jmeter_skill_contract():
     payload = _load_yaml_file(path)
     if not payload:
         payload = {
-            "schema_version": "1.0",
+            "schema_version": ASSET_SCHEMA_VERSION,
             "skill": "jmeter-script-generation",
             "purpose": "从需求包和结构化测试用例生成 JMeter 执行资产",
             "output_contract": ["JMX脚本", "映射清单", "运行参数说明", "报告归档位置"],
@@ -3541,7 +4173,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
     skill_contract_path = package_root / "outputs" / "jmeter" / "jmeter-skill-contract.json"
     skill_contract_path.parent.mkdir(parents=True, exist_ok=True)
     skill_contract_path.write_text(json.dumps({
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package_id,
         "generated_at": now(),
@@ -3555,7 +4187,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
     pytest_skill_contract_path = package_root / "outputs" / "pytest" / "pytest-evidence-skill-contract.json"
     pytest_skill_contract_path.parent.mkdir(parents=True, exist_ok=True)
     pytest_skill_contract_path.write_text(json.dumps({
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package_id,
         "generated_at": now(),
@@ -3620,7 +4252,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
 
     package = ensure_requirement_package_manifest(project_id, _requirement_package_template(project_id, package_id))
     result_manifest = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
@@ -3659,31 +4291,130 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
     }
 
 
+def _role_csv_path(package_root, role, fallback):
+    manifest = _load_yaml_file(Path(package_root) / "resource_manifest.yaml")
+    for credential in manifest.get("credentials") or []:
+        if str(credential.get("role") or "").lower() != role:
+            continue
+        for source in credential.get("sources") or []:
+            if str(source.get("type") or "").lower() == "csv" and source.get("path"):
+                return _resolve_resource_path(source["path"])
+    return ROOT / fallback
+
+
+def _csv_role_identity(rows_, role):
+    uid_names = (f"{role}_uid", "uid", "agent_uid", "agentUid")
+    ticket_names = (f"{role}_ticket", "ticket", "access_token", "token")
+    for row_data in rows_:
+        enabled = str(row_data.get("enabled", "true")).strip().lower()
+        if enabled in {"0", "false", "no", "off"}:
+            continue
+        uid_value = next((str(row_data.get(name) or "").strip() for name in uid_names if str(row_data.get(name) or "").strip()), "")
+        ticket = next((str(row_data.get(name) or "").strip() for name in ticket_names if str(row_data.get(name) or "").strip()), "")
+        if not uid_value or not ticket:
+            continue
+        jwt_uid = str(jwt_claims_unverified(ticket).get("uid") or "") if _looks_like_jwt(ticket) else ""
+        if jwt_uid and jwt_uid != uid_value:
+            continue
+        return dict(row_data), uid_value, ticket
+    return {}, "", ""
+
+
+def _salary_trade_csv_runtime_context(package_root, runtime):
+    applicant_path = _role_csv_path(package_root, "applicant", "data/salary-trade-applicants.csv")
+    proxy_path = _role_csv_path(package_root, "proxy", "data/salary-trade-proxies.csv")
+    applicant_row, applicant_uid, applicant_ticket = _csv_role_identity(_csv_rows_for_path(applicant_path), "applicant")
+    currency = str(applicant_row.get("currency") or "").strip()
+    proxy_rows = _csv_rows_for_path(proxy_path)
+    if currency:
+        matching = []
+        for row_data in proxy_rows:
+            supported = str(row_data.get("support_currencies") or row_data.get("supportCurrencies") or row_data.get("currency") or "")
+            currencies = {item.strip().upper() for item in re.split(r"[,|;/]", supported) if item.strip()}
+            if currency.upper() in currencies:
+                matching.append(row_data)
+        proxy_rows = matching
+    proxy_row, proxy_uid, proxy_ticket = _csv_role_identity(proxy_rows, "proxy")
+    context = dict(runtime or {})
+    aliases = _load_yaml_file(Path(package_root) / "runtime_aliases.yaml")
+    common_query = aliases.get("common_query") if isinstance(aliases.get("common_query"), dict) else {}
+    for key, value in common_query.items():
+        if value not in (None, ""):
+            context[str(key)] = str(value)
+    if applicant_uid and applicant_ticket:
+        context.update({
+            "uid": applicant_uid,
+            "ticket": applicant_ticket,
+            "applicant_uid": applicant_uid,
+            "applicant_ticket": applicant_ticket,
+            "countryCode": str(applicant_row.get("countryCode") or applicant_row.get("country_code") or ""),
+            "country_code": str(applicant_row.get("countryCode") or applicant_row.get("country_code") or ""),
+            "currency": currency,
+        })
+    if proxy_uid and proxy_ticket:
+        context.update({
+            "proxy_uid": proxy_uid,
+            "proxy_ticket": proxy_ticket,
+            "proxyUid": proxy_uid,
+            "agentUid": proxy_uid,
+        })
+    if applicant_uid or proxy_uid:
+        context["source"] = "requirement_package_csv"
+    return _normalize_auth_runtime_context(context)
+
+
 def run_requirement_package_newman(project_id, package_id, options=None):
     options = options or {}
     package = requirement_package_by_id(project_id, package_id)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
     collection = package_root / "outputs" / "newman" / "postman-collection.json"
     if not collection.is_file():
         generated = generate_requirement_package_tool_assets(project_id, package_id, options)
         collection = package_root / "outputs" / "newman" / "postman-collection.json"
         if not collection.is_file():
-            return {
+            blocked = {
                 "status": "BLOCKED",
                 "package_id": package_id,
+                "run_id": run_id,
                 "message": "当前需求包没有可运行的 Newman collection，请先补齐可执行接口用例。",
                 "generated": generated.get("generated", []),
             }
+            update_requirement_run_context(project_id, package_id, run_id, "newman", "BLOCKED", blocked)
+            return blocked
+    static_collection = collection
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
+    source_cases = _requirement_package_cases(project_id, package_id)
+    executable_cases = [case for case in source_cases if str(case.get("method") or "").strip() and str(case.get("path") or "").strip()]
+    tool_cases = _external_tool_cases(executable_cases, False)
+    if options.get("read_only_only"):
+        tool_cases = [case for case in tool_cases if str(case.get("method") or "").upper() in {"GET", "HEAD", "OPTIONS"}]
+    runtime_options = _merge_execution_profile_options(project_id, options)
+    credential = load_runtime_credential(project_id)
+    if credential.get("encrypted_password") and not runtime_options.get("login_password_encrypted"):
+        runtime_options["login_password_encrypted"] = credential.get("encrypted_password")
+        runtime_options["login_strategy"] = "force"
+    runtime = _login_runtime_context(project_id, runtime_options) if runtime_options.get("login_password_encrypted") else _runtime_context(project_id, runtime_options)
+    if package_id == "salary-trade":
+        runtime = _salary_trade_csv_runtime_context(package_root, runtime)
+    if project and tool_cases:
+        collection = _run_context_file(package_root, run_id).parent / "newman-runtime-collection.json"
+        collection.parent.mkdir(parents=True, exist_ok=True)
+        collection.write_text(json.dumps(build_postman_collection(project, tool_cases, runtime, False), ensure_ascii=False, indent=2), encoding="utf-8")
     newman = shutil.which("newman")
     if not newman:
-        return {
+        blocked = {
             "status": "BLOCKED",
             "package_id": package_id,
+            "run_id": run_id,
             "message": "本机未安装 Newman；请执行 npm install -g newman 后重试。",
             "install_command": "npm install -g newman",
             "collection": str(collection),
         }
+        update_requirement_run_context(project_id, package_id, run_id, "newman", "BLOCKED", blocked)
+        return blocked
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     run_dir = package_root / "reports" / f"newman-{stamp}"
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -3698,7 +4429,7 @@ def run_requirement_package_newman(project_id, package_id, options=None):
         str(json_report),
     ]
     env = os.environ.copy()
-    result = _sanitize_tool_result(_run_command_capture(command, ROOT, int(options.get("timeout", 180) or 180), env), _runtime_context(project_id, options))
+    result = _sanitize_tool_result(_run_command_capture(command, ROOT, int(options.get("timeout", 180) or 180), env), runtime)
     status = "PASSED" if result.get("exit_code") == 0 else "FAILED"
     failures = []
     newman_stats = {}
@@ -3714,9 +4445,13 @@ def run_requirement_package_newman(project_id, package_id, options=None):
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
         "status": status,
         "created_at": now(),
         "collection": str(collection),
+        "static_collection": str(static_collection),
+        "runtime_context_source": runtime.get("source") or "",
         "command": " ".join(command),
         "json_report": str(json_report) if json_report.is_file() else "",
         "exit_code": result.get("exit_code"),
@@ -3740,12 +4475,387 @@ def run_requirement_package_newman(project_id, package_id, options=None):
         "stderr": result.get("stderr", "")[-4000:],
     }
     summary_path = run_dir / "summary.json"
+    summary["summary_path"] = str(summary_path)
+    summary["json_url"] = "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    return {
-        **summary,
-        "summary_path": str(summary_path),
-        "json_url": "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
+    update_requirement_run_context(project_id, package_id, run_id, "newman", status, summary)
+    try:
+        analysis = generate_requirement_newman_analysis(project_id, package_id, {
+            "run_id": run_id,
+            "source_summary_path": str(summary_path),
+        })
+        summary["analysis_report"] = {
+            "status": analysis.get("status"),
+            "summary_path": analysis.get("summary_path"),
+            "json_url": analysis.get("json_url"),
+        }
+        summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception as exc:
+        summary["analysis_warning"] = _redact_runtime_text(str(exc))[:500]
+        summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    return summary
+
+
+def _newman_request_path(request_payload):
+    url = (request_payload or {}).get("url") or {}
+    if isinstance(url, str):
+        return urllib.parse.urlsplit(url).path or url
+    path = url.get("path") or []
+    return "/" + "/".join(str(item) for item in path) if isinstance(path, list) else str(path or "")
+
+
+def _newman_response_preview(response_payload):
+    stream = (response_payload or {}).get("stream")
+    try:
+        if isinstance(stream, dict) and isinstance(stream.get("data"), list):
+            raw = bytes(int(item) & 255 for item in stream["data"][:4096])
+            return _redact_runtime_text(raw.decode("utf-8", errors="replace"))[:1000]
+        if isinstance(stream, str):
+            return _redact_runtime_text(stream)[:1000]
+    except Exception:
+        return ""
+    return ""
+
+
+def generate_requirement_newman_analysis(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    source_summary = Path(str(options.get("source_summary_path") or ""))
+    if not source_summary.is_file():
+        source_item = next((
+            item for item in _package_report_summaries(package_root, run_id)
+            if str(item["payload"].get("report_type") or "").upper() == "REQUIREMENT_PACKAGE_NEWMAN_RUN"
+        ), None)
+        if not source_item:
+            raise ValueError("当前运行批次还没有 Newman 原始报告，请先执行接口冒烟测试。")
+        source_summary = Path(source_item["path"])
+    source = _read_json_asset(source_summary)
+    raw_path = Path(str(source.get("json_report") or ""))
+    if not raw_path.is_file():
+        raise ValueError("Newman 原始 JSON 不存在，无法逐接口分析。")
+    raw = _read_json_asset(raw_path)
+    executions = deep_get(raw, "run.executions", []) or []
+    failures = deep_get(raw, "run.failures", []) or []
+    execution_by_id = {}
+    execution_by_name = {}
+    endpoint_map = {}
+    for execution in executions:
+        item = execution.get("item") or {}
+        request_payload = execution.get("request") or item.get("request") or {}
+        response = execution.get("response") or {}
+        name = str(item.get("name") or "未命名接口")
+        item_id = str(item.get("id") or execution.get("id") or "")
+        method = str(request_payload.get("method") or "").upper()
+        path = _newman_request_path(request_payload)
+        duration = int(response.get("responseTime") or 0)
+        code = str(response.get("code") if response.get("code") is not None else "NO_RESPONSE")
+        record = {"name": name, "method": method, "path": path, "response": response, "duration_ms": duration, "http_status": code}
+        if item_id:
+            execution_by_id[item_id] = record
+        execution_by_name.setdefault(name, []).append(record)
+        key = f"{method} {path}".strip()
+        endpoint = endpoint_map.setdefault(key, {"method": method, "path": path, "cases": set(), "requests": 0, "durations": [], "response_codes": {}, "failure_count": 0})
+        endpoint["cases"].add(name)
+        endpoint["requests"] += 1
+        endpoint["durations"].append(duration)
+        endpoint["response_codes"][code] = endpoint["response_codes"].get(code, 0) + 1
+    incidents = []
+    for failure in failures:
+        error = failure.get("error") or {}
+        source_item = failure.get("source") or {}
+        name = str(source_item.get("name") or "未命名接口")
+        item_id = str(source_item.get("id") or "")
+        request_payload = source_item.get("request") or {}
+        execution = execution_by_id.get(item_id) or next(iter(execution_by_name.get(name) or []), {})
+        method = str((request_payload or {}).get("method") or execution.get("method") or "").upper()
+        path = _newman_request_path(request_payload) or str(execution.get("path") or "")
+        http_status = str(error.get("actual") or execution.get("http_status") or "NO_RESPONSE")
+        message = str(error.get("message") or error.get("name") or "Newman执行失败")
+        detail = f"{method} {path} HTTP {http_status} {message}"
+        category = _review_category(detail, "FAILED")
+        severity = "P0" if http_status.startswith("5") or http_status == "NO_RESPONSE" else "P1"
+        incidents.append({
+            "severity": severity,
+            "interface": name,
+            "method": method,
+            "path": path,
+            "http_status": http_status,
+            "error_type": str(error.get("name") or "ExecutionError"),
+            "error": _redact_runtime_text(message)[:1000],
+            "response_preview": _newman_response_preview(execution.get("response") or {}),
+            "category": category,
+            "suggested_owner": _review_owner_for_failure(detail, "FAILED"),
+            "review_action": _review_recommendation_for_category(category),
+        })
+        endpoint_key = f"{method} {path}".strip()
+        if endpoint_key in endpoint_map:
+            endpoint_map[endpoint_key]["failure_count"] += 1
+    endpoints = []
+    for endpoint in endpoint_map.values():
+        durations = endpoint.pop("durations")
+        endpoint["cases"] = sorted(endpoint["cases"])
+        endpoint["average_ms"] = round(statistics.mean(durations), 2) if durations else 0
+        endpoint["max_ms"] = max(durations) if durations else 0
+        endpoint["status"] = "FAILED" if endpoint["failure_count"] else "PASSED"
+        endpoints.append(endpoint)
+    endpoints.sort(key=lambda item: (-item["failure_count"], -item["max_ms"], item["path"]))
+    category_counts = {}
+    for incident in incidents:
+        category_counts[incident["category"]] = category_counts.get(incident["category"], 0) + 1
+    failed_endpoints = sum(1 for endpoint in endpoints if endpoint["failure_count"])
+    status = "FAILED" if incidents else "PASSED"
+    report = {
+        "report_type": "REQUIREMENT_PACKAGE_NEWMAN_ANALYSIS",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
+        "status": status,
+        "created_at": now(),
+        "summary": {"requests": len(executions), "endpoints": len(endpoints), "failed_endpoints": failed_endpoints, "incidents": len(incidents), "root_cause_categories": category_counts},
+        "conclusion": "接口冒烟存在异常，请按接口和建议负责人分派。" if incidents else "本批次 Newman 接口冒烟未发现失败。",
+        "incidents": incidents[:200],
+        "endpoints": endpoints,
+        "source": {
+            "newman_summary": str(source_summary),
+            "newman_json": str(raw_path),
+            "newman_summary_url": _package_report_file_url(source_summary),
+            "newman_json_url": _package_report_file_url(raw_path),
+        },
+        "business_value": "把Newman原始执行结果按接口聚合，并给出错误分类、建议负责人和复核动作，方便直接分派而不是人工翻原始JSON。",
     }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out_dir = package_root / "reports" / f"newman-analysis-{stamp}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / "summary.json"
+    report["summary_path"] = str(out)
+    report["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "newman_review", status, report)
+    return report
+
+
+def generate_requirement_jmeter_load_plan(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,))
+    if not project:
+        raise ValueError("项目不存在")
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    source_cases = _requirement_package_cases(project_id, package_id)
+    safe_cases = []
+    seen = set()
+    excluded_mutations = []
+    for case in source_cases:
+        method = str(case.get("method") or "").upper()
+        path = str(case.get("path") or "")
+        if method != "GET" or NEGATIVE_CASE_RE.search(str(case.get("title") or "")):
+            if method in {"POST", "PUT", "PATCH", "DELETE"}:
+                excluded_mutations.append({"method": method, "path": path, "name": case.get("title")})
+            continue
+        key = (method, path)
+        if key in seen:
+            continue
+        seen.add(key)
+        safe_cases.append(case)
+    if not safe_cases:
+        raise ValueError("当前需求包没有可默认进入持续压测的只读GET接口；写接口需要人工确认后才能加入。")
+    profiles = options.get("stages") or [
+        {"code": "baseline", "name": "基线", "threads": 2, "rampup_seconds": 30, "duration_seconds": 180},
+        {"code": "light-load", "name": "轻负载", "threads": 5, "rampup_seconds": 60, "duration_seconds": 300},
+        {"code": "target-load", "name": "目标负载", "threads": 10, "rampup_seconds": 120, "duration_seconds": 600},
+        {"code": "capacity-search", "name": "容量探索", "threads": 20, "rampup_seconds": 180, "duration_seconds": 900},
+    ]
+    output_dir = package_root / "outputs" / "jmeter" / "load-test"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    runtime = safe_runtime_context(_runtime_context(project_id, _merge_execution_profile_options(project_id, options)))
+    stage_assets = []
+    for index, stage in enumerate(profiles, start=1):
+        stage_options = {
+            **options,
+            "jmeter_threads": max(1, min(int(stage.get("threads") or 1), 500)),
+            "jmeter_rampup": max(0, min(int(stage.get("rampup_seconds") or 0), 3600)),
+            "jmeter_duration_seconds": max(60, min(int(stage.get("duration_seconds") or 60), 86400)),
+            "jmeter_think_time_ms": max(0, min(int(stage.get("think_time_ms") or 300), 10000)),
+            "_jmeter_result_jtl": "${__P(load_result_jtl,)}",
+            "_jmeter_non_gui_plan": True,
+        }
+        stage_code = re.sub(r"[^a-zA-Z0-9_-]", "-", str(stage.get("code") or f"stage-{index}")).strip("-") or f"stage-{index}"
+        jmx_path = output_dir / f"stage-{index:02d}-{stage_code}.jmx"
+        jmx_path.write_text(build_jmeter_jmx(project, safe_cases, runtime, True, stage_options), encoding="utf-8")
+        stage_assets.append({**stage, "stage": index, "jmx_path": str(jmx_path), "jtl_property": "load_result_jtl"})
+    thresholds = {
+        "max_error_rate": float(options.get("max_error_rate", 1)),
+        "max_p95_ms": float(options.get("max_p95_ms", 2000)),
+        "max_p99_ms": float(options.get("max_p99_ms", 4000)),
+        "min_throughput_rps": float(options.get("min_throughput_rps", 0)),
+    }
+    plan = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_JMETER_LOAD_PLAN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
+        "status": "READY",
+        "created_at": now(),
+        "summary": {"safe_endpoints": len(safe_cases), "excluded_mutations": len(excluded_mutations), "stages": len(stage_assets)},
+        "safe_endpoints": [{"method": case.get("method"), "path": case.get("path"), "name": case.get("title")} for case in safe_cases],
+        "excluded_mutations": excluded_mutations[:100],
+        "stages": stage_assets,
+        "thresholds": thresholds,
+        "stop_conditions": ["错误率超过阈值", "P95或P99连续两个观察窗口超过阈值", "测试环境出现明显不可用", "业务方或运维要求停止"],
+        "capacity_rule": "最后一个满足错误率、P95/P99和吞吐量门槛的阶梯视为当前可接受容量；首次持续越界的阶梯作为容量拐点候选，不直接等同生产极限。",
+        "execution_pipeline": ["平台选择压测场景", "生成可执行JMX", "JMeter持续运行", "回收JTL和HTML", "自动生成性能分析"],
+        "report_contract": {"raw_jtl": "必须保留", "jmeter_html": "必须生成并提供原地址", "ai_analysis": "引用同一批JTL/HTML，不替代原始报告"},
+    }
+    plan_path = output_dir / "load-test-plan.json"
+    plan["plan_path"] = str(plan_path)
+    plan_path.write_text(json.dumps(plan, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    report_dir = package_root / "reports" / f"jmeter-load-plan-{stamp}"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    summary_path = report_dir / "summary.json"
+    plan["summary_path"] = str(summary_path)
+    plan["json_url"] = "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    summary_path.write_text(json.dumps(plan, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "load_test_plan", "READY", plan)
+    return plan
+
+
+def _jmeter_load_capacity_progress(package_root, run_id):
+    completed = []
+    for item in _package_report_summaries(package_root, run_id):
+        payload = item["payload"]
+        if str(payload.get("report_type") or "").upper() != "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN":
+            continue
+        summary = payload.get("summary") or {}
+        completed.append({
+            "stage": int(summary.get("stage") or 0),
+            "name": summary.get("stage_name") or "",
+            "threads": int(summary.get("threads") or 0),
+            "status": payload.get("status"),
+            "error_rate": summary.get("error_rate"),
+            "p95_ms": summary.get("p95_ms"),
+            "p99_ms": summary.get("p99_ms"),
+            "throughput_rps": summary.get("throughput_rps"),
+            "report": item["path"],
+        })
+    completed.sort(key=lambda item: item["stage"])
+    passed = [item for item in completed if item["status"] == "PASSED"]
+    failed = [item for item in completed if item["status"] == "FAILED"]
+    return {
+        "completed_stages": completed,
+        "last_acceptable_stage": passed[-1] if passed else None,
+        "first_failed_stage": failed[0] if failed else None,
+        "capacity_conclusion": (
+            f"容量拐点候选出现在第{failed[0]['stage']}阶梯；最后通过为第{passed[-1]['stage']}阶梯。" if failed and passed
+            else f"第{failed[0]['stage']}阶梯已失败，尚未获得可接受基线。" if failed
+            else f"当前已完成{len(completed)}个阶梯且均通过，尚未触达容量拐点。" if completed
+            else "尚未执行压测阶梯。"
+        ),
+    }
+
+
+def run_requirement_jmeter_load_stage(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    plan_path = package_root / "outputs" / "jmeter" / "load-test" / "load-test-plan.json"
+    plan = _read_json_asset(plan_path)
+    if not plan:
+        plan = generate_requirement_jmeter_load_plan(project_id, package_id, {**options, "run_id": run_id})
+    stage_number = max(1, int(options.get("stage") or 1))
+    stage = next((item for item in plan.get("stages") or [] if int(item.get("stage") or 0) == stage_number), None)
+    if not stage:
+        raise ValueError(f"压测预案中没有第 {stage_number} 阶梯。")
+    jmx_path = Path(str(stage.get("jmx_path") or ""))
+    if not jmx_path.is_file():
+        raise ValueError(f"压测JMX不存在：{jmx_path}。请重新生成压测预案。")
+    jmeter = _jmeter_command()
+    if not (Path(str(jmeter)).exists() or shutil.which(str(jmeter))):
+        raise ValueError("本机未发现 JMeter，请先配置环境中的 JMeter 路径。")
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    report_dir = package_root / "reports" / f"jmeter-load-stage-{stage_number:02d}-{stamp}"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    jtl_path = report_dir / "result.jtl"
+    html_dir = report_dir / "html"
+    runtime = _runtime_context(project_id, _merge_execution_profile_options(project_id, options))
+    command = [str(jmeter), "-n", "-t", str(jmx_path), "-l", str(jtl_path)]
+    for key in ("ticket", "uid", "t", "deviceId", "model", "osVersion", "netType", "channel", "packageName", "appid", "appVersion", "version", "appsflyerId", "organic", "ispType", "isVpnConnected", "language", "appCode", "os", "systemLanguage", "deviceType"):
+        value = str(runtime.get(key) or "").strip()
+        if value:
+            command.append(f"-J{key}={value}")
+    timeout_seconds = int(stage.get("duration_seconds") or 60) + int(stage.get("rampup_seconds") or 0) + 180
+    result = _sanitize_tool_result(_run_command_capture(command, ROOT, timeout_seconds, os.environ.copy()), runtime)
+    if not jtl_path.is_file():
+        raise ValueError("JMeter压测结束后没有生成JTL，请查看执行输出和JMX运行参数。")
+    performance = _summarize_jmeter_jtl(jtl_path)
+    gate_options = {**options, **(plan.get("thresholds") or {})}
+    gate = _performance_gate(performance, gate_options)
+    diagnosis = _performance_diagnosis(performance, gate)
+    html_result = _run_command_capture([str(jmeter), "-g", str(jtl_path), "-o", str(html_dir)], ROOT, 180, os.environ.copy())
+    html_index = html_dir / "index.html"
+    status = "FAILED" if result.get("exit_code") not in {0, None} or gate.get("status") == "FAILED" else "PASSED"
+    report = {
+        "report_type": "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
+        "status": status,
+        "created_at": now(),
+        "summary": {
+            "stage": stage_number,
+            "stage_name": stage.get("name"),
+            "threads": stage.get("threads"),
+            "rampup_seconds": stage.get("rampup_seconds"),
+            "duration_seconds": stage.get("duration_seconds"),
+            "requests": performance.get("requests", 0),
+            "errors": performance.get("errors", 0),
+            "error_rate": performance.get("error_rate", 0),
+            "p95_ms": performance.get("p95_ms", 0),
+            "p99_ms": performance.get("p99_ms", 0),
+            "throughput_rps": performance.get("throughput_rps", 0),
+        },
+        "performance_summary": performance,
+        "performance_gate": gate,
+        "performance_diagnosis": diagnosis,
+        "execution": {"exit_code": result.get("exit_code"), "duration_ms": result.get("duration_ms"), "stdout": result.get("stdout", "")[-3000:], "stderr": result.get("stderr", "")[-3000:]},
+        "source": {
+            "jmx_path": str(jmx_path),
+            "jtl_path": str(jtl_path),
+            "archived_jtl": str(jtl_path),
+            "html_report": str(html_index) if html_index.is_file() else "",
+            "html_status": html_result.get("status"),
+            "html_error": str(html_result.get("stderr") or "")[-1000:],
+        },
+    }
+    summary_path = report_dir / "summary.json"
+    report["summary_path"] = str(summary_path)
+    report["json_url"] = "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    report["jtl_url"] = "/requirement-reports/" + jtl_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    report["html_url"] = "/requirement-reports/" + html_index.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix() if html_index.is_file() else ""
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "jmeter", status, report)
+    performance_review = generate_requirement_performance_ai_review(project_id, package_id, {"run_id": run_id, "use_model": False})
+    report["performance_analysis"] = {"status": performance_review.get("status"), "json_url": performance_review.get("json_url"), "summary_path": performance_review.get("summary_path")}
+    report["capacity_progress"] = _jmeter_load_capacity_progress(package_root, run_id)
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    return report
 
 
 def run_requirement_package_pytest(project_id, package_id, options=None):
@@ -3753,6 +4863,8 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
     package = requirement_package_by_id(project_id, package_id)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
     pytest_file = package_root / "outputs" / "pytest" / "pytest_api_cases.py"
     needs_refresh = True
     if pytest_file.is_file():
@@ -3767,6 +4879,8 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
                 "planned_scenario_batches",
                 "run_scenario_batch",
                 "orchestration",
+                "apply_case_query_variant",
+                "http_case_passed",
             )
             needs_refresh = any(marker not in existing_pytest for marker in required_markers)
         except Exception:
@@ -3777,7 +4891,9 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
         executable_cases = [case for case in source_cases if str(case.get("method") or "").strip() and str(case.get("path") or "").strip()]
         tool_cases = _external_tool_cases(executable_cases, False)
         if not project or not tool_cases:
-            return {"status": "BLOCKED", "package_id": package_id, "message": "当前需求包没有可生成 pytest 的可执行接口用例。"}
+            blocked = {"status": "BLOCKED", "package_id": package_id, "run_id": run_id, "message": "当前需求包没有可生成 pytest 的可执行接口用例。"}
+            update_requirement_run_context(project_id, package_id, run_id, "pytest", "BLOCKED", blocked)
+            return blocked
         pytest_file.parent.mkdir(parents=True, exist_ok=True)
         pytest_file.write_text(build_pytest_script(project, tool_cases, safe_runtime_context(_runtime_context(project_id, options)), True, package_id, str(package_root)), encoding="utf-8")
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -3799,7 +4915,8 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
         env["AUTOTEST_JTL_PATH"] = str(options.get("jtl_path"))
     if options.get("newman_json"):
         env["AUTOTEST_NEWMAN_JSON"] = str(options.get("newman_json"))
-    result = _sanitize_tool_result(_run_command_capture([sys.executable, "-m", "pytest", str(pytest_file), "-q"], ROOT, int(options.get("timeout", 240) or 240), env), runtime)
+    pytest_command = _pytest_command(pytest_file, run_dir / ".pytest-temp")
+    result = _sanitize_tool_result(_run_command_capture(pytest_command, ROOT, int(options.get("timeout", 240) or 240), env), runtime)
     payload = {}
     if summary_path.is_file():
         try:
@@ -3813,6 +4930,8 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
         "status": status,
         "created_at": now(),
         "pytest_file": str(pytest_file),
@@ -3823,18 +4942,131 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
         "stdout": result.get("stdout", "")[-4000:],
         "stderr": result.get("stderr", "")[-4000:],
     }
-    if not summary_path.is_file():
-        summary_path.write_text(json.dumps(run_summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    else:
-        summary_path.write_text(json.dumps({**payload, **run_summary}, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    return {
+    final_summary = {
+        **payload,
         **run_summary,
         "summary_path": str(summary_path),
         "json_url": "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
     }
+    summary_path.write_text(json.dumps(final_summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "pytest", status, final_summary)
+    return final_summary
 
 
-def _package_report_summaries(package_root):
+def run_requirement_package_pipeline(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    shared_options = {**options, "run_id": run_id}
+    steps = []
+
+    def record(name, action):
+        try:
+            result = action() or {}
+            status = str(result.get("status") or "PASSED").upper()
+            steps.append({
+                "name": name,
+                "status": status,
+                "message": result.get("message") or result.get("conclusion") or "",
+                "json_url": result.get("json_url") or "",
+                "summary_path": result.get("summary_path") or result.get("report_path") or result.get("manifest_path") or "",
+            })
+            return result
+        except Exception as exc:
+            steps.append({"name": name, "status": "FAILED", "message": str(exc), "json_url": "", "summary_path": ""})
+            return {"status": "FAILED", "message": str(exc)}
+
+    record("资源预检", lambda: requirement_resource_preflight(project_id, package_id))
+    structured_path = package_root / "outputs" / "structured-test-cases.json"
+    if not structured_path.is_file() or options.get("regenerate_structured_cases"):
+        record("结构化测试用例", lambda: generate_structured_test_cases(project_id, {"package_id": package_id}))
+    else:
+        steps.append({"name": "结构化测试用例", "status": "REUSED", "message": "复用当前需求包正式资产，未覆盖人工维护内容。", "json_url": "", "summary_path": str(structured_path)})
+
+    plan_path = package_root / "outputs" / "execution-plan.json"
+    if not plan_path.is_file() or options.get("regenerate_execution_plan"):
+        record("场景执行计划", lambda: generate_requirement_execution_plan(project_id, package_id, shared_options))
+    else:
+        steps.append({"name": "场景执行计划", "status": "REUSED", "message": "复用当前需求包正式场景计划。", "json_url": "", "summary_path": str(plan_path)})
+
+    tool_manifest = package_root / "outputs" / "tool-assets-manifest.json"
+    if not tool_manifest.is_file() or options.get("regenerate_tool_assets"):
+        record("执行工具资产", lambda: generate_requirement_package_tool_assets(project_id, package_id, shared_options))
+    else:
+        steps.append({"name": "执行工具资产", "status": "REUSED", "message": "复用当前需求包 Newman/JMeter/pytest 资产。", "json_url": "", "summary_path": str(tool_manifest)})
+
+    schema_audit = record("Schema校验", lambda: validate_requirement_package_schemas(project_id, package_id, True))
+    preflight = _read_json_asset(package_root / "outputs" / "data-preflight-check.json")
+    preflight_blocked = preflight.get("status") == "BLOCKED" or schema_audit.get("status") == "FAILED"
+    if preflight_blocked and options.get("stop_on_preflight_blocked", True):
+        steps.append({"name": "真实工具执行", "status": "BLOCKED", "message": "资源、数据或Schema预检存在阻断，未向测试环境发送请求。", "json_url": "", "summary_path": ""})
+    else:
+        source_cases = _requirement_package_cases(project_id, package_id)
+        mutation_count = sum(1 for case in source_cases if str(case.get("method") or "").upper() in {"POST", "PUT", "PATCH", "DELETE"})
+        allow_mutations = bool(options.get("allow_mutations"))
+        if options.get("run_newman", True):
+            newman_options = {**shared_options, "read_only_only": bool(mutation_count and not allow_mutations)}
+            record("Newman接口冒烟", lambda: run_requirement_package_newman(project_id, package_id, newman_options))
+        if options.get("run_pytest", True):
+            if mutation_count and not allow_mutations:
+                steps.append({
+                    "name": "pytest深度证据",
+                    "status": "SKIPPED",
+                    "message": f"当前需求包包含 {mutation_count} 个写接口；一键执行只运行只读 Newman，写流程与深度证据需显式允许或进入 JMeter 场景执行。",
+                    "json_url": "",
+                    "summary_path": "",
+                })
+            else:
+                record("pytest深度证据", lambda: run_requirement_package_pytest(project_id, package_id, shared_options))
+        if options.get("create_load_plan", True):
+            record("JMeter压测预案", lambda: generate_requirement_jmeter_load_plan(project_id, package_id, shared_options))
+        if options.get("jmeter_stage"):
+            record("JMeter压测执行", lambda: run_requirement_jmeter_load_stage(project_id, package_id, shared_options))
+
+    record("统一场景报告", lambda: generate_requirement_package_unified_scenario_report(project_id, package_id, shared_options))
+    record("AI执行复盘", lambda: generate_requirement_package_ai_review(project_id, package_id, shared_options))
+
+    normalized = [_normalized_package_status(item.get("status"), "ATTENTION") for item in steps]
+    failed = sum(1 for status in normalized if status == "FAILED")
+    blocked = sum(1 for status in normalized if status == "BLOCKED")
+    warnings = sum(1 for status in normalized if status in {"ATTENTION", "READY_WITH_WARNINGS"})
+    passed = sum(1 for status in normalized if status == "PASSED")
+    status = "FAILED" if failed else "BLOCKED" if blocked else "READY_WITH_WARNINGS" if warnings else "PASSED"
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    report_dir = package_root / "reports" / f"pipeline-{stamp}"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    summary_path = report_dir / "summary.json"
+    report = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_PIPELINE_RUN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "status": status,
+        "created_at": now(),
+        "summary": {"steps": len(steps), "passed": passed, "failed": failed, "blocked": blocked, "warnings": warnings},
+        "steps": steps,
+        "policy": {
+            "reuse_existing_assets": True,
+            "send_real_requests": bool(options.get("run_newman", True) or options.get("run_pytest", True)),
+            "jmeter_load_requires_explicit_stage": True,
+            "mutations_require_explicit_permission": True,
+        },
+        "next_action": "查看同批次失败步骤和原始报告；JMeter持续压测需在压测预案中明确选择阶梯。",
+    }
+    report["summary_path"] = str(summary_path)
+    report["json_url"] = "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "pipeline", status, report)
+    report["report_index"] = requirement_package_report_index(project_id, package_id, True)
+    return report
+
+
+def _package_report_summaries(package_root, run_id=""):
     result = []
     for file in sorted(Path(package_root).glob("reports/*/summary.json"), key=lambda x: x.stat().st_mtime, reverse=True):
         if file.parent.name.startswith("ai-review-"):
@@ -3842,6 +5074,8 @@ def _package_report_summaries(package_root):
         try:
             payload = json.loads(file.read_text(encoding="utf-8"))
         except Exception:
+            continue
+        if run_id and str(payload.get("run_id") or "").strip() != str(run_id).strip():
             continue
         result.append({"path": str(file), "payload": payload})
     return result
@@ -3918,9 +5152,9 @@ def _aggregate_scenario_status(statuses):
     return "UNKNOWN" if normalized else "PENDING"
 
 
-def _latest_package_reports_by_type(package_root):
+def _latest_package_reports_by_type(package_root, run_id=""):
     latest = {}
-    for item in _package_report_summaries(package_root):
+    for item in _package_report_summaries(package_root, run_id):
         payload = item.get("payload") or {}
         report_type = payload.get("report_type") or "UNKNOWN"
         if report_type not in latest:
@@ -3961,6 +5195,22 @@ def _newman_summary_for_report(payload):
     }
 
 
+def _apifox_summary_for_report(payload):
+    summary = payload.get("summary") or {}
+    return {
+        "status": payload.get("status") or "PENDING",
+        "requests": summary.get("requests", 0),
+        "failures": summary.get("failures", 0),
+        "exit_code": summary.get("exit_code"),
+        "duration_ms": summary.get("duration_ms", 0),
+        "timed_out": bool(summary.get("timed_out")),
+        "blockers": (payload.get("blockers") or [])[:10],
+        "failure_analysis": (payload.get("failure_analysis") or [])[:10],
+        "summary_path": payload.get("summary_path") or "",
+        "json_url": payload.get("json_url") or "",
+    }
+
+
 def _jmeter_summary_from_reports(package_root, package_id, run_payload=None):
     mapping = _read_json_asset(Path(package_root) / "outputs" / "case-jmeter-mapping.json")
     manifest = _read_json_asset(Path(package_root) / "outputs" / "jmeter" / f"{package_id}-case-jmeter-manifest.json")
@@ -3991,6 +5241,7 @@ def _write_unified_scenario_report_markdown(path, report):
         f"- 状态：{report.get('status')}",
         f"- 场景：{deep_get(report, 'summary.scenarios', 0)}",
         f"- 通过/失败/阻断/提醒：{deep_get(report, 'summary.passed', 0)}/{deep_get(report, 'summary.failed', 0)}/{deep_get(report, 'summary.blocked', 0)}/{deep_get(report, 'summary.warning', 0)}",
+        f"- Apifox发布冒烟：{deep_get(report, 'tools.apifox.status', 'PENDING')}（请求 {deep_get(report, 'tools.apifox.requests', 0)}，失败 {deep_get(report, 'tools.apifox.failures', 0)}）",
         "",
         "## 场景明细",
         "",
@@ -4019,12 +5270,17 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
     package = requirement_package_by_id(project_id, package_id)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
     plan = _read_json_asset(package_root / "outputs" / "execution-plan.json")
     if not plan.get("scenarios"):
         plan = generate_requirement_execution_plan(project_id, package_id, options)
     data_preflight = _read_json_asset(package_root / "outputs" / "data-preflight-check.json")
     preflight_by_scenario = _scenario_preflight_index(data_preflight)
-    latest_reports = _latest_package_reports_by_type(package_root)
+    latest_reports = _latest_package_reports_by_type(package_root, run_id)
+    apifox_item = latest_reports.get("REQUIREMENT_PACKAGE_APIFOX_CLI_RUN") or {}
+    apifox_payload = apifox_item.get("payload") or {}
+    apifox_summary = _apifox_summary_for_report(apifox_payload) if apifox_payload else {"status": "PENDING", "requests": 0, "failures": 0}
     pytest_item = latest_reports.get("REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN") or latest_reports.get("PYTEST_DEEP_EVIDENCE_REVIEW") or {}
     pytest_payload = pytest_item.get("payload") or {}
     pytest_by_scenario = _pytest_scenario_index(pytest_payload)
@@ -4136,28 +5392,44 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
                 "当前场景关联的外部工具脚本",
             ],
         })
-    overall = _aggregate_scenario_status([item.get("status") for item in scenarios])
+    overall_inputs = [item.get("status") for item in scenarios]
+    if apifox_payload:
+        overall_inputs.append(apifox_summary.get("status"))
+    overall = _aggregate_scenario_status(overall_inputs)
     if overall == "PASSED" and not pytest_by_scenario:
         overall = "READY_WITH_WARNINGS"
     report = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "report_type": "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT",
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
         "status": overall,
         "created_at": now(),
         "summary": {
             "scenarios": len(scenarios),
             **status_counts,
             "source_reports": len(source_reports),
+            "apifox_status": apifox_summary.get("status"),
             "newman_status": newman_summary.get("status"),
             "jmeter_status": jmeter_summary.get("status"),
             "pytest_scenarios": len(pytest_by_scenario),
         },
+        "tools": {
+            "apifox": {**apifox_summary, "scope": "package_release_smoke"},
+            "newman": {**newman_summary, "scope": "package_interface_regression"},
+            "jmeter": {**jmeter_summary, "scope": "scenario_and_performance"},
+            "pytest": {
+                "status": pytest_payload.get("status") or "PENDING",
+                "scenarios": len(pytest_by_scenario),
+                "scope": "scenario_deep_evidence",
+            },
+        },
         "scenarios": scenarios,
         "source_reports": source_reports,
-        "business_value": "把同一需求包下 Newman、JMeter、pytest、数据准备和人工维护点统一到业务场景，人工复核时按流程看，不按工具散着找。",
+        "business_value": "把同一需求包下 Apifox发布冒烟、Newman、JMeter、pytest、数据准备和人工维护点统一到业务场景，人工复核时按流程看，不按工具散着找。",
     }
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = package_root / "reports" / f"scenario-report-{stamp}"
@@ -4170,6 +5442,8 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
     report["markdown_path"] = str(markdown_path)
     report["json_url"] = "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     report["markdown_url"] = "/requirement-reports/" + markdown_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "scenario_report", overall, report)
     return report
 
 
@@ -4298,6 +5572,130 @@ def _salary_trade_execution_scenarios(package_root, structured_cases, mapping):
     return scenarios
 
 
+WEALTH_LEVEL_SCENARIO_RULES = [
+    {
+        "id": "wealth_auth_context",
+        "name": "登录态与公共参数",
+        "priority": "P0",
+        "tool": "newman",
+        "keywords": ["登录", "ticket", "token", "鉴权", "认证", "公共参数"],
+        "goal": "确认财富等级接口执行前的 uid、ticket 和公共移动端参数可用。",
+    },
+    {
+        "id": "wealth_snapshot_contract",
+        "name": "财富等级快照契约",
+        "priority": "P0",
+        "tool": "newman",
+        "keywords": ["财富", "等级", "经验", "currentlevel", "currentexper", "myexperlevelinfo"],
+        "goal": "校验财富等级查询响应的核心字段、类型、等级边界和展示字段。",
+    },
+    {
+        "id": "wealth_gift_experience_growth",
+        "name": "送礼后经验增长",
+        "priority": "P0",
+        "tool": "jmeter",
+        "keywords": ["送礼", "礼物", "经验增长", "增长", "gold", "consume", "账单"],
+        "goal": "执行送礼闭环并确认经验值、消费金币和业务账单按需求变化。",
+    },
+    {
+        "id": "wealth_wallet_bill_consistency",
+        "name": "钱包与账单一致性",
+        "priority": "P1",
+        "tool": "pytest",
+        "keywords": ["钱包", "余额", "账单", "bill", "wallet", "流水", "一致"],
+        "goal": "执行后复核钱包余额、账单记录和财富经验结果是否互相支撑。",
+    },
+    {
+        "id": "wealth_exception_contract",
+        "name": "异常参数与鉴权失败",
+        "priority": "P1",
+        "tool": "newman",
+        "keywords": ["异常", "缺失", "为空", "非法", "过期", "401", "403", "错误码"],
+        "goal": "覆盖缺少参数、无效凭证、边界值和错误码契约。",
+    },
+    {
+        "id": "wealth_performance_baseline",
+        "name": "财富接口性能基线",
+        "priority": "P1",
+        "tool": "jmeter",
+        "keywords": ["性能", "基线", "并发", "循环", "p95", "p99", "吞吐"],
+        "goal": "用 JMeter 固化财富等级接口性能基线和可回收报告。",
+    },
+]
+
+
+def _case_matches_keywords(case, keywords):
+    text = _case_text(case).lower()
+    return any(str(word).lower() in text for word in keywords)
+
+
+def _wealth_level_execution_scenarios(package_root, structured_cases, mapping):
+    mappings = {item.get("case_id"): item for item in (mapping.get("mappings") or []) if item.get("case_id")}
+    scenarios = []
+    assigned = set()
+    for rule in WEALTH_LEVEL_SCENARIO_RULES:
+        matched = [case for case in structured_cases if case.get("id") not in assigned and _case_matches_keywords(case, rule["keywords"])]
+        if not matched and rule["id"] == "wealth_snapshot_contract":
+            matched = [case for case in structured_cases if case.get("method") and case.get("path")][:20]
+        assigned.update(case.get("id") for case in matched if case.get("id"))
+        evidence = []
+        for case in matched:
+            item = mappings.get(case.get("id")) or {}
+            evidence.extend(item.get("db_evidence_rules") or [])
+            evidence.extend(item.get("redis_evidence_rules") or [])
+        preferred_tool = rule["tool"]
+        tool_cases = [case for case in matched if case.get("coverage_tool") == preferred_tool] or matched
+        tasks = []
+        if preferred_tool == "newman":
+            tasks.append(_scenario_tool_task("newman", "轻量接口回归、鉴权和响应契约检查。", tool_cases, str(Path(package_root) / "outputs" / "newman" / "postman-collection.json")))
+        if preferred_tool == "jmeter":
+            tasks.append(_scenario_tool_task("jmeter", "闭环流程、变量传递或性能基线执行。", tool_cases, str(Path(package_root) / "outputs" / "jmeter" / "jmeter-plan.jmx"), evidence, "财富等级性能基线"))
+        if preferred_tool == "pytest" or evidence:
+            tasks.append(_scenario_tool_task("pytest", "执行后结合 HTTP、财富经验、钱包、账单和可选Redis证据做深度校验。", tool_cases, str(Path(package_root) / "outputs" / "pytest" / "pytest_api_cases.py"), evidence))
+        blockers = []
+        review_notes = [] if matched else ["未在结构化用例中匹配到该财富等级场景，需要补充用例或确认关键词。"]
+        scenarios.append({
+            "scenario_id": rule["id"],
+            "name": rule["name"],
+            "business_goal": rule["goal"],
+            "priority": rule["priority"],
+            "status": _execution_plan_status(matched, blockers, False),
+            "account_slot": "wealth_user",
+            "cases": [_case_brief(case) for case in matched[:40]],
+            "tool_tasks": tasks or [_scenario_tool_task("manual", "缺少场景用例时先人工确认需求覆盖范围。", matched, blockers=review_notes)],
+            "human_review": {
+                "review_question": "该财富等级场景的接口结果、经验变化、钱包和账单证据是否共同符合需求？",
+                "human_actions": ["查看当前场景关联用例和原始报告。", "按需要核对财富经验、钱包余额、账单或Redis经验快照。"],
+                "maintenance_targets": [
+                    str(Path(package_root) / "outputs" / "structured-test-cases.json"),
+                    str(Path(package_root) / "outputs" / "case-jmeter-mapping.json"),
+                    str(Path(package_root) / "resource_manifest.yaml"),
+                    str(Path(package_root) / "account_model.yaml"),
+                ],
+            },
+            "reports": _scenario_report_targets(package_root, rule["id"]),
+        })
+    unassigned = [case for case in structured_cases if case.get("id") not in assigned]
+    if unassigned:
+        scenarios.append({
+            "scenario_id": "wealth_unclassified_cases",
+            "name": "待归类财富等级用例",
+            "business_goal": "保留暂未匹配到固定场景的用例，避免生成资产时丢失覆盖。",
+            "priority": "P2",
+            "status": "NEEDS_REVIEW",
+            "account_slot": "wealth_user",
+            "cases": [_case_brief(case) for case in unassigned[:40]],
+            "tool_tasks": [_scenario_tool_task("manual", "人工确认这些用例应该归入哪个财富等级场景。", unassigned[:40])],
+            "human_review": {
+                "review_question": "这些用例是否需要新增财富等级场景或扩展匹配规则？",
+                "human_actions": ["补充 scenario_type 或扩展财富等级场景规则。"],
+                "maintenance_targets": [str(Path(package_root) / "outputs" / "structured-test-cases.json")],
+            },
+            "reports": _scenario_report_targets(package_root, "wealth_unclassified_cases"),
+        })
+    return scenarios
+
+
 def _generic_execution_scenarios(package_root, structured_cases, mapping):
     groups = {}
     for case in structured_cases:
@@ -4386,7 +5784,12 @@ def generate_requirement_execution_plan(project_id, package_id, options=None):
     structured_payload = _read_json_asset(package_root / "outputs" / "structured-test-cases.json")
     mapping = _read_json_asset(package_root / "outputs" / "case-jmeter-mapping.json")
     structured_cases = structured_payload.get("cases") or _requirement_package_cases(project_id, package_id)
-    scenarios = _salary_trade_execution_scenarios(package_root, structured_cases, mapping) if package_id == "salary-trade" else _generic_execution_scenarios(package_root, structured_cases, mapping)
+    if package_id == "salary-trade":
+        scenarios = _salary_trade_execution_scenarios(package_root, structured_cases, mapping)
+    elif package_id == "wealth-level":
+        scenarios = _wealth_level_execution_scenarios(package_root, structured_cases, mapping)
+    else:
+        scenarios = _generic_execution_scenarios(package_root, structured_cases, mapping)
     tool_counts = {}
     status_counts = {}
     for scenario in scenarios:
@@ -4397,7 +5800,7 @@ def generate_requirement_execution_plan(project_id, package_id, options=None):
             tool_counts[tool] = tool_counts.get(tool, 0) + 1
     status = "BLOCKED" if status_counts.get("BLOCKED") else "READY_WITH_WARNINGS" if (status_counts.get("NEEDS_REVIEW") or status_counts.get("READY_WITH_WARNINGS")) else "READY"
     plan = {
-        "schema_version": "1.0",
+        "schema_version": ASSET_SCHEMA_VERSION,
         "report_type": "REQUIREMENT_PACKAGE_SCENARIO_EXECUTION_PLAN",
         "project_id": project_id,
         "package_id": package_id,
@@ -4589,14 +5992,163 @@ def _pytest_scenario_signals(payload):
     return signals, findings
 
 
+def _performance_ai_analysis(performance, gate, diagnosis, allow_model=True):
+    findings = list(diagnosis.get("findings") or [])
+    bottlenecks = list(diagnosis.get("bottlenecks") or [])
+    failed_checks = [item for item in gate.get("checks") or [] if not item.get("passed")]
+    risk_level = "P0" if float(performance.get("error_rate") or 0) > 0 else "P1" if failed_checks else "PASS"
+    built_in = {
+        "mode": "built_in_rules",
+        "risk_level": risk_level,
+        "conclusion": diagnosis.get("conclusion") or ("性能阈值全部通过。" if not failed_checks else "存在未通过的性能阈值。"),
+        "findings": findings[:10],
+        "recommendations": [
+            "先定位失败请求并将脚本、鉴权和业务失败分开统计，再评估响应时间。" if float(performance.get("error_rate") or 0) > 0 else "错误率已通过，可继续关注尾部延迟和吞吐量。",
+            "优先检查慢接口：" + "、".join(str(item.get("label") or "") for item in bottlenecks[:3]) if bottlenecks else "当前没有可识别的慢接口标签。",
+            "使用同一运行批次的独立JTL复测，避免历史数据影响基线。",
+        ],
+    }
+    settings = {item["key"]: item["value"] for item in rows("SELECT * FROM settings")}
+    api_key = str(settings.get("api_key") or "").strip()
+    if not allow_model or not api_key or api_key == "••••••••":
+        return built_in
+    prompt = (
+        "你是性能测试分析师。请仅根据下面的JMeter聚合指标、阈值和慢接口证据输出JSON，"
+        "字段必须是 risk_level、conclusion、findings、recommendations。"
+        "findings为对象数组，每项包含severity、title、detail；recommendations为字符串数组。"
+        "不要编造服务端原因，无法确认时明确写需要哪些证据。\n"
+        + json.dumps({"performance": performance, "gate": gate, "diagnosis": diagnosis}, ensure_ascii=False, default=str)[:30000]
+    )
+    base = str(settings.get("api_base") or "https://api.openai.com/v1").rstrip("/")
+    model = str(settings.get("model") or "gpt-5-mini")
+    body = json.dumps({"model": model, "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
+    request = urllib.request.Request(base + "/chat/completions", data=body, headers={"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"})
+    try:
+        with urllib.request.urlopen(request, timeout=90) as response:
+            content = str(json.loads(response.read())["choices"][0]["message"]["content"] or "").strip()
+        match = re.search(r"\{.*\}", content, re.S)
+        ai_payload = json.loads(match.group(0) if match else content)
+        if not isinstance(ai_payload, dict):
+            return built_in
+        return {
+            "mode": "configured_model",
+            "model": model,
+            "risk_level": str(ai_payload.get("risk_level") or risk_level),
+            "conclusion": str(ai_payload.get("conclusion") or built_in["conclusion"]),
+            "findings": list(ai_payload.get("findings") or findings)[:20],
+            "recommendations": list(ai_payload.get("recommendations") or built_in["recommendations"])[:12],
+        }
+    except Exception as exc:
+        built_in["model_fallback_reason"] = _redact_runtime_text(str(exc))[:500]
+        return built_in
+
+
+def generate_requirement_performance_ai_review(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    jmeter_item = next(
+        (
+            item for item in _package_report_summaries(package_root, run_id)
+            if str(item["payload"].get("report_type") or "").upper() in {"REQUIREMENT_PACKAGE_JMETER_RUN", "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN"}
+        ),
+        None,
+    )
+    if not jmeter_item:
+        raise ValueError("当前运行批次还没有 JMeter 报告，请先执行并回收本批次 JMeter 结果。")
+    jmeter_report = jmeter_item["payload"]
+    source_report_type = str(jmeter_report.get("report_type") or "").upper()
+    if package_id == "salary-trade" and source_report_type == "REQUIREMENT_PACKAGE_JMETER_RUN":
+        expected_jtl = package_root / "runs" / run_id / "jmeter-result.jtl"
+        source_jtl = Path(jmeter_report.get("jtl_path") or deep_get(jmeter_report, "source.jtl_path") or "")
+        if not source_jtl or source_jtl.resolve() != expected_jtl.resolve():
+            raise ValueError("当前 JMeter 报告来自历史累计JTL，不能生成可信的性能AI分析。请从平台重新打开JMeter并运行当前批次。")
+    performance = jmeter_report.get("performance_summary") or jmeter_report.get("summary") or {}
+    gate = jmeter_report.get("performance_gate") or _performance_gate(performance, options)
+    diagnosis = jmeter_report.get("performance_diagnosis") or _performance_diagnosis(performance, gate)
+    analysis = _performance_ai_analysis(performance, gate, diagnosis, bool(options.get("use_model", True)))
+    failed_checks = [item for item in gate.get("checks") or [] if not item.get("passed")]
+    status = "FAILED" if failed_checks else "READY_WITH_WARNINGS" if analysis.get("risk_level") in {"P0", "P1"} else "PASSED"
+    report = {
+        "report_type": "REQUIREMENT_PACKAGE_PERFORMANCE_AI_REVIEW",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
+        "status": status,
+        "created_at": now(),
+        "summary": {
+            "requests": performance.get("requests", 0),
+            "errors": performance.get("errors", 0),
+            "error_rate": performance.get("error_rate", 0),
+            "p95_ms": performance.get("p95_ms", 0),
+            "p99_ms": performance.get("p99_ms", 0),
+            "throughput_rps": performance.get("throughput_rps", 0),
+            "failed_thresholds": len(failed_checks),
+            "risk_level": analysis.get("risk_level"),
+        },
+        "analysis": analysis,
+        "performance_summary": performance,
+        "performance_gate": gate,
+        "performance_diagnosis": diagnosis,
+        "source_jmeter_report": jmeter_item["path"],
+        "source": {
+            "jmeter_json": jmeter_item["path"],
+            "jmeter_json_url": _package_report_file_url(jmeter_item["path"]),
+            "jmeter_html": deep_get(jmeter_report, "source.html_report") or jmeter_report.get("html_report") or "",
+            "jmeter_html_url": jmeter_report.get("html_url") or _package_report_file_url(deep_get(jmeter_report, "source.html_report")),
+            "jmeter_jtl": deep_get(jmeter_report, "source.archived_jtl") or jmeter_report.get("jtl_path") or "",
+            "jmeter_jtl_url": _package_report_file_url(deep_get(jmeter_report, "source.archived_jtl")),
+        },
+        "business_value": "把JMeter原始指标转成错误率、尾部延迟、慢接口、阈值结论和人工排查建议，保留原始证据但不要求测试人员只看图表。",
+    }
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out_dir = package_root / "reports" / f"performance-ai-review-{stamp}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / "summary.json"
+    markdown = out_dir / "review.md"
+    report["summary_path"] = str(out)
+    report["markdown_path"] = str(markdown)
+    report["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    report["markdown_url"] = "/requirement-reports/" + markdown.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    markdown.write_text("\n".join([
+        f"# {package.get('name') or package_id} - 性能报告AI分析",
+        "",
+        f"- 状态：{status}",
+        f"- 请求数：{performance.get('requests', 0)}",
+        f"- 错误率：{performance.get('error_rate', 0)}%",
+        f"- P95/P99：{performance.get('p95_ms', 0)}ms / {performance.get('p99_ms', 0)}ms",
+        f"- 吞吐量：{performance.get('throughput_rps', 0)} req/s",
+        "",
+        "## 结论",
+        "",
+        str(analysis.get("conclusion") or "-"),
+        "",
+        "## 建议",
+        "",
+        *[f"{index + 1}. {item}" for index, item in enumerate(analysis.get("recommendations") or [])],
+    ]), encoding="utf-8")
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "performance_review", status, report)
+    return report
+
+
 def generate_requirement_package_ai_review(project_id, package_id, options=None):
     options = options or {}
     package = requirement_package_by_id(project_id, package_id)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
-    report_items = _package_report_summaries(package_root)
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    report_items = _package_report_summaries(package_root, run_id)
     output_context = _package_output_context(package_root)
-    http_runs = _requirement_package_http_runs(project_id, package_id)
+    # Platform-level HTTP history has no package run_id and must not affect a new batch.
+    # HTTP evidence for this review comes from the run-scoped Newman/pytest reports.
+    http_runs = []
     generated_manifest = package_root / "outputs" / "tool-assets-manifest.json"
     tool_manifest = {}
     if generated_manifest.is_file():
@@ -4604,18 +6156,9 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
             tool_manifest = json.loads(generated_manifest.read_text(encoding="utf-8"))
         except Exception:
             tool_manifest = {}
+    # Old project-level reports are intentionally excluded. Static assets are read
+    # from the current package output directory instead of guessed by report name.
     related_global = []
-    seen_global_kinds = set()
-    for item in list_generated_reports(project_id):
-        if item.get("kind") == "AI复盘":
-            continue
-        text = " ".join(str(item.get(key) or "") for key in ("name", "kind", "summary", "package_id"))
-        if package_id in text or str(package.get("name") or "") in text:
-            kind_key = item.get("kind") or item.get("name") or ""
-            if kind_key in seen_global_kinds:
-                continue
-            seen_global_kinds.add(kind_key)
-            related_global.append(item)
     statuses = []
     findings = []
     execution_signals = {
@@ -4624,6 +6167,7 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
         "package_reports": len(report_items),
         "related_reports": len(related_global),
         "newman_reports": 0,
+        "apifox_reports": 0,
         "jmeter_reports": 0,
         "pytest_reports": 0,
         "pytest_scenarios": 0,
@@ -4645,6 +6189,13 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
         statuses.append(status)
         if payload.get("report_type") == "REQUIREMENT_PACKAGE_NEWMAN_RUN":
             execution_signals["newman_reports"] += 1
+        if payload.get("report_type") == "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN":
+            execution_signals["apifox_reports"] += 1
+            for problem in (payload.get("blockers") or []):
+                _review_add_finding(findings, "P1", "Apifox发布冒烟被阻断", problem, item["path"], status)
+            for failure in (payload.get("failure_analysis") or [])[:10]:
+                detail = failure.get("message") or json.dumps(failure, ensure_ascii=False)
+                _review_add_finding(findings, "P0" if status == "FAILED" else "P1", "Apifox发布冒烟失败", detail, item["path"], status)
         if payload.get("report_type") in {"REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN", "PYTEST_DEEP_EVIDENCE_REVIEW"}:
             pytest_signals, pytest_findings = _pytest_scenario_signals(payload)
             for key, value in pytest_signals.items():
@@ -4723,6 +6274,8 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
         "status": status,
         "created_at": now(),
         "summary": {
@@ -4811,6 +6364,8 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
     review["summary_path"] = str(out)
     review["markdown_path"] = str(md)
     review["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    out.write_text(json.dumps(review, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "ai_review", status, review)
     return review
 
 
@@ -5848,6 +7403,8 @@ SENSITIVE_CAPTURE_KEYS = (
 def _capture_redacted(name, value):
     key = str(name or "").lower()
     text = "" if value is None else str(value)
+    if re.fullmatch(r"\{\{[A-Za-z0-9_]+\}\}", text):
+        return value
     if any(word in key for word in SENSITIVE_CAPTURE_KEYS):
         return "***REDACTED***"
     if re.fullmatch(r"1[3-9]\d{9}", text):
@@ -6064,66 +7621,834 @@ def _csv_text(records, fields):
     return output.getvalue()
 
 
-def build_apipost_collaboration_package(project_id):
+def _openapi_paths_from_cases(cases):
+    paths = {}
+    for case in cases:
+        parsed = urllib.parse.urlsplit(str(case.get("path") or ""))
+        path = parsed.path or "/"
+        method = str(case.get("method") or "GET").lower()
+        if method not in {"get", "post", "put", "patch", "delete", "head", "options"}:
+            continue
+        query = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+        parameters = [
+            {
+                "name": key,
+                "in": "query",
+                "required": False,
+                "schema": {"type": "string"},
+                "example": value,
+            }
+            for key, value in query
+        ]
+        headers, payload = _case_request(case)
+        parameters.extend(
+            {
+                "name": key,
+                "in": "header",
+                "required": False,
+                "schema": {"type": "string"},
+                "example": value,
+            }
+            for key, value in headers.items()
+        )
+        expected_status = str(_tool_expected_status(case))
+        operation = {
+            "summary": case.get("title") or f"{method.upper()} {path}",
+            "operationId": re.sub(r"[^A-Za-z0-9_]", "_", str(case.get("id") or f"{method}_{path}")),
+            "tags": [str(case.get("module") or path.strip("/").split("/")[0] or "API")],
+            "parameters": parameters,
+            "responses": {expected_status: {"description": str(case.get("expected") or "Expected response")}},
+            "x-autotest-case-ids": [str(case.get("id") or "")],
+            "x-autotest-source": "requirement-package-test-case",
+        }
+        if method in {"post", "put", "patch", "delete"} and payload not in (None, "", {}):
+            operation["requestBody"] = {
+                "content": {
+                    "application/json": {
+                        "example": _redact_doc_value("body", payload),
+                    }
+                }
+            }
+        existing = paths.setdefault(path, {}).get(method)
+        if existing:
+            existing.setdefault("x-autotest-case-ids", []).append(str(case.get("id") or ""))
+        else:
+            paths[path][method] = operation
+    return paths
+
+
+def _parse_openapi_document(content):
+    text = str(content or "").strip()
+    if not text:
+        raise ValueError("请提供从Apifox完整导出的OpenAPI 3.0 JSON或YAML")
+    try:
+        document = json.loads(text)
+    except Exception:
+        try:
+            import yaml
+            document = yaml.safe_load(text)
+        except Exception as exc:
+            raise ValueError("OpenAPI文件不是合法的JSON或YAML") from exc
+    if not isinstance(document, dict) or not isinstance(document.get("paths"), dict):
+        raise ValueError("OpenAPI文件缺少paths接口定义")
+    if not (document.get("openapi") or document.get("swagger")):
+        raise ValueError("文件没有声明openapi或swagger版本")
+    return document
+
+
+def _openapi_schema_example(schema):
+    if not isinstance(schema, dict):
+        return None
+    if "example" in schema:
+        return schema.get("example")
+    if "default" in schema:
+        return schema.get("default")
+    if schema.get("enum"):
+        return schema["enum"][0]
+    schema_type = schema.get("type")
+    if schema_type == "object":
+        return {key: _openapi_schema_example(value) for key, value in (schema.get("properties") or {}).items()}
+    if schema_type == "array":
+        item = _openapi_schema_example(schema.get("items") or {})
+        return [] if item is None else [item]
+    return None
+
+
+def _openapi_pytest_operations(document, package_cases):
+    case_mapping = {}
+    for case in package_cases:
+        if not case.get("method") or not case.get("path"):
+            continue
+        key = (str(case.get("method") or "").upper(), urllib.parse.urlsplit(str(case.get("path") or "")).path)
+        case_mapping.setdefault(key, []).append(str(case.get("id") or ""))
+    all_operations = []
+    for path, path_item in (document.get("paths") or {}).items():
+        if not isinstance(path_item, dict):
+            continue
+        shared_parameters = path_item.get("parameters") or []
+        for method, operation in path_item.items():
+            method_upper = str(method).upper()
+            if method_upper not in {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"} or not isinstance(operation, dict):
+                continue
+            parameters = []
+            required_variables = []
+            for parameter in [*shared_parameters, *(operation.get("parameters") or [])]:
+                if not isinstance(parameter, dict) or not parameter.get("name"):
+                    continue
+                schema = parameter.get("schema") if isinstance(parameter.get("schema"), dict) else {}
+                example = parameter.get("example", _openapi_schema_example(schema))
+                item = {
+                    "name": str(parameter["name"]),
+                    "in": str(parameter.get("in") or "query"),
+                    "required": bool(parameter.get("required")),
+                    "example": example,
+                }
+                parameters.append(item)
+                if item["required"] and example in (None, ""):
+                    required_variables.append(item["name"])
+            body_example = None
+            body_required = False
+            request_body = operation.get("requestBody") or {}
+            if isinstance(request_body, dict):
+                body_required = bool(request_body.get("required"))
+                content_map = request_body.get("content") or {}
+                if isinstance(content_map, dict) and content_map:
+                    media = next(iter(content_map.values()))
+                    if isinstance(media, dict):
+                        body_example = media.get("example", _openapi_schema_example(media.get("schema") or {}))
+            response_map = operation.get("responses") or {}
+            expected_statuses = [int(code) for code in response_map if str(code).isdigit() and 200 <= int(code) < 300]
+            if not expected_statuses:
+                expected_statuses = [200]
+            response_schema_type = ""
+            for code in map(str, expected_statuses):
+                response = response_map.get(code) or {}
+                response_content = response.get("content") if isinstance(response, dict) else {}
+                if isinstance(response_content, dict) and response_content:
+                    media = next(iter(response_content.values()))
+                    schema = media.get("schema") if isinstance(media, dict) else {}
+                    if isinstance(schema, dict):
+                        response_schema_type = str(schema.get("type") or "")
+                if response_schema_type:
+                    break
+            operation_key = (method_upper, str(path))
+            all_operations.append({
+                "id": str(operation.get("operationId") or re.sub(r"[^A-Za-z0-9_]", "_", f"{method}_{path}")),
+                "title": str(operation.get("summary") or operation.get("description") or f"{method_upper} {path}"),
+                "method": method_upper,
+                "path": str(path),
+                "parameters": parameters,
+                "request_body_example": body_example,
+                "request_body_required": body_required,
+                "required_variables": required_variables,
+                "expected_statuses": expected_statuses,
+                "response_schema_type": response_schema_type,
+                "tags": operation.get("tags") or [],
+                "mapped_case_ids": [item for item in case_mapping.get(operation_key, []) if item],
+            })
+    mapped = [item for item in all_operations if item.get("mapped_case_ids")]
+    selection_mode = "full_openapi_with_case_mapping" if mapped else "full_openapi"
+    return all_operations, selection_mode
+
+
+def _build_openapi_pytest_foundation(package_id, operations):
+    return f'''import json
+import os
+import re
+
+import httpx
+import pytest
+
+
+PACKAGE_ID = {json.dumps(package_id, ensure_ascii=False)}
+OPERATIONS = {json.dumps(operations, ensure_ascii=False, indent=2)}
+
+
+def _env_name(name):
+    return "AUTOTEST_" + re.sub(r"[^A-Za-z0-9]+", "_", str(name)).strip("_").upper()
+
+
+def _runtime_value(name, example=None):
+    value = os.getenv(_env_name(name))
+    return value if value not in (None, "") else example
+
+
+def _request_parts(operation):
+    path = operation["path"]
+    query = {{}}
+    headers = {{}}
+    missing = []
+    for parameter in operation.get("parameters", []):
+        value = _runtime_value(parameter["name"], parameter.get("example"))
+        if parameter.get("required") and value in (None, ""):
+            missing.append(parameter["name"])
+            continue
+        if value in (None, ""):
+            continue
+        if parameter["in"] == "path":
+            path = path.replace("{{" + parameter["name"] + "}}", str(value))
+        elif parameter["in"] == "header":
+            headers[parameter["name"]] = str(value)
+        elif parameter["in"] == "query":
+            query[parameter["name"]] = value
+    return path, query, headers, missing
+
+
+@pytest.mark.parametrize("operation", OPERATIONS, ids=[item["id"] for item in OPERATIONS])
+def test_openapi_contract(operation):
+    if os.getenv("AUTOTEST_RUN_HTTP", "0").lower() not in {{"1", "true", "yes"}}:
+        pytest.skip("设置 AUTOTEST_RUN_HTTP=1 后发送真实请求")
+    base_url = os.getenv("AUTOTEST_BASE_URL", "").rstrip("/")
+    if not base_url:
+        pytest.skip("缺少 AUTOTEST_BASE_URL")
+    path, query, headers, missing = _request_parts(operation)
+    if missing:
+        pytest.skip("缺少必填运行变量: " + ", ".join(missing))
+    body = operation.get("request_body_example")
+    if operation.get("request_body_required") and body in (None, {{}}):
+        pytest.skip("OpenAPI未提供必填请求体示例，请在business目录补充")
+    response = httpx.request(
+        operation["method"],
+        base_url + "/" + path.lstrip("/"),
+        params=query,
+        headers=headers,
+        json=body if body is not None else None,
+        timeout=float(os.getenv("AUTOTEST_HTTP_TIMEOUT", "30")),
+    )
+    assert response.status_code in operation["expected_statuses"], response.text[:1000]
+    expected_type = operation.get("response_schema_type")
+    if expected_type in {{"object", "array"}}:
+        payload = response.json()
+        assert isinstance(payload, dict if expected_type == "object" else list)
+'''
+
+
+def import_apifox_openapi_to_package(project_id, package_id, payload=None):
+    payload = payload or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
+    document = _parse_openapi_document(payload.get("content"))
+    canonical = json.dumps(document, ensure_ascii=False, indent=2)
+    digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    apifox_root = package_root / "apifox"
+    source_path = apifox_root / "openapi.json"
+    previous_digest = ""
+    if source_path.is_file():
+        try:
+            previous_document = json.loads(source_path.read_text(encoding="utf-8-sig"))
+            previous_canonical = json.dumps(previous_document, ensure_ascii=False, indent=2)
+            previous_digest = hashlib.sha256(previous_canonical.encode("utf-8")).hexdigest()
+        except Exception:
+            previous_text = source_path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
+            previous_digest = hashlib.sha256(previous_text.encode("utf-8")).hexdigest()
+    changed = digest != previous_digest
+    if changed and source_path.is_file():
+        history = apifox_root / "history"
+        history.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_path, history / f"openapi-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json")
+    apifox_root.mkdir(parents=True, exist_ok=True)
+    source_path.write_text(canonical, encoding="utf-8")
+
+    package_cases = _requirement_package_cases(project_id, package_id)
+    operations, selection_mode = _openapi_pytest_operations(document, package_cases)
+    generated_root = package_root / "outputs" / "pytest" / "generated"
+    business_root = package_root / "outputs" / "pytest" / "business"
+    generated_root.mkdir(parents=True, exist_ok=True)
+    business_root.mkdir(parents=True, exist_ok=True)
+    test_path = generated_root / "test_openapi_contract.py"
+    test_path.write_text(_build_openapi_pytest_foundation(package_id, operations), encoding="utf-8")
+    business_readme = business_root / "README.md"
+    if not business_readme.exists():
+        business_readme.write_text(
+            "# 人工业务自动化\n\n这里用于维护业务断言、数据库/Redis证据和复杂场景。平台重新导入OpenAPI时不会覆盖本目录。\n",
+            encoding="utf-8",
+        )
+    cli_example = apifox_root / "cli-profile.example.yaml"
+    if not cli_example.exists():
+        cli_example.write_text(
+            """schema_version: '1.1'
+enabled: false
+name: Apifox发布前核心冒烟
+# 把Apifox的CI/CD页面生成命令拆成数组；真实access token只放环境变量。
+command:
+  - apifox-cli
+  - run
+required_env:
+  - APIFOX_ACCESS_TOKEN
+timeout_seconds: 300
+report_globs: []
+""",
+            encoding="utf-8",
+        )
+    manifest = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "APIFOX_OPENAPI_PYTEST_GENERATION",
+        "project_id": project_id,
+        "package_id": package_id,
+        "generated_at": now(),
+        "status": "READY" if operations else "BLOCKED",
+        "source_of_truth": "apifox",
+        "source_path": str(source_path),
+        "source_hash": digest,
+        "source_changed": changed,
+        "selection_mode": selection_mode,
+        "summary": {"openapi_paths": len(document.get("paths") or {}), "pytest_operations": len(operations)},
+        "generated_files": [str(test_path)],
+        "protected_paths": [str(business_root), str(apifox_root / "cli-profile.yaml")],
+        "rule": "只覆盖generated目录；business目录由人工维护。",
+    }
+    manifest_path = package_root / "outputs" / "pytest" / "openapi-pytest-manifest.json"
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {**manifest, "manifest_path": str(manifest_path), "source_url": _package_report_file_url(source_path), "generated_url": _package_report_file_url(test_path)}
+
+
+def _apifox_cli_command(profile, runtime_values):
+    raw_command = profile.get("command") or []
+    if isinstance(raw_command, str):
+        raw_command = [item.strip('"\'') for item in shlex.split(raw_command, posix=False)]
+    if not isinstance(raw_command, list) or not raw_command:
+        return [], ["command"]
+    missing = set()
+
+    def replace(value):
+        def resolve(match):
+            key = match.group(1) or match.group(2)
+            resolved = runtime_values.get(key)
+            if resolved in (None, ""):
+                missing.add(key)
+                return match.group(0)
+            return str(resolved)
+        return re.sub(r"\$\{([A-Za-z0-9_]+)\}|\{\{([A-Za-z0-9_]+)\}\}", resolve, str(value))
+
+    return [replace(item) for item in raw_command], sorted(missing)
+
+
+def _redact_apifox_cli_text(value, secrets):
+    text = str(value or "")
+    for secret in sorted({str(item) for item in secrets if item}, key=len, reverse=True):
+        text = text.replace(secret, "***REDACTED***")
+    text = re.sub(r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", "***REDACTED_JWT***", text)
+    return text
+
+
+def run_requirement_package_apifox_cli(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    profile_path = package_root / "apifox" / "cli-profile.yaml"
+    global_profile = deep_get(load_environment_config(), "tools.apifox_cli", {}) or {}
+    profile = deep_merge(global_profile if isinstance(global_profile, dict) else {}, _load_yaml_file(profile_path))
+    if isinstance(options.get("profile"), dict):
+        profile = deep_merge(profile, options["profile"])
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    out = ROOT / "reports" / "apipost" / f"{project_id}-{stamp}"
-    out.mkdir(parents=True, exist_ok=True)
-    openapi_doc = build_project_interface_document(project_id)
-    runtime_profile = project_execution_profile(project_id)
-    tool_assets = generate_enterprise_tool_assets(project_id)
-    (out / "openapi-baseline.apipost-import.json").write_text(json.dumps(openapi_doc, ensure_ascii=False, indent=2), encoding="utf-8")
-    (out / "postman-compatible-collection.json").write_text((TOOL_ASSET_ROOT / project_id / "postman-collection.json").read_text(encoding="utf-8"), encoding="utf-8")
-    env_doc = {
-        "name": project["name"] + " 测试环境变量",
-        "base_url": project.get("base_url") or "",
-        "variables": {
-            "uid": runtime_profile.get("runtime_params", {}).get("uid", ""),
-            "receiver_uid": runtime_profile.get("runtime_params", {}).get("receiver_uid", ""),
-            "pageNo": runtime_profile.get("runtime_params", {}).get("pageNo", 1),
-            "pageSize": runtime_profile.get("runtime_params", {}).get("pageSize", 50),
-            "ticket": "{{ticket}}",
+    run_dir = package_root / "reports" / f"apifox-smoke-{stamp}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    runtime_values = dict(os.environ)
+    runtime_values.update({str(key): str(value) for key, value in (profile.get("variables") or {}).items() if value not in (None, "")})
+    runtime_values.update({"APIFOX_REPORT_DIR": str(run_dir), "AUTOTEST_RUN_ID": run_id, "AUTOTEST_PACKAGE_ID": package_id})
+    required_env = [str(item) for item in profile.get("required_env") or []]
+    if profile.get("token_env") and str(profile.get("token_env")) not in required_env:
+        required_env.append(str(profile.get("token_env")))
+    missing_required = [name for name in required_env if not runtime_values.get(name)]
+    command, unresolved = _apifox_cli_command(profile, runtime_values)
+    blockers = []
+    if not profile_path.is_file() and not options.get("profile"):
+        blockers.append(f"缺少 {profile_path}；请复制cli-profile.example.yaml并填入Apifox CI/CD页面生成的命令")
+    if profile.get("enabled") is False and not options.get("force"):
+        blockers.append("Apifox CLI配置尚未启用")
+    if missing_required:
+        blockers.append("缺少环境变量：" + ", ".join(missing_required))
+    if unresolved:
+        blockers.append("命令仍有未解析变量：" + ", ".join(unresolved))
+    if not command:
+        blockers.append("Apifox CLI命令为空")
+    executable = command[0] if command else ""
+    resolved_executable = shutil.which(executable) or (str(Path(executable)) if executable and Path(executable).is_file() else "")
+    if command and not resolved_executable:
+        blockers.append(f"找不到Apifox CLI可执行程序：{executable}")
+    secrets = [runtime_values.get(name, "") for name in required_env if re.search(r"token|secret|password|key", name, re.I)]
+    if blockers:
+        report = {
+            "schema_version": ASSET_SCHEMA_VERSION,
+            "report_type": "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN",
+            "project_id": project_id,
+            "package_id": package_id,
+            "run_id": run_id,
+            "status": "BLOCKED",
+            "executed_at": now(),
+            "summary": {"requests": 0, "failures": 0, "exit_code": None},
+            "blockers": blockers,
+            "command": [_redact_apifox_cli_text(item, secrets) for item in command],
+            "profile_path": str(profile_path),
+        }
+        summary_path = run_dir / "summary.json"
+        summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        report.update({"summary_path": str(summary_path), "json_url": _package_report_file_url(summary_path)})
+        update_requirement_run_context(project_id, package_id, run_id, "apifox", "BLOCKED", report)
+        return report
+
+    command[0] = resolved_executable
+    timeout_seconds = max(10, min(int(options.get("timeout_seconds") or profile.get("timeout_seconds") or 300), 3600))
+    started = time.perf_counter()
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=str(package_root),
+            env={**os.environ, **{key: str(value) for key, value in runtime_values.items()}},
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout_seconds,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+        exit_code = completed.returncode
+        stdout = _redact_apifox_cli_text(completed.stdout, secrets)
+        stderr = _redact_apifox_cli_text(completed.stderr, secrets)
+        timed_out = False
+    except subprocess.TimeoutExpired as exc:
+        exit_code = -1
+        stdout = _redact_apifox_cli_text(exc.stdout, secrets)
+        stderr = _redact_apifox_cli_text(exc.stderr, secrets)
+        timed_out = True
+    duration_ms = round((time.perf_counter() - started) * 1000, 2)
+    (run_dir / "stdout.log").write_text(stdout or "", encoding="utf-8")
+    (run_dir / "stderr.log").write_text(stderr or "", encoding="utf-8")
+    collected_artifacts = []
+    artifact_root = run_dir / "artifacts"
+    for pattern in profile.get("report_globs") or []:
+        for candidate in package_root.glob(str(pattern)):
+            if not candidate.is_file():
+                continue
+            try:
+                relative = candidate.relative_to(package_root)
+            except ValueError:
+                continue
+            destination = candidate if run_dir in candidate.parents else artifact_root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            if destination != candidate:
+                shutil.copy2(candidate, destination)
+            if destination.suffix.lower() in {".json", ".html", ".htm", ".xml", ".txt", ".log", ".md", ".csv"}:
+                try:
+                    artifact_text = destination.read_text(encoding="utf-8", errors="replace")
+                    destination.write_text(_redact_apifox_cli_text(artifact_text, secrets), encoding="utf-8")
+                except OSError:
+                    pass
+            if destination not in collected_artifacts:
+                collected_artifacts.append(destination)
+    combined = "\n".join(filter(None, [stdout, stderr]))
+    failure_lines = [
+        line.strip() for line in combined.splitlines()
+        if re.search(r"\b(error|failed|failure|assertion|timeout)\b|错误|失败|断言|超时", line, re.I)
+    ][:100]
+    request_match = re.search(r"(?:requests?|请求)\s*[:=]?\s*(\d+)", combined, re.I)
+    failure_match = re.search(r"(?:failures?|failed|失败)\s*[:=]?\s*(\d+)", combined, re.I)
+    status = "PASSED" if exit_code == 0 and not timed_out else "FAILED"
+    report = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "run_id": run_id,
+        "status": status,
+        "executed_at": now(),
+        "summary": {
+            "requests": int(request_match.group(1)) if request_match else 0,
+            "failures": int(failure_match.group(1)) if failure_match else (0 if status == "PASSED" else max(1, len(failure_lines))),
+            "exit_code": exit_code,
+            "duration_ms": duration_ms,
+            "timed_out": timed_out,
         },
+        "failure_analysis": [{
+            "category": "ASSERTION_OR_RUNTIME",
+            "message": line,
+            "suggested_owner": "接口研发/测试共同复核",
+            "review_action": "在Apifox中打开对应冒烟场景，核对环境、请求参数和断言。",
+        } for line in failure_lines],
+        "command": [_redact_apifox_cli_text(item, secrets) for item in command],
+        "profile_path": str(profile_path),
+        "raw": {
+            "stdout": str(run_dir / "stdout.log"),
+            "stderr": str(run_dir / "stderr.log"),
+            "artifacts": [str(item) for item in collected_artifacts],
+            "artifact_urls": [_package_report_file_url(item) for item in collected_artifacts],
+        },
+    }
+    summary_path = run_dir / "summary.json"
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report.update({"summary_path": str(summary_path), "json_url": _package_report_file_url(summary_path)})
+    update_requirement_run_context(project_id, package_id, run_id, "apifox", status, report)
+    return report
+
+
+def _apifox_placeholder_text(value):
+    text = str(value or "")
+    text = re.sub(r"\$\{__P\(([^,\)]+)(?:,[^\)]*)?\)\}", r"{{\1}}", text)
+    text = re.sub(r"\$\{([A-Za-z0-9_]+)\}", r"{{\1}}", text)
+    text = text.replace("{{salary_order_no}}", "{{orderNo}}")
+    text = text.replace("{{salary_order_id}}", "{{orderId}}")
+    return text
+
+
+def _apifox_scenario_groups(package_root, cases):
+    execution_plan = _read_json_asset(package_root / "outputs" / "execution-plan.json")
+    case_ids = {str(case.get("id") or "") for case in cases}
+    case_scenarios = {}
+    groups = []
+    for index, scenario in enumerate(execution_plan.get("scenarios") or [], 1):
+        scenario_case_ids = [
+            str(item.get("id") or item) for item in scenario.get("cases") or []
+            if str(item.get("id") or item) in case_ids
+        ]
+        if not scenario_case_ids:
+            continue
+        meta = {
+            "scenario_id": str(scenario.get("scenario_id") or f"scenario-{index:02d}"),
+            "name": str(scenario.get("name") or f"业务场景 {index}"),
+            "description": str(scenario.get("business_goal") or ""),
+            "order_variable": str(scenario.get("order_variable") or "orderNo"),
+            "case_ids": scenario_case_ids,
+        }
+        groups.append(meta)
+        for case_id in scenario_case_ids:
+            case_scenarios.setdefault(case_id, []).append(meta)
+    return groups, case_scenarios
+
+
+def _apifox_test_script(case, scenario=None):
+    expected_status = _tool_expected_status(case)
+    expected_contains = str(case.get("expected_contains") or "").strip()
+    order_variable = str((scenario or {}).get("order_variable") or "orderNo")
+    lines = [
+        f'pm.test("HTTP状态码为 {expected_status}", function () {{ pm.response.to.have.status({expected_status}); }});',
+        "let responseJson = null;",
+        "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+    ]
+    if 200 <= expected_status < 300:
+        lines.append(
+            'if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, "code")) '
+            '{ pm.test("业务响应码成功", function () { pm.expect([0, 200, "0", "200"]).to.include(responseJson.code); }); }'
+        )
+    if expected_contains:
+        lines.append(
+            f'pm.test("响应包含预期内容", function () {{ pm.expect(pm.response.text()).to.include({json.dumps(expected_contains, ensure_ascii=False)}); }});'
+        )
+    lines.extend([
+        "function findValue(node, key) {",
+        "  if (!node || typeof node !== 'object') return undefined;",
+        "  if (Object.prototype.hasOwnProperty.call(node, key) && node[key] !== null && node[key] !== '') return node[key];",
+        "  for (const name of Object.keys(node)) { const found = findValue(node[name], key); if (found !== undefined) return found; }",
+        "  return undefined;",
+        "}",
+        "if (responseJson) {",
+        "  const orderNo = findValue(responseJson, 'orderNo');",
+        "  const orderId = findValue(responseJson, 'orderId');",
+        "  const accessToken = findValue(responseJson, 'access_token');",
+        "  if (orderNo !== undefined) { pm.environment.set('orderNo', String(orderNo)); "
+        + f"pm.environment.set({json.dumps(order_variable)}, String(orderNo)); }}",
+        "  if (orderId !== undefined) pm.environment.set('orderId', String(orderId));",
+        "  if (accessToken !== undefined) pm.environment.set('ticket', String(accessToken));",
+        "}",
+    ])
+    return lines
+
+
+def build_apifox_collaboration_package(project_id, package_id):
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,))
+    if not project:
+        raise ValueError("项目不存在")
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    source_cases = _requirement_package_cases(project_id, package_id)
+    executable_cases = [
+        case for case in source_cases
+        if str(case.get("method") or "").strip() and str(case.get("path") or "").strip()
+    ]
+    execution_plan = _read_json_asset(package_root / "outputs" / "execution-plan.json")
+    planned_case_ids = {
+        str(item.get("id") or item)
+        for scenario in execution_plan.get("scenarios") or []
+        for item in scenario.get("cases") or []
+    }
+    planned_cases = [case for case in executable_cases if str(case.get("id") or "") in planned_case_ids]
+    fallback_cases = _external_tool_cases([
+        case for case in executable_cases if str(case.get("id") or "") not in planned_case_ids
+    ], True)
+    cases = planned_cases + fallback_cases
+    if not cases:
+        raise ValueError("当前需求包没有可导出到Apifox的接口用例")
+
+    out = package_root / "outputs" / "apifox"
+    curl_dir = out / "curl"
+    curl_dir.mkdir(parents=True, exist_ok=True)
+    for old in curl_dir.glob("*.curl"):
+        old.unlink()
+
+    aliases = _load_yaml_file(package_root / "runtime_aliases.yaml")
+    common_query = aliases.get("common_query") if isinstance(aliases.get("common_query"), dict) else {}
+    runtime = {str(key): str(value) for key, value in common_query.items() if value not in (None, "")}
+    runtime.update({"uid": "{{uid}}", "ticket": "{{ticket}}", "countryCode": "{{countryCode}}", "currency": "{{currency}}", "orderNo": "{{orderNo}}", "orderId": "{{orderId}}", "t": "{{t}}"})
+    if package_id == "salary-trade":
+        runtime.update({
+            "applicant_uid": "{{applicant_uid}}",
+            "applicant_ticket": "{{applicant_ticket}}",
+            "proxy_uid": "{{proxy_uid}}",
+            "proxy_ticket": "{{proxy_ticket}}",
+            "agentUid": "{{proxy_uid}}",
+            "proxyUid": "{{proxy_uid}}",
+        })
+
+    sanitized_cases = []
+    for case in cases:
+        item = dict(case)
+        parsed = urllib.parse.urlsplit(str(item.get("path") or ""))
+        proxy_side = "/userserv/salary/trade/agent/" in parsed.path.lower()
+        pairs = []
+        for key, value in urllib.parse.parse_qsl(parsed.query, keep_blank_values=True):
+            lower = key.lower()
+            if lower in {"ticket", "token", "access_token"}:
+                value = "{{proxy_ticket}}" if package_id == "salary-trade" and proxy_side else "{{applicant_ticket}}" if package_id == "salary-trade" else "{{ticket}}"
+            elif lower == "uid":
+                value = "{{proxy_uid}}" if package_id == "salary-trade" and proxy_side else "{{applicant_uid}}" if package_id == "salary-trade" else "{{uid}}"
+            elif "password" in lower or lower in {"sn", "cookie", "authorization"}:
+                value = "{{" + re.sub(r"[^A-Za-z0-9_]", "_", key) + "}}"
+            pairs.append((key, value))
+        item["path"] = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urllib.parse.urlencode(pairs, safe="{}"), parsed.fragment))
+        item["path"] = _apifox_placeholder_text(item["path"])
+        headers, _ = _case_request(item)
+        for key in list(headers):
+            if re.search(r"ticket|token|password|authorization|cookie|\bsn\b", key, re.I):
+                headers[key] = "{{" + re.sub(r"[^A-Za-z0-9_]", "_", key) + "}}"
+            else:
+                headers[key] = _apifox_placeholder_text(headers[key])
+        item["headers"] = json.dumps(headers, ensure_ascii=False)
+        item["payload"] = _apifox_placeholder_text(item.get("payload") or "")
+        sanitized_cases.append(item)
+
+    collection = build_postman_collection(project, sanitized_cases, runtime, False)
+    collection["info"]["name"] = f"{package.get('name') or package_id} - Apifox可导入集合"
+    flat_collection_items = list(collection.get("item") or [])
+    scenario_groups, case_scenarios = _apifox_scenario_groups(package_root, sanitized_cases)
+    grouped_items = {}
+    group_order = []
+    for scenario in scenario_groups:
+        key = scenario["scenario_id"]
+        grouped_items[key] = {
+            "name": scenario["name"],
+            "description": scenario["description"],
+            "item": [],
+            "x-autotest-scenario": scenario,
+        }
+        group_order.append(key)
+    for case, collection_item in zip(sanitized_cases, flat_collection_items):
+        request = collection_item.get("request") or {}
+        parsed_url = urllib.parse.urlsplit(str(request.get("url") or ""))
+        portable_path = urllib.parse.urlunsplit(("", "", parsed_url.path, parsed_url.query, parsed_url.fragment))
+        request["url"] = "{{baseUrl}}/" + portable_path.lstrip("/")
+        case_id = str(case.get("id") or "")
+        assigned_scenarios = case_scenarios.get(case_id) or [None]
+        for scenario in assigned_scenarios:
+            scenario_item = copy.deepcopy(collection_item)
+            scenario_item["event"] = [{
+                "listen": "test",
+                "script": {"type": "text/javascript", "exec": _apifox_test_script(case, scenario)},
+            }]
+            scenario_item["request"]["description"] = "\n".join(filter(None, [
+                f"平台用例ID：{case_id}",
+                f"业务场景：{scenario.get('name')}" if scenario else "",
+                f"预期结果：{case.get('expected')}" if case.get("expected") else "",
+            ]))
+            group_key = scenario["scenario_id"] if scenario else "fallback:" + str(case.get("scenario_type") or "接口契约")
+            if group_key not in grouped_items:
+                group_name = str(case.get("scenario_type") or "接口契约与补充用例")
+                grouped_items[group_key] = {"name": group_name, "item": []}
+                group_order.append(group_key)
+            grouped_items[group_key]["item"].append(scenario_item)
+    collection["item"] = [grouped_items[key] for key in group_order if grouped_items[key]["item"]]
+    openapi_doc = build_project_interface_document(project_id)
+    wanted_paths = {urllib.parse.urlsplit(str(case.get("path") or "")).path for case in sanitized_cases}
+    openapi_doc["paths"] = {path: value for path, value in (openapi_doc.get("paths") or {}).items() if path in wanted_paths}
+    case_paths = _openapi_paths_from_cases(sanitized_cases)
+    for path, methods in case_paths.items():
+        target = openapi_doc["paths"].setdefault(path, {})
+        for method, operation in methods.items():
+            if method not in target:
+                target[method] = operation
+            else:
+                target[method]["x-autotest-case-ids"] = operation.get("x-autotest-case-ids", [])
+    openapi_doc.setdefault("info", {})["title"] = f"{package.get('name') or package_id} - Apifox接口基线"
+    openapi_doc["x-autotest-package"] = {"package_id": package_id, "generated_at": now()}
+    (out / "openapi.json").write_text(json.dumps(openapi_doc, ensure_ascii=False, indent=2), encoding="utf-8")
+    env_doc = {
+        "name": f"{package.get('name') or package_id} - Apifox环境模板",
+        "variables": {"baseUrl": project.get("base_url") or "", "mockBaseUrl": "", "uid": "", "ticket": "", **{key: "" if "ticket" in key.lower() or "token" in key.lower() else ("" if str(value).startswith("{{") else value) for key, value in runtime.items()}},
         "security": {
-            "ticket": "请在 Apipost 环境变量中手动填入或由登录前置脚本写入；平台导出包不包含真实 ticket。",
+            "ticket": "请在 Apifox本地环境中填写或由登录前置脚本写入；平台导出包不包含真实ticket。",
             "password": "不导出密码、sn、cookie、access_token 原值。",
         },
     }
-    (out / "apipost-env-template.json").write_text(json.dumps(env_doc, ensure_ascii=False, indent=2), encoding="utf-8")
-    guide = f"""# Apipost 协同导入说明
+    if package_id == "salary-trade":
+        env_doc["variables"].pop("uid", None)
+        env_doc["variables"].pop("ticket", None)
+    collection_text = json.dumps(collection, ensure_ascii=False, indent=2)
+    for variable_name in sorted(set(re.findall(r"\{\{([A-Za-z0-9_]+)\}\}", collection_text))):
+        env_doc["variables"].setdefault(variable_name, "")
+    (out / "postman-collection.json").write_text(collection_text, encoding="utf-8")
+    (out / "environment.example.json").write_text(json.dumps(env_doc, ensure_ascii=False, indent=2), encoding="utf-8")
+    postman_environment = {
+        "id": str(uuid.uuid4()),
+        "name": f"{package.get('name') or package_id} - Apifox环境模板",
+        "values": [
+            {"key": key, "value": value, "enabled": True, "type": "default"}
+            for key, value in env_doc["variables"].items()
+        ],
+        "_postman_variable_scope": "environment",
+        "_postman_exported_at": now(),
+        "_postman_exported_using": "AutoTest-AI Apifox exporter",
+    }
+    (out / "postman-environment.json").write_text(json.dumps(postman_environment, ensure_ascii=False, indent=2), encoding="utf-8")
 
-项目：{project['name']}
+    jmeter_mapping = _read_json_asset(package_root / "outputs" / "case-jmeter-mapping.json")
+    jmeter_by_case = {str(item.get("case_id") or item.get("id") or ""): item for item in jmeter_mapping.get("mappings") or []}
+    mappings = []
+    automation_scenarios = []
+    for key in group_order:
+        group = grouped_items[key]
+        if not group.get("item"):
+            continue
+        automation_scenarios.append({
+            "scenario_id": deep_get(group, "x-autotest-scenario.scenario_id", key),
+            "name": group.get("name"),
+            "case_count": len(group.get("item") or []),
+            "order_variable": deep_get(group, "x-autotest-scenario.order_variable", ""),
+        })
+    automation_manifest = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "package_id": package_id,
+        "generated_at": now(),
+        "collection": "postman-collection.json",
+        "environment": "postman-environment.json",
+        "scenario_count": len(automation_scenarios),
+        "scenarios": automation_scenarios,
+        "capabilities": ["scenario_folders", "http_assertion", "business_code_assertion", "response_variable_extraction", "environment_parameterization"],
+    }
+    (out / "apifox-automation-manifest.json").write_text(json.dumps(automation_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    for index, (case, collection_item) in enumerate(zip(sanitized_cases, flat_collection_items), 1):
+        case_id = str(case.get("id") or f"case-{index:03d}")
+        curl_name = f"{index:03d}-{re.sub(r'[^A-Za-z0-9_.-]+', '-', case_id)}.curl"
+        request = collection_item.get("request") or {}
+        command = [f"curl --request {str(request.get('method') or 'GET').upper()}", f"--url {json.dumps(str(request.get('url') or ''), ensure_ascii=False)}"]
+        for header in request.get("header") or []:
+            command.append(f"--header {json.dumps(str(header.get('key') or '') + ': ' + str(header.get('value') or ''), ensure_ascii=False)}")
+        raw_body = deep_get(request, "body.raw", "")
+        if raw_body:
+            command.append(f"--data-raw {json.dumps(str(raw_body), ensure_ascii=False)}")
+        (curl_dir / curl_name).write_text(" \\\n  ".join(command) + "\n", encoding="utf-8")
+        mapped = jmeter_by_case.get(case_id) or {}
+        scenarios = case_scenarios.get(case_id) or []
+        primary_scenario = scenarios[0] if scenarios else {}
+        mappings.append({"case_id": case_id, "title": case.get("title"), "method": case.get("method"), "path": urllib.parse.urlsplit(str(case.get("path") or "")).path, "scenario_id": primary_scenario.get("scenario_id") or "", "scenario_name": primary_scenario.get("name") or str(case.get("scenario_type") or ""), "order_variable": primary_scenario.get("order_variable") or "", "scenario_ids": [scenario.get("scenario_id") for scenario in scenarios], "scenario_names": [scenario.get("name") for scenario in scenarios], "order_variables": [scenario.get("order_variable") for scenario in scenarios if scenario.get("order_variable")], "postman_item": collection_item.get("name"), "curl_file": f"curl/{curl_name}", "jmeter_thread_group": mapped.get("thread_group") or mapped.get("jmeter_thread_group") or "", "jmeter_sampler": mapped.get("sampler") or mapped.get("request_sampler") or ""})
+    (out / "case-api-mapping.json").write_text(json.dumps({"schema_version": ASSET_SCHEMA_VERSION, "package_id": package_id, "generated_at": now(), "mappings": mappings}, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    guide = f"""# Apifox 协同导入说明
+
+需求包：{package.get('name') or package_id}
 生成时间：{now()}
 
 ## 导入顺序
-1. 在 Apipost 中导入 `openapi-baseline.apipost-import.json`，建立接口文档基线。
-2. 如需直接执行集合，也可导入 `postman-compatible-collection.json`。
-3. 参考 `apipost-env-template.json` 建立测试环境变量。
-4. `ticket`、密码、sn、cookie 等敏感值需要在 Apipost 本地环境中填写或由登录前置脚本生成，本包不会导出。
+1. 在Apifox中导入 `openapi.json`，建立接口文档基线。
+2. 通过Postman导入入口导入 `postman-collection.json`，复用请求和断言。
+3. 同一入口导入 `postman-environment.json`；测试域名填写 `baseUrl`，Apifox生成的Mock域名填写 `mockBaseUrl`。
+4. `environment.example.json` 是便于人工维护和平台迁移的可读配置副本。
+5. 单接口排错时导入或复制 `curl/` 下对应用例的cURL。
+6. 使用 `case-api-mapping.json` 反查平台用例、Apifox请求和JMeter线程组。
+7. ticket、密码、sn、cookie等敏感值只在Apifox本地环境维护，本包不会导出。
+
+## 自动化能力
+- 请求会按照 `execution-plan.json` 的业务场景分组；未进入场景计划的接口按用例类型归档。
+- 每个请求包含HTTP状态断言，成功用例在响应存在 `code` 时校验业务成功码。
+- 响应中的 `orderNo`、`orderId` 和 `access_token` 会自动写入环境变量，供后续步骤使用。
+- `apifox-automation-manifest.json` 记录场景、用例数量和自动化能力，便于平台与人工复核。
 
 ## 平台边界
 - 平台负责生成接口资产、测试用例、执行脚本、运行参数模板和报告归档。
-- Apipost 负责单接口调试、人工排查、团队接口协作。
+- Apifox负责接口文档、Mock、单接口调试、人工维护和团队协作。
 - Newman、JMeter、pytest 负责自动执行与报告产出。
 - MySQL/Redis 只读，用于证据核对，不写真实业务数据。
 
 ## 本次资产
 - 接口数量：{len(openapi_doc.get('paths', {}))}
-- 外部工具资产：{tool_assets.get('generated', 0)}
+- 测试用例：{len(sanitized_cases)}
+- cURL文件：{len(mappings)}
 """
-    (out / "README-Apipost.md").write_text(guide, encoding="utf-8")
-    zip_path = ROOT / "reports" / f"apipost-package-{project_id}-{stamp}.zip"
+    (out / "README-Apifox.md").write_text(guide, encoding="utf-8")
+    zip_path = out / f"{package_id}-apifox-exchange.zip"
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        for file in out.iterdir():
-            zf.write(file, arcname=file.name)
+        for file in out.rglob("*"):
+            if file.is_file() and file != zip_path:
+                zf.write(file, arcname=file.relative_to(out).as_posix())
+    base_url = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     return {
         "status": "READY",
-        "name": "Apipost 协同包",
-        "files": [item.name for item in out.iterdir()],
+        "name": "Apifox需求包交换包",
+        "package_id": package_id,
+        "summary": {"interfaces": len(openapi_doc.get("paths") or {}), "cases": len(sanitized_cases), "scenario_steps": sum(item.get("case_count", 0) for item in automation_scenarios), "scenarios": len(automation_scenarios), "curl_files": len(mappings)},
+        "files": [item.relative_to(out).as_posix() for item in out.rglob("*") if item.is_file()],
         "zip_path": str(zip_path),
-        "zip_url": "/reports/" + zip_path.name,
+        "zip_url": base_url + "/" + zip_path.name,
+        "openapi_url": base_url + "/openapi.json",
+        "postman_url": base_url + "/postman-collection.json",
+        "environment_url": base_url + "/postman-environment.json",
+        "environment_reference_url": base_url + "/environment.example.json",
+        "mapping_url": base_url + "/case-api-mapping.json",
         "security": {"sensitive_values_exported": False, "business_datasource_readonly": True},
     }
 
@@ -6167,7 +8492,7 @@ def build_test_asset_delivery_package(project_id):
 生成时间：{now()}
 
 ## 包含内容
-- 接口文档基线：OpenAPI 3.0，已脱敏，可导入 Apipost/Postman。
+- 接口文档基线：OpenAPI 3.0，已脱敏，可导入 Apifox/Postman。
 - 测试点清单：按优先级、模块、风险归档。
 - 测试用例清单：按执行器、场景、状态归档。
 - 需求追踪关系：需求、接口、用例、流程、数据规则之间的关联。
@@ -6177,7 +8502,7 @@ def build_test_asset_delivery_package(project_id):
 - 报告索引：当前平台已归档报告列表。
 
 ## 企业协作边界
-平台是 AI 自动化质量中枢，负责资产生成、编排、准入和归档；Apipost 负责单接口人工协作；Newman、JMeter、pytest 负责标准化执行；MySQL/Redis 只读取证。
+平台是 AI 自动化质量中枢，负责资产生成、编排、准入和归档；Apifox负责接口文档、Mock和单接口人工协作；Newman、JMeter、pytest负责标准化执行；MySQL/Redis只读取证。
 
 ## 安全说明
 本包不导出 ticket、access_token、密码、sn、cookie、手机号等敏感原值。真实业务库和 Redis 不允许写入。
@@ -6518,8 +8843,20 @@ def run_performance(plan_id):
 
 TOOL_ASSET_ROOT = ROOT / "reports" / "tool-assets"
 REQUIREMENT_PACKAGE_ROOT = ROOT / "requirements"
-JMETER_WORKBENCH_JMX = Path(os.getenv("AUTOTEST_JMETER_WORKBENCH_JMX") or r"D:\apache-jmeter-5.6.3\jmx\20260826\性能基线.jmx")
-JMETER_WORKBENCH_JTL = Path(os.getenv("AUTOTEST_JMETER_WORKBENCH_JTL") or r"D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl")
+
+
+def _jmeter_workbench_jmx():
+    config = load_environment_config()
+    return _path_from_config(os.getenv("AUTOTEST_JMETER_WORKBENCH_JMX") or deep_get(config, "requirement_datasets.wealth_level.jmeter_plan_path"), "jmeter/wealth-level-performance.jmx")
+
+
+def _jmeter_workbench_jtl():
+    config = load_environment_config()
+    return _path_from_config(os.getenv("AUTOTEST_JMETER_WORKBENCH_JTL") or deep_get(config, "requirement_datasets.wealth_level.result_jtl_path"), "reports/latest/wealth-level-result.jtl")
+
+
+JMETER_WORKBENCH_JMX = _jmeter_workbench_jmx()
+JMETER_WORKBENCH_JTL = _jmeter_workbench_jtl()
 
 
 def _tool_version(command, args):
@@ -6667,9 +9004,24 @@ def _case_has_runtime_placeholder(case):
 
 def _external_tool_cases(cases, include_runtime=False, include_login_cases=False):
     selected = list(cases) if include_runtime else [case for case in cases if not _case_has_runtime_placeholder(case)]
-    if include_login_cases:
-        return selected
-    return [case for case in selected if not _is_login_case(case)]
+    if not include_login_cases:
+        selected = [case for case in selected if not _is_login_case(case)]
+    unique = []
+    seen = set()
+    for case in selected:
+        signature = (
+            str(case.get("title") or "").strip(),
+            str(case.get("method") or "").upper(),
+            str(case.get("path") or "").strip(),
+            str(case.get("headers") or "").strip(),
+            str(case.get("payload") or "").strip(),
+            int(case.get("expected_status") or 200),
+        )
+        if signature in seen:
+            continue
+        seen.add(signature)
+        unique.append(case)
+    return unique
 
 
 def _safe_runtime_scalar(value):
@@ -6891,7 +9243,10 @@ def _append_runtime_query_params(path, context):
     parsed = urllib.parse.urlsplit(path)
     current = urllib.parse.parse_qs(parsed.query, keep_blank_values=True)
     additions = {}
-    for key in LOGIN_CONTEXT_KEYS:
+    runtime_query_keys = LOGIN_CONTEXT_KEYS | {
+        "ticket", "uid", "countryCode", "currency", "agentUid", "proxyUid", "orderNo", "orderId"
+    }
+    for key in runtime_query_keys:
         if key in context and key not in current:
             additions[key] = str(context[key])
     if not additions:
@@ -6900,29 +9255,78 @@ def _append_runtime_query_params(path, context):
     return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
 
 
+def _apply_case_query_variant(case, path):
+    title = str(case.get("title") or "").lower()
+    parsed = urllib.parse.urlsplit(path)
+    pairs = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+    target_aliases = {
+        "uid": ("uid", "用户id", "用户 id"),
+        "ticket": ("ticket", "token", "令牌", "登录态", "凭证"),
+        "orderNo": ("orderno", "order no", "订单号"),
+        "orderId": ("orderid", "order id", "订单id"),
+        "pageNo": ("pageno", "page no", "页码"),
+        "pageSize": ("pagesize", "page size", "分页大小"),
+    }
+    missing = any(word in title for word in ("缺失", "为空", "空值", "missing", "empty", "omit"))
+    invalid = any(word in title for word in ("非法", "无效", "错误类型", "类型错误", "invalid", "wrong type"))
+    target = next((key for key, aliases in target_aliases.items() if any(alias in title for alias in aliases)), "")
+    if not target and (missing or invalid):
+        target = "uid"
+    if not target:
+        return path
+    if missing:
+        pairs = [(key, value) for key, value in pairs if key.lower() != target.lower()]
+    elif invalid:
+        invalid_value = "not-a-number" if target.lower() in {"uid", "orderid", "pageno", "pagesize"} else "invalid-token"
+        pairs = [(key, invalid_value if key.lower() == target.lower() else value) for key, value in pairs]
+        if not any(key.lower() == target.lower() for key, _ in pairs):
+            pairs.append((target, invalid_value))
+    query = urllib.parse.urlencode(pairs, safe="{}")
+    return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
+
+
 def _case_request_with_runtime_context(case, runtime_context=None):
     headers, payload = _case_request(case)
     runtime_context = runtime_context or {}
-    if not _is_login_case(case) and (_case_has_runtime_placeholder(case) or _tool_expected_status(case) == 200):
+    if not _is_login_case(case):
         for key in ("t", "sn"):
             if runtime_context.get(key) and key not in headers:
                 headers[key] = "{{" + key + "}}"
     path = case["path"]
-    if not _is_login_case(case) and (_case_has_runtime_placeholder(case) or _tool_expected_status(case) == 200):
+    if not _is_login_case(case):
         placeholder_context = {key: "{{" + key + "}}" for key in LOGIN_CONTEXT_KEYS if runtime_context.get(key)}
+        for key in ("ticket", "uid", "countryCode", "currency", "agentUid", "proxyUid", "orderNo", "orderId"):
+            if runtime_context.get(key) not in (None, ""):
+                placeholder_context[key] = "{{" + key + "}}"
         path = _append_runtime_query_params(path, placeholder_context)
+        path = _apply_case_query_variant(case, path)
     return path, headers, payload
+
+
+def _runtime_context_for_case(case, runtime_context=None):
+    context = dict(runtime_context or {})
+    path = str(case.get("path") or "").lower()
+    proxy_side = "/userserv/salary/trade/agent/" in path
+    prefix = "proxy" if proxy_side else "applicant"
+    role_uid = context.get(f"{prefix}_uid")
+    role_ticket = context.get(f"{prefix}_ticket")
+    if role_uid not in (None, ""):
+        context["uid"] = str(role_uid)
+    if role_ticket not in (None, ""):
+        context["ticket"] = str(role_ticket)
+    return context
 
 
 def build_postman_collection(project, cases, runtime_context=None, redact_runtime=True):
     runtime_context = runtime_context or {}
     items = []
     for case in cases:
-        case_path, headers, payload = _case_request_with_runtime_context(case, runtime_context)
-        raw_path = _replace_runtime_placeholders(case_path, runtime_context, redact_runtime)
+        case_runtime = _runtime_context_for_case(case, runtime_context)
+        case_path, headers, payload = _case_request_with_runtime_context(case, case_runtime)
+        raw_path = _replace_runtime_placeholders(case_path, case_runtime, redact_runtime)
         raw_path = raw_path if raw_path.startswith("http") else (project.get("base_url") or "").rstrip("/") + "/" + raw_path.lstrip("/")
-        headers = _replace_runtime_placeholders(headers, runtime_context, redact_runtime)
-        payload = _replace_runtime_placeholders(payload, runtime_context, redact_runtime)
+        headers = _replace_runtime_placeholders(headers, case_runtime, redact_runtime)
+        payload = _replace_runtime_placeholders(payload, case_runtime, redact_runtime)
         request = {
             "method": case["method"],
             "header": [{"key": k, "value": str(v), "type": "text"} for k, v in headers.items()],
@@ -7308,6 +9712,14 @@ def build_jmeter_jmx(project, cases, runtime_context=None, redact_runtime=True, 
     threads = max(1, min(int(options.get("jmeter_threads", 1) or 1), 200))
     loops = max(1, min(int(options.get("jmeter_loops", 1) or 1), 1000))
     rampup = max(0, min(int(options.get("jmeter_rampup", 1) or 1), 600))
+    duration_seconds = max(0, min(int(options.get("jmeter_duration_seconds", 0) or 0), 86400))
+    loop_forever = "true" if duration_seconds else "false"
+    loop_count = "-1" if duration_seconds else str(loops)
+    scheduler_xml = (
+        f'<boolProp name="ThreadGroup.scheduler">true</boolProp><stringProp name="ThreadGroup.duration">{duration_seconds}</stringProp><stringProp name="ThreadGroup.delay">0</stringProp>'
+        if duration_seconds else '<boolProp name="ThreadGroup.scheduler">false</boolProp>'
+    )
+    listener_enabled = "false" if options.get("_jmeter_non_gui_plan") else "true"
     think_time = max(0, min(int(options.get("jmeter_think_time_ms", 300) or 0), 10000))
     jtl_path = Path(options.get("_jmeter_result_jtl") or JMETER_WORKBENCH_JTL)
     default_url = urllib.parse.urlsplit(project.get("base_url") or "http://127.0.0.1")
@@ -7479,7 +9891,8 @@ if (loginUid) {{
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="接口性能冒烟" enabled="true">
         <intProp name="ThreadGroup.num_threads">{threads}</intProp>
         <intProp name="ThreadGroup.ramp_time">{rampup}</intProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">false</boolProp><stringProp name="LoopController.loops">{loops}</stringProp></elementProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">{loop_forever}</boolProp><stringProp name="LoopController.loops">{loop_count}</stringProp></elementProp>
+        {scheduler_xml}
       </ThreadGroup>
       <hashTree>
         <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取登录身份上下文" enabled="true">
@@ -7504,27 +9917,27 @@ if (loginUid) {{
         <hashTree/>
         {''.join(samplers)}
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="true">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="{listener_enabled}">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <stringProp name="filename">{_xml_escape(jtl_path)}</stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="{listener_enabled}">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <stringProp name="filename">{_xml_escape(jtl_path)}</stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="{listener_enabled}">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <stringProp name="filename">{_xml_escape(jtl_path)}</stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true">
+      <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="{listener_enabled}">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <stringProp name="filename">{_xml_escape(jtl_path)}</stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="true">
+      <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="{listener_enabled}">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <stringProp name="filename">{_xml_escape(jtl_path)}</stringProp>
       </ResultCollector>
@@ -7538,17 +9951,19 @@ def build_pytest_script(project, cases, runtime_context=None, redact_runtime=Tru
     runtime_context = runtime_context or {}
     serializable = []
     for case in cases:
-        case_path, headers, payload = _case_request_with_runtime_context(case, runtime_context)
+        case_runtime = _runtime_context_for_case(case, runtime_context)
+        case_path, headers, payload = _case_request_with_runtime_context(case, case_runtime)
         serializable.append({
             "id": case.get("id", ""),
             "title": case["title"],
             "scenario_type": case.get("scenario_type", ""),
             "coverage_tool": case.get("coverage_tool", ""),
             "method": case["method"],
-            "path": _replace_runtime_placeholders(case_path, runtime_context, redact_runtime),
-            "headers": _replace_runtime_placeholders(headers, runtime_context, redact_runtime),
-            "payload": _replace_runtime_placeholders(payload, runtime_context, redact_runtime),
+            "path": _replace_runtime_placeholders(case_path, case_runtime, redact_runtime),
+            "headers": _replace_runtime_placeholders(headers, case_runtime, redact_runtime),
+            "payload": _replace_runtime_placeholders(payload, case_runtime, redact_runtime),
             "expected_status": _tool_expected_status(case),
+            "expected_business_code": case.get("expected_business_code") if case.get("expected_business_code") is not None else "",
         })
     return f'''import csv
 import json
@@ -7767,6 +10182,36 @@ def ensure_common_query_params(path):
     return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
 
 
+def apply_case_query_variant(case, path):
+    title = str(case.get("title") or "").lower()
+    parsed = urllib.parse.urlsplit(path)
+    pairs = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+    target_aliases = {{
+        "uid": ("uid", "用户id", "用户 id"),
+        "ticket": ("ticket", "token", "令牌", "登录态", "凭证"),
+        "orderNo": ("orderno", "order no", "订单号"),
+        "orderId": ("orderid", "order id", "订单id"),
+        "pageNo": ("pageno", "page no", "页码"),
+        "pageSize": ("pagesize", "page size", "分页大小"),
+    }}
+    missing = any(word in title for word in ("缺失", "为空", "空值", "missing", "empty", "omit"))
+    invalid = any(word in title for word in ("非法", "无效", "错误类型", "类型错误", "invalid", "wrong type"))
+    target = next((key for key, aliases in target_aliases.items() if any(alias in title for alias in aliases)), "")
+    if not target and (missing or invalid):
+        target = "uid"
+    if not target:
+        return path
+    if missing:
+        pairs = [(key, value) for key, value in pairs if key.lower() != target.lower()]
+    elif invalid:
+        invalid_value = "not-a-number" if target.lower() in {{"uid", "orderid", "pageno", "pagesize"}} else "invalid-token"
+        pairs = [(key, invalid_value if key.lower() == target.lower() else value) for key, value in pairs]
+        if not any(key.lower() == target.lower() for key, _ in pairs):
+            pairs.append((target, invalid_value))
+    query = urllib.parse.urlencode(pairs, safe="{{}}")
+    return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
+
+
 def update_runtime_from_response(case, body):
     try:
         payload = json.loads(body[body.find("{{"):]) if "{{" in body else json.loads(body)
@@ -7815,7 +10260,7 @@ def update_runtime_from_response(case, body):
 
 def run_case(case):
     case = dict(case)
-    case["path"] = ensure_common_query_params(fill_runtime(case.get("path", "")))
+    case["path"] = apply_case_query_variant(case, ensure_common_query_params(fill_runtime(case.get("path", ""))))
     case["headers"] = fill_runtime(case.get("headers") or {{}})
     case["payload"] = fill_runtime(case.get("payload"))
     url = case["path"] if case["path"].startswith("http") else BASE_URL.rstrip("/") + "/" + case["path"].lstrip("/")
@@ -8219,7 +10664,22 @@ def run_single_case(case, scenario):
             business_message = parsed_body.get("message", "")
     except Exception:
         pass
-    return {{"id": case.get("id"), "title": case["title"], "scenario_id": scenario.get("scenario_id"), "scenario_name": scenario.get("scenario_name"), "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}}
+    return {{"id": case.get("id"), "title": case["title"], "scenario_id": scenario.get("scenario_id"), "scenario_name": scenario.get("scenario_name"), "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "expected_business_code": case.get("expected_business_code"), "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}}
+
+
+def http_case_passed(result):
+    if result.get("status") != result.get("expected_status"):
+        return False
+    expected_business_code = result.get("expected_business_code")
+    if expected_business_code not in (None, ""):
+        return str(result.get("business_code")) == str(expected_business_code)
+    try:
+        expected_status = int(result.get("expected_status"))
+    except (TypeError, ValueError):
+        expected_status = 0
+    if 200 <= expected_status < 300:
+        return str(result.get("business_code") or "200") == "200"
+    return True
 
 
 def run_scenario_batch(scenario, base_runtime_state=None):
@@ -8234,7 +10694,7 @@ def run_scenario_batch(scenario, base_runtime_state=None):
     for item in evidence:
         item["scenario_id"] = scenario.get("scenario_id")
         item["scenario_name"] = scenario.get("scenario_name")
-    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status") or str(x.get("business_code") or "200") != "200")
+    http_failed = sum(1 for x in http_results if not http_case_passed(x))
     failed = sum(1 for x in evidence if x.get("status") == "FAILED")
     blocked = sum(1 for x in evidence if x.get("status") == "BLOCKED")
     status = "BLOCKED" if blocked else "FAILED" if failed or http_failed else "PASSED"
@@ -8261,7 +10721,7 @@ def build_evidence_report(scenario_runs):
     newman = load_newman(os.getenv("AUTOTEST_NEWMAN_JSON", ""))
     http_results = [item for scenario in scenario_runs for item in scenario.get("http_results") or []]
     evidence = [item for scenario in scenario_runs for item in scenario.get("evidence_results") or []]
-    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status") or str(x.get("business_code") or "200") != "200")
+    http_failed = sum(1 for x in http_results if not http_case_passed(x))
     failed = sum(1 for x in evidence if x["status"] == "FAILED")
     blocked = sum(1 for x in evidence if x["status"] == "BLOCKED")
     for scenario in scenario_runs:
@@ -8530,6 +10990,20 @@ def open_jmeter_gui(project_id, options=None):
     jmeter = _jmeter_command()
     if not (Path(str(jmeter)).exists() or shutil.which(str(jmeter))):
         raise ValueError("本机未发现 JMeter，请确认 AUTOTEST_JMETER 或 JMeter 安装路径")
+    run_context = None
+    if package:
+        run_context = _ensure_requirement_run_context(project_id, package.get("package_id"), options)
+        if script_key in {"salary_trade", "salary"}:
+            callback_base = os.getenv("AUTOTEST_PLATFORM_CALLBACK_BASE", "http://127.0.0.1:8765").rstrip("/")
+            run_jtl_dir = Path(package["root"]) / "runs" / run_context["run_id"]
+            run_jtl_dir.mkdir(parents=True, exist_ok=True)
+            jtl_path = run_jtl_dir / "jmeter-result.jtl"
+            command_properties = [item for item in command_properties if not str(item).startswith("-Jsalary_result_jtl=")]
+            command_properties.extend([
+                f"-Jsalary_result_jtl={_jmeter_property_path(jtl_path)}",
+                f"-Jrequirement_run_id={run_context['run_id']}",
+                f"-Jplatform_jmeter_callback_url={callback_base}/api/projects/{project_id}/salary-trade/jmeter-harvest",
+            ])
     command = [str(jmeter), *command_properties, "-t", str(jmx_path)]
     runtime_context = _runtime_context(project_id, options)
     credential = load_runtime_credential(project_id)
@@ -8550,6 +11024,8 @@ def open_jmeter_gui(project_id, options=None):
     if os.name == "nt":
         popen_kwargs["creationflags"] = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)
     subprocess.Popen(command, **popen_kwargs)
+    if package:
+        update_requirement_run_context(project_id, package.get("package_id"), run_context["run_id"], "jmeter", "OPENED")
     return {
         "status": "OPENED",
         "message": "已调起真实 JMeter 界面，并加载平台生成的线程组脚本。",
@@ -8558,6 +11034,8 @@ def open_jmeter_gui(project_id, options=None):
         "script_key": script_key,
         "script_name": package.get("name") if package else ("工资代理快速结算" if script_key in {"salary_trade", "salary"} else "财富等级/通用接口"),
         "package_id": package.get("package_id") if package else "",
+        "run_id": run_context.get("run_id") if run_context else "",
+        "run_context_path": run_context.get("run_context_path") if run_context else "",
         "jmeter_command": str(jmeter),
         "runtime_parameters_passed": bool(runtime_context.get("ticket") or saved_login_password or str(options.get("login_password_encrypted") or options.get("login_t") or options.get("login_sn") or "").strip()),
         "login_password_available": bool(str(options.get("login_password_encrypted") or "").strip() or saved_login_password),
@@ -8579,7 +11057,13 @@ def harvest_jmeter_workbench_report(project_id, options=None):
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
-    jtl_path = JMETER_WORKBENCH_JTL
+    package_id = str(options.get("package_id") or "").strip()
+    package = requirement_package_by_id(project_id, package_id) if package_id else None
+    run_context = _ensure_requirement_run_context(project_id, package_id, options) if package else None
+    if package_id == "salary-trade":
+        jtl_path = Path(package["root"]) / "runs" / run_context["run_id"] / "jmeter-result.jtl"
+    else:
+        jtl_path = Path(options.get("jtl_path") or JMETER_WORKBENCH_JTL)
     if not jtl_path.is_file():
         raise ValueError(f"尚未发现 JMeter GUI 结果文件：{jtl_path}。请先在 JMeter 里运行并确认监听器写入该文件。")
     summary = _summarize_jmeter_jtl(jtl_path)
@@ -8588,7 +11072,8 @@ def harvest_jmeter_workbench_report(project_id, options=None):
     gate = _performance_gate(summary, options)
     diagnosis = _performance_diagnosis(summary, gate)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    run_dir = ROOT / "reports" / f"jmeter-gui-{project_id}-{stamp}"
+    report_root = Path(package["root"]) / "reports" if package else ROOT / "reports"
+    run_dir = report_root / f"jmeter-{stamp}"
     run_dir.mkdir(parents=True, exist_ok=True)
     archived_jtl = run_dir / "jmeter-gui-result.jtl"
     shutil.copy2(jtl_path, archived_jtl)
@@ -8602,9 +11087,13 @@ def harvest_jmeter_workbench_report(project_id, options=None):
         html_error = result.get("stderr", "")
     status = "FAILED" if summary.get("errors", 0) else gate["status"]
     report = {
-        "report_type": "JMETER_GUI_WORKBENCH",
+        "report_type": "REQUIREMENT_PACKAGE_JMETER_RUN" if package else "JMETER_GUI_WORKBENCH",
         "project_id": project_id,
         "project_name": project["name"],
+        "package_id": package_id,
+        "package_name": package.get("name") if package else "",
+        "run_id": run_context.get("run_id") if run_context else "",
+        "run_context_path": run_context.get("run_context_path") if run_context else "",
         "status": status,
         "executed_at": now(),
         "source": {
@@ -8622,13 +11111,29 @@ def harvest_jmeter_workbench_report(project_id, options=None):
         "policy": {"external_tool": "JMeter GUI", "business_datasource_readonly": True, "secrets_runtime_only": True},
     }
     summary_file = run_dir / "summary.json"
-    summary_file.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    return {
+    response = {
         **report,
+        "summary_path": str(summary_file),
         "report": str(summary_file),
-        "report_url": "/reports/" + summary_file.relative_to(ROOT / "reports").as_posix(),
-        "html_url": "/reports/" + (html_dir / "index.html").relative_to(ROOT / "reports").as_posix() if (html_dir / "index.html").is_file() else "",
+        "report_url": ("/requirement-reports/" + summary_file.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()) if package else ("/reports/" + summary_file.relative_to(ROOT / "reports").as_posix()),
+        "json_url": ("/requirement-reports/" + summary_file.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()) if package else ("/reports/" + summary_file.relative_to(ROOT / "reports").as_posix()),
+        "html_url": (("/requirement-reports/" + (html_dir / "index.html").relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()) if package else ("/reports/" + (html_dir / "index.html").relative_to(ROOT / "reports").as_posix())) if (html_dir / "index.html").is_file() else "",
     }
+    summary_file.write_text(json.dumps(response, ensure_ascii=False, indent=2), encoding="utf-8")
+    if package:
+        update_requirement_run_context(project_id, package_id, run_context["run_id"], "jmeter", status, response)
+        try:
+            performance_review = generate_requirement_performance_ai_review(project_id, package_id, {"run_id": run_context["run_id"], "use_model": False})
+            response["performance_analysis"] = {
+                "status": performance_review.get("status"),
+                "summary_path": performance_review.get("summary_path"),
+                "json_url": performance_review.get("json_url"),
+            }
+            summary_file.write_text(json.dumps(response, ensure_ascii=False, indent=2), encoding="utf-8")
+        except Exception as exc:
+            response["performance_analysis_warning"] = _redact_runtime_text(str(exc))[:500]
+            summary_file.write_text(json.dumps(response, ensure_ascii=False, indent=2), encoding="utf-8")
+    return response
 
 
 def generate_enterprise_tool_run_assets(project_id, out, options=None):
@@ -9178,11 +11683,26 @@ def _run_command_capture(command, cwd, timeout=180, env=None):
         }
 
 
+def _pytest_command(pytest_file, base_temp):
+    """Build an isolated pytest command for one platform run."""
+    base_temp = Path(base_temp)
+    base_temp.parent.mkdir(parents=True, exist_ok=True)
+    return [
+        sys.executable,
+        "-m",
+        "pytest",
+        str(pytest_file),
+        "-q",
+        "--basetemp",
+        str(base_temp),
+    ]
+
+
 def _jmeter_command():
-    config_home = str(deep_get(load_environment_config(), "tools.jmeter.home", "") or "").strip()
+    config_home = _expand_config_value(os.getenv("AUTOTEST_JMETER_HOME") or deep_get(load_environment_config(), "tools.jmeter.home", ""))
     config_command = str(Path(config_home) / "bin" / "jmeter.bat") if config_home else ""
-    configured = os.getenv("AUTOTEST_JMETER") or config_command or r"D:\apache-jmeter-5.6.3\bin\jmeter.bat"
-    if Path(configured).exists():
+    configured = _expand_config_value(os.getenv("AUTOTEST_JMETER") or config_command)
+    if configured and Path(configured).exists():
         return configured
     return shutil.which("jmeter") or configured
 
@@ -9363,7 +11883,8 @@ def run_enterprise_toolchain(project_id, options=None):
     else:
         pytest_probe = _python_module_probe("pytest", "pytest", ["--version"], "在当前 Python 环境安装 pytest。")
         if pytest_probe["status"] == "READY":
-            result = _sanitize_tool_result(_run_command_capture([sys.executable, "-m", "pytest", str(asset_dir / "pytest_api_cases.py"), "-q"], ROOT, 180, runtime_env), runtime_context)
+            pytest_command = _pytest_command(asset_dir / "pytest_api_cases.py", run_dir / ".pytest-temp")
+            result = _sanitize_tool_result(_run_command_capture(pytest_command, ROOT, 180, runtime_env), runtime_context)
             result.update({"tool": "pytest", "artifact": "pytest_api_cases.py"})
             results.append(result)
         else:
@@ -9778,8 +12299,12 @@ def vision_analyze_bundle(context_text, images):
 
 def browser_capture_source(source_url):
     capture_dir=DATA/"browser-captures"/uid("capture"); profile_dir=DATA/"browser-profile"; capture_dir.mkdir(parents=True,exist_ok=True)
-    node=Path(r"C:\Users\DELL\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe")
-    env=dict(os.environ); env["NODE_PATH"]=r"C:\Users\DELL\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules"
+    node=os.getenv("AUTOTEST_NODE") or shutil.which("node")
+    if not node:
+        raise ValueError("浏览器采集需要 Node.js，请配置 AUTOTEST_NODE 或安装 node。")
+    env=dict(os.environ)
+    if os.getenv("AUTOTEST_NODE_PATH"):
+        env["NODE_PATH"]=os.environ["AUTOTEST_NODE_PATH"]
     proc=subprocess.run([str(node),str(ROOT/"browser_collector.js"),source_url,str(capture_dir),str(profile_dir)],env=env,capture_output=True,text=True,timeout=240)
     if proc.returncode!=0: raise ValueError("浏览器采集失败："+(proc.stderr or (capture_dir/"error.txt").read_text("utf-8","ignore") if (capture_dir/"error.txt").exists() else "未知错误"))
     page=json.loads((capture_dir/"page.json").read_text(encoding="utf-8")); screenshot_files=[capture_dir/"full-page.png"]+sorted(capture_dir.glob("viewport-*.png"))
@@ -10187,6 +12712,7 @@ def salary_trade_case_to_jmeter_model(project_id):
     account_csv = ROOT / str(salary_dataset.get("account_csv_path") or "data/salary-trade-accounts.csv")
     applicant_csv = ROOT / str(salary_dataset.get("applicant_csv_path") or "data/salary-trade-applicants.csv")
     flow_slots_csv = ROOT / str(salary_dataset.get("flow_slots_csv_path") or "data/salary-trade-flow-slots.csv")
+    proxy_csv = ROOT / str(salary_dataset.get("proxy_csv_path") or "data/salary-trade-proxies.csv")
     account_model = REQUIREMENT_PACKAGE_ROOT / "salary-trade" / "account_model.yaml"
     runtime_decision = infer_jmeter_runtime_data_strategy(salary_cases, SALARY_TRADE_CASE_FLOWS)
     return {
@@ -10229,13 +12755,15 @@ def salary_trade_case_to_jmeter_model(project_id):
             "account_csv": str(account_csv),
             "applicant_csv": str(applicant_csv),
             "flow_slots_csv": str(flow_slots_csv),
+            "proxy_csv": str(proxy_csv),
         },
         "csv_contract": {
             "owner": "Runtime data source is inferred from test cases. CSV is used only when cases require multi-account, multi-role or data-matrix execution.",
             "account_csv": str(account_csv),
             "applicant_csv": str(applicant_csv),
             "flow_slots_csv": str(flow_slots_csv),
-            "jmeter_properties": ["salary_accounts_csv", "salary_applicants_csv", "salary_flow_slots_csv", "salary_result_jtl"],
+            "proxy_csv": str(proxy_csv),
+            "jmeter_properties": ["salary_accounts_csv", "salary_applicants_csv", "salary_proxies_csv", "salary_flow_slots_csv", "salary_result_jtl"],
         },
         "gaps": salary_trade_case_jmeter_gaps(),
         "status": "READY" if generated.is_file() else "PENDING",
@@ -10382,6 +12910,154 @@ def _set_salary_trade_applicant_csv_property(text, value):
     return re.sub(pattern, lambda match: match.group(1) + value + match.group(2), text, flags=re.S)
 
 
+def _inject_salary_trade_proxy_csv_resolution(text, default_proxy_csv):
+    marker = "工资交易代理CSV动态匹配"
+    if marker in text:
+        return text
+    needle = "def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)"
+    resolver = f"""def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
+// {marker}：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
+def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
+if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {{
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;{default_proxy_csv}&apos;)
+    def proxyCsvFile = new File(proxyCsvPath)
+    if (!proxyCsvFile.isFile()) {{
+        throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
+    }}
+    def parseCsvLine = {{ line -&gt;
+        def values = []
+        def current = new StringBuilder()
+        boolean quoted = false
+        for (int i = 0; i &lt; line.length(); i++) {{
+            char ch = line.charAt(i)
+            if (ch == ((char) 34)) {{
+                if (quoted &amp;&amp; i + 1 &lt; line.length() &amp;&amp; line.charAt(i + 1) == ((char) 34)) {{
+                    current.append((char) 34)
+                    i++
+                }} else {{
+                    quoted = !quoted
+                }}
+            }} else if (ch == ((char) 44) &amp;&amp; !quoted) {{
+                values.add(current.toString())
+                current.setLength(0)
+            }} else {{
+                current.append(ch)
+            }}
+        }}
+        values.add(current.toString())
+        return values
+    }}
+    def lines = proxyCsvFile.readLines(&apos;UTF-8&apos;).findAll {{ it != null &amp;&amp; it.trim() }}
+    if (lines.size() &lt; 2) {{
+        throw new IllegalStateException(&apos;代理CSV没有可用数据：&apos; + proxyCsvPath)
+    }}
+    def headers = parseCsvLine(lines[0]).collect {{ it.replace(&apos;\uFEFF&apos;, &apos;&apos;).trim() }}
+    def requestedCurrency = pick(&apos;currency&apos;, &apos;&apos;).toUpperCase()
+    def requestedCountry = pick(&apos;countryCode&apos;, &apos;&apos;).toUpperCase()
+    def candidates = []
+    lines.drop(1).each {{ line -&gt;
+        def values = parseCsvLine(line)
+        def row = [:]
+        headers.eachWithIndex {{ header, index -&gt;
+            row[header] = index &lt; values.size() ? String.valueOf(values[index]).trim() : &apos;&apos;
+        }}
+        def enabled = !row.containsKey(&apos;enabled&apos;) || row.enabled.equalsIgnoreCase(&apos;true&apos;) || row.enabled == &apos;1&apos;
+        def active = !row.containsKey(&apos;status&apos;) || row.status == &apos;1&apos;
+        def supported = String.valueOf(row.supportCurrencies ?: row.support_currencies ?: &apos;&apos;)
+            .split(&apos;,&apos;).collect {{ it.trim().toUpperCase() }}
+        def uid = String.valueOf(row.proxy_uid ?: row.uid ?: &apos;&apos;).trim()
+        def ticket = String.valueOf(row.proxy_ticket ?: row.ticket ?: &apos;&apos;).trim()
+        def tokenParts = ticket.tokenize(&apos;.&apos;)
+        def tokenUid = &apos;&apos;
+        if (tokenParts.size() == 3) {{
+            try {{
+                def payload = new groovy.json.JsonSlurper().parseText(new String(java.util.Base64.getUrlDecoder().decode(tokenParts[1]), &apos;UTF-8&apos;))
+                tokenUid = String.valueOf(payload.uid ?: &apos;&apos;)
+            }} catch (ignored) {{
+                tokenUid = &apos;&apos;
+            }}
+        }}
+        if (enabled &amp;&amp; active &amp;&amp; uid &amp;&amp; ticket &amp;&amp; uid == tokenUid &amp;&amp; supported.contains(requestedCurrency)) {{
+            row[&apos;resolved_uid&apos;] = uid
+            row[&apos;resolved_ticket&apos;] = ticket
+            candidates.add(row)
+        }}
+    }}
+    if (!candidates) {{
+        throw new IllegalStateException(&apos;代理CSV未匹配到可用账号：currency=&apos; + requestedCurrency + &apos;，csv=&apos; + proxyCsvPath)
+    }}
+    def sameCountry = candidates.findAll {{ String.valueOf(it.countryCode ?: it.country_code ?: &apos;&apos;).trim().equalsIgnoreCase(requestedCountry) }}
+    def pool = sameCountry ?: candidates
+    def selector = pick(&apos;applicant_uid&apos;, &apos;&apos;) + &apos;|&apos; + ctx.getThreadNum() + &apos;|&apos; + ctx.getThreadGroup().getName()
+    def selected = pool[Math.floorMod(selector.hashCode(), pool.size())]
+    proxyUid = String.valueOf(selected.resolved_uid)
+    proxyTicket = String.valueOf(selected.resolved_ticket)
+    vars.put(&apos;proxy_uid&apos;, proxyUid)
+    vars.put(&apos;proxy_ticket&apos;, proxyTicket)
+    vars.put(&apos;proxy_countryCode&apos;, String.valueOf(selected.countryCode ?: selected.country_code ?: &apos;&apos;))
+    vars.put(&apos;proxy_supportCurrencies&apos;, String.valueOf(selected.supportCurrencies ?: selected.support_currencies ?: &apos;&apos;))
+}}
+if (isBlankOrPlaceholder(proxyUid)) {{
+    throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
+}}"""
+    return text.replace(needle, resolver).replace("def proxyTicket = pick('proxy_ticket', '')", resolver)
+
+
+def _inject_jmeter_platform_callback(text):
+    marker = "AutoTest AI：测试结束自动回收JMeter报告"
+    if marker in text:
+        return text
+    closing = "    </hashTree>\n  </hashTree>\n</jmeterTestPlan>"
+    if closing not in text:
+        return text
+    callback = f"""      <PostThreadGroup guiclass=\"PostThreadGroupGui\" testclass=\"PostThreadGroup\" testname=\"{marker}\" enabled=\"true\">
+        <intProp name=\"ThreadGroup.num_threads\">1</intProp>
+        <intProp name=\"ThreadGroup.ramp_time\">1</intProp>
+        <boolProp name=\"ThreadGroup.same_user_on_next_iteration\">true</boolProp>
+        <stringProp name=\"ThreadGroup.on_sample_error\">continue</stringProp>
+        <elementProp name=\"ThreadGroup.main_controller\" elementType=\"LoopController\" guiclass=\"LoopControlPanel\" testclass=\"LoopController\">
+          <stringProp name=\"LoopController.loops\">1</stringProp>
+          <boolProp name=\"LoopController.continue_forever\">false</boolProp>
+        </elementProp>
+      </PostThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass=\"TestBeanGUI\" testclass=\"JSR223Sampler\" testname=\"通知平台回收本批次JTL与数据库证据\" enabled=\"true\">
+          <stringProp name=\"cacheKey\">true</stringProp>
+          <stringProp name=\"scriptLanguage\">groovy</stringProp>
+          <stringProp name=\"script\">def callbackUrl = String.valueOf(props.get(&apos;platform_jmeter_callback_url&apos;) ?: &apos;&apos;).trim()
+def runId = String.valueOf(props.get(&apos;requirement_run_id&apos;) ?: &apos;&apos;).trim()
+if (!callbackUrl || !runId) {{
+    SampleResult.setSuccessful(true)
+    SampleResult.setResponseMessage(&apos;未配置平台回调，本次仅保留本地JTL&apos;)
+    return
+}}
+def resultJtl = String.valueOf(props.get(&apos;salary_result_jtl&apos;) ?: &apos;&apos;).trim()
+def payload = groovy.json.JsonOutput.toJson([run_id: runId, jtl_path: resultJtl])
+def connection = (java.net.HttpURLConnection) new URL(callbackUrl).openConnection()
+connection.setRequestMethod(&apos;POST&apos;)
+connection.setConnectTimeout(10000)
+connection.setReadTimeout(120000)
+connection.setDoOutput(true)
+connection.setRequestProperty(&apos;Content-Type&apos;, &apos;application/json; charset=UTF-8&apos;)
+connection.outputStream.withWriter(&apos;UTF-8&apos;) {{ writer -&gt; writer.write(payload) }}
+def responseCode = connection.responseCode
+def stream = responseCode &gt;= 200 &amp;&amp; responseCode &lt; 300 ? connection.inputStream : connection.errorStream
+def responseText = stream == null ? &apos;&apos; : stream.getText(&apos;UTF-8&apos;)
+SampleResult.setResponseCode(String.valueOf(responseCode))
+SampleResult.setResponseData(responseText, &apos;UTF-8&apos;)
+SampleResult.setSuccessful(responseCode &gt;= 200 &amp;&amp; responseCode &lt; 300)
+if (!SampleResult.isSuccessful()) {{
+    throw new IllegalStateException(&apos;平台自动回收失败：HTTP &apos; + responseCode + &apos; &apos; + responseText)
+}}</stringProp>
+          <stringProp name=\"parameters\"></stringProp>
+          <stringProp name=\"filename\"></stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+"""
+    return text.replace(closing, callback + closing, 1)
+
+
 def _write_jmx_preserving_manual_edits(path, text):
     path = Path(path)
     old = path.read_text(encoding="utf-8") if path.is_file() else ""
@@ -10411,17 +13087,21 @@ def generate_salary_trade_jmeter_from_cases(project_id):
     account_csv = Path(model["artifacts"]["account_csv"])
     applicant_csv = Path(model["artifacts"]["applicant_csv"])
     flow_slots_csv = Path(model["artifacts"]["flow_slots_csv"])
+    proxy_csv = Path(model["artifacts"]["proxy_csv"])
     env_config = load_environment_config()
     result_jtl = Path(
         deep_get(env_config, "requirement_datasets.salary_trade.result_jtl_path")
         or deep_get(env_config, "reports.salary_trade_jtl")
-        or r"D:\apache-jmeter-5.6.3\jmx\20260826\工资代理结算-result.jtl"
+        or str(ROOT / "reports" / "latest" / "salary-trade-result.jtl")
     )
     _write_salary_trade_flow_slots_csv(flow_slots_csv)
     default_applicant_csv = _jmeter_property_path(applicant_csv)
     default_account_csv = _jmeter_property_path(account_csv)
     default_flow_slots_csv = _jmeter_property_path(flow_slots_csv)
+    default_proxy_csv = _jmeter_property_path(proxy_csv)
     text = _set_salary_trade_applicant_csv_property(text, "${__P(salary_applicants_csv," + default_applicant_csv + ")}")
+    text = _inject_salary_trade_proxy_csv_resolution(text, default_proxy_csv)
+    text = _inject_jmeter_platform_callback(text)
     default_result_jtl = _jmeter_property_path(result_jtl)
     text = text.replace(str(result_jtl), "${__P(salary_result_jtl," + default_result_jtl + ")}")
     text = _normalize_jmeter_empty_script_filenames(text)
@@ -10446,10 +13126,12 @@ def generate_salary_trade_jmeter_from_cases(project_id):
             "accounts": str(account_csv),
             "applicants": str(applicant_csv),
             "flow_slots": str(flow_slots_csv),
+            "proxies": str(proxy_csv),
         },
         "jmeter_property_defaults": {
             "salary_accounts_csv": default_account_csv,
             "salary_applicants_csv": default_applicant_csv,
+            "salary_proxies_csv": default_proxy_csv,
             "salary_flow_slots_csv": default_flow_slots_csv,
             "salary_result_jtl": default_result_jtl,
         },
@@ -10890,12 +13572,13 @@ def salary_trade_db_evidence_check(project_id, payload):
             "note": "业务变化由接口/JMeter产生，平台只读取MySQL证据并归档。",
         },
     }
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    out = ROOT / "reports" / f"salary-trade-db-evidence-{project_id}-{stamp}.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    report["json_url"] = "/reports/" + out.name
-    report["file_name"] = out.name
+    if payload.get("persist_report", True):
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        out = ROOT / "reports" / f"salary-trade-db-evidence-{project_id}-{stamp}.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        report["json_url"] = "/reports/" + out.name
+        report["file_name"] = out.name
     return report
 
 
@@ -10931,7 +13614,7 @@ def _latest_salary_trade_jtl():
     configured = Path(
         deep_get(env, "requirement_datasets.salary_trade.result_jtl_path")
         or deep_get(env, "reports.salary_trade_jtl")
-        or r"D:\apache-jmeter-5.6.3\jmx\20260826\工资代理结算-result.jtl"
+        or str(ROOT / "reports" / "latest" / "salary-trade-result.jtl")
     )
     candidates = []
     if configured.is_file():
@@ -10998,12 +13681,25 @@ def harvest_salary_trade_jmeter_mapping(project_id, payload=None):
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
-    manifest_path = Path(payload.get("manifest_path") or ROOT / "outputs" / "salary-trade-case-jmeter-manifest.json")
+    package = requirement_package_by_id(project_id, "salary-trade")
+    package_root = Path(package["root"])
+    run_context = _ensure_requirement_run_context(project_id, "salary-trade", payload)
+    run_id = run_context["run_id"]
+    manifest_path = Path(payload.get("manifest_path") or package_root / "outputs" / "jmeter" / "salary-trade-case-jmeter-manifest.json")
+    if not manifest_path.is_file():
+        manifest_path = ROOT / "outputs" / "salary-trade-case-jmeter-manifest.json"
     if not manifest_path.is_file():
         raise ValueError("缺少工资交易 JMeter Manifest，请先生成用例驱动脚本。")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     flows = manifest.get("flows") or []
-    jtl_path = Path(payload.get("jtl_path") or _latest_salary_trade_jtl())
+    expected_jtl = package_root / "runs" / run_id / "jmeter-result.jtl"
+    supplied_jtl = str(payload.get("jtl_path") or "").strip()
+    jtl_path = Path(supplied_jtl) if supplied_jtl else expected_jtl
+    if jtl_path.resolve() != expected_jtl.resolve():
+        raise ValueError(
+            "检测到旧版或其他批次的 JMeter 结果文件，已拒绝回收，避免历史失败混入当前错误率。"
+            f"当前批次应写入：{expected_jtl}。请关闭旧 JMeter 窗口，并从平台重新打开本批次脚本。"
+        )
     fields, samples = _read_jmeter_jtl_rows(jtl_path)
     if not samples:
         raise ValueError(f"未找到可回收的 JMeter JTL 结果：{jtl_path}")
@@ -11047,6 +13743,7 @@ def harvest_salary_trade_jmeter_mapping(project_id, payload=None):
                     "country_code": country,
                     "currency": currency,
                     "expect_evidence": str(flow.get("type")) == "exception",
+                    "persist_report": False,
                 })
             except Exception as exc:
                 db_evidence = {"status": "FAILED", "message": str(exc)}
@@ -11082,6 +13779,8 @@ def harvest_salary_trade_jmeter_mapping(project_id, payload=None):
                 "summary": db_evidence.get("summary"),
                 "json_url": db_evidence.get("json_url"),
                 "message": db_evidence.get("message", ""),
+                "assertions": db_evidence.get("assertions") or [],
+                "evidence": db_evidence.get("evidence") or {},
             },
         })
 
@@ -11094,9 +13793,14 @@ def harvest_salary_trade_jmeter_mapping(project_id, payload=None):
     if unmapped:
         warnings.append(f"有 {len(unmapped)} 条JMeter采样未匹配到工资交易流程，建议检查请求命名是否保留流程编号。")
     report = {
-        "report_type": "SALARY_TRADE_JMETER_MAPPING",
+        "report_type": "REQUIREMENT_PACKAGE_JMETER_RUN",
+        "report_subtype": "SALARY_TRADE_JMETER_MAPPING",
         "project_id": project_id,
         "project_name": project["name"],
+        "package_id": "salary-trade",
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
         "requirement": manifest.get("requirement") or "工资代理快速结算",
         "status": status,
         "created_at": now(),
@@ -11126,11 +13830,96 @@ def harvest_salary_trade_jmeter_mapping(project_id, payload=None):
         "trace_rule": manifest.get("trace_rule"),
     }
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    out = ROOT / "reports" / f"salary-trade-jmeter-mapping-{project_id}-{stamp}.json"
+    out_dir = package_root / "reports" / f"jmeter-{stamp}"
+    out = out_dir / "summary.json"
     out.parent.mkdir(parents=True, exist_ok=True)
+    archived_jtl = out_dir / "jmeter-result.jtl"
+    if jtl_path.resolve() != archived_jtl.resolve():
+        shutil.copy2(jtl_path, archived_jtl)
+    else:
+        archived_jtl = jtl_path
+    html_dir = out_dir / "html"
+    html_status = "SKIPPED"
+    html_error = ""
+    jmeter_command = _jmeter_command()
+    if Path(str(jmeter_command)).exists() or shutil.which(str(jmeter_command)):
+        html_result = _run_command_capture(
+            [str(jmeter_command), "-g", str(archived_jtl), "-o", str(html_dir)],
+            ROOT,
+            180,
+            os.environ.copy(),
+        )
+        html_status = html_result.get("status", "UNKNOWN")
+        html_error = str(html_result.get("stderr") or "")[-1000:]
+    html_index = html_dir / "index.html"
+    report["source"] = {
+        "jtl_path": str(jtl_path),
+        "archived_jtl": str(archived_jtl),
+        "html_report": str(html_index) if html_index.is_file() else "",
+        "html_status": html_status,
+        "html_error": html_error,
+    }
+    report["html_url"] = ("/requirement-reports/" + html_index.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()) if html_index.is_file() else ""
+    report["summary_path"] = str(out)
+    report["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    report["file_name"] = str(out)
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    report["json_url"] = "/reports/" + out.name
-    report["file_name"] = out.name
+
+    data_status = "FAILED" if db_failed else "BLOCKED" if db_blocked and not db_passed else "READY_WITH_WARNINGS" if db_blocked else "PASSED"
+    data_report = {
+        "report_type": "REQUIREMENT_PACKAGE_DATA_EVIDENCE_RUN",
+        "project_id": project_id,
+        "package_id": "salary-trade",
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "run_context_path": run_context.get("run_context_path"),
+        "status": data_status,
+        "created_at": now(),
+        "source_report": str(out),
+        "tables": sorted(SALARY_TRADE_DB_TABLES.values()),
+        "summary": {
+            "flows_total": len(flow_reports),
+            "db_passed": db_passed,
+            "db_failed": db_failed,
+            "db_blocked": db_blocked,
+        },
+        "flows": [
+            {
+                "code": item.get("code"),
+                "name": item.get("name"),
+                "order_no": item.get("order_no"),
+                "runtime": item.get("runtime"),
+                "db_evidence": item.get("db_evidence"),
+            }
+            for item in flow_reports
+        ],
+        "policy": {"business_database": "readonly", "redis_required": False},
+    }
+    data_dir = package_root / "reports" / f"data-evidence-{stamp}"
+    data_out = data_dir / "summary.json"
+    data_out.parent.mkdir(parents=True, exist_ok=True)
+    data_report["summary_path"] = str(data_out)
+    data_report["json_url"] = "/requirement-reports/" + data_out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    data_out.write_text(json.dumps(data_report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    report["data_evidence_report"] = {
+        "status": data_status,
+        "summary_path": str(data_out),
+        "json_url": data_report["json_url"],
+    }
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, "salary-trade", run_id, "jmeter", status, report)
+    update_requirement_run_context(project_id, "salary-trade", run_id, "data_evidence", data_status, data_report)
+    try:
+        performance_review = generate_requirement_performance_ai_review(project_id, "salary-trade", {"run_id": run_id, "use_model": False})
+        report["performance_analysis"] = {
+            "status": performance_review.get("status"),
+            "summary_path": performance_review.get("summary_path"),
+            "json_url": performance_review.get("json_url"),
+        }
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    except Exception as exc:
+        report["performance_analysis_warning"] = _redact_runtime_text(str(exc))[:500]
+        out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     return report
 
 
@@ -12877,6 +15666,14 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(requirement_evidence_rules(m.group(1), m.group(2)))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/execution-plan", path)
             if m: return self.send_json(generate_requirement_execution_plan(m.group(1), m.group(2), {}))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/report-index", path)
+            if m: return self.send_json(requirement_package_report_index(m.group(1), m.group(2), True))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/runs/([^/]+)", path)
+            if m: return self.send_json(get_requirement_run_context(m.group(1), m.group(2), m.group(3)))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/runs", path)
+            if m: return self.send_json(list_requirement_run_contexts(m.group(1), m.group(2)))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/schema-audit", path)
+            if m: return self.send_json(validate_requirement_package_schemas(m.group(1), m.group(2), True))
             m = re.fullmatch(r"/api/projects/([^/]+)/wealth-latest-report", path)
             if m:
                 report_dir=ROOT/"reports"
@@ -12938,7 +15735,7 @@ class Handler(BaseHTTPRequestHandler):
                     raw=file.read_bytes(); self.send_response(200); self.send_header("Content-Type",mime); self.send_header("Cache-Control","no-store"); self.send_header("Content-Length",str(len(raw))); self.end_headers(); return self.wfile.write(raw)
             file = STATIC / ("index.html" if path == "/" else path.lstrip("/"))
             if file.is_file() and STATIC in file.resolve().parents:
-                raw = file.read_bytes(); mime = "text/html; charset=utf-8" if file.suffix == ".html" else "text/css" if file.suffix == ".css" else "application/javascript"; self.send_response(200); self.send_header("Content-Type", mime); self.send_header("Cache-Control", "no-store, no-cache, must-revalidate"); self.send_header("Pragma", "no-cache"); self.send_header("Content-Length", str(len(raw))); self.end_headers(); return self.wfile.write(raw)
+                raw = render_static_index().encode("utf-8") if file.resolve() == (STATIC / "index.html").resolve() else file.read_bytes(); mime = "text/html; charset=utf-8" if file.suffix == ".html" else "text/css" if file.suffix == ".css" else "application/javascript"; self.send_response(200); self.send_header("Content-Type", mime); self.send_header("Cache-Control", "no-store, no-cache, must-revalidate"); self.send_header("Pragma", "no-cache"); self.send_header("Content-Length", str(len(raw))); self.end_headers(); return self.wfile.write(raw)
             self.send_error(404)
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
@@ -13079,6 +15876,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(create_requirement_package(m.group(1), self.body()), 201)
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/tool-assets", path)
             if m: return self.send_json(generate_requirement_package_tool_assets(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/runs", path)
+            if m: return self.send_json(create_requirement_run_context(m.group(1), m.group(2), self.body()), 201)
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/account-model", path)
             if m: return self.send_json(generate_requirement_account_model(m.group(1), m.group(2), True))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/resource-manifest", path)
@@ -13093,8 +15892,18 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(run_requirement_package_pytest(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/ai-review", path)
             if m: return self.send_json(generate_requirement_package_ai_review(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/performance-ai-review", path)
+            if m: return self.send_json(generate_requirement_performance_ai_review(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/newman-analysis", path)
+            if m: return self.send_json(generate_requirement_newman_analysis(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/jmeter-load-plan", path)
+            if m: return self.send_json(generate_requirement_jmeter_load_plan(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/jmeter-load-run", path)
+            if m: return self.send_json(run_requirement_jmeter_load_stage(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/scenario-report", path)
             if m: return self.send_json(generate_requirement_package_unified_scenario_report(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/schema-upgrade", path)
+            if m: return self.send_json(upgrade_requirement_package_schemas(m.group(1), m.group(2)))
             m = re.fullmatch(r"/api/projects/([^/]+)/jmeter/open-gui", path)
             if m: return self.send_json(open_jmeter_gui(m.group(1),self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/jmeter/harvest-gui-report", path)
@@ -13103,8 +15912,12 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(generate_salary_trade_jmeter_from_cases(m.group(1)))
             m = re.fullmatch(r"/api/projects/([^/]+)/salary-trade-data-map", path)
             if m: return self.send_json(salary_trade_data_map())
-            m = re.fullmatch(r"/api/projects/([^/]+)/apipost-package", path)
-            if m: return self.send_json(build_apipost_collaboration_package(m.group(1)))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/apifox-export", path)
+            if m: return self.send_json(build_apifox_collaboration_package(m.group(1), m.group(2)))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/apifox/openapi/import", path)
+            if m: return self.send_json(import_apifox_openapi_to_package(m.group(1), m.group(2), x))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/apifox-cli/run", path)
+            if m: return self.send_json(run_requirement_package_apifox_cli(m.group(1), m.group(2), x))
             m = re.fullmatch(r"/api/projects/([^/]+)/delivery-package", path)
             if m: return self.send_json(build_test_asset_delivery_package(m.group(1)))
             m = re.fullmatch(r"/api/projects/([^/]+)/toolchain/run", path)

@@ -1,0 +1,2536 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Soulfree",
+    "description": "",
+    "version": "1.0.0",
+    "x-project-id": "616ebb842088000",
+    "x-marks": [
+      {
+        "mark_id": "1",
+        "project_id": "0",
+        "name": "开发中",
+        "color": "#2857FF",
+        "is_sys_default": 1,
+        "is_default_mark": 1
+      },
+      {
+        "mark_id": "2",
+        "project_id": "0",
+        "name": "已完成",
+        "color": "#26CEA4",
+        "is_sys_default": 1,
+        "is_default_mark": -1
+      },
+      {
+        "mark_id": "3",
+        "project_id": "0",
+        "name": "需修改",
+        "color": "#FFC01E",
+        "is_sys_default": 1,
+        "is_default_mark": -1
+      },
+      {
+        "mark_id": "4",
+        "project_id": "0",
+        "name": "已废弃",
+        "color": "#FF2200",
+        "is_sys_default": 1,
+        "is_default_mark": -1
+      }
+    ]
+  },
+  "tags": [
+    {
+      "name": "user/trade/主播侧"
+    },
+    {
+      "name": "user/trade/代理侧"
+    }
+  ],
+  "paths": {
+    "/salary/trade/quota": {
+      "get": {
+        "summary": "查询工资交易额度",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorUid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorTicket}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unionId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{unionId}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost-anchor-device",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "systemLanguage",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh-CN",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1.0.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "os",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "ios",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "osVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "18.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "sparty",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "sparty",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceType",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "mobile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "iPhone15%2C2",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "netType",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "wifi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "100a6543e11c2",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:08:13+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/userserv/salary/trade/agents": {
+      "get": {
+        "summary": "查询可交易代理",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{uid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{access_token}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryCode",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "EG",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "USD",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "20",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost-anchor-device",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1.0.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "os",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "ios",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "101213b7e11f2",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-26T19:52:44+08:00",
+        "x-updated-user-name": "阳坤"
+      }
+    },
+    "/userserv/salary/trade/order/create": {
+      "post": {
+        "summary": "创建工资交易订单",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{uid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{access_token}}"
+                  },
+                  "agentUid": {
+                    "type": "string",
+                    "example": "{{agentUid}}"
+                  },
+                  "salaryAmount": {
+                    "type": "string",
+                    "example": "50"
+                  },
+                  "receiveCurrency": {
+                    "type": "string",
+                    "example": "EGP"
+                  },
+                  "receiveAccountType": {
+                    "type": "string",
+                    "example": "bank"
+                  },
+                  "receiveAccount": {
+                    "type": "string",
+                    "example": "SA0380000000608010167519"
+                  },
+                  "countryCode": {
+                    "type": "string",
+                    "example": "EG"
+                  },
+                  "userRemark": {
+                    "type": "string",
+                    "example": "ApiPost mock salary trade order"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-anchor-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "ios"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  },
+                  "bankReceiverName": {
+                    "type": "string",
+                    "example": "newbee"
+                  },
+                  "swiftCode": {
+                    "type": "string",
+                    "example": "555555"
+                  },
+                  "bankName": {
+                    "type": "string",
+                    "example": "newbee"
+                  },
+                  "bankAccount": {
+                    "type": "string",
+                    "example": "12313132132131313123213"
+                  },
+                  "bankReceiverAddress": {
+                    "type": "string",
+                    "example": "EG"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "agentUid",
+                  "salaryAmount",
+                  "receiveCurrency",
+                  "receiveAccountType",
+                  "receiveAccount",
+                  "countryCode",
+                  "userRemark",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel",
+                  "bankReceiverName",
+                  "swiftCode",
+                  "bankName",
+                  "bankAccount",
+                  "bankReceiverAddress"
+                ]
+              },
+              "example": {
+                "uid": "{{uid}}",
+                "ticket": "{{access_token}}",
+                "agentUid": "{{agentUid}}",
+                "salaryAmount": "50",
+                "receiveCurrency": "EGP",
+                "receiveAccountType": "bank",
+                "receiveAccount": "SA0380000000608010167519",
+                "countryCode": "EG",
+                "userRemark": "ApiPost mock salary trade order",
+                "deviceId": "apipost-anchor-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "ios",
+                "channel": "apipost",
+                "bankReceiverName": "newbee",
+                "swiftCode": "555555",
+                "bankName": "newbee",
+                "bankAccount": "12313132132131313123213",
+                "bankReceiverAddress": "EG"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "101484abe11f4",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-26T19:52:41+08:00",
+        "x-updated-user-name": "阳坤"
+      }
+    },
+    "/userserv/salary/trade/order/page": {
+      "get": {
+        "summary": "主播订单分页",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{uid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{access_token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "1016c34fe1223",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-26T19:52:36+08:00",
+        "x-updated-user-name": "阳坤"
+      }
+    },
+    "/salary/trade/order/detail": {
+      "get": {
+        "summary": "主播订单详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorUid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorTicket}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderNo",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{orderNo}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost-anchor-device",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1.0.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "os",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "ios",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "1018ebefe1225",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:08:17+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/userserv/salary/trade/order/cancel": {
+      "post": {
+        "summary": "主播取消订单",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{uid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{access_token}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "1455141260826164551792387"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo"
+                ]
+              },
+              "example": {
+                "uid": "{{uid}}",
+                "ticket": "{{access_token}}",
+                "orderNo": "1455141260826164551792387"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "101abc7be1227",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-26T19:52:31+08:00",
+        "x-updated-user-name": "阳坤"
+      }
+    },
+    "/salary/trade/order/confirm": {
+      "post": {
+        "summary": "主播确认到账",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{anchorUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{anchorTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "example": "ApiPost mock payment received"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-anchor-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "ios"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "reason",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{anchorUid}}",
+                "ticket": "{{anchorTicket}}",
+                "orderNo": "{{orderNo}}",
+                "reason": "ApiPost mock payment received",
+                "deviceId": "apipost-anchor-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "ios",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "101c1d5fe1256",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:08:06+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/order/appeal": {
+      "post": {
+        "summary": "主播申诉订单",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{anchorUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{anchorTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "example": "ApiPost mock payment not received"
+                  },
+                  "evidenceUrls": {
+                    "type": "string",
+                    "example": "{{evidenceUrl}},https://s3.gzxchate.com/Spartysys/evidence/mock-chat-record.jpg"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-anchor-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "ios"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "reason",
+                  "evidenceUrls",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{anchorUid}}",
+                "ticket": "{{anchorTicket}}",
+                "orderNo": "{{orderNo}}",
+                "reason": "ApiPost mock payment not received",
+                "evidenceUrls": "{{evidenceUrl}},https://s3.gzxchate.com/Spartysys/evidence/mock-chat-record.jpg",
+                "deviceId": "apipost-anchor-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "ios",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "101e751be1285",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:08:01+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/evidence/upload": {
+      "post": {
+        "summary": "主播补充凭证",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{anchorUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{anchorTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "evidenceType": {
+                    "type": "string",
+                    "example": "1"
+                  },
+                  "url": {
+                    "type": "string",
+                    "example": "{{evidenceUrl}}"
+                  },
+                  "remark": {
+                    "type": "string",
+                    "example": "ApiPost mock anchor evidence"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-anchor-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "ios"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "evidenceType",
+                  "url",
+                  "remark",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{anchorUid}}",
+                "ticket": "{{anchorTicket}}",
+                "orderNo": "{{orderNo}}",
+                "evidenceType": "1",
+                "url": "{{evidenceUrl}}",
+                "remark": "ApiPost mock anchor evidence",
+                "deviceId": "apipost-anchor-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "ios",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "1033efdbe12b4",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:56+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/evidence/list": {
+      "get": {
+        "summary": "主播查询凭证",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorUid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorTicket}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderNo",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{orderNo}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost-anchor-device",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1.0.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "os",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "ios",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "10357447e12e3",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:08:05+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/logs": {
+      "get": {
+        "summary": "主播查询流转日志",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/主播侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorUid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{anchorTicket}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderNo",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{orderNo}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost-anchor-device",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1.0.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "os",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "ios",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "1036e383e12e5",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:08:03+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/agent/order/page": {
+      "get": {
+        "summary": "代理订单分页",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/代理侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{agentUid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{agentTicket}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unionId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{unionId}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderNo",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "10",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "receiveCurrency",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "SAR",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryCode",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "SA",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hasAppeal",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "false",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1785513600000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1788192000000",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "20",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost-agent-device",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1.0.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "os",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "android",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "osVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "15",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceType",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "mobile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "Pixel%209",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "netType",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "wifi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "10385c23e12e7",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:47+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/agent/order/detail": {
+      "get": {
+        "summary": "代理订单详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/代理侧"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{agentUid}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{agentTicket}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderNo",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "{{orderNo}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost-agent-device",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "zh",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1.0.0",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "os",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "android",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "apipost",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "1039997fe12e9",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:31+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/agent/order/accept": {
+      "post": {
+        "summary": "代理接单",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/代理侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{agentUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{agentTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "example": "ApiPost mock accept order"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-agent-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "android"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "reason",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{agentUid}}",
+                "ticket": "{{agentTicket}}",
+                "orderNo": "{{orderNo}}",
+                "reason": "ApiPost mock accept order",
+                "deviceId": "apipost-agent-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "android",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "103b257be12eb",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:41+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/agent/order/reject": {
+      "post": {
+        "summary": "代理拒绝订单",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/代理侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{agentUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{agentTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "example": "ApiPost mock unsupported payment account"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-agent-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "android"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "reason",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{agentUid}}",
+                "ticket": "{{agentTicket}}",
+                "orderNo": "{{orderNo}}",
+                "reason": "ApiPost mock unsupported payment account",
+                "deviceId": "apipost-agent-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "android",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "103c27f7e131a",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:45+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/agent/order/paid": {
+      "post": {
+        "summary": "代理标记已付款",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/代理侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{agentUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{agentTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "payProofUrls": {
+                    "type": "string",
+                    "example": "{{evidenceUrl}},https://s3.gzxchate.com/Spartysys/evidence/mock-bank-transfer.jpg"
+                  },
+                  "agentRemark": {
+                    "type": "string",
+                    "example": "ApiPost mock bank transfer completed"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-agent-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "android"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "payProofUrls",
+                  "agentRemark",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{agentUid}}",
+                "ticket": "{{agentTicket}}",
+                "orderNo": "{{orderNo}}",
+                "payProofUrls": "{{evidenceUrl}},https://s3.gzxchate.com/Spartysys/evidence/mock-bank-transfer.jpg",
+                "agentRemark": "ApiPost mock bank transfer completed",
+                "deviceId": "apipost-agent-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "android",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "103dacc7e1349",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:43+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/agent/order/appeal": {
+      "post": {
+        "summary": "代理申诉订单",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/代理侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{agentUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{agentTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "example": "ApiPost mock agent payment dispute"
+                  },
+                  "evidenceUrls": {
+                    "type": "string",
+                    "example": "{{evidenceUrl}},https://s3.gzxchate.com/Spartysys/evidence/mock-agent-chat.jpg"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-agent-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "android"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "reason",
+                  "evidenceUrls",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{agentUid}}",
+                "ticket": "{{agentTicket}}",
+                "orderNo": "{{orderNo}}",
+                "reason": "ApiPost mock agent payment dispute",
+                "evidenceUrls": "{{evidenceUrl}},https://s3.gzxchate.com/Spartysys/evidence/mock-agent-chat.jpg",
+                "deviceId": "apipost-agent-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "android",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "103ef093e1378",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:30+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    },
+    "/salary/trade/agent/evidence/upload": {
+      "post": {
+        "summary": "代理补充付款凭证",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "user/trade/代理侧"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/x-www-form-urlencoded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "example": "{{agentUid}}"
+                  },
+                  "ticket": {
+                    "type": "string",
+                    "example": "{{agentTicket}}"
+                  },
+                  "orderNo": {
+                    "type": "string",
+                    "example": "{{orderNo}}"
+                  },
+                  "evidenceType": {
+                    "type": "string",
+                    "example": "2"
+                  },
+                  "url": {
+                    "type": "string",
+                    "example": "{{evidenceUrl}}"
+                  },
+                  "remark": {
+                    "type": "string",
+                    "example": "ApiPost mock agent payment evidence"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "example": "apipost-agent-device"
+                  },
+                  "language": {
+                    "type": "string",
+                    "example": "zh"
+                  },
+                  "appVersion": {
+                    "type": "string",
+                    "example": "1.0.0"
+                  },
+                  "os": {
+                    "type": "string",
+                    "example": "android"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "example": "apipost"
+                  }
+                },
+                "required": [
+                  "uid",
+                  "ticket",
+                  "orderNo",
+                  "evidenceType",
+                  "url",
+                  "remark",
+                  "deviceId",
+                  "language",
+                  "appVersion",
+                  "os",
+                  "channel"
+                ]
+              },
+              "example": {
+                "uid": "{{agentUid}}",
+                "ticket": "{{agentTicket}}",
+                "orderNo": "{{orderNo}}",
+                "evidenceType": "2",
+                "url": "{{evidenceUrl}}",
+                "remark": "ApiPost mock agent payment evidence",
+                "deviceId": "apipost-agent-device",
+                "language": "zh",
+                "appVersion": "1.0.0",
+                "os": "android",
+                "channel": "apipost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [],
+        "x-target-id": "1040529fe13a7",
+        "x-protocol": "http",
+        "x-mock-server-enable": 1,
+        "x-mark-id": "1",
+        "x-updated-at": "2026-08-24T19:07:38+08:00",
+        "x-updated-user-name": "一起吃大龙虾"
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}

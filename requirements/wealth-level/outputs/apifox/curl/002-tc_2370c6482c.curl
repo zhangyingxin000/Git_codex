@@ -1,0 +1,3 @@
+curl --request GET \
+  --url "{{baseUrl}}/level/exeperience/v2/get?currency={{currency}}&ticket={{ticket}}&countryCode={{countryCode}}&orderNo={{orderNo}}&uid=not-a-number&orderId={{orderId}}" \
+  --header "t: {{t}}"

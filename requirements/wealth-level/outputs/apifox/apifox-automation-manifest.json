@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.1",
+  "package_id": "wealth-level",
+  "generated_at": "2026-09-03T16:20:53+08:00",
+  "collection": "postman-collection.json",
+  "environment": "postman-environment.json",
+  "scenario_count": 1,
+  "scenarios": [
+    {
+      "scenario_id": "wealth_exception_contract",
+      "name": "异常参数与鉴权失败",
+      "case_count": 2,
+      "order_variable": "orderNo"
+    }
+  ],
+  "capabilities": [
+    "scenario_folders",
+    "http_assertion",
+    "business_code_assertion",
+    "response_variable_extraction",
+    "environment_parameterization"
+  ]
+}

@@ -1,0 +1,5448 @@
+{
+  "schema_version": "1.1",
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "generated_at": "2026-09-03T14:29:39+08:00",
+  "summary": {
+    "cases": 195,
+    "jmeter_targets": 0,
+    "script_ready": 0,
+    "evidence_pending": 0,
+    "manual_only": 190,
+    "not_jmeter_target": 5
+  },
+  "mappings": [
+    {
+      "case_id": "tc_05d9690ca7",
+      "case_title": "个人等级区域完整展示",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "所有需求字段可见，值与接口和账号一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7775ff7b25",
+      "case_title": "用户ID与登录账号一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "页面nickId为30010025，UID为1454694"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_78564c7ba8",
+      "case_title": "当前等级展示与数据库一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "页面、接口和数据库等级完全一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_f87a6304a1",
+      "case_title": "当前经验位于等级区间中间值",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "当前等级、经验进度和升级差值计算正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ec3efc314f",
+      "case_title": "经验等于当前等级起点",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "进度从0开始，当前等级不发生错误变化"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7b99341fb1",
+      "case_title": "距离下一等级只差1经验",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "升级前仍为当前等级；达到阈值后切换为下一等级"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_92b7e73135",
+      "case_title": "经验刚好达到升级阈值",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "等级升级、进度重置、权益和勋章同步更新"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7cf6fc8fd7",
+      "case_title": "经验超过升级阈值但等级未更新",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "平台识别数据不一致；客户端不应长期展示错误等级"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ea1e756791",
+      "case_title": "最高等级100",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "显示最高等级状态，不展示不存在的升级目标"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_67f4e0ba41",
+      "case_title": "经验换算规则",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "待确认：消费金额与经验的换算及舍入规则"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ceeb6ea498",
+      "case_title": "Level 0展示规则",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "待确认：Level 0是否存在、数据来源及权益"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ce35ae4ce6",
+      "case_title": "每个等级段权益数组正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "每段权益种类、数量和解锁等级与配置一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_4527814ef5",
+      "case_title": "登录UID与财富UID一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "两个真实响应UID一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6b8bca5264",
+      "case_title": "接口等级与MySQL一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "接口等级等于数据库等级"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_01247bd294",
+      "case_title": "接口经验与MySQL一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "经验值一致；字段映射待最终确认"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_e734064f38",
+      "case_title": "Redis等级缓存与MySQL一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "三方等级一致；Key映射需确认后锁定"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_e7c8f9afd0",
+      "case_title": "数据库更新但缓存未刷新",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "识别缓存陈旧；最终一致性策略符合设计"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_bf4d12a36f",
+      "case_title": "缺失Token",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "请求被拒绝且不返回用户财富数据"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_517ed20f15",
+      "case_title": "无效Token",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "请求被拒绝且错误信息明确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_11663aaefa",
+      "case_title": "过期Token",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "提示会话失效并可通过重新登录恢复"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_18be03f23c",
+      "case_title": "Token UID与参数UID不一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "拒绝越权或强制使用Token所属UID，不泄露B数据"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_cdf388f130",
+      "case_title": "真实登录到财富页面",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "两接口成功，页面与接口核心数据一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7e3e7168bf",
+      "case_title": "送礼增加经验但未升级",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "经验按规则增加，等级和权益状态不误变"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_0d4a18c67c",
+      "case_title": "送礼触发等级升级",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "等级、经验、勋章、区间和权益同步升级"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_0dd34a92db",
+      "case_title": "财富等级矩阵：Lv.1奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.1的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_8acae5f343",
+      "case_title": "财富等级矩阵：Lv.2奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.2的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_08acc16184",
+      "case_title": "财富等级矩阵：Lv.3奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.3的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_1250f7a9a7",
+      "case_title": "财富等级矩阵：Lv.4奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.4的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_8c4d74c230",
+      "case_title": "财富等级矩阵：Lv.5奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.5的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7289cc2110",
+      "case_title": "财富等级矩阵：Lv.6奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.6的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6cd0bae0cc",
+      "case_title": "财富等级矩阵：Lv.7奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.7的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_04d2f14423",
+      "case_title": "财富等级矩阵：Lv.8奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.8的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7f1250c83e",
+      "case_title": "财富等级矩阵：Lv.9奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.9的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b6aa79069b",
+      "case_title": "财富等级矩阵：Lv.10奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.10的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_21749752c9",
+      "case_title": "财富等级矩阵：Lv.11奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.11的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_2b215236ff",
+      "case_title": "财富等级矩阵：Lv.12奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.12的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_995adab6d7",
+      "case_title": "财富等级矩阵：Lv.13奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.13的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a8a0f1b627",
+      "case_title": "财富等级矩阵：Lv.14奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.14的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_8805cfa24b",
+      "case_title": "财富等级矩阵：Lv.15奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.15的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_4e3817f59d",
+      "case_title": "财富等级矩阵：Lv.16奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.16的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ec48033823",
+      "case_title": "财富等级矩阵：Lv.17奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.17的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_2c0e2a2982",
+      "case_title": "财富等级矩阵：Lv.18奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.18的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_45c74a1ed3",
+      "case_title": "财富等级矩阵：Lv.19奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.19的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7740873a2a",
+      "case_title": "财富等级矩阵：Lv.20奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.20的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_9292adc9cc",
+      "case_title": "财富等级矩阵：Lv.21奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.21的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_48466c3093",
+      "case_title": "财富等级矩阵：Lv.22奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.22的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ad4b659b94",
+      "case_title": "财富等级矩阵：Lv.23奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.23的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_c0672b93d8",
+      "case_title": "财富等级矩阵：Lv.24奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.24的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_e3bd3542ce",
+      "case_title": "财富等级矩阵：Lv.25奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.25的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7a1b170e02",
+      "case_title": "财富等级矩阵：Lv.26奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.26的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_847c06db48",
+      "case_title": "财富等级矩阵：Lv.27奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.27的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_d36453700b",
+      "case_title": "财富等级矩阵：Lv.28奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.28的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_3a53c09257",
+      "case_title": "财富等级矩阵：Lv.29奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.29的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_dd511c32c7",
+      "case_title": "财富等级矩阵：Lv.30奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.30的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_cf8ed41463",
+      "case_title": "财富等级矩阵：Lv.31奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.31的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_5fefa76422",
+      "case_title": "财富等级矩阵：Lv.32奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.32的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_93b58e7aee",
+      "case_title": "财富等级矩阵：Lv.33奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.33的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_20b9eb1aae",
+      "case_title": "财富等级矩阵：Lv.34奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.34的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_99a1e6bc76",
+      "case_title": "财富等级矩阵：Lv.35奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.35的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_acdf71de73",
+      "case_title": "财富等级矩阵：Lv.36奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.36的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_d2d85b736c",
+      "case_title": "财富等级矩阵：Lv.37奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.37的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_4abe6a9f26",
+      "case_title": "财富等级矩阵：Lv.38奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.38的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_94844c26bb",
+      "case_title": "财富等级矩阵：Lv.39奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.39的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_edb08aaf9f",
+      "case_title": "财富等级矩阵：Lv.40奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.40的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_53e93c2c9b",
+      "case_title": "财富等级矩阵：Lv.41奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.41的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7ad077e9d5",
+      "case_title": "财富等级矩阵：Lv.42奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.42的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_94602c9e74",
+      "case_title": "财富等级矩阵：Lv.43奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.43的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6ec3d15f69",
+      "case_title": "财富等级矩阵：Lv.44奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.44的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b87eeef97c",
+      "case_title": "财富等级矩阵：Lv.45奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.45的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_dcb2ca8da9",
+      "case_title": "财富等级矩阵：Lv.46奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.46的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_1a60e14a6e",
+      "case_title": "财富等级矩阵：Lv.47奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.47的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_d2a4823971",
+      "case_title": "财富等级矩阵：Lv.48奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.48的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_c56ec05f23",
+      "case_title": "财富等级矩阵：Lv.49奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.49的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6740325d44",
+      "case_title": "财富等级矩阵：Lv.50奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.50的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_300c860f82",
+      "case_title": "财富等级矩阵：Lv.51奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.51的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_e0d06e309d",
+      "case_title": "财富等级矩阵：Lv.52奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.52的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_1963e6eeed",
+      "case_title": "财富等级矩阵：Lv.53奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.53的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a21692df17",
+      "case_title": "财富等级矩阵：Lv.54奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.54的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_baf9767def",
+      "case_title": "财富等级矩阵：Lv.55奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.55的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_45d32f59b4",
+      "case_title": "财富等级矩阵：Lv.56奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.56的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_fa6c5f744d",
+      "case_title": "财富等级矩阵：Lv.57奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.57的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_cb547a2cd6",
+      "case_title": "财富等级矩阵：Lv.58奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.58的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7c1d78389c",
+      "case_title": "财富等级矩阵：Lv.59奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.59的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_0f398daaae",
+      "case_title": "财富等级矩阵：Lv.60奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.60的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a33fdf1e1b",
+      "case_title": "财富等级矩阵：Lv.61奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.61的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_136c9a89b3",
+      "case_title": "财富等级矩阵：Lv.62奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.62的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b120828e55",
+      "case_title": "财富等级矩阵：Lv.63奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.63的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_d3c2d1c340",
+      "case_title": "财富等级矩阵：Lv.64奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.64的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ce5cbcade0",
+      "case_title": "财富等级矩阵：Lv.65奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.65的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_52f8951c67",
+      "case_title": "财富等级矩阵：Lv.66奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.66的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_8a825362c0",
+      "case_title": "财富等级矩阵：Lv.67奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.67的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7894394b0e",
+      "case_title": "财富等级矩阵：Lv.68奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.68的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_9703c5cf2c",
+      "case_title": "财富等级矩阵：Lv.69奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.69的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_3a9257602b",
+      "case_title": "财富等级矩阵：Lv.70奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.70的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_f5471c19eb",
+      "case_title": "财富等级矩阵：Lv.71奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.71的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_78d906207e",
+      "case_title": "财富等级矩阵：Lv.72奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.72的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_c4ace41f43",
+      "case_title": "财富等级矩阵：Lv.73奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.73的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_d4d3ce52da",
+      "case_title": "财富等级矩阵：Lv.74奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.74的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_77182cc125",
+      "case_title": "财富等级矩阵：Lv.75奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.75的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_d8535556b7",
+      "case_title": "财富等级矩阵：Lv.76奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.76的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_bed4aae435",
+      "case_title": "财富等级矩阵：Lv.77奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.77的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_2004d0ab76",
+      "case_title": "财富等级矩阵：Lv.78奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.78的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_9a881d3eea",
+      "case_title": "财富等级矩阵：Lv.79奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.79的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6217b03c02",
+      "case_title": "财富等级矩阵：Lv.80奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.80的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_32ed4c50fc",
+      "case_title": "财富等级矩阵：Lv.81奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.81的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_f68fb8332b",
+      "case_title": "财富等级矩阵：Lv.82奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.82的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7de1252871",
+      "case_title": "财富等级矩阵：Lv.83奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.83的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_84a17d394d",
+      "case_title": "财富等级矩阵：Lv.84奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.84的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_c54568a734",
+      "case_title": "财富等级矩阵：Lv.85奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.85的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_3e3bf3d20c",
+      "case_title": "财富等级矩阵：Lv.86奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.86的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_9544be84ec",
+      "case_title": "财富等级矩阵：Lv.87奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.87的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_fdc05ecc2a",
+      "case_title": "财富等级矩阵：Lv.88奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.88的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_e3b40ed636",
+      "case_title": "财富等级矩阵：Lv.89奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.89的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7a4cf946c0",
+      "case_title": "财富等级矩阵：Lv.90奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.90的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_545d3f5a16",
+      "case_title": "财富等级矩阵：Lv.91奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.91的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_e5da2caf38",
+      "case_title": "财富等级矩阵：Lv.92奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.92的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_84e25ea4bc",
+      "case_title": "财富等级矩阵：Lv.93奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.93的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_25cd90014b",
+      "case_title": "财富等级矩阵：Lv.94奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.94的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_775600d33a",
+      "case_title": "财富等级矩阵：Lv.95奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.95的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_3ed43ddded",
+      "case_title": "财富等级矩阵：Lv.96奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.96的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_98a5b3b2f4",
+      "case_title": "财富等级矩阵：Lv.97奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.97的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7c8350cd18",
+      "case_title": "财富等级矩阵：Lv.98奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.98的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_0fbdd21045",
+      "case_title": "财富等级矩阵：Lv.99奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.99的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_40f9877ffa",
+      "case_title": "财富等级矩阵：Lv.100奖励明细正确",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.100的奖励集合与批准矩阵完全一致；不得缺少、重复、多发或提前解锁；每项名称、类型、图片/MP4/PAG/SVGA资源、有效期和状态正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a6b23aefe9",
+      "case_title": "财富等级矩阵：Lv.9→Lv.10跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.1-9移动到包含Lv.10的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_42a2a434d0",
+      "case_title": "财富等级矩阵：Lv.10→Lv.9跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.1-9；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b4f46309a0",
+      "case_title": "财富等级矩阵：Lv.19→Lv.20跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.10-19移动到包含Lv.20的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_67d3d215c3",
+      "case_title": "财富等级矩阵：Lv.20→Lv.19跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.10-19；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_03117e1ea3",
+      "case_title": "财富等级矩阵：Lv.29→Lv.30跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.20-29移动到包含Lv.30的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7a45abfb23",
+      "case_title": "财富等级矩阵：Lv.30→Lv.29跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.20-29；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_9b6270d018",
+      "case_title": "财富等级矩阵：Lv.39→Lv.40跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.30-39移动到包含Lv.40的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_f5072ba7b1",
+      "case_title": "财富等级矩阵：Lv.40→Lv.39跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.30-39；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a4055c89db",
+      "case_title": "财富等级矩阵：Lv.49→Lv.50跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.40-49移动到包含Lv.50的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_f5a0551e87",
+      "case_title": "财富等级矩阵：Lv.50→Lv.49跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.40-49；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_8f26871e83",
+      "case_title": "财富等级矩阵：Lv.59→Lv.60跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.50-59移动到包含Lv.60的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_f0ad5bf017",
+      "case_title": "财富等级矩阵：Lv.60→Lv.59跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.50-59；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_0a84389425",
+      "case_title": "财富等级矩阵：Lv.69→Lv.70跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.60-69移动到包含Lv.70的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_139bb92ed9",
+      "case_title": "财富等级矩阵：Lv.70→Lv.69跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.60-69；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b2465be7bf",
+      "case_title": "财富等级矩阵：Lv.79→Lv.80跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.70-79移动到包含Lv.80的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_030f383de5",
+      "case_title": "财富等级矩阵：Lv.80→Lv.79跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.70-79；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_50897114b1",
+      "case_title": "财富等级矩阵：Lv.89→Lv.90跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.80-89移动到包含Lv.90的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b216b48ddd",
+      "case_title": "财富等级矩阵：Lv.90→Lv.89跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.80-89；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_780389228f",
+      "case_title": "财富等级矩阵：Lv.99→Lv.100跨段升级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位从Lv.90-99移动到包含Lv.100的新区间；个人信息同步；仅新等级应解锁的奖励变化，其余奖励保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_57d8c81fe9",
+      "case_title": "财富等级矩阵：Lv.100→Lv.99跨段降级联动",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "定位回到Lv.90-99；等级、勋章和经验同步；奖励严格按批准的降级回收/保留规则处理"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_5c37f55c75",
+      "case_title": "财富等级矩阵：Lv.1个人信息与定位边界",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.1定位到最低区间，不出现Lv.0或负经验；奖励锁定/解锁正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        },
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_439dfecde7",
+      "case_title": "财富等级矩阵：Lv.100个人信息与定位边界",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "Lv.100定位到最高等级，不出现Lv.101、下一等级或错误升级进度；最高奖励完整"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_08201fc35e",
+      "case_title": "缺失UID参数",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "拒绝非法请求或不泄露其他用户数据"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_2370c6482c",
+      "case_title": "非法UID类型",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "拒绝非法请求或不泄露其他用户数据"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_89aa5650e3",
+      "case_title": "查询当前用户钱包余额：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "appCode",
+        "appVersion",
+        "appid",
+        "channel",
+        "deviceType",
+        "language",
+        "os",
+        "systemLanguage",
+        "ticket",
+        "uid",
+        "version"
+      ],
+      "assertions": [
+        "返回当前登录用户钱包余额，接口只读，不应改变业务数据。"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_473504bd41",
+      "case_title": "查询送礼账单记录：正常请求",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "appCode",
+        "appVersion",
+        "appid",
+        "appsflyerId",
+        "channel",
+        "date",
+        "deviceId",
+        "deviceType",
+        "isVpnConnected",
+        "ispType",
+        "language",
+        "model",
+        "netType",
+        "organic",
+        "os",
+        "osVersion",
+        "packageName",
+        "pageNo",
+        "pageSize",
+        "systemLanguage",
+        "ticket",
+        "type",
+        "uid",
+        "version"
+      ],
+      "assertions": [
+        "返回当前登录用户账单列表，接口只读，不应改变业务数据。"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_d439db777f",
+      "case_title": "登录后查询真实财富等级",
+      "mapping_status": "NOT_JMETER_TARGET",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [
+        "appCode",
+        "appVersion",
+        "appid",
+        "deviceType",
+        "language",
+        "os",
+        "systemLanguage",
+        "ticket",
+        "uid"
+      ],
+      "assertions": [
+        "HTTP与业务码符合预期"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "newman",
+      "readiness": "SCRIPT_GENERATION_READY"
+    },
+    {
+      "case_id": "tc_597bec9dd5",
+      "case_title": "超长昵称展示",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "昵称按设计截断或换行，不覆盖等级信息"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_0b7c3b0812",
+      "case_title": "当前勋章与等级对应",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "勋章样式、名称和等级配置匹配"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ec58fc412b",
+      "case_title": "个人区域接口失败",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "展示可理解的错误和重试入口，恢复后数据正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_cd1786c4e7",
+      "case_title": "最低等级经验",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "最低等级、进度和可解锁权益正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_8abaa0f0c4",
+      "case_title": "经验为0",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "按已确认的最低等级规则展示；Level 0规则待产品确认"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a6615698b4",
+      "case_title": "经验为负数",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "服务拒绝或修正非法值，页面不显示负进度"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_030bc3252c",
+      "case_title": "经验超出最大配置",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "按最高等级封顶或明确告警，不溢出"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_71a7e1ffa6",
+      "case_title": "升级所需经验文案",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "文案中的所需经验=下一阈值-当前经验"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_c176a8d236",
+      "case_title": "进度条比例计算",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "比例=(当前经验-区间起点)/(下一阈值-区间起点)"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b374f6d931",
+      "case_title": "大经验值显示精度",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "无科学计数、溢出或精度损失"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_96dd2f08c8",
+      "case_title": "连续升级多个等级",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "最终等级和权益按最终经验正确计算，不停留在中间等级"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "cache_consistency",
+          "source": "redis_optional",
+          "key_pattern": "待按需求包确认",
+          "field": "",
+          "reason": "用例涉及缓存语义，但当前需求包未提供稳定Key，先作为可选证据。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a2b3790f6a",
+      "case_title": "默认定位当前等级段",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "默认定位并高亮Lv.70-79"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_904f976a97",
+      "case_title": "等级段从低到高可完整浏览",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "UI按需求从低到高展示完整等级范围"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_dfc287f60c",
+      "case_title": "相邻等级段切换",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "区间标题、权益和状态同步切换"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6fe633d70c",
+      "case_title": "快速连续切换等级段",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "最终内容与最后一次选择一致，无错位或重叠"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_60d78ca2c9",
+      "case_title": "等级段边界9到10",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "等级9属于1-9；等级10属于10-19"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a38b45922e",
+      "case_title": "等级段边界99到100",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "99属于90-99；100属于独立100区间"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_46e920eeee",
+      "case_title": "未解锁区间状态",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "未解锁权益显示灰锁，预览权限符合需求"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_9975c5a0a9",
+      "case_title": "已解锁区间状态",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "已获得权益显示金色勾选"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_5082221ae5",
+      "case_title": "当前区间状态",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "当前区间内各权益根据具体解锁等级正确显示"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_803a7e7121",
+      "case_title": "列表滚动到末端",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "末尾内容可见，无截断和空白"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_dfed7fb743",
+      "case_title": "列表刷新后保持位置",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "刷新策略符合设计，My Level仍可正确回位"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6c822846bc",
+      "case_title": "等级勋章权益",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "勋章资源和展示与等级段匹配"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a96aa87ac8",
+      "case_title": "进场特效权益",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "对应等级进场特效完整播放"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_9694282eaf",
+      "case_title": "房间图片消息权益",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "仅满足等级要求的账号可使用"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_92e5a5dea3",
+      "case_title": "等级礼物权益",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "礼物可见性、赠送权限和扣减符合配置"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_929a8c0f2e",
+      "case_title": "聊天气泡权益",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "气泡样式与对应等级一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_6d45cb278a",
+      "case_title": "特殊ID权益",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "特殊ID位数和样式与等级段一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ca1b7b6748",
+      "case_title": "权益重复配置",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "不应出现非预期重复或同级冲突"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ce20fd1be3",
+      "case_title": "从高等级段回到当前等级",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "回到70-79并正确高亮"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_7bd3ecd254",
+      "case_title": "从低等级段回到当前等级",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "回到70-79，位置准确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_30d34d0008",
+      "case_title": "已在当前等级段点击My Level",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "不重复请求或抖动，状态保持正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_b15e34123b",
+      "case_title": "等级升级后My Level回位",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "回到升级后的70-79区间"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a43ccc45ad",
+      "case_title": "列表未加载完成时点击My Level",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "按钮禁用或延迟执行，不跳到错误位置"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_fcc99f8ee8",
+      "case_title": "接口失败时点击My Level",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "不崩溃，恢复后可正确回位"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_2f95ee777e",
+      "case_title": "最高等级My Level",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "准确定位Level 100"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_a76f014a7d",
+      "case_title": "最低等级My Level",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "准确定位最低等级区间"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_2f415ba578",
+      "case_title": "打开权益预览弹窗",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "弹窗展示正确的区间、名称和预览资源"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ccdc41befd",
+      "case_title": "重复请求数据稳定",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "业务数据保持一致，非业务时间字段除外"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "rate_limit_or_idempotency",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及限流、频控或幂等，Redis可能保存计数或锁，需要研发确认Key规则。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_ce429b0f24",
+      "case_title": "重新登录后数据一致",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "同一账号数据一致"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_4864d26b85",
+      "case_title": "财富接口响应性能",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "性能阈值待确认；报告真实平均与P95"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_5e5c8f6ac3",
+      "case_title": "大量权益资源加载",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "资源按需加载，无明显卡顿或内存异常"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_8862f0efdd",
+      "case_title": "升级后浏览新权益并回位",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "新权益解锁状态和回位目标均正确"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "processing_lock",
+          "source": "redis_optional",
+          "key_pattern": "待按服务实现确认",
+          "field": "",
+          "reason": "用例涉及处理中互斥或锁语义，Redis可能存在临时状态Key。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    },
+    {
+      "case_id": "tc_50bfe8a80e",
+      "case_title": "Token过期后恢复财富页面",
+      "mapping_status": "MANUAL_ONLY",
+      "jmeter_thread_group": "",
+      "matched_flow_id": "",
+      "jmeter_sampler": "",
+      "variables": [],
+      "assertions": [
+        "重新认证后恢复真实数据，不丢失页面导航状态"
+      ],
+      "db_evidence_rules": [],
+      "redis_evidence_rules": [],
+      "optional_redis_evidence": [
+        {
+          "type": "login_state",
+          "source": "redis_optional",
+          "key_pattern": "user_login_info:{uid}",
+          "field": "access_token",
+          "reason": "用例涉及登录态或身份认证，可选读取Redis登录缓存辅助定位401/403。"
+        }
+      ],
+      "coverage_tool": "manual",
+      "readiness": "MANUAL_ONLY"
+    }
+  ]
+}

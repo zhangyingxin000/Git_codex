@@ -1,0 +1,22 @@
+schema_version: '1.0'
+package_id: salary-trade
+purpose: 工资交易接口的非敏感公共请求参数；账号uid和ticket仍从角色CSV或运行时输入读取。
+common_query:
+  deviceType: '0'
+  systemLanguage: zh
+  appVersion: 100.1.5.6
+  os: android
+  netType: '2'
+  channel: google
+  appsflyerId: 1787889409378-5852177650651460260
+  language: en
+  appCode: '100156'
+  deviceId: 8fcce1f1-5153-3207-9786-0240140a524a
+  version: 100.1.5.6
+  osVersion: '16'
+  isVpnConnected: '0'
+  appid: soulfree
+  model: SM-A546B
+  packageName: com.soulfree.happiness
+  ispType: '4'
+  organic: Organic

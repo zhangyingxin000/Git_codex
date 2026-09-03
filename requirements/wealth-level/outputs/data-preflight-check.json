@@ -1,0 +1,327 @@
+{
+  "schema_version": "1.1",
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "generated_at": "2026-09-03T14:29:39+08:00",
+  "status": "READY_WITH_WARNINGS",
+  "checks": [
+    {
+      "name": "账号模型",
+      "status": "READY",
+      "detail": "已读取 C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml",
+      "next_action": ""
+    },
+    {
+      "name": "通用运行数据",
+      "status": "READY_WITH_WARNINGS",
+      "detail": "当前需求包按 account_model.yaml 声明的数据来源做静态判断，不默认强制CSV、Redis或DB。",
+      "next_action": ""
+    },
+    {
+      "name": "场景数据准备",
+      "status": "WARNING",
+      "detail": "场景预检有 7 个场景需要关注。",
+      "next_action": "确认未绑定证据规则或人工/定时流程是否符合预期"
+    },
+    {
+      "name": "需求资源预检",
+      "status": "WARNING",
+      "detail": "无运行阻断；有 1 个提醒、0 个建议。",
+      "next_action": "确认资源登记或对非必要项执行确认忽略"
+    }
+  ],
+  "runtime_sql_checks": [],
+  "scenario_preflight": {
+    "status": "READY_WITH_WARNINGS",
+    "summary": {
+      "scenarios": 7,
+      "ready": 0,
+      "warnings": 7,
+      "blocked": 0
+    },
+    "scenarios": [
+      {
+        "scenario_id": "wealth_auth_context",
+        "name": "登录态与公共参数",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "wealth_user",
+        "applicant_uid": "",
+        "countryCode": "",
+        "currency": "",
+        "case_count": 43,
+        "evidence_rule_ids": [],
+        "blockers": [],
+        "attentions": [
+          "场景未绑定证据规则，将退回执行需求包通用证据规则"
+        ]
+      },
+      {
+        "scenario_id": "wealth_snapshot_contract",
+        "name": "财富等级快照契约",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "wealth_user",
+        "applicant_uid": "",
+        "countryCode": "",
+        "currency": "",
+        "case_count": 52,
+        "evidence_rule_ids": [],
+        "blockers": [],
+        "attentions": [
+          "场景未绑定证据规则，将退回执行需求包通用证据规则"
+        ]
+      },
+      {
+        "scenario_id": "wealth_gift_experience_growth",
+        "name": "送礼后经验增长",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "wealth_user",
+        "applicant_uid": "",
+        "countryCode": "",
+        "currency": "",
+        "case_count": 0,
+        "evidence_rule_ids": [],
+        "blockers": [],
+        "attentions": [
+          "场景暂未绑定测试用例，保留为待补充或人工确认项",
+          "场景未绑定证据规则，将退回执行需求包通用证据规则"
+        ]
+      },
+      {
+        "scenario_id": "wealth_wallet_bill_consistency",
+        "name": "钱包与账单一致性",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "wealth_user",
+        "applicant_uid": "",
+        "countryCode": "",
+        "currency": "",
+        "case_count": 0,
+        "evidence_rule_ids": [],
+        "blockers": [],
+        "attentions": [
+          "场景暂未绑定测试用例，保留为待补充或人工确认项",
+          "场景未绑定证据规则，将退回执行需求包通用证据规则"
+        ]
+      },
+      {
+        "scenario_id": "wealth_exception_contract",
+        "name": "异常参数与鉴权失败",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "wealth_user",
+        "applicant_uid": "",
+        "countryCode": "",
+        "currency": "",
+        "case_count": 3,
+        "evidence_rule_ids": [],
+        "blockers": [],
+        "attentions": [
+          "场景未绑定证据规则，将退回执行需求包通用证据规则"
+        ]
+      },
+      {
+        "scenario_id": "wealth_performance_baseline",
+        "name": "财富接口性能基线",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "wealth_user",
+        "applicant_uid": "",
+        "countryCode": "",
+        "currency": "",
+        "case_count": 0,
+        "evidence_rule_ids": [],
+        "blockers": [],
+        "attentions": [
+          "场景暂未绑定测试用例，保留为待补充或人工确认项",
+          "场景未绑定证据规则，将退回执行需求包通用证据规则"
+        ]
+      },
+      {
+        "scenario_id": "wealth_unclassified_cases",
+        "name": "待归类财富等级用例",
+        "status": "READY_WITH_WARNINGS",
+        "account_slot": "wealth_user",
+        "applicant_uid": "",
+        "countryCode": "",
+        "currency": "",
+        "case_count": 5,
+        "evidence_rule_ids": [],
+        "blockers": [],
+        "attentions": [
+          "场景未绑定证据规则，将退回执行需求包通用证据规则"
+        ]
+      }
+    ],
+    "message": "按场景检查账号槽位、用例绑定和证据规则绑定。"
+  },
+  "details": {
+    "applicants": [],
+    "country_currency_pairs": [],
+    "proxy_matches": [],
+    "credential_sources": {},
+    "input_detection": {
+      "policy": "按当前需求包 account_model.yaml 和测试用例字段检测数据来源；不默认强加 CSV、Redis 或登录接口。",
+      "enabled_sources": [
+        "csv",
+        "login_api",
+        "mysql",
+        "redis",
+        "runtime"
+      ],
+      "disabled_by_default": [
+        "csv",
+        "redis",
+        "mysql",
+        "login_api"
+      ],
+      "roles": {}
+    },
+    "scenario_preflight": {
+      "status": "READY_WITH_WARNINGS",
+      "summary": {
+        "scenarios": 7,
+        "ready": 0,
+        "warnings": 7,
+        "blocked": 0
+      },
+      "scenarios": [
+        {
+          "scenario_id": "wealth_auth_context",
+          "name": "登录态与公共参数",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "wealth_user",
+          "applicant_uid": "",
+          "countryCode": "",
+          "currency": "",
+          "case_count": 43,
+          "evidence_rule_ids": [],
+          "blockers": [],
+          "attentions": [
+            "场景未绑定证据规则，将退回执行需求包通用证据规则"
+          ]
+        },
+        {
+          "scenario_id": "wealth_snapshot_contract",
+          "name": "财富等级快照契约",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "wealth_user",
+          "applicant_uid": "",
+          "countryCode": "",
+          "currency": "",
+          "case_count": 52,
+          "evidence_rule_ids": [],
+          "blockers": [],
+          "attentions": [
+            "场景未绑定证据规则，将退回执行需求包通用证据规则"
+          ]
+        },
+        {
+          "scenario_id": "wealth_gift_experience_growth",
+          "name": "送礼后经验增长",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "wealth_user",
+          "applicant_uid": "",
+          "countryCode": "",
+          "currency": "",
+          "case_count": 0,
+          "evidence_rule_ids": [],
+          "blockers": [],
+          "attentions": [
+            "场景暂未绑定测试用例，保留为待补充或人工确认项",
+            "场景未绑定证据规则，将退回执行需求包通用证据规则"
+          ]
+        },
+        {
+          "scenario_id": "wealth_wallet_bill_consistency",
+          "name": "钱包与账单一致性",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "wealth_user",
+          "applicant_uid": "",
+          "countryCode": "",
+          "currency": "",
+          "case_count": 0,
+          "evidence_rule_ids": [],
+          "blockers": [],
+          "attentions": [
+            "场景暂未绑定测试用例，保留为待补充或人工确认项",
+            "场景未绑定证据规则，将退回执行需求包通用证据规则"
+          ]
+        },
+        {
+          "scenario_id": "wealth_exception_contract",
+          "name": "异常参数与鉴权失败",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "wealth_user",
+          "applicant_uid": "",
+          "countryCode": "",
+          "currency": "",
+          "case_count": 3,
+          "evidence_rule_ids": [],
+          "blockers": [],
+          "attentions": [
+            "场景未绑定证据规则，将退回执行需求包通用证据规则"
+          ]
+        },
+        {
+          "scenario_id": "wealth_performance_baseline",
+          "name": "财富接口性能基线",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "wealth_user",
+          "applicant_uid": "",
+          "countryCode": "",
+          "currency": "",
+          "case_count": 0,
+          "evidence_rule_ids": [],
+          "blockers": [],
+          "attentions": [
+            "场景暂未绑定测试用例，保留为待补充或人工确认项",
+            "场景未绑定证据规则，将退回执行需求包通用证据规则"
+          ]
+        },
+        {
+          "scenario_id": "wealth_unclassified_cases",
+          "name": "待归类财富等级用例",
+          "status": "READY_WITH_WARNINGS",
+          "account_slot": "wealth_user",
+          "applicant_uid": "",
+          "countryCode": "",
+          "currency": "",
+          "case_count": 5,
+          "evidence_rule_ids": [],
+          "blockers": [],
+          "attentions": [
+            "场景未绑定证据规则，将退回执行需求包通用证据规则"
+          ]
+        }
+      ],
+      "message": "按场景检查账号槽位、用例绑定和证据规则绑定。"
+    },
+    "resource_preflight": {
+      "schema_version": "1.1",
+      "package_id": "wealth-level",
+      "package_name": "财富等级",
+      "generated_at": "2026-09-03T14:29:39+08:00",
+      "status": "READY_WITH_WARNINGS",
+      "summary": {
+        "blocked": 0,
+        "warnings": 1,
+        "suggestions": 0,
+        "confirmed_ignored": 0,
+        "registered_datasets": 1,
+        "registered_mysql_tables": 0,
+        "registered_redis_patterns": 0
+      },
+      "policy": "资源由当前需求包登记；预检只判断资源类型和完整性，不默认强制CSV、数据库、Redis或登录接口。",
+      "findings": [
+        {
+          "id": "redis:unregistered",
+          "status": "WARNING",
+          "title": "用例涉及缓存语义但未登记Redis资源",
+          "reason": "平台不会猜测Redis Key；缺少Key模式时仍可执行HTTP，但缓存结论不完整。",
+          "next_action": "让研发提供Key模式，或确认该需求不检查Redis。",
+          "resource_type": "redis_pattern",
+          "registered": []
+        }
+      ],
+      "resource_manifest_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+      "report_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\resource-preflight-check.json"
+    }
+  }
+}

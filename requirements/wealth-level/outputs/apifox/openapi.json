@@ -1,0 +1,96 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "财富等级 - Apifox接口基线",
+    "version": "2026.09.03.1620",
+    "description": "由质量中枢根据 OpenAPI、HAR 抓包和人工维护接口资产生成。敏感示例值已脱敏。"
+  },
+  "servers": [
+    {
+      "url": "https://test2westarlive.gzxchate.com/"
+    }
+  ],
+  "paths": {
+    "/level/exeperience/v2/get": {
+      "get": {
+        "summary": "获取财富等级经验及等级权益",
+        "tags": [
+          "财富等级"
+        ],
+        "parameters": [
+          {
+            "name": "ticket",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "uid",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "systemLanguage",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "deviceType",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "返回myExperLevelInfo和experRights"
+          }
+        },
+        "x-autotest-risk": {
+          "level": "low",
+          "reason": "只读请求，未发现高风险关键词",
+          "danger_score": 5,
+          "danger_warning": "低危险系数 5/100"
+        },
+        "x-autotest-source": "platform-interface-baseline",
+        "security": [
+          {
+            "capturedOrConfiguredAuth": []
+          }
+        ],
+        "x-autotest-case-ids": [
+          "tc_08201fc35e",
+          "tc_2370c6482c"
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "capturedOrConfiguredAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "平台只保留脱敏后的认证占位，不导出真实 Cookie、Token、Ticket 或账号密码。"
+      }
+    }
+  },
+  "x-autotest-security": {
+    "raw_har_saved": false,
+    "sensitive_fields_redacted": true,
+    "business_datasource_readonly": true,
+    "note": "导出文档来自平台接口资产库，不包含原始抓包敏感值。"
+  },
+  "x-autotest-package": {
+    "package_id": "wealth-level",
+    "generated_at": "2026-09-03T16:20:53+08:00"
+  }
+}

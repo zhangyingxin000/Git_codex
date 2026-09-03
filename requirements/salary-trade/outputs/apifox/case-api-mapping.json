@@ -1,0 +1,1516 @@
+{
+  "schema_version": "1.1",
+  "package_id": "salary-trade",
+  "generated_at": "2026-09-03T16:20:53+08:00",
+  "mappings": [
+    {
+      "case_id": "tc_3c2aa3f293",
+      "title": "返回工资快速结算创建入口开关：正常请求",
+      "method": "GET",
+      "path": "/union/getAnchorApplyRecord",
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "scenario_name": "转账后申请人投诉，投诉失败",
+      "order_variable": "flow_d_order_no",
+      "scenario_ids": [
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "返回工资快速结算创建入口开关：正常请求",
+      "curl_file": "curl/001-tc_3c2aa3f293.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_c4f56bbedb",
+      "title": "返回工资快速结算创建入口开关：正常请求",
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "scenario_name": "转账后申请人投诉，投诉失败",
+      "order_variable": "flow_d_order_no",
+      "scenario_ids": [
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "返回工资快速结算创建入口开关：正常请求",
+      "curl_file": "curl/002-tc_c4f56bbedb.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_586b91c352",
+      "title": "进入入口时查询可结算额度：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/quota",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "进入入口时查询可结算额度：正常请求",
+      "curl_file": "curl/003-tc_586b91c352.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_cb0f14e257",
+      "title": "按国家和币种选择代理用户：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agents",
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "scenario_name": "转账后申请人投诉，投诉失败",
+      "order_variable": "flow_d_order_no",
+      "scenario_ids": [
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "按国家和币种选择代理用户：正常请求",
+      "curl_file": "curl/004-tc_cb0f14e257.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_ddc2782339",
+      "title": "提交收款信息并创建待代理处理订单：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "scenario_name": "转账后申请人投诉，投诉失败",
+      "order_variable": "flow_d_order_no",
+      "scenario_ids": [
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "提交收款信息并创建待代理处理订单：正常请求",
+      "curl_file": "curl/005-tc_ddc2782339.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_2c8302c8bf",
+      "title": "查看本人快速结算订单列表：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/page",
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "scenario_name": "转账后申请人投诉，投诉失败",
+      "order_variable": "flow_d_order_no",
+      "scenario_ids": [
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "查看本人快速结算订单列表：正常请求",
+      "curl_file": "curl/006-tc_2c8302c8bf.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_ed495e60ee",
+      "title": "查看本人订单详情：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/detail",
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "scenario_name": "转账后申请人投诉，投诉失败",
+      "order_variable": "flow_d_order_no",
+      "scenario_ids": [
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "查看本人订单详情：正常请求",
+      "curl_file": "curl/007-tc_ed495e60ee.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_4a361f2e73",
+      "title": "取消待代理处理订单：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "scenario_id": "salary_flow_a_cancel_by_applicant",
+      "scenario_name": "创建后申请人取消",
+      "order_variable": "flow_a_order_no",
+      "scenario_ids": [
+        "salary_flow_a_cancel_by_applicant",
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "创建后申请人取消",
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_a_order_no",
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "取消待代理处理订单：正常请求",
+      "curl_file": "curl/008-tc_4a361f2e73.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_da1f72545f",
+      "title": "确认已收到代理转账：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "scenario_id": "salary_flow_d_appeal_failed",
+      "scenario_name": "转账后申请人投诉，投诉失败",
+      "order_variable": "flow_d_order_no",
+      "scenario_ids": [
+        "salary_flow_d_appeal_failed",
+        "salary_flow_e_appeal_success",
+        "salary_flow_f_create_timeout",
+        "salary_flow_g_accept_timeout",
+        "salary_flow_h_confirm_timeout"
+      ],
+      "scenario_names": [
+        "转账后申请人投诉，投诉失败",
+        "转账后申请人投诉，投诉成功",
+        "创建后代理不处理直到订单过期",
+        "代理接受后不转账，12小时过期取消",
+        "代理已转账后申请人24小时不确认，订单自动完成"
+      ],
+      "order_variables": [
+        "flow_d_order_no",
+        "flow_e_order_no",
+        "flow_f_order_no",
+        "flow_g_order_no",
+        "flow_h_order_no"
+      ],
+      "postman_item": "确认已收到代理转账：正常请求",
+      "curl_file": "curl/009-tc_da1f72545f.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_be228a1cd1",
+      "title": "待确认收款时提交投诉：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：正常请求",
+      "curl_file": "curl/010-tc_be228a1cd1.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_8ea08e4145",
+      "title": "补充上传本人订单凭证：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传本人订单凭证：正常请求",
+      "curl_file": "curl/011-tc_8ea08e4145.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_3b931425b2",
+      "title": "查看本人订单凭证：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/evidence/list",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单凭证：正常请求",
+      "curl_file": "curl/012-tc_3b931425b2.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_634b8077e8",
+      "title": "查看本人订单流转记录：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/logs",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单流转记录：正常请求",
+      "curl_file": "curl/013-tc_634b8077e8.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_8038c2a2f7",
+      "title": "查看自己的交易公告编辑页信息：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/notice",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看自己的交易公告编辑页信息：正常请求",
+      "curl_file": "curl/014-tc_8038c2a2f7.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_92bfaeecaf",
+      "title": "保存自己的交易公告：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "保存自己的交易公告：正常请求",
+      "curl_file": "curl/015-tc_92bfaeecaf.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_6e4c0c21e9",
+      "title": "查看可处理或已承接的订单列表：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/page",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看可处理或已承接的订单列表：正常请求",
+      "curl_file": "curl/016-tc_6e4c0c21e9.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_b05f2ae271",
+      "title": "查看代理侧订单详情：正常请求",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/detail",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看代理侧订单详情：正常请求",
+      "curl_file": "curl/017-tc_b05f2ae271.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_e07f18ed5f",
+      "title": "接受待代理处理订单：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "接受待代理处理订单：正常请求",
+      "curl_file": "curl/018-tc_e07f18ed5f.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_d1023be903",
+      "title": "拒绝待代理处理订单：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "scenario_id": "salary_flow_b_reject_by_proxy",
+      "scenario_name": "创建后代理拒绝",
+      "order_variable": "flow_b_order_no",
+      "scenario_ids": [
+        "salary_flow_b_reject_by_proxy"
+      ],
+      "scenario_names": [
+        "创建后代理拒绝"
+      ],
+      "order_variables": [
+        "flow_b_order_no"
+      ],
+      "postman_item": "拒绝待代理处理订单：正常请求",
+      "curl_file": "curl/019-tc_d1023be903.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_3fea7697b2",
+      "title": "标记已完成线下转账：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "标记已完成线下转账：正常请求",
+      "curl_file": "curl/020-tc_3fea7697b2.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_343e941fe3",
+      "title": "待确认收款时提交投诉：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：正常请求",
+      "curl_file": "curl/021-tc_343e941fe3.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_aaf3603a09",
+      "title": "补充上传付款或投诉凭证：正常请求",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "正常请求",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传付款或投诉凭证：正常请求",
+      "curl_file": "curl/022-tc_aaf3603a09.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_a29da10d78",
+      "title": "返回工资快速结算创建入口开关：缺失必填参数",
+      "method": "GET",
+      "path": "/union/getAnchorApplyRecord",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "返回工资快速结算创建入口开关：缺失必填参数",
+      "curl_file": "curl/023-tc_a29da10d78.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_931a51df47",
+      "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "method": "GET",
+      "path": "/union/getAnchorApplyRecord",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "curl_file": "curl/024-tc_931a51df47.curl",
+      "jmeter_thread_group": "",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_4186d63f07",
+      "title": "返回工资快速结算创建入口开关：缺失必填参数",
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "返回工资快速结算创建入口开关：缺失必填参数",
+      "curl_file": "curl/025-tc_4186d63f07.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_25bb4b4110",
+      "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "返回工资快速结算创建入口开关：字段边界与类型错误",
+      "curl_file": "curl/026-tc_25bb4b4110.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_ffe359e00e",
+      "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
+      "method": "POST",
+      "path": "/union/getAnchorApplyRecord",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "返回工资快速结算创建入口开关：重复提交与幂等性",
+      "curl_file": "curl/027-tc_ffe359e00e.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_71d4c8f02c",
+      "title": "进入入口时查询可结算额度：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/quota",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "进入入口时查询可结算额度：缺失必填参数",
+      "curl_file": "curl/028-tc_71d4c8f02c.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_43c6c779d8",
+      "title": "进入入口时查询可结算额度：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/quota",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "进入入口时查询可结算额度：字段边界与类型错误",
+      "curl_file": "curl/029-tc_43c6c779d8.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_520d95529f",
+      "title": "按国家和币种选择代理用户：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agents",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "按国家和币种选择代理用户：缺失必填参数",
+      "curl_file": "curl/030-tc_520d95529f.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_09f5709402",
+      "title": "按国家和币种选择代理用户：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agents",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "按国家和币种选择代理用户：字段边界与类型错误",
+      "curl_file": "curl/031-tc_09f5709402.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_9e9ab12cdd",
+      "title": "提交收款信息并创建待代理处理订单：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "提交收款信息并创建待代理处理订单：缺失必填参数",
+      "curl_file": "curl/032-tc_9e9ab12cdd.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_e2826cb5f1",
+      "title": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+      "curl_file": "curl/033-tc_e2826cb5f1.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_7b37235a8c",
+      "title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/create",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+      "curl_file": "curl/034-tc_7b37235a8c.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_cec2930031",
+      "title": "查看本人快速结算订单列表：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/page",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人快速结算订单列表：缺失必填参数",
+      "curl_file": "curl/035-tc_cec2930031.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_09a3bd659e",
+      "title": "查看本人快速结算订单列表：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/page",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人快速结算订单列表：字段边界与类型错误",
+      "curl_file": "curl/036-tc_09a3bd659e.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_040bef7520",
+      "title": "查看本人订单详情：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/detail",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单详情：缺失必填参数",
+      "curl_file": "curl/037-tc_040bef7520.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_1c37a1d263",
+      "title": "查看本人订单详情：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/order/detail",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单详情：字段边界与类型错误",
+      "curl_file": "curl/038-tc_1c37a1d263.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_fd3c65bfca",
+      "title": "取消待代理处理订单：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "scenario_id": "salary_flow_a_cancel_by_applicant",
+      "scenario_name": "创建后申请人取消",
+      "order_variable": "flow_a_order_no",
+      "scenario_ids": [
+        "salary_flow_a_cancel_by_applicant"
+      ],
+      "scenario_names": [
+        "创建后申请人取消"
+      ],
+      "order_variables": [
+        "flow_a_order_no"
+      ],
+      "postman_item": "取消待代理处理订单：缺失必填参数",
+      "curl_file": "curl/039-tc_fd3c65bfca.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_ea40bd1230",
+      "title": "取消待代理处理订单：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "scenario_id": "salary_flow_a_cancel_by_applicant",
+      "scenario_name": "创建后申请人取消",
+      "order_variable": "flow_a_order_no",
+      "scenario_ids": [
+        "salary_flow_a_cancel_by_applicant"
+      ],
+      "scenario_names": [
+        "创建后申请人取消"
+      ],
+      "order_variables": [
+        "flow_a_order_no"
+      ],
+      "postman_item": "取消待代理处理订单：字段边界与类型错误",
+      "curl_file": "curl/040-tc_ea40bd1230.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_5e834a4d16",
+      "title": "取消待代理处理订单：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/cancel",
+      "scenario_id": "salary_flow_a_cancel_by_applicant",
+      "scenario_name": "创建后申请人取消",
+      "order_variable": "flow_a_order_no",
+      "scenario_ids": [
+        "salary_flow_a_cancel_by_applicant"
+      ],
+      "scenario_names": [
+        "创建后申请人取消"
+      ],
+      "order_variables": [
+        "flow_a_order_no"
+      ],
+      "postman_item": "取消待代理处理订单：重复提交与幂等性",
+      "curl_file": "curl/041-tc_5e834a4d16.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_82c425f44c",
+      "title": "确认已收到代理转账：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "确认已收到代理转账：缺失必填参数",
+      "curl_file": "curl/042-tc_82c425f44c.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_d280272aef",
+      "title": "确认已收到代理转账：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "确认已收到代理转账：字段边界与类型错误",
+      "curl_file": "curl/043-tc_d280272aef.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_d5cae5cd7e",
+      "title": "确认已收到代理转账：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/confirm",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "确认已收到代理转账：重复提交与幂等性",
+      "curl_file": "curl/044-tc_d5cae5cd7e.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_60ad3df5c9",
+      "title": "待确认收款时提交投诉：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：缺失必填参数",
+      "curl_file": "curl/045-tc_60ad3df5c9.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_78189ffc40",
+      "title": "待确认收款时提交投诉：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：字段边界与类型错误",
+      "curl_file": "curl/046-tc_78189ffc40.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_ac39a4c15e",
+      "title": "待确认收款时提交投诉：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：重复提交与幂等性",
+      "curl_file": "curl/047-tc_ac39a4c15e.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_6501f71533",
+      "title": "补充上传本人订单凭证：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传本人订单凭证：缺失必填参数",
+      "curl_file": "curl/048-tc_6501f71533.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_2e9af91fa2",
+      "title": "补充上传本人订单凭证：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传本人订单凭证：字段边界与类型错误",
+      "curl_file": "curl/049-tc_2e9af91fa2.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_92a0e95d19",
+      "title": "补充上传本人订单凭证：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传本人订单凭证：重复提交与幂等性",
+      "curl_file": "curl/050-tc_92a0e95d19.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_894bfa0bef",
+      "title": "查看本人订单凭证：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/evidence/list",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单凭证：缺失必填参数",
+      "curl_file": "curl/051-tc_894bfa0bef.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_44f440f8ec",
+      "title": "查看本人订单凭证：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/evidence/list",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单凭证：字段边界与类型错误",
+      "curl_file": "curl/052-tc_44f440f8ec.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_204821a151",
+      "title": "查看本人订单流转记录：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/logs",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单流转记录：缺失必填参数",
+      "curl_file": "curl/053-tc_204821a151.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_3995b1037b",
+      "title": "查看本人订单流转记录：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/logs",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看本人订单流转记录：字段边界与类型错误",
+      "curl_file": "curl/054-tc_3995b1037b.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_148e1062ae",
+      "title": "查看自己的交易公告编辑页信息：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/notice",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看自己的交易公告编辑页信息：缺失必填参数",
+      "curl_file": "curl/055-tc_148e1062ae.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_970acf530c",
+      "title": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/notice",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+      "curl_file": "curl/056-tc_970acf530c.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_aa5fd1ad97",
+      "title": "保存自己的交易公告：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "保存自己的交易公告：缺失必填参数",
+      "curl_file": "curl/057-tc_aa5fd1ad97.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_456ee46651",
+      "title": "保存自己的交易公告：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "保存自己的交易公告：字段边界与类型错误",
+      "curl_file": "curl/058-tc_456ee46651.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_5754cedeaa",
+      "title": "保存自己的交易公告：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/notice/save",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "保存自己的交易公告：重复提交与幂等性",
+      "curl_file": "curl/059-tc_5754cedeaa.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_92de8ee503",
+      "title": "查看可处理或已承接的订单列表：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/page",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看可处理或已承接的订单列表：缺失必填参数",
+      "curl_file": "curl/060-tc_92de8ee503.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_f96f0a6e7c",
+      "title": "查看可处理或已承接的订单列表：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/page",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看可处理或已承接的订单列表：字段边界与类型错误",
+      "curl_file": "curl/061-tc_f96f0a6e7c.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_67d008fb3c",
+      "title": "查看代理侧订单详情：缺失必填参数",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/detail",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看代理侧订单详情：缺失必填参数",
+      "curl_file": "curl/062-tc_67d008fb3c.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_13d2898449",
+      "title": "查看代理侧订单详情：字段边界与类型错误",
+      "method": "GET",
+      "path": "/userserv/salary/trade/agent/order/detail",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "查看代理侧订单详情：字段边界与类型错误",
+      "curl_file": "curl/063-tc_13d2898449.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_d5b812d9bc",
+      "title": "接受待代理处理订单：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "接受待代理处理订单：缺失必填参数",
+      "curl_file": "curl/064-tc_d5b812d9bc.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_2cbdc73c2a",
+      "title": "接受待代理处理订单：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "接受待代理处理订单：字段边界与类型错误",
+      "curl_file": "curl/065-tc_2cbdc73c2a.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_6d0fa5869e",
+      "title": "接受待代理处理订单：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/accept",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "接受待代理处理订单：重复提交与幂等性",
+      "curl_file": "curl/066-tc_6d0fa5869e.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_ae8f94bb13",
+      "title": "拒绝待代理处理订单：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "scenario_id": "salary_flow_b_reject_by_proxy",
+      "scenario_name": "创建后代理拒绝",
+      "order_variable": "flow_b_order_no",
+      "scenario_ids": [
+        "salary_flow_b_reject_by_proxy"
+      ],
+      "scenario_names": [
+        "创建后代理拒绝"
+      ],
+      "order_variables": [
+        "flow_b_order_no"
+      ],
+      "postman_item": "拒绝待代理处理订单：缺失必填参数",
+      "curl_file": "curl/067-tc_ae8f94bb13.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_e7f828e13a",
+      "title": "拒绝待代理处理订单：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "scenario_id": "salary_flow_b_reject_by_proxy",
+      "scenario_name": "创建后代理拒绝",
+      "order_variable": "flow_b_order_no",
+      "scenario_ids": [
+        "salary_flow_b_reject_by_proxy"
+      ],
+      "scenario_names": [
+        "创建后代理拒绝"
+      ],
+      "order_variables": [
+        "flow_b_order_no"
+      ],
+      "postman_item": "拒绝待代理处理订单：字段边界与类型错误",
+      "curl_file": "curl/068-tc_e7f828e13a.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_e3fe32d890",
+      "title": "拒绝待代理处理订单：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/reject",
+      "scenario_id": "salary_flow_b_reject_by_proxy",
+      "scenario_name": "创建后代理拒绝",
+      "order_variable": "flow_b_order_no",
+      "scenario_ids": [
+        "salary_flow_b_reject_by_proxy"
+      ],
+      "scenario_names": [
+        "创建后代理拒绝"
+      ],
+      "order_variables": [
+        "flow_b_order_no"
+      ],
+      "postman_item": "拒绝待代理处理订单：重复提交与幂等性",
+      "curl_file": "curl/069-tc_e3fe32d890.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_7b351242d9",
+      "title": "标记已完成线下转账：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "标记已完成线下转账：缺失必填参数",
+      "curl_file": "curl/070-tc_7b351242d9.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_81ca4518aa",
+      "title": "标记已完成线下转账：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "标记已完成线下转账：字段边界与类型错误",
+      "curl_file": "curl/071-tc_81ca4518aa.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_cecc2e452e",
+      "title": "标记已完成线下转账：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/paid",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "标记已完成线下转账：重复提交与幂等性",
+      "curl_file": "curl/072-tc_cecc2e452e.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_63b49481af",
+      "title": "待确认收款时提交投诉：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：缺失必填参数",
+      "curl_file": "curl/073-tc_63b49481af.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_9703f0d4b0",
+      "title": "待确认收款时提交投诉：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：字段边界与类型错误",
+      "curl_file": "curl/074-tc_9703f0d4b0.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_6d43b840fc",
+      "title": "待确认收款时提交投诉：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/order/appeal",
+      "scenario_id": "salary_flow_c_finish",
+      "scenario_name": "接受并转账后申请人确认完成",
+      "order_variable": "flow_c_order_no",
+      "scenario_ids": [
+        "salary_flow_c_finish"
+      ],
+      "scenario_names": [
+        "接受并转账后申请人确认完成"
+      ],
+      "order_variables": [
+        "flow_c_order_no"
+      ],
+      "postman_item": "待确认收款时提交投诉：重复提交与幂等性",
+      "curl_file": "curl/075-tc_6d43b840fc.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_a252cf3ccf",
+      "title": "补充上传付款或投诉凭证：缺失必填参数",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传付款或投诉凭证：缺失必填参数",
+      "curl_file": "curl/076-tc_a252cf3ccf.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_4754618c13",
+      "title": "补充上传付款或投诉凭证：字段边界与类型错误",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传付款或投诉凭证：字段边界与类型错误",
+      "curl_file": "curl/077-tc_4754618c13.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    },
+    {
+      "case_id": "tc_8f0fbfb1e9",
+      "title": "补充上传付款或投诉凭证：重复提交与幂等性",
+      "method": "POST",
+      "path": "/userserv/salary/trade/agent/evidence/upload",
+      "scenario_id": "",
+      "scenario_name": "接口契约",
+      "order_variable": "",
+      "scenario_ids": [],
+      "scenario_names": [],
+      "order_variables": [],
+      "postman_item": "补充上传付款或投诉凭证：重复提交与幂等性",
+      "curl_file": "curl/078-tc_8f0fbfb1e9.curl",
+      "jmeter_thread_group": "工资交易接口链路线程组",
+      "jmeter_sampler": ""
+    }
+  ]
+}

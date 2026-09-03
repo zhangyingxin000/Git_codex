@@ -5,6 +5,8 @@ __pycache__/
 *$py.class
 .pytest_cache/
 .test-tmp/
+.pytest-local-tmp/
+.pytest-run-*/
 *.egg-info/
 
 # Local databases and credentials
@@ -24,12 +26,15 @@ data/salary-trade-applicants.csv
 data/salary-trade-proxies.csv
 data/wealth-level-runtime.csv
 data/redis-wealth-decoded.json
+requirements/*/apifox/cli-profile.yaml
 
 # Reports, logs, temporary work files
 reports/
+requirements/*/runs/
 work/
 backups/
 requirements/*/outputs/corrections/
+requirements/*/outputs/schema-upgrade-backups/
 *.log
 *.jtl
 *.har
