@@ -221,13 +221,25 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 
 多账号预检会输出申请人槽位、国家/币种组合、代理匹配情况和凭证来源摘要，用于执行前排查 401、50017、代理白名单缺失和账号复用问题。
 
+## 需求测试用例生成 Skill
+
+业务需求用例规则位于 `skills/requirement-test-case-generation/SKILL.md` 和 `rules.yaml`。它从需求文档、验收标准、流程图和业务规则中识别角色、权限、业务对象、状态机、主流程、分支、异常、超时、补偿、幂等、数据一致性和人工检查点，输出到当前需求包的 `outputs/structured-test-cases.*`。
+
+需求用例以需求包为维护单位。Newman、JMeter、pytest 和人工验证可以执行不同部分，但不会把同一个需求拆成多套无法维护的用例。生成后的用例继续驱动账号模型、资源预检、候选证据规则和执行计划；已维护的 `account_model.yaml`、`resource_manifest.yaml`、`evidence_rules.yaml` 和正式执行计划不会被自动覆盖。
+
+职责边界：需求测试用例验证业务流程、角色和状态结果；接口测试用例验证单接口协议、参数和Schema；性能测试验证基准、负载、稳定性、并发和压力容量。三类资产可以互相引用，但分别设计、执行和归档。
+
 ## Schema驱动接口测试用例 Skill
 
 接口测试用例规则位于 `skills/api-test-case-generation/SKILL.md` 和 `rules.yaml`。平台读取当前需求包的 OpenAPI/Apifox Schema，按字段生成有效/无效等价类、必填与类型校验、枚举、数值和长度边界、认证授权、异常JSON、幂等、并发以及隔离安全场景。
 
 这里的“接口测试用例”与“需求测试用例”是两套独立资产：前者验证单接口的协议、参数和响应契约，保存到 `outputs/api-test-cases/`；后者验证业务流程、状态流转、多角色、多账号和数据证据，保存到 `outputs/structured-test-cases.*`。接口用例可以被业务场景引用，但不会覆盖或替代需求用例。
 
-生成结果独立保存到当前需求包的 `outputs/api-test-cases/`，同时提供 JSON、Markdown 和 Excel。SQL注入、XSS、写接口重复提交及并发场景默认标记为 `REVIEW_REQUIRED`，只能在明确允许的隔离测试环境执行。缺少字段约束时平台会提示补充Schema，不会臆造最小值、最大值或枚举。
+JMeter 同样按目的分成两种独立模式：`jmeter_scenario` 执行复杂业务场景，关注链路步骤、状态流转、角色归属和数据证据；`jmeter_performance` 执行基准、阶梯负载、稳定性、并发和压力测试，关注响应时间、P95/P99、TPS/QPS、吞吐量、并发用户、错误率和容量拐点。两种模式分别生成 JMX、运行批次和报告，不因执行工具相同而混合。
+
+接口测试执行遵循固定顺序：接口文档生成 `outputs/api-test-cases/api-test-cases.json`，人工评审后由接口执行编译器生成 `outputs/interface-tests/newman/api-test-collection.json`，Newman 执行后按 `TC_{模块}_{三位序号}_{场景类型}` 用例ID回收结果。缺少运行变量时执行前直接阻断并列出变量，不会用未解析占位符批量请求。接口测试报告与复杂业务场景报告、性能报告分别归档。
+
+生成结果独立保存到当前需求包的 `outputs/api-test-cases/`，同时提供 JSON、Markdown 和 Excel。SQL注入、XSS、写接口重复提交及并发场景默认标记为 `REVIEW_REQUIRED`，只能在明确允许的隔离测试环境执行。缺少字符串长度约束时平台按Skill默认值生成候选边界，并强制标记 `inferred` 和 `need_review`；枚举、业务状态和数据源仍不得臆造。
 
 ## 结构化测试用例输出
 
