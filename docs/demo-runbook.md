@@ -18,7 +18,7 @@ The first run creates `.venv` when needed. Later runs reuse it.
 
 1. Demo mode forcibly disables external mutations and high-risk calls.
 2. The outbound host allowlist is replaced with `127.0.0.1,localhost`.
-3. A fresh synthetic `seed.sqlite` is created from the demo account CSV.
+3. The committed `seed.sqlite` remains unchanged and a fresh ignored runtime copy is created.
 4. A temporary localhost HTTP service is started on a random free port.
 5. Eight applicants execute eight independent order flows in scenario order.
 6. Proxies are selected from the whitelist by applicant country and requested currency.

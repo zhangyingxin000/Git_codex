@@ -18,6 +18,7 @@ ACCOUNT_CSV = DEMO_ROOT / "data" / "accounts.csv"
 REPLAY_FILE = DEMO_ROOT / "replay" / "scenarios.json"
 DATABASE_FILE = DEMO_ROOT / "seed.sqlite"
 REPORT_ROOT = DEMO_ROOT / "reports"
+RUNTIME_DATABASE_FILE = REPORT_ROOT / "latest" / "runtime.sqlite"
 
 
 def _now() -> str:
@@ -221,8 +222,9 @@ def run_demo() -> dict[str, Any]:
     os.environ["AUTOTEST_ALLOW_MUTATIONS"] = "false"
     os.environ["AUTOTEST_ALLOW_HIGH_RISK"] = "false"
     os.environ["AUTOTEST_ALLOWED_HOSTS"] = "127.0.0.1,localhost"
-    seed_database()
-    state = DemoState(DATABASE_FILE)
+    RUNTIME_DATABASE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    seed_database(RUNTIME_DATABASE_FILE)
+    state = DemoState(RUNTIME_DATABASE_FILE)
     server = ThreadingHTTPServer(("127.0.0.1", 0), _handler(state))
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -271,7 +273,8 @@ def run_demo() -> dict[str, Any]:
         "status": "PASSED" if passed == len(results) else "FAILED",
         "summary": {"scenarios": len(results), "passed": passed, "failed": len(results) - passed},
         "artifacts": {
-            "database": str(DATABASE_FILE),
+            "database_seed": str(DATABASE_FILE),
+            "database_runtime": str(RUNTIME_DATABASE_FILE),
             "accounts": str(ACCOUNT_CSV),
             "replay": str(REPLAY_FILE),
         },

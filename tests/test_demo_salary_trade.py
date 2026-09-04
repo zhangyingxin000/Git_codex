@@ -2,7 +2,7 @@ import json
 import os
 import sqlite3
 
-from quality_hub_backend.demo.salary_trade import DATABASE_FILE, REPORT_ROOT, run_demo
+from quality_hub_backend.demo.salary_trade import REPORT_ROOT, RUNTIME_DATABASE_FILE, run_demo
 
 
 def test_salary_trade_demo_runs_eight_independent_accounts(monkeypatch) -> None:
@@ -20,7 +20,7 @@ def test_salary_trade_demo_runs_eight_independent_accounts(monkeypatch) -> None:
     assert len({item["order_no"] for item in report["scenarios"]}) == 8
     assert all(str(item["proxy_uid"]).startswith("920") for item in report["scenarios"])
 
-    with sqlite3.connect(DATABASE_FILE) as connection:
+    with sqlite3.connect(RUNTIME_DATABASE_FILE) as connection:
         assert connection.execute("SELECT COUNT(*) FROM anchor_salary_trade_order").fetchone()[0] == 8
         assert connection.execute("SELECT COUNT(DISTINCT applicant_uid) FROM anchor_salary_trade_order").fetchone()[0] == 8
         assert connection.execute("SELECT COUNT(*) FROM anchor_salary_trade_order_log").fetchone()[0] > 8

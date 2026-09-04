@@ -50,7 +50,8 @@ if ($Action -eq "demo") {
     & $venvPython -m quality_hub_backend.demo.salary_trade
     $demoExitCode = $LASTEXITCODE
     if ($demoExitCode -eq 0) {
-      & $venvPython -m pytest -q tests/test_demo_salary_trade.py tests/test_jmeter_adapter.py tests/test_dependency_consistency.py
+      $demoPytestTemp = Join-Path $PSScriptRoot (".pytest-run-demo-" + [guid]::NewGuid().ToString("N"))
+      & $venvPython -m pytest -q --basetemp $demoPytestTemp tests/test_demo_salary_trade.py tests/test_jmeter_adapter.py tests/test_dependency_consistency.py
       $demoExitCode = $LASTEXITCODE
     }
   } finally {

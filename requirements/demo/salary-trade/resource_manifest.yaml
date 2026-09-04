@@ -16,7 +16,13 @@ resources:
   - id: demo_database
     kind: sqlite
     path: seed.sqlite
+    generated: false
+    immutable: true
+  - id: demo_runtime_database
+    kind: sqlite
+    path: reports/latest/runtime.sqlite
     generated: true
+    git_ignored: true
 safety:
   network: localhost_only
   mutations: local_sqlite_only
