@@ -39,6 +39,9 @@
   const toolAssets = (projectId, packageId, payload) => (
     jsonRequest(`${packagePath(projectId, packageId)}/tool-assets`, "POST", payload)
   );
+  const apiTestCases = (projectId, packageId, payload = {}) => (
+    jsonRequest(`${packagePath(projectId, packageId)}/api-test-cases`, "POST", payload)
+  );
   const createRun = (projectId, packageId, payload) => (
     jsonRequest(`${packagePath(projectId, packageId)}/runs`, "POST", payload)
   );
@@ -60,6 +63,7 @@
     saveResourceManifest,
     resourcePreflight,
     executionPlan,
+    apiTestCases,
     toolAssets,
     createRun,
     reportIndex,

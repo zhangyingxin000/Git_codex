@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-04T07:51:15+00:00",
+  "generated_at": "2026-09-04T08:39:09+00:00",
   "method": "static route and test-reference analysis",
   "summary": {
-    "routes": 121,
-    "covered": 40,
+    "routes": 122,
+    "covered": 41,
     "unmapped": 69,
     "integration_required": 12,
     "p0": 19,
@@ -459,6 +459,24 @@
       "coverage_status": "COVERED",
       "evidence": [
         "handler-reference"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/api-test-cases",
+      "methods": [
+        "POST"
+      ],
+      "name": "schema_api_test_cases",
+      "handler": "schema_api_test_cases",
+      "tags": [
+        "Execution",
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_requirement_routes.py"
       ],
       "scope": "standard"
     },

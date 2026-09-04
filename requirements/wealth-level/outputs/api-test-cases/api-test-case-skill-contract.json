@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "generated_at": "2026-09-04T16:49:58+08:00",
+  "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\api-test-case-generation\\rules.yaml",
+  "contract": {
+    "schema_version": "1.0",
+    "skill": "api-test-case-generation",
+    "source_priority": [
+      "openapi_schema",
+      "captured_request_example",
+      "requirement_rule",
+      "manual_confirmation"
+    ],
+    "dimensions": [
+      "functional",
+      "response_contract",
+      "parameter_validation",
+      "equivalence_partition",
+      "boundary_value",
+      "authentication_authorization",
+      "exception_handling",
+      "reliability_idempotency",
+      "concurrency",
+      "isolated_security"
+    ],
+    "boundary_matrix": {
+      "numeric": [
+        "min-1",
+        "min",
+        "min+1",
+        "max-1",
+        "max",
+        "max+1"
+      ],
+      "length": [
+        "minLength-1",
+        "minLength",
+        "minLength+1",
+        "maxLength-1",
+        "maxLength",
+        "maxLength+1"
+      ],
+      "collection": [
+        "empty",
+        "one_item",
+        "maxItems",
+        "maxItems+1"
+      ]
+    },
+    "protocol_contract": [
+      "unsupported_http_method",
+      "missing_required_body",
+      "mismatched_content_type",
+      "malformed_json"
+    ],
+    "response_contract": [
+      "http_status",
+      "business_code",
+      "required_fields",
+      "field_types",
+      "enum_values",
+      "sensitive_field_leakage"
+    ],
+    "equivalence_rules": {
+      "required": [
+        "present_valid",
+        "missing"
+      ],
+      "type": [
+        "valid_type",
+        "invalid_type"
+      ],
+      "enum": [
+        "each_declared_value",
+        "undeclared_value"
+      ],
+      "nullable": [
+        "non_null",
+        null
+      ],
+      "format": [
+        "valid_format",
+        "invalid_format"
+      ]
+    },
+    "tool_routing": {
+      "newman": [
+        "functional",
+        "parameter_validation",
+        "equivalence_partition",
+        "boundary_value",
+        "authentication_smoke"
+      ],
+      "pytest": [
+        "authorization",
+        "business_assertion",
+        "idempotency",
+        "data_evidence",
+        "isolated_security"
+      ],
+      "jmeter": [
+        "concurrency",
+        "repeated_request",
+        "performance_interface"
+      ]
+    },
+    "automation_policy": {
+      "standard_cases": "READY",
+      "security_cases": "REVIEW_REQUIRED",
+      "mutation_concurrency": "REVIEW_REQUIRED",
+      "missing_schema_or_assertion": "NEEDS_DESIGN"
+    },
+    "security_policy": {
+      "environment": "isolated_test_only",
+      "production_execution": "forbidden",
+      "sensitive_values_in_output": "forbidden"
+    },
+    "output_contract": {
+      "scope": "interface_test_cases_only",
+      "must_not_overwrite": "outputs/structured-test-cases.*",
+      "formats": [
+        "json",
+        "markdown",
+        "xlsx"
+      ],
+      "required_summary": [
+        "interfaces",
+        "cases",
+        "dimensions",
+        "tools",
+        "review_required"
+      ],
+      "required_case_fields": [
+        "case_id",
+        "operation_id",
+        "interface",
+        "method",
+        "path",
+        "dimension",
+        "design_technique",
+        "equivalence_partition",
+        "request_mutation",
+        "preconditions",
+        "steps",
+        "expected_result",
+        "recommended_tool",
+        "automation_status",
+        "security_policy"
+      ]
+    }
+  },
+  "usage": "接口测试用例由Schema和接口约束形成独立设计资产，再映射到Newman、pytest和JMeter；不得覆盖需求业务测试用例。"
+}

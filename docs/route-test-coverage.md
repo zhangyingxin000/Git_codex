@@ -1,7 +1,7 @@
 # Route Test Coverage
 
-- Routes: 121
-- Covered by static evidence: 40
+- Routes: 122
+- Covered by static evidence: 41
 - Unmapped: 69
 - Integration required: 12
 - P0 routes: 19
@@ -35,6 +35,7 @@
 | P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight` | COVERED | test_package_status_model.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight` | COVERED | test_package_status_model.py |
 | P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/evidence-rules` | COVERED | handler-reference |
+| P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/api-test-cases` | COVERED | test_requirement_routes.py |
 | P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan` | COVERED | test_requirement_routes.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan` | COVERED | test_requirement_routes.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/tool-assets` | UNMAPPED | - |

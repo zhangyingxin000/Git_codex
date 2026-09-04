@@ -1,0 +1,812 @@
+{
+  "schema_version": "1.0",
+  "report_type": "SCHEMA_DRIVEN_API_TEST_CASE_DESIGN",
+  "package_id": "wealth-level",
+  "summary": {
+    "interfaces": 1,
+    "cases": 23,
+    "dimensions": {
+      "功能": 1,
+      "响应契约": 1,
+      "异常处理": 1,
+      "参数校验": 10,
+      "边界值": 6,
+      "安全": 2,
+      "认证授权": 2
+    },
+    "tools": {
+      "Newman": 21,
+      "pytest": 2
+    },
+    "review_required": 2
+  },
+  "coverage_dimensions": [
+    "功能",
+    "响应契约",
+    "参数校验",
+    "等价类",
+    "边界值",
+    "认证授权",
+    "异常处理",
+    "可靠性",
+    "并发",
+    "安全"
+  ],
+  "operations": [
+    {
+      "operation_id": "get_level_exeperience_v2_get",
+      "summary": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "security": true,
+      "request_body_required": false,
+      "content_types": [],
+      "fields": [
+        {
+          "location": "query",
+          "name": "ticket",
+          "field": "query.ticket",
+          "required": true,
+          "schema": {},
+          "sample": "valid-value"
+        },
+        {
+          "location": "query",
+          "name": "uid",
+          "field": "query.uid",
+          "required": true,
+          "schema": {},
+          "sample": "valid-value"
+        },
+        {
+          "location": "query",
+          "name": "language",
+          "field": "query.language",
+          "required": false,
+          "schema": {},
+          "sample": "valid-value"
+        },
+        {
+          "location": "query",
+          "name": "systemLanguage",
+          "field": "query.systemLanguage",
+          "required": false,
+          "schema": {},
+          "sample": "valid-value"
+        },
+        {
+          "location": "query",
+          "name": "appVersion",
+          "field": "query.appVersion",
+          "required": false,
+          "schema": {},
+          "sample": "valid-value"
+        },
+        {
+          "location": "query",
+          "name": "deviceType",
+          "field": "query.deviceType",
+          "required": false,
+          "schema": {},
+          "sample": "valid-value"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "API-00001",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "功能",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "valid",
+      "title": "获取财富等级经验及等级权益：有效等价类正常请求",
+      "priority": "P0",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "use_valid_baseline"
+      },
+      "expected_result": "返回成功状态，响应Schema及核心业务结果正确。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00002",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "响应契约",
+      "design_technique": "契约校验",
+      "equivalence_partition": "valid",
+      "title": "获取财富等级经验及等级权益：响应状态与Schema契约",
+      "priority": "P0",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "validate_response_contract"
+      },
+      "expected_result": "HTTP状态、业务码、必填响应字段、字段类型和枚举均符合OpenAPI契约，不泄露未声明敏感字段。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00003",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "异常处理",
+      "design_technique": "错误推测",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：使用不支持的HTTP方法",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "use_unsupported_http_method"
+      },
+      "expected_result": "返回405或明确的业务拒绝，不执行原接口业务写入。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00004",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：缺失必填字段 query.ticket",
+      "priority": "P0",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "remove",
+        "field": "query.ticket"
+      },
+      "expected_result": "接口明确拒绝请求，不产生错误业务数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00005",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.ticket 非法null",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.ticket",
+        "value": null
+      },
+      "expected_result": "接口拒绝必填且不可为空字段的null值，不产生500或脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00006",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "边界值",
+      "design_technique": "边界值分析",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.ticket 空值边界",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.ticket",
+        "value": ""
+      },
+      "expected_result": "接口按Schema和业务规则接受或明确拒绝，不能产生500。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00007",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.ticket 类型错误",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.ticket",
+        "value": 123456,
+        "expected_type": "string"
+      },
+      "expected_result": "接口返回参数错误，不产生500和业务脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00008",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：缺失必填字段 query.uid",
+      "priority": "P0",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "remove",
+        "field": "query.uid"
+      },
+      "expected_result": "接口明确拒绝请求，不产生错误业务数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00009",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.uid 非法null",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.uid",
+        "value": null
+      },
+      "expected_result": "接口拒绝必填且不可为空字段的null值，不产生500或脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00010",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "边界值",
+      "design_technique": "边界值分析",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.uid 空值边界",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.uid",
+        "value": ""
+      },
+      "expected_result": "接口按Schema和业务规则接受或明确拒绝，不能产生500。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00011",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.uid 类型错误",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.uid",
+        "value": 123456,
+        "expected_type": "string"
+      },
+      "expected_result": "接口返回参数错误，不产生500和业务脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00012",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "安全",
+      "design_technique": "攻击输入",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.uid SQL注入字符",
+      "priority": "P0",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.uid",
+        "value": "' OR '1'='1' --"
+      },
+      "expected_result": "接口不执行注入语义，不泄露数据库错误，不绕过鉴权或条件。",
+      "recommended_tool": "pytest",
+      "automation_status": "REVIEW_REQUIRED",
+      "security_policy": "ISOLATED_TEST_ENVIRONMENT_ONLY"
+    },
+    {
+      "case_id": "API-00013",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "安全",
+      "design_technique": "攻击输入",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.uid XSS脚本字符",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.uid",
+        "value": "<script>alert(1)</script>"
+      },
+      "expected_result": "响应和持久化数据不得执行脚本，输出应安全编码。",
+      "recommended_tool": "pytest",
+      "automation_status": "REVIEW_REQUIRED",
+      "security_policy": "ISOLATED_TEST_ENVIRONMENT_ONLY"
+    },
+    {
+      "case_id": "API-00014",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "边界值",
+      "design_technique": "边界值分析",
+      "equivalence_partition": "boundary",
+      "title": "获取财富等级经验及等级权益：query.language 空值边界",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.language",
+        "value": ""
+      },
+      "expected_result": "接口按Schema和业务规则接受或明确拒绝，不能产生500。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00015",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.language 类型错误",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.language",
+        "value": 123456,
+        "expected_type": "string"
+      },
+      "expected_result": "接口返回参数错误，不产生500和业务脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00016",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "边界值",
+      "design_technique": "边界值分析",
+      "equivalence_partition": "boundary",
+      "title": "获取财富等级经验及等级权益：query.systemLanguage 空值边界",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.systemLanguage",
+        "value": ""
+      },
+      "expected_result": "接口按Schema和业务规则接受或明确拒绝，不能产生500。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00017",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.systemLanguage 类型错误",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.systemLanguage",
+        "value": 123456,
+        "expected_type": "string"
+      },
+      "expected_result": "接口返回参数错误，不产生500和业务脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00018",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "边界值",
+      "design_technique": "边界值分析",
+      "equivalence_partition": "boundary",
+      "title": "获取财富等级经验及等级权益：query.appVersion 空值边界",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.appVersion",
+        "value": ""
+      },
+      "expected_result": "接口按Schema和业务规则接受或明确拒绝，不能产生500。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00019",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.appVersion 类型错误",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.appVersion",
+        "value": 123456,
+        "expected_type": "string"
+      },
+      "expected_result": "接口返回参数错误，不产生500和业务脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00020",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "边界值",
+      "design_technique": "边界值分析",
+      "equivalence_partition": "boundary",
+      "title": "获取财富等级经验及等级权益：query.deviceType 空值边界",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.deviceType",
+        "value": ""
+      },
+      "expected_result": "接口按Schema和业务规则接受或明确拒绝，不能产生500。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00021",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "参数校验",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：query.deviceType 类型错误",
+      "priority": "P1",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace",
+        "field": "query.deviceType",
+        "value": 123456,
+        "expected_type": "string"
+      },
+      "expected_result": "接口返回参数错误，不产生500和业务脏数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00022",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "认证授权",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：缺失认证凭证",
+      "priority": "P0",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "remove_auth"
+      },
+      "expected_result": "返回401或403，不返回受保护业务数据。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    },
+    {
+      "case_id": "API-00023",
+      "operation_id": "get_level_exeperience_v2_get",
+      "interface": "获取财富等级经验及等级权益",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "dimension": "认证授权",
+      "design_technique": "等价类划分",
+      "equivalence_partition": "invalid",
+      "title": "获取财富等级经验及等级权益：无效或伪造认证凭证",
+      "priority": "P0",
+      "preconditions": [
+        "测试环境可用",
+        "准备接口所需身份与公共参数",
+        "确认测试数据可恢复或只读"
+      ],
+      "steps": [
+        "按请求变异规则准备数据",
+        "发送 GET /level/exeperience/v2/get",
+        "检查HTTP状态、业务码、响应Schema和业务数据"
+      ],
+      "request_mutation": {
+        "action": "replace_auth",
+        "value": "invalid-token"
+      },
+      "expected_result": "返回401或403，不泄露凭证校验细节。",
+      "recommended_tool": "Newman",
+      "automation_status": "READY",
+      "security_policy": "STANDARD_TEST_ENVIRONMENT"
+    }
+  ],
+  "project_id": "prj_e3515817c4",
+  "package_name": "财富等级",
+  "generated_at": "2026-09-04T16:49:58+08:00",
+  "source_openapi": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\apifox\\openapi.json",
+  "skill_contract": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\api-test-cases\\api-test-case-skill-contract.json",
+  "status": "READY_WITH_REVIEW"
+}

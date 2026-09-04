@@ -52,12 +52,12 @@
     "jmeter": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-state-machine.jmx",
       "exists": true,
-      "updated_at": "2026-09-02T11:51:39+08:00"
+      "updated_at": "2026-09-03T18:06:39+08:00"
     },
     "launcher": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\open-salary-trade-state-machine.ps1",
       "exists": true,
-      "updated_at": "2026-09-02T19:27:37+08:00"
+      "updated_at": "2026-09-03T18:06:35+08:00"
     },
     "manifest": {
       "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-jmeter-manifest.json",
@@ -97,5 +97,5 @@
     "redis_patterns": [],
     "scope_reason": "工资代理结算只围绕代理白名单、订单主表、订单日志和投诉凭证取证；身份认证由申请人/代理CSV或登录接口提供，Redis不参与本需求执行。"
   },
-  "updated_at": "2026-09-02T19:28:49+08:00"
+  "updated_at": "2026-09-04T16:32:37+08:00"
 }

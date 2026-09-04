@@ -8,6 +8,9 @@ from quality_hub_backend.api.routes.requirement_reports import build_requirement
 
 
 class FakeLegacy:
+    def generate_schema_api_test_cases(self, project_id, package_id, payload):
+        return {"project_id": project_id, "package_id": package_id, "payload": payload}
+
     def generate_requirement_execution_plan(self, project_id, package_id, payload):
         return {"project_id": project_id, "package_id": package_id, "payload": payload}
 
@@ -23,6 +26,7 @@ def test_requirement_route_modules_keep_execution_and_report_paths() -> None:
     paths = {route.path for route in app.routes}
 
     assert "/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan" in paths
+    assert "/api/projects/{project_id}/requirement-packages/{package_id}/api-test-cases" in paths
     assert "/api/projects/{project_id}/requirement-packages/{package_id}/pipeline/run" in paths
     assert "/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run" in paths
     assert "/api/projects/{project_id}/requirement-packages/{package_id}/report-index" in paths

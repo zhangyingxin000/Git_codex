@@ -41,6 +41,10 @@ from quality_hub_backend.config.environment import (
     load_environment_config as _load_environment_config_module,
     load_yaml_file as _load_yaml_file_module,
 )
+from quality_hub_backend.services.api_case_design import (
+    generate_api_case_design,
+    write_case_design,
+)
 
 
 ROOT = Path(__file__).resolve().parent
@@ -4032,6 +4036,72 @@ def _jmeter_skill_contract():
     }
 
 
+def _api_test_case_skill_contract():
+    path = SKILL_DIR / "api-test-case-generation" / "rules.yaml"
+    return {"path": str(path), "rules": _load_yaml_file(path)}
+
+
+def generate_schema_api_test_cases(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    candidates = [
+        package_root / "apifox" / "openapi.json",
+        package_root / "outputs" / "apifox" / "openapi.json",
+        package_root / "openapi.json",
+        package_root / "openapi.yaml",
+        package_root / "openapi.yml",
+    ]
+    source_path = next((path for path in candidates if path.is_file()), None)
+    output_dir = package_root / "outputs" / "api-test-cases"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    skill = _api_test_case_skill_contract()
+    contract_path = output_dir / "api-test-case-skill-contract.json"
+    contract_path.write_text(json.dumps({
+        "schema_version": "1.0",
+        "project_id": project_id,
+        "package_id": package_id,
+        "generated_at": now(),
+        "source": skill["path"],
+        "contract": skill["rules"],
+        "usage": "接口测试用例由Schema和接口约束形成独立设计资产，再映射到Newman、pytest和JMeter；不得覆盖需求业务测试用例。",
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    if source_path is None:
+        return {
+            "status": "NEEDS_SCHEMA",
+            "message": "当前需求包没有正式OpenAPI文件，未编造字段边界；请导入OpenAPI/Apifox接口定义后重新生成。",
+            "project_id": project_id,
+            "package_id": package_id,
+            "skill_contract": str(contract_path),
+            "summary": {"interfaces": 0, "cases": 0, "dimensions": {}, "tools": {}, "review_required": 0},
+        }
+    if source_path.suffix.lower() == ".json":
+        spec = json.loads(source_path.read_text(encoding="utf-8-sig"))
+    else:
+        spec = _load_yaml_file(source_path)
+    if not isinstance(spec, dict) or not isinstance(spec.get("paths"), dict):
+        raise ValueError(f"OpenAPI文件没有有效paths：{source_path}")
+    payload = generate_api_case_design(spec, package_id)
+    payload.update({
+        "project_id": project_id,
+        "package_name": package.get("name"),
+        "generated_at": now(),
+        "source_openapi": str(source_path),
+        "skill_contract": str(contract_path),
+        "status": "READY_WITH_REVIEW" if payload["summary"].get("review_required") else "READY",
+    })
+    paths = write_case_design(payload, output_dir)
+    relative_root = output_dir.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    return {
+        **payload,
+        "paths": paths,
+        "json_url": f"/requirement-reports/{relative_root}/api-test-cases.json",
+        "markdown_url": f"/requirement-reports/{relative_root}/api-test-cases.md",
+        "xlsx_url": f"/requirement-reports/{relative_root}/api-test-cases.xlsx",
+    }
+
+
 def _pytest_evidence_skill_contract():
     path = SKILL_DIR / "pytest-evidence-review" / "SKILL.md"
     if path.is_file():
@@ -4082,6 +4152,16 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
     warnings = []
     account_model = generate_requirement_account_model(project_id, package_id, True)
     generated.append({"tool": "Account Model", "path": account_model.get("path", "")})
+    api_case_design = generate_schema_api_test_cases(project_id, package_id, options)
+    generated.append({
+        "tool": "API Test Case Design",
+        "path": (api_case_design.get("paths") or {}).get("json", ""),
+        "status": api_case_design.get("status"),
+        "cases": (api_case_design.get("summary") or {}).get("cases", 0),
+        "skill_contract": api_case_design.get("skill_contract", ""),
+    })
+    if api_case_design.get("status") == "NEEDS_SCHEMA":
+        warnings.append(api_case_design.get("message"))
     jmeter_skill = _jmeter_skill_contract()
     skill_contract_path = package_root / "outputs" / "jmeter" / "jmeter-skill-contract.json"
     skill_contract_path.parent.mkdir(parents=True, exist_ok=True)
@@ -4893,6 +4973,11 @@ def run_requirement_package_pipeline(project_id, package_id, options=None):
             return {"status": "FAILED", "message": str(exc)}
 
     record("资源预检", lambda: requirement_resource_preflight(project_id, package_id))
+    api_case_path = package_root / "outputs" / "api-test-cases" / "api-test-cases.json"
+    if not api_case_path.is_file() or options.get("regenerate_api_test_cases"):
+        record("Schema接口测试用例", lambda: generate_schema_api_test_cases(project_id, package_id, shared_options))
+    else:
+        steps.append({"name": "Schema接口测试用例", "status": "REUSED", "message": "复用当前需求包正式接口测试设计。", "json_url": "", "summary_path": str(api_case_path)})
     structured_path = package_root / "outputs" / "structured-test-cases.json"
     if not structured_path.is_file() or options.get("regenerate_structured_cases"):
         record("结构化测试用例", lambda: generate_structured_test_cases(project_id, {"package_id": package_id}))
