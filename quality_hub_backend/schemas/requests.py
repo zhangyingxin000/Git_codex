@@ -5,6 +5,13 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 
+class BackgroundTaskCreateRequest(BaseModel):
+    task_type: str = Field(min_length=1, max_length=64)
+    project_id: str = Field(default="", max_length=128)
+    package_id: str = Field(default="", max_length=128)
+    options: dict[str, Any] = Field(default_factory=dict)
+
+
 class ProjectCreateRequest(BaseModel):
     name: str = Field(default="未命名项目", description="项目名称")
     description: str = Field(default="", description="项目说明")

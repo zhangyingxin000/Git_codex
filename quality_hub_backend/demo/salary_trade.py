@@ -5,7 +5,9 @@ import json
 import os
 import sqlite3
 import threading
+import time
 import urllib.request
+import uuid
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -18,7 +20,8 @@ ACCOUNT_CSV = DEMO_ROOT / "data" / "accounts.csv"
 REPLAY_FILE = DEMO_ROOT / "replay" / "scenarios.json"
 DATABASE_FILE = DEMO_ROOT / "seed.sqlite"
 REPORT_ROOT = DEMO_ROOT / "reports"
-RUNTIME_DATABASE_FILE = REPORT_ROOT / "latest" / "runtime.sqlite"
+RUNTIME_DATABASE_DIR = REPORT_ROOT / "latest"
+_DEMO_RUN_LOCK = threading.Lock()
 
 
 def _now() -> str:
@@ -37,7 +40,14 @@ def _read_scenarios() -> list[dict[str, Any]]:
 def seed_database(path: Path = DATABASE_FILE) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():
-        path.unlink()
+        for attempt in range(5):
+            try:
+                path.unlink()
+                break
+            except PermissionError:
+                if attempt == 4:
+                    raise
+                time.sleep(0.1 * (attempt + 1))
     connection = sqlite3.connect(path)
     try:
         connection.executescript(
@@ -217,14 +227,15 @@ def _post(url: str, payload: dict[str, Any]) -> dict[str, Any]:
         return json.loads(response.read().decode("utf-8"))
 
 
-def run_demo() -> dict[str, Any]:
+def _run_demo_once() -> dict[str, Any]:
     os.environ["AUTOTEST_DEMO_MODE"] = "true"
     os.environ["AUTOTEST_ALLOW_MUTATIONS"] = "false"
     os.environ["AUTOTEST_ALLOW_HIGH_RISK"] = "false"
     os.environ["AUTOTEST_ALLOWED_HOSTS"] = "127.0.0.1,localhost"
-    RUNTIME_DATABASE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    seed_database(RUNTIME_DATABASE_FILE)
-    state = DemoState(RUNTIME_DATABASE_FILE)
+    runtime_database = RUNTIME_DATABASE_DIR / f"runtime-{uuid.uuid4().hex[:12]}.sqlite"
+    runtime_database.parent.mkdir(parents=True, exist_ok=True)
+    seed_database(runtime_database)
+    state = DemoState(runtime_database)
     server = ThreadingHTTPServer(("127.0.0.1", 0), _handler(state))
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -274,7 +285,7 @@ def run_demo() -> dict[str, Any]:
         "summary": {"scenarios": len(results), "passed": passed, "failed": len(results) - passed},
         "artifacts": {
             "database_seed": str(DATABASE_FILE),
-            "database_runtime": str(RUNTIME_DATABASE_FILE),
+            "database_runtime": str(runtime_database),
             "accounts": str(ACCOUNT_CSV),
             "replay": str(REPLAY_FILE),
         },
@@ -286,6 +297,11 @@ def run_demo() -> dict[str, Any]:
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     report["report_path"] = str(report_path)
     return report
+
+
+def run_demo() -> dict[str, Any]:
+    with _DEMO_RUN_LOCK:
+        return _run_demo_once()
 
 
 def main() -> int:

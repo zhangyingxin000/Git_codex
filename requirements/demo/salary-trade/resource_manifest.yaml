@@ -20,7 +20,7 @@ resources:
     immutable: true
   - id: demo_runtime_database
     kind: sqlite
-    path: reports/latest/runtime.sqlite
+    path: reports/latest/runtime-*.sqlite
     generated: true
     git_ignored: true
 safety:

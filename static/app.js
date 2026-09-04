@@ -1,9 +1,7 @@
 let projects=[], current=null, data=null, pendingFile=null, wealthLastResult=null, activeResourceManifest=null;const PAGE_BUILD=document.documentElement.dataset.build||'';
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const {request:api,select:$,selectAll:$$,escapeHtml:esc}=window.QualityHub.services.api;
+let toast=window.QualityHub.components.notifications.toast;
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='toolPerfProfile')applyPerformanceProfile()});
-async function api(path,opts={}){opts.headers={"Content-Type":"application/json",...(opts.headers||{})};const r=await fetch(path,opts);let x={};try{x=await r.json()}catch{}if(!r.ok){if(r.status===404&&path.startsWith('/api/'))throw Error('平台后端尚未加载此功能，请重新启动 AutoTest AI 后重试');throw Error(x.error||`请求失败（HTTP ${r.status}）`)}return x}
-function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function toast(s){const d=document.createElement("div");d.className="toast";d.textContent=s;$("#toast").append(d);setTimeout(()=>d.remove(),3200)}
 async function loadProjects(){projects=await api("/api/projects");$("#projects").innerHTML=projects.map(p=>`<button class="project ${current===p.id?'active':''}" onclick="openProject('${p.id}')">◫　${esc(p.name)}</button>`).join("")}
 async function openProject(id){current=id;await loadProjects();data=await api(`/api/projects/${id}/dashboard`);try{data.capture_reports=await api(`/api/projects/${id}/capture-reports`)}catch{data.capture_reports=[]}try{data.redis_mappings=await api(`/api/projects/${id}/redis-mappings`)}catch{data.redis_mappings=[]}try{data.toolchain=await api(`/api/projects/${id}/toolchain`)}catch{data.toolchain={tools:[],artifacts:[],blockers:[]}}try{data.case_jmeter_model=await api(`/api/projects/${id}/jmeter/case-script-model`)}catch{data.case_jmeter_model=null}$("#welcome").classList.add("hidden");$("#workspace").classList.remove("hidden");$("#pageTitle").textContent=data.project.name;$("#subtitle").textContent=data.project.description||"AI 自主测试控制中心";render()}
 function render(){let pass=data.runs.filter(x=>x.status==='PASSED').length,fail=data.runs.filter(x=>['FAILED','ERROR'].includes(x.status)).length,rate=data.runs.length?Math.round(pass/data.runs.length*100):0;$("#metrics").innerHTML=[["接口资产",data.endpoints?.length||0],["测试点",data.points.length],["测试用例",data.cases.length],["最近通过率",rate+'%']].map(x=>`<div class="metric"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
@@ -70,7 +68,7 @@ function editProject(){$("#modalBody").innerHTML=`<h2>项目配置</h2><label>�
 async function saveProject(){await api(`/api/projects/${current}`,{method:'PUT',body:JSON.stringify({name:$("#editName").value,description:$("#editDesc").value,base_url:$("#editUrl").value})});closeModal();toast('项目配置已保存');await openProject(current)}
 async function showSettings(){let s=await api('/api/settings');$("#modalBody").innerHTML=`<h2>AI 模型设置</h2><p style="color:var(--muted);font-size:12px">不配置密钥时使用内置规则引擎；配置 OpenAI 兼容接口后使用大模型深度分析。</p><label>API Base</label><input id="apiBase" value="${esc(s.api_base||'https://api.openai.com/v1')}"><label>API Key</label><input id="apiKey" type="password" value="${esc(s.api_key||'')}"><label>模型</label><input id="model" value="${esc(s.model||'gpt-5-mini')}"><button class="primary" onclick="saveSettings()">保存设置</button>`;$("#modal").classList.remove('hidden')}
 async function saveSettings(){await api('/api/settings',{method:'POST',body:JSON.stringify({api_base:$("#apiBase").value,api_key:$("#apiKey").value,model:$("#model").value})});closeModal();toast('模型设置已保存')}
-function closeModal(){$("#modal").classList.add('hidden')}function switchTab(id){let aliases={manual:'sources',changes:'sources',apis:'sources',runs:'automation',operations:'automation',points:'sources',cases:'sources',database:'dataquality',redis:'dataquality'};id=aliases[id]||id;if(!current){$$('.side-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));return}$("#welcome")?.classList.add("hidden");$("#workspace")?.classList.remove("hidden");$$('.tab').forEach(x=>x.classList.add('hidden'));$('#'+id)?.classList.remove('hidden');$$('.tabs button,.side-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));if(data?.project){let titles={overview:['质量总览','测试资产、执行任务、数据验证与报告证据统一管理'],sources:['需求资产','需求输入、测试点、用例与接口覆盖归纳'],automation:['执行中心','调度接口测试、性能测试和真实链路执行'],dataquality:['数据验证','接口返回、MySQL、Redis与后台配置一致性核对'],reports:['报告中心','测试结论、缺陷风险、性能结果与完整证据归档']};let t=titles[id]||[data.project.name,data.project.description||'质量工程控制台'];$('#pageTitle').textContent=t[0];$('#subtitle').textContent=t[1]}}
+function closeModal(){$("#modal").classList.add('hidden')}function switchTab(id){return window.QualityHub.routers.workspace.switchTab(id,{$,$$,current,data})}
 function tableRedisV2(){let maps=data.redis_mappings||[];let auto=`<div class="card" style="background:#153c2c;color:white"><span style="color:var(--lime);font-size:11px">MYSQL + REDIS AUTO MATCH</span><h2>自动匹配数据库与 Redis</h2><p style="color:#c2d3ca">根据接口路径、请求字段、MySQL 表字段和 Redis Key 名称建立关联链。自动扫描阶段不读取缓存值。</p><button class="primary" onclick="autoMatchData()">✦ 开始自动匹配</button></div>`;let result=maps.length?`<div class="card"><h3>接口 → MySQL → Redis 自动映射</h3><p style="font-size:12px;color:var(--muted)">共 ${maps.length} 条候选关联，动态数字和 UUID 已归纳为 Key Pattern。</p><table><thead><tr><th>置信度</th><th>接口</th><th>数据库表</th><th>Redis Key / Pattern</th><th>依据</th></tr></thead><tbody>${maps.slice(0,300).map(x=>`<tr><td><span class="tag ${x.confidence>=.75?'PASSED':x.confidence>=.5?'P1':''}">${Math.round(x.confidence*100)}%</span></td><td><code>${esc(x.method+' '+x.path)}</code><br><small>${esc(x.summary)}</small></td><td><code>${esc(x.matched_table||'待确认')}</code></td><td><code>${esc(x.key_pattern)}</code><br><small>${esc(x.key_type)}</small></td><td>${esc(x.reason)}</td></tr>`).join('')}</tbody></table></div>`:'';return auto+result+tableRedis()}
 async function autoMatchData(){try{toast('正在自动匹配接口、数据库与 Redis Key…');let x=await api(`/api/projects/${current}/auto-match-data`,{method:'POST',body:'{}'});toast(`匹配完成：扫描 ${x.keys_scanned} 个 Key，生成 ${x.redis_mappings} 条关联`);await openProject(current);switchTab('redis')}catch(e){toast(e.message)}}
 function polishInterfaceCopy(){let labels={manual:'智能工作台',sources:'资料中心',changes:'版本变更',apis:'接口资产',flows:'业务流程',automation:'自动化中心',operations:'安全 · UI · 调度',points:'测试点',cases:'测试用例',database:'数据映射',redis:'Redis 中心',runs:'执行记录'};$$('.tabs button').forEach(b=>{if(labels[b.dataset.tab])b.textContent=labels[b.dataset.tab]});let runAllBtn=$('.toolbar .primary');if(runAllBtn)runAllBtn.textContent='▶ 运行全部用例';let redis=$('#redis');if(!redis)return;redis.querySelectorAll('.card').forEach(card=>{let h=card.querySelector('h3');if(!h)return;if(h.textContent.trim()==='接入 Redis'){h.textContent='Redis 数据源';let p=card.querySelector('p');if(p)p.textContent='连接测试环境 Redis，用于缓存验证与数据一致性分析。接入后默认以只读模式运行。';let labels=card.querySelectorAll('label');if(labels[0])labels[0].textContent='连接名称';let inputs=card.querySelectorAll('input');if(inputs[1])inputs[1].placeholder='服务器地址（Host）';let btn=card.querySelector('button.primary');if(btn)btn.textContent='验证并接入'}if(h.textContent.trim()==='安全边界'){h.textContent='只读安全策略';let items=card.querySelectorAll('li');let copy=['使用渐进式 SCAN，避免阻塞 Redis 服务','单次最多展示 500 个 Key，防止页面负载过高','支持读取 String、Hash、List、Set 与 ZSet','写入、删除、清库及配置类命令均不可执行','查看 Key 时保留摘要快照，便于测试前后对比'];items.forEach((x,i)=>{if(copy[i])x.textContent=copy[i]})}});redis.querySelectorAll('.tag').forEach(x=>{if(x.textContent.trim()==='connected')x.textContent='已连接'});redis.querySelectorAll('.empty').forEach(x=>{if(x.textContent.includes('尚未接入 Redis'))x.innerHTML='<b>等待接入 Redis</b>填写服务器地址和端口，验证成功后即可开始分析'})}
@@ -1818,5 +1816,31 @@ async function runBusinessEvidenceRules(){
   }finally{
     let b=$('#businessEvidenceRunButton');if(b){b.disabled=false;b.textContent='执行规则'}
   }
+}
+
+const openProjectBeforeBackgroundTasks=openProject;
+openProject=async function(id){
+  await openProjectBeforeBackgroundTasks(id);
+  try{data.background_tasks=await api('/api/tasks?limit=20')}catch{data.background_tasks=[]}
+  render()
+};
+
+const renderBeforeBackgroundTasks=render;
+render=function(){
+  renderBeforeBackgroundTasks();
+  const panel=window.QualityHub.components.taskPanel.render(data?.background_tasks||[],esc);
+  $('#automation')?.insertAdjacentHTML('afterbegin',panel)
+};
+
+async function submitCurrentPackageBackgroundTask(){
+  const pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);
+  if(!current||!packageId)return toast('请先选择可执行需求包','warning');
+  try{
+    const task=await window.QualityHub.services.tasks.submit('requirement_pipeline',{project_id:current,package_id:packageId,options:{run_newman:true,run_pytest:true}});
+    toast(`后台任务已提交：${task.task_id}`,'success');
+    data.background_tasks=await api('/api/tasks?limit=20');
+    render();
+    window.QualityHub.services.tasks.wait(task.task_id,{onProgress:async state=>{if(['PASSED','FAILED','INTERRUPTED'].includes(state.status)){data.background_tasks=await api('/api/tasks?limit=20');render();toast(`后台任务${state.status==='PASSED'?'完成':'结束'}：${state.status}`,state.status==='PASSED'?'success':'error')}}}).catch(error=>toast(error.message,'warning'))
+  }catch(error){toast(error.message,'error')}
 }
 

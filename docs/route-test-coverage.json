@@ -1,0 +1,1891 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-04T06:10:38+00:00",
+  "method": "static route and test-reference analysis",
+  "summary": {
+    "routes": 121,
+    "covered": 28,
+    "unmapped": 79,
+    "integration_required": 14,
+    "p0": 19,
+    "p0_unmapped": 0
+  },
+  "routes": [
+    {
+      "path": "/api/health",
+      "methods": [
+        "GET"
+      ],
+      "name": "health",
+      "handler": "health",
+      "tags": [
+        "System"
+      ],
+      "priority": "P0",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_route_coverage.py",
+        "test_task_queue.py"
+      ],
+      "scope": "demo-critical"
+    },
+    {
+      "path": "/api/system/storage-policy",
+      "methods": [
+        "GET"
+      ],
+      "name": "storage_policy",
+      "handler": "storage_policy",
+      "tags": [
+        "System"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/system/environment-config",
+      "methods": [
+        "GET"
+      ],
+      "name": "environment_config",
+      "handler": "environment_config",
+      "tags": [
+        "System"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/system/route-coverage",
+      "methods": [
+        "GET"
+      ],
+      "name": "route_coverage",
+      "handler": "route_coverage",
+      "tags": [
+        "System"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/tasks",
+      "methods": [
+        "GET"
+      ],
+      "name": "list_tasks",
+      "handler": "list_tasks",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_route_coverage.py",
+        "test_task_queue.py"
+      ],
+      "scope": "demo-critical"
+    },
+    {
+      "path": "/api/tasks/types",
+      "methods": [
+        "GET"
+      ],
+      "name": "task_types",
+      "handler": "task_types",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_route_coverage.py",
+        "test_task_queue.py"
+      ],
+      "scope": "demo-critical"
+    },
+    {
+      "path": "/api/tasks/{task_id}",
+      "methods": [
+        "GET"
+      ],
+      "name": "get_task",
+      "handler": "get_task",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_route_coverage.py",
+        "test_task_queue.py"
+      ],
+      "scope": "demo-critical"
+    },
+    {
+      "path": "/api/tasks",
+      "methods": [
+        "POST"
+      ],
+      "name": "submit_task",
+      "handler": "submit_task",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_route_coverage.py",
+        "test_task_queue.py"
+      ],
+      "scope": "demo-critical"
+    },
+    {
+      "path": "/api/projects/{project_id}/environment-config",
+      "methods": [
+        "GET"
+      ],
+      "name": "project_environment_config",
+      "handler": "project_environment_config",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/multi-account-context",
+      "methods": [
+        "GET"
+      ],
+      "name": "multi_account_context",
+      "handler": "multi_account_context",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/jmeter/generation-skill",
+      "methods": [
+        "GET"
+      ],
+      "name": "jmeter_generation_skill",
+      "handler": "jmeter_generation_skill",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects",
+      "methods": [
+        "GET"
+      ],
+      "name": "projects",
+      "handler": "projects",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects",
+      "methods": [
+        "POST"
+      ],
+      "name": "create_project",
+      "handler": "create_project",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/dashboard",
+      "methods": [
+        "GET"
+      ],
+      "name": "dashboard",
+      "handler": "dashboard",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/diagnosis",
+      "methods": [
+        "GET"
+      ],
+      "name": "diagnosis",
+      "handler": "diagnosis",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/control-plane",
+      "methods": [
+        "GET"
+      ],
+      "name": "control_plane",
+      "handler": "control_plane",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_packages",
+      "handler": "requirement_packages",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages",
+      "methods": [
+        "POST"
+      ],
+      "name": "create_requirement_package",
+      "handler": "create_requirement_package",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/account-model",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_account_model",
+      "handler": "requirement_account_model",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/account-model",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_requirement_account_model",
+      "handler": "generate_requirement_account_model",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest",
+      "methods": [
+        "GET"
+      ],
+      "name": "resource_manifest",
+      "handler": "resource_manifest",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest",
+      "methods": [
+        "POST"
+      ],
+      "name": "save_resource_manifest",
+      "handler": "save_resource_manifest",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight",
+      "methods": [
+        "GET"
+      ],
+      "name": "resource_preflight",
+      "handler": "resource_preflight",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight",
+      "methods": [
+        "POST"
+      ],
+      "name": "rerun_resource_preflight",
+      "handler": "rerun_resource_preflight",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/evidence-rules",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_evidence_rules",
+      "handler": "requirement_evidence_rules",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_execution_plan",
+      "handler": "requirement_execution_plan",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_requirement_execution_plan",
+      "handler": "generate_requirement_execution_plan",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/tool-assets",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_tool_assets",
+      "handler": "requirement_tool_assets",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/runs",
+      "methods": [
+        "POST"
+      ],
+      "name": "create_requirement_run",
+      "handler": "create_requirement_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/runs",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_runs",
+      "handler": "requirement_runs",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/runs/{run_id}",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_run",
+      "handler": "requirement_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/newman/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_newman_run",
+      "handler": "requirement_newman_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/pytest/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_pytest_run",
+      "handler": "requirement_pytest_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/pipeline/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_pipeline_run",
+      "handler": "requirement_pipeline_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "demo-critical"
+    },
+    {
+      "path": "/api/projects/{project_id}/salary-trade/jmeter-harvest",
+      "methods": [
+        "POST"
+      ],
+      "name": "salary_trade_jmeter_harvest",
+      "handler": "salary_trade_jmeter_harvest",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/scenario-report",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_scenario_report",
+      "handler": "requirement_scenario_report",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/report-index",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_report_index",
+      "handler": "requirement_report_index",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/schema-audit",
+      "methods": [
+        "GET"
+      ],
+      "name": "requirement_schema_audit",
+      "handler": "requirement_schema_audit",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/schema-upgrade",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_schema_upgrade",
+      "handler": "requirement_schema_upgrade",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/ai-review",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_ai_review",
+      "handler": "requirement_ai_review",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/performance-ai-review",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_performance_ai_review",
+      "handler": "requirement_performance_ai_review",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/newman-analysis",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_newman_analysis",
+      "handler": "requirement_newman_analysis",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-plan",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_jmeter_load_plan",
+      "handler": "requirement_jmeter_load_plan",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_jmeter_load_run",
+      "handler": "requirement_jmeter_load_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/structured-test-cases",
+      "methods": [
+        "POST"
+      ],
+      "name": "structured_test_cases",
+      "handler": "structured_test_cases",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/candidate-evidence-rules",
+      "methods": [
+        "POST"
+      ],
+      "name": "candidate_evidence_rules",
+      "handler": "candidate_evidence_rules",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/accept-candidate-evidence-rules",
+      "methods": [
+        "POST"
+      ],
+      "name": "accept_candidate_evidence_rules",
+      "handler": "accept_candidate_evidence_rules",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/business-evidence-plan",
+      "methods": [
+        "POST"
+      ],
+      "name": "business_evidence_plan",
+      "handler": "business_evidence_plan",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/business-evidence-run",
+      "methods": [
+        "POST"
+      ],
+      "name": "business_evidence_run",
+      "handler": "business_evidence_run",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/metadata-hallucination-audit",
+      "methods": [
+        "POST"
+      ],
+      "name": "metadata_hallucination_audit",
+      "handler": "metadata_hallucination_audit",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/metadata-hallucination-correction",
+      "methods": [
+        "POST"
+      ],
+      "name": "metadata_hallucination_correction",
+      "handler": "metadata_hallucination_correction",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/quality-profile",
+      "methods": [
+        "GET"
+      ],
+      "name": "quality_profile",
+      "handler": "quality_profile",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/quality-profile",
+      "methods": [
+        "POST"
+      ],
+      "name": "save_quality_profile",
+      "handler": "save_quality_profile",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/reports",
+      "methods": [
+        "GET"
+      ],
+      "name": "reports",
+      "handler": "reports",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/test-accounts",
+      "methods": [
+        "GET"
+      ],
+      "name": "test_accounts",
+      "handler": "test_accounts",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/evidence-center",
+      "methods": [
+        "GET"
+      ],
+      "name": "evidence_center",
+      "handler": "evidence_center",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/capture-reports",
+      "methods": [
+        "GET"
+      ],
+      "name": "capture_reports",
+      "handler": "capture_reports",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/interface-document",
+      "methods": [
+        "GET"
+      ],
+      "name": "interface_document",
+      "handler": "interface_document",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P2",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/apifox-export",
+      "methods": [
+        "POST"
+      ],
+      "name": "apifox_package",
+      "handler": "apifox_package",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/apifox/openapi/import",
+      "methods": [
+        "POST"
+      ],
+      "name": "apifox_openapi_import",
+      "handler": "apifox_openapi_import",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/apifox-cli/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "apifox_cli_run",
+      "handler": "apifox_cli_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/delivery-package",
+      "methods": [
+        "POST"
+      ],
+      "name": "delivery_package",
+      "handler": "delivery_package",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/toolchain",
+      "methods": [
+        "GET"
+      ],
+      "name": "toolchain",
+      "handler": "toolchain",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/tool-assets",
+      "methods": [
+        "POST"
+      ],
+      "name": "tool_assets",
+      "handler": "tool_assets",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/toolchain/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_toolchain",
+      "handler": "run_toolchain",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/jmeter/open-gui",
+      "methods": [
+        "POST"
+      ],
+      "name": "open_jmeter_gui",
+      "handler": "open_jmeter_gui",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/jmeter/harvest-gui-report",
+      "methods": [
+        "POST"
+      ],
+      "name": "harvest_jmeter_gui_report",
+      "handler": "harvest_jmeter_gui_report",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/jmeter/case-script-model",
+      "methods": [
+        "GET"
+      ],
+      "name": "jmeter_case_script_model",
+      "handler": "jmeter_case_script_model",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/jmeter/generate-from-cases",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_jmeter_from_cases",
+      "handler": "generate_jmeter_from_cases",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/execution-profile",
+      "methods": [
+        "GET"
+      ],
+      "name": "execution_profile",
+      "handler": "execution_profile",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/execution-profile",
+      "methods": [
+        "POST"
+      ],
+      "name": "save_execution_profile",
+      "handler": "save_execution_profile",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/redis-mappings",
+      "methods": [
+        "GET"
+      ],
+      "name": "redis_mappings",
+      "handler": "redis_mappings",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/consistency",
+      "methods": [
+        "GET"
+      ],
+      "name": "consistency",
+      "handler": "consistency",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/wealth-latest-report",
+      "methods": [
+        "GET"
+      ],
+      "name": "wealth_latest_report",
+      "handler": "wealth_latest_report",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/gift-latest-report",
+      "methods": [
+        "GET"
+      ],
+      "name": "gift_latest_report",
+      "handler": "gift_latest_report",
+      "tags": [
+        "Reports"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/wealth-reward-configs",
+      "methods": [
+        "GET"
+      ],
+      "name": "wealth_reward_configs",
+      "handler": "wealth_reward_configs",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P2",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/test-accounts",
+      "methods": [
+        "POST"
+      ],
+      "name": "save_test_account",
+      "handler": "save_test_account",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/redis-manual-result",
+      "methods": [
+        "POST"
+      ],
+      "name": "redis_manual_result",
+      "handler": "redis_manual_result",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/sources",
+      "methods": [
+        "POST"
+      ],
+      "name": "add_source",
+      "handler": "add_source",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/generate",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_assets",
+      "handler": "generate_assets",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/db-schema",
+      "methods": [
+        "POST"
+      ],
+      "name": "db_schema",
+      "handler": "db_schema",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/mysql/status",
+      "methods": [
+        "GET"
+      ],
+      "name": "mysql_status",
+      "handler": "mysql_status",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/mysql/test",
+      "methods": [
+        "POST"
+      ],
+      "name": "mysql_test",
+      "handler": "mysql_test",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/mysql/query",
+      "methods": [
+        "POST"
+      ],
+      "name": "mysql_query",
+      "handler": "mysql_query",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/mysql/import-schema-live",
+      "methods": [
+        "POST"
+      ],
+      "name": "mysql_import_schema_live",
+      "handler": "mysql_import_schema_live",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/salary-trade/db-evidence",
+      "methods": [
+        "POST"
+      ],
+      "name": "salary_trade_db_evidence",
+      "handler": "salary_trade_db_evidence",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/redis-sources",
+      "methods": [
+        "POST"
+      ],
+      "name": "add_redis_source",
+      "handler": "add_redis_source",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/auto-match-data",
+      "methods": [
+        "POST"
+      ],
+      "name": "auto_match_data",
+      "handler": "auto_match_data",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/generate-consistency",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_consistency",
+      "handler": "generate_consistency",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/consistency/run-ready",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_ready_consistency",
+      "handler": "run_ready_consistency",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/evidence-check",
+      "methods": [
+        "POST"
+      ],
+      "name": "manual_evidence_check",
+      "handler": "manual_evidence_check",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/assistant",
+      "methods": [
+        "POST"
+      ],
+      "name": "assistant",
+      "handler": "assistant",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/consistency-rules/{rule_id}/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_consistency",
+      "handler": "run_consistency",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/redis-sources/{source_id}/test",
+      "methods": [
+        "POST"
+      ],
+      "name": "test_redis_source",
+      "handler": "test_redis_source",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/redis-sources/{source_id}/scan",
+      "methods": [
+        "POST"
+      ],
+      "name": "scan_redis_source",
+      "handler": "scan_redis_source",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/redis-sources/{source_id}/inspect",
+      "methods": [
+        "POST"
+      ],
+      "name": "inspect_redis_source",
+      "handler": "inspect_redis_source",
+      "tags": [
+        "Data Validation"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/generate-workflows",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_workflows",
+      "handler": "generate_workflows",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/workflows/{workflow_id}/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_workflow",
+      "handler": "run_workflow",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/generate-nonfunctional",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_nonfunctional",
+      "handler": "generate_nonfunctional",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/suites/{suite_id}/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_suite",
+      "handler": "run_suite",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/performance/{plan_id}/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_performance",
+      "handler": "run_performance",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/generate-operations",
+      "methods": [
+        "POST"
+      ],
+      "name": "generate_operations",
+      "handler": "generate_operations",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/security-scan",
+      "methods": [
+        "POST"
+      ],
+      "name": "security_scan",
+      "handler": "security_scan",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/jobs/{job_id}/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_job",
+      "handler": "run_job",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/endpoints",
+      "methods": [
+        "POST"
+      ],
+      "name": "add_endpoint",
+      "handler": "add_endpoint",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/jobs",
+      "methods": [
+        "POST"
+      ],
+      "name": "add_job",
+      "handler": "add_job",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/refresh-trace",
+      "methods": [
+        "POST"
+      ],
+      "name": "refresh_trace",
+      "handler": "refresh_trace",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/ai-pipeline",
+      "methods": [
+        "POST"
+      ],
+      "name": "ai_pipeline",
+      "handler": "ai_pipeline",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/requirements/{requirement_id}/link",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_link",
+      "handler": "requirement_link",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/requirements/{requirement_id}/generate-workflow",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_workflow",
+      "handler": "requirement_workflow",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/cases/{case_id}/run",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_case",
+      "handler": "run_case",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/gift-chain",
+      "methods": [
+        "POST"
+      ],
+      "name": "gift_chain",
+      "handler": "gift_chain",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/login-performance",
+      "methods": [
+        "POST"
+      ],
+      "name": "login_performance",
+      "handler": "login_performance",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}/run-all",
+      "methods": [
+        "POST"
+      ],
+      "name": "run_all",
+      "handler": "run_all",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/settings",
+      "methods": [
+        "POST"
+      ],
+      "name": "save_settings",
+      "handler": "save_settings",
+      "tags": [
+        "Settings"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/system/reload",
+      "methods": [
+        "POST"
+      ],
+      "name": "reload_system",
+      "handler": "reload_system",
+      "tags": [
+        "System"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}",
+      "methods": [
+        "PUT"
+      ],
+      "name": "update_project",
+      "handler": "update_project",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/cases/{case_id}",
+      "methods": [
+        "PUT"
+      ],
+      "name": "update_case",
+      "handler": "update_case",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/jobs/{job_id}",
+      "methods": [
+        "PUT"
+      ],
+      "name": "update_job",
+      "handler": "update_job",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/endpoints/{endpoint_id}",
+      "methods": [
+        "PUT"
+      ],
+      "name": "update_endpoint",
+      "handler": "update_endpoint",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "UNMAPPED",
+      "evidence": [],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/requirements/{requirement_id}",
+      "methods": [
+        "PUT"
+      ],
+      "name": "update_requirement",
+      "handler": "update_requirement",
+      "tags": [
+        "Assets"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
+      "scope": "standard"
+    }
+  ]
+}

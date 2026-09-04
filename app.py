@@ -35,6 +35,13 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from quality_hub_backend.config.environment import (
+    deep_get,
+    deep_merge,
+    load_environment_config as _load_environment_config_module,
+    load_yaml_file as _load_yaml_file_module,
+)
+
 
 ROOT = Path(__file__).resolve().parent
 STATIC = ROOT / "static"
@@ -296,109 +303,15 @@ def uid(prefix):
     return f"{prefix}_{uuid.uuid4().hex[:10]}"
 
 
-def _parse_simple_yaml_value(value):
-    text = str(value or "").strip()
-    if not text:
-        return ""
-    if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
-        return text[1:-1]
-    if text.lower() in {"true", "false"}:
-        return text.lower() == "true"
-    if text.startswith("[") and text.endswith("]"):
-        try:
-            return json.loads(text.replace("'", '"'))
-        except Exception:
-            return [item.strip().strip('"').strip("'") for item in text[1:-1].split(",") if item.strip()]
-    if re.fullmatch(r"-?\d+", text):
-        try:
-            return int(text)
-        except Exception:
-            return text
-    if re.fullmatch(r"-?\d+\.\d+", text):
-        try:
-            return float(text)
-        except Exception:
-            return text
-    return text
-
-
-def _parse_simple_yaml(text):
-    """Small YAML subset parser for project env files; avoids making startup depend on PyYAML."""
-    root = {}
-    stack = [(-1, root)]
-    for raw_line in str(text or "").splitlines():
-        if not raw_line.strip() or raw_line.lstrip().startswith("#"):
-            continue
-        indent = len(raw_line) - len(raw_line.lstrip(" "))
-        line = raw_line.strip()
-        if ":" not in line:
-            continue
-        key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip()
-        while stack and indent <= stack[-1][0]:
-            stack.pop()
-        parent = stack[-1][1]
-        if value == "":
-            node = {}
-            parent[key] = node
-            stack.append((indent, node))
-        else:
-            parent[key] = _parse_simple_yaml_value(value)
-    return root
-
-
 def _load_yaml_file(path):
     global YAML_BACKEND
-    path = Path(path)
-    if not path.is_file():
-        return {}
-    text = path.read_text(encoding="utf-8")
-    try:
-        import yaml  # type: ignore
-
-        loaded = yaml.safe_load(text) or {}
-        YAML_BACKEND = "PyYAML"
-        return loaded if isinstance(loaded, dict) else {}
-    except Exception:
-        YAML_BACKEND = "fallback"
-        return _parse_simple_yaml(text)
-
-
-def deep_get(mapping, dotted, default=None):
-    current = mapping
-    for part in str(dotted).split("."):
-        if not isinstance(current, dict) or part not in current:
-            return default
-        current = current[part]
-    return current
-
-
-def deep_merge(base, override):
-    result = dict(base or {})
-    for key, value in (override or {}).items():
-        if isinstance(value, dict) and isinstance(result.get(key), dict):
-            result[key] = deep_merge(result[key], value)
-        else:
-            result[key] = value
-    return result
+    payload, YAML_BACKEND = _load_yaml_file_module(Path(path))
+    return payload
 
 
 def load_environment_config(env_name=None):
-    env = str(env_name or os.getenv("AUTOTEST_ENV") or "test").strip() or "test"
-    example = _load_yaml_file(CONFIG_DIR / "env.example.yaml")
-    concrete = _load_yaml_file(CONFIG_DIR / f"env.{env}.yaml")
-    data_sources = _load_yaml_file(CONFIG_DIR / "data-sources.yaml")
-    config = deep_merge(deep_merge(example, concrete), data_sources)
-    if not config:
-        config = {}
-    config.setdefault("project", {})
-    config.setdefault("tools", {})
-    config.setdefault("data_sources", {})
-    config.setdefault("accounts", {})
-    config.setdefault("reports", {})
-    config["env_file"] = str(CONFIG_DIR / f"env.{env}.yaml")
-    config["env_name"] = env
+    global YAML_BACKEND
+    config, YAML_BACKEND = _load_environment_config_module(CONFIG_DIR, env_name)
     return config
 
 

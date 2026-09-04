@@ -112,6 +112,12 @@ cd <AutoTest-AI项目目录>
 .\platform.cmd demo
 ```
 
+## 工程维护入口
+
+平台已经开始把旧的单文件实现渐进拆分为可维护模块：后端采用 `routes / handlers / services / startup / config` 边界，前端按 `services / components / routers` 拆分；长时间执行通过 SQLite 持久化后台任务队列运行。详细职责、任务状态流转和新增功能放置规则见 [工程架构说明](docs/engineering-architecture.md)。
+
+路由与测试覆盖矩阵位于 `docs/route-test-coverage.md` 和 `docs/route-test-coverage.json`。它会区分普通测试已覆盖、尚未映射以及必须依赖 JMeter/Newman/MySQL/Redis 的集成验证，避免把外部工具路由误报为单元测试已覆盖。
+
 `platform.cmd demo` 是面试与现场演示入口。它会强制进入演示模式，加载 `requirements/demo/salary-trade/seed.sqlite`，启动临时 localhost 服务，使用 8 个合成申请人运行 8 条工资交易流程并生成场景报告。该模式不读取真实 ticket，不连接测试服，也不允许任何外部写操作。
 
 需要临时更换监听端口时：

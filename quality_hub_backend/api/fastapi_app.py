@@ -11,6 +11,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
+from ..config import AppSettings
+from ..handlers import TaskDispatcher
+from ..services.task_queue import PersistentTaskQueue
+from ..startup import application_lifespan
+from .routes import build_system_router, build_task_router
 from ..schemas.requests import (
     GenerateFromSourceRequest,
     ProjectCreateRequest,
@@ -38,6 +43,9 @@ def create_app() -> FastAPI:
     import app as legacy
 
     legacy.init_db()
+    settings = AppSettings.from_environment(legacy.ROOT)
+    task_queue = PersistentTaskQueue(settings.task_database, settings.task_workers)
+    dispatcher = TaskDispatcher(legacy)
     api = FastAPI(
         title="AutoTest AI Quality Hub",
         version="0.1.0",
@@ -47,7 +55,15 @@ def create_app() -> FastAPI:
             "company MySQL and Redis integrations are readonly."
         ),
         openapi_tags=OPENAPI_TAGS,
+        lifespan=application_lifespan(task_queue),
     )
+    api.state.settings = settings
+    api.state.task_queue = task_queue
+    api.state.task_dispatcher = dispatcher
+    # FastAPI 0.141 wraps include_router() entries in _IncludedRouter. Appending the
+    # concrete APIRoutes keeps legacy route introspection and coverage tooling stable.
+    api.router.routes.extend(build_system_router(legacy, settings).routes)
+    api.router.routes.extend(build_task_router(task_queue, dispatcher).routes)
 
     @api.exception_handler(HTTPException)
     def http_exception_handler(_: Request, exc: HTTPException) -> JSONResponse:
@@ -61,32 +77,6 @@ def create_app() -> FastAPI:
     @api.exception_handler(ValueError)
     def value_error_handler(_: Request, exc: ValueError) -> JSONResponse:
         return JSONResponse(status_code=400, content={"error": str(exc), "detail": str(exc)})
-
-    @api.get("/api/health", tags=["System"], summary="平台健康检查")
-    def health() -> dict[str, Any]:
-        demo_mode = os.getenv("AUTOTEST_DEMO_MODE", "false").lower() == "true"
-        return {
-            "ok": True,
-            "time": legacy.now(),
-            "build": legacy.BUILD_ID,
-            "frontend_build": legacy.BUILD_ID,
-            "backend": "fastapi",
-            "demo_mode": demo_mode,
-            "external_mutations_allowed": os.getenv("AUTOTEST_ALLOW_MUTATIONS", "false").lower() == "true",
-            "allowed_hosts": [
-                item.strip()
-                for item in os.getenv("AUTOTEST_ALLOWED_HOSTS", "").split(",")
-                if item.strip()
-            ],
-        }
-
-    @api.get("/api/system/storage-policy", tags=["System"], summary="查看平台存储与只读边界")
-    def storage_policy() -> dict[str, Any]:
-        return legacy.platform_storage_policy()
-
-    @api.get("/api/system/environment-config", tags=["System"], summary="查看YAML环境配置状态")
-    def environment_config() -> dict[str, Any]:
-        return legacy.environment_config_status()
 
     @api.get("/api/projects/{project_id}/environment-config", tags=["Projects"], summary="项目YAML环境配置状态")
     def project_environment_config(project_id: str) -> dict[str, Any]:

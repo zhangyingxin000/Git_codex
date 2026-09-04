@@ -7,7 +7,7 @@ credentials or calling an external environment.
 - `openapi.json`: minimal API contract used by the localhost mock service.
 - `replay/scenarios.json`: eight ordered business flows and expected final states.
 - `seed.sqlite`: immutable synthetic seed shipped with the repository.
-- `reports/latest/runtime.sqlite`: disposable execution database regenerated before each run.
+- `reports/latest/runtime-*.sqlite`: disposable execution database created for each run.
 - `reports/latest/demo-summary.json`: latest unified scenario result.
 
 Run from the repository root:
