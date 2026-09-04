@@ -1,9 +1,9 @@
 # Route Test Coverage
 
 - Routes: 121
-- Covered by static evidence: 28
-- Unmapped: 79
-- Integration required: 14
+- Covered by static evidence: 40
+- Unmapped: 69
+- Integration required: 12
 - P0 routes: 19
 - P0 unmapped: 0
 
@@ -18,41 +18,42 @@
 | P0 | GET | `/api/tasks/{task_id}` | COVERED | test_route_coverage.py, test_task_queue.py |
 | P0 | POST | `/api/tasks` | COVERED | test_route_coverage.py, test_task_queue.py |
 | P2 | GET | `/api/projects/{project_id}/environment-config` | UNMAPPED | - |
-| P2 | GET | `/api/projects/{project_id}/multi-account-context` | UNMAPPED | - |
-| P0 | GET | `/api/projects/{project_id}/jmeter/generation-skill` | INTEGRATION_REQUIRED | - |
-| P2 | GET | `/api/projects` | COVERED | test_package_status_model.py |
-| P1 | POST | `/api/projects` | COVERED | test_package_status_model.py |
-| P2 | GET | `/api/projects/{project_id}/dashboard` | UNMAPPED | - |
-| P2 | GET | `/api/projects/{project_id}/diagnosis` | UNMAPPED | - |
-| P2 | GET | `/api/projects/{project_id}/control-plane` | UNMAPPED | - |
-| P2 | GET | `/api/projects/{project_id}/requirement-packages` | COVERED | test_package_status_model.py |
-| P1 | POST | `/api/projects/{project_id}/requirement-packages` | COVERED | test_package_status_model.py |
-| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/account-model` | UNMAPPED | - |
-| P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/account-model` | UNMAPPED | - |
+| P2 | GET | `/api/projects/{project_id}/multi-account-context` | COVERED | test_project_routes.py |
+| P0 | GET | `/api/projects/{project_id}/jmeter/generation-skill` | COVERED | handler-reference |
+| P2 | GET | `/api/projects` | COVERED | test_package_status_model.py, test_project_routes.py, test_requirement_routes.py |
+| P1 | POST | `/api/projects` | COVERED | test_package_status_model.py, test_project_routes.py, test_requirement_routes.py |
+| P1 | PUT | `/api/projects/{project_id}` | COVERED | test_package_status_model.py, test_project_routes.py, test_requirement_routes.py |
+| P2 | GET | `/api/projects/{project_id}/dashboard` | COVERED | handler-reference |
+| P2 | GET | `/api/projects/{project_id}/diagnosis` | COVERED | handler-reference |
+| P2 | GET | `/api/projects/{project_id}/control-plane` | COVERED | handler-reference |
+| P2 | GET | `/api/projects/{project_id}/requirement-packages` | COVERED | test_package_status_model.py, test_project_routes.py, test_requirement_routes.py |
+| P1 | POST | `/api/projects/{project_id}/requirement-packages` | COVERED | test_package_status_model.py, test_project_routes.py, test_requirement_routes.py |
+| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/account-model` | COVERED | handler-reference |
+| P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/account-model` | COVERED | handler-reference |
 | P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest` | COVERED | handler-reference |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest` | UNMAPPED | - |
 | P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight` | COVERED | test_package_status_model.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight` | COVERED | test_package_status_model.py |
-| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/evidence-rules` | UNMAPPED | - |
-| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan` | UNMAPPED | - |
-| P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan` | UNMAPPED | - |
+| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/evidence-rules` | COVERED | handler-reference |
+| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan` | COVERED | test_requirement_routes.py |
+| P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan` | COVERED | test_requirement_routes.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/tool-assets` | UNMAPPED | - |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/runs` | COVERED | test_package_status_model.py |
 | P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/runs` | COVERED | test_package_status_model.py |
 | P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/runs/{run_id}` | COVERED | test_package_status_model.py |
 | P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/newman/run` | INTEGRATION_REQUIRED | - |
 | P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/pytest/run` | INTEGRATION_REQUIRED | - |
-| P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/pipeline/run` | COVERED | test_package_status_model.py |
+| P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/pipeline/run` | COVERED | test_package_status_model.py, test_requirement_routes.py |
 | P0 | POST | `/api/projects/{project_id}/salary-trade/jmeter-harvest` | INTEGRATION_REQUIRED | - |
+| P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-plan` | INTEGRATION_REQUIRED | - |
+| P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run` | COVERED | test_requirement_routes.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/scenario-report` | COVERED | test_package_status_model.py |
-| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/report-index` | COVERED | test_package_status_model.py |
-| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/schema-audit` | COVERED | test_package_status_model.py |
+| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/report-index` | COVERED | test_package_status_model.py, test_requirement_routes.py |
+| P2 | GET | `/api/projects/{project_id}/requirement-packages/{package_id}/schema-audit` | COVERED | test_package_status_model.py, test_requirement_routes.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/schema-upgrade` | UNMAPPED | - |
-| P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/ai-review` | UNMAPPED | - |
+| P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/ai-review` | COVERED | test_requirement_routes.py |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/performance-ai-review` | UNMAPPED | - |
 | P1 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/newman-analysis` | UNMAPPED | - |
-| P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-plan` | INTEGRATION_REQUIRED | - |
-| P0 | POST | `/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run` | INTEGRATION_REQUIRED | - |
 | P1 | POST | `/api/projects/{project_id}/structured-test-cases` | UNMAPPED | - |
 | P1 | POST | `/api/projects/{project_id}/candidate-evidence-rules` | UNMAPPED | - |
 | P1 | POST | `/api/projects/{project_id}/accept-candidate-evidence-rules` | UNMAPPED | - |
@@ -125,7 +126,6 @@
 | P1 | POST | `/api/projects/{project_id}/run-all` | UNMAPPED | - |
 | P1 | POST | `/api/settings` | UNMAPPED | - |
 | P1 | POST | `/api/system/reload` | UNMAPPED | - |
-| P1 | PUT | `/api/projects/{project_id}` | COVERED | test_package_status_model.py |
 | P1 | PUT | `/api/cases/{case_id}` | UNMAPPED | - |
 | P1 | PUT | `/api/jobs/{job_id}` | UNMAPPED | - |
 | P1 | PUT | `/api/endpoints/{endpoint_id}` | UNMAPPED | - |

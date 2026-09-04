@@ -17,6 +17,14 @@ FastAPI 应用入口位于 `quality_hub_backend/api/fastapi_app.py`，并由 `cr
 
 `app.py` 仍是兼容层，已有功能暂时通过 `legacy` 调用继续工作。新增公共能力应优先进入上述模块；后续迁移旧路由时，以一个完整业务域为单位移动，并保留原接口路径和响应结构。
 
+当前已迁移的路由域：
+
+- `api/routes/system.py`：健康检查、存储策略、环境配置和路由覆盖。
+- `api/routes/tasks.py`：后台任务提交、查询和任务类型。
+- `api/routes/projects.py`：项目基础信息、工作台、诊断、需求包目录、账号模型和资源预检。
+- `api/routes/requirement_execution.py`：需求包场景计划、运行批次和 Newman/JMeter/pytest 执行。
+- `api/routes/requirement_reports.py`：需求包报告索引、统一场景报告、Schema 审计和 AI 分析。
+
 ## 后台任务
 
 `quality_hub_backend/services/task_queue.py` 提供本地最小任务队列：
@@ -38,6 +46,7 @@ FastAPI 应用入口位于 `quality_hub_backend/api/fastapi_app.py`，并由 `cr
 | 目录 | 职责 |
 | --- | --- |
 | `static/js/services/api.js` | HTTP 请求和统一错误处理 |
+| `static/js/services/requirement-packages.js` | 需求包、运行批次、工具执行和报告请求 |
 | `static/js/services/tasks.js` | 后台任务查询、提交和刷新 |
 | `static/js/components/notifications.js` | 通知与用户反馈 |
 | `static/js/components/task-panel.js` | 后台任务面板渲染 |

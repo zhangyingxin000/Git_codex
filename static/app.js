@@ -1,5 +1,6 @@
 let projects=[], current=null, data=null, pendingFile=null, wealthLastResult=null, activeResourceManifest=null;const PAGE_BUILD=document.documentElement.dataset.build||'';
 const {request:api,select:$,selectAll:$$,escapeHtml:esc}=window.QualityHub.services.api;
+const requirementPackagesApi=window.QualityHub.services.requirementPackages;
 let toast=window.QualityHub.components.notifications.toast;
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='toolPerfProfile')applyPerformanceProfile()});
 async function loadProjects(){projects=await api("/api/projects");$("#projects").innerHTML=projects.map(p=>`<button class="project ${current===p.id?'active':''}" onclick="openProject('${p.id}')">◫　${esc(p.name)}</button>`).join("")}
@@ -1039,8 +1040,8 @@ async function showRequirementResourceCenter(packageId){
   $('#modalBody').innerHTML='<h2>资源与预检</h2><div class="summary-panel"><b>正在检查当前需求需要哪些资源</b><p>平台会按账号模型、测试用例、场景计划和证据规则检查，不会默认强加CSV、数据库或Redis。</p></div>';
   try{
     let [manifest,preflight]=await Promise.all([
-      api(`/api/projects/${current}/requirement-packages/${packageId}/resource-manifest`),
-      api(`/api/projects/${current}/requirement-packages/${packageId}/resource-preflight`)
+      requirementPackagesApi.resourceManifest(current,packageId),
+      requirementPackagesApi.resourcePreflight(current,packageId)
     ]);
     activeResourceManifest=manifest;
     let s=preflight.summary||{},credentials=manifest.credentials||[],findings=preflight.findings||[];
@@ -1065,7 +1066,7 @@ async function saveRequirementResourceManifest(packageId){
       variable_extractions:parseResourceLines('resourceExtractions',x=>({variable:x[0]||'',source:x[1]||'',json_paths:(x[2]||'').split(',').map(y=>y.trim()).filter(Boolean),required:true})),
       confirmed_ignored:activeResourceManifest?.confirmed_ignored||[]
     };
-    await api(`/api/projects/${current}/requirement-packages/${packageId}/resource-manifest`,{method:'POST',body:JSON.stringify(payload)});
+    await requirementPackagesApi.saveResourceManifest(current,packageId,payload);
     toast('资源登记已保存，正在重新预检','success');
     await showRequirementResourceCenter(packageId)
   }catch(e){toast(e.message,'error')}
@@ -1073,7 +1074,7 @@ async function saveRequirementResourceManifest(packageId){
 
 async function ignoreRequirementResourceGap(packageId,gapId){
   try{
-    await api(`/api/projects/${current}/requirement-packages/${packageId}/resource-manifest`,{method:'POST',body:JSON.stringify({confirm_ignore_gap_id:gapId})});
+    await requirementPackagesApi.saveResourceManifest(current,packageId,{confirm_ignore_gap_id:gapId});
     toast('已记录为当前需求不需要，不再重复提醒','success');
     await showRequirementResourceCenter(packageId)
   }catch(e){toast(e.message,'error')}
@@ -1151,7 +1152,7 @@ async function loadRequirementReportIndex(packageId=selectedRequirementPackageId
   if(!current||!packageId)return null;
   data.requirement_report_indexes=data.requirement_report_indexes||{};
   try{
-    let index=await api(`/api/projects/${current}/requirement-packages/${packageId}/report-index`);
+    let index=await requirementPackagesApi.reportIndex(current,packageId);
     data.requirement_report_indexes[packageId]=index;
     return index
   }catch(e){
@@ -1189,7 +1190,7 @@ async function ensureRequirementRunContext(forceNew=false){
   if(!packageId)throw new Error('当前没有可执行的需求包');
   let runId=forceNew?'':activeRequirementRunId(packageId);
   if(runId)return runId;
-  let context=await api(`/api/projects/${current}/requirement-packages/${packageId}/runs`,{method:'POST',body:JSON.stringify({name:`${pkg.name} · 手工执行批次`})});
+  let context=await requirementPackagesApi.createRun(current,packageId,{name:`${pkg.name} · 手工执行批次`});
   localStorage.setItem(requirementRunStorageKey(packageId),context.run_id);
   localStorage.setItem(reportRunStorageKey(packageId),context.run_id);
   await loadRequirementReportIndex(packageId);
@@ -1217,7 +1218,7 @@ async function generateSelectedRequirementPackageAssets(){
   if(!packageId)return toast('当前没有可生成的需求包','warning');
   try{
     toast(`正在为 ${pkg.name} 生成工具资产…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/tool-assets`,{method:'POST',body:JSON.stringify(collectJmeterWorkbenchPayload())});
+    let x=await requirementPackagesApi.toolAssets(current,packageId,collectJmeterWorkbenchPayload());
     let files=x.generated||[];
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 工具资产已生成</h2><p class="policy-note">本次只写入当前需求包目录。Newman、JMeter、pytest 分开保存，报告后续也按需求包归档。</p><div class="metrics"><div class="metric"><span>状态</span><b>${esc(x.status)}</b></div><div class="metric"><span>文件</span><b>${esc(files.length)}</b></div><div class="metric"><span>需求包</span><b style="font-size:20px">${esc(packageId)}</b></div></div>${(x.warnings||[]).length?`<div class="summary-panel"><b>生成提醒</b><p>${esc((x.warnings||[]).join('；'))}</p></div>`:''}<h3>生成文件</h3><div class="evidence-list">${files.map(f=>`<div class="evidence-item"><b>${esc(f.tool||'asset')}</b><small>${esc(f.path||'')}</small></div>`).join('')}</div><label>资产清单</label><code>${esc(x.manifest_path||'')}</code>`;
     $('#modal').classList.remove('hidden');
@@ -1272,7 +1273,7 @@ async function createRequirementPackage(){
   };
   if(!payload.name)return toast('请填写需求包名称','warning');
   try{
-    let x=await api(`/api/projects/${current}/requirement-packages`,{method:'POST',body:JSON.stringify(payload)});
+    let x=await requirementPackagesApi.create(current,payload);
     data.requirement_packages=x.catalog;
     localStorage.setItem('autotest_selected_requirement_package',requirementPackageId(x.package));
     closeModal();
@@ -1288,7 +1289,7 @@ async function runSelectedRequirementPackageNewman(){
   try{
     toast(`正在运行 ${pkg.name} 的 Newman 回归…`);
     let runId=await ensureRequirementRunContext();
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/newman/run`,{method:'POST',body:JSON.stringify({timeout:180,run_id:runId})});
+    let x=await requirementPackagesApi.runNewman(current,packageId,{timeout:180,run_id:runId});
     let failures=x.failures||[],s=x.summary||{};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · Newman执行结果</h2><p class="policy-note">${esc(x.message||'Newman 已按当前需求包 collection 执行，结果归档到需求包 reports。')}</p><div class="metrics"><div class="metric"><span>状态</span><b>${esc(x.status)}</b></div><div class="metric"><span>请求</span><b>${esc(s.requests??'-')}</b></div><div class="metric"><span>断言失败</span><b>${esc(s.failed_assertions??failures.length)}</b></div><div class="metric"><span>耗时</span><b>${esc(x.duration_ms??'-')}ms</b></div></div>${x.install_command?`<div class="summary-panel"><b>需要安装 Newman</b><p><code>${esc(x.install_command)}</code></p></div>`:''}${failures.length?`<h3>失败接口</h3><table><thead><tr><th>接口/步骤</th><th>错误</th></tr></thead><tbody>${failures.map(f=>`<tr><td>${esc(f.source||'-')}</td><td>${esc(f.error||'-')}</td></tr>`).join('')}</tbody></table>`:''}<label>Collection</label><code>${esc(x.collection||'')}</code>${x.summary_path?`<label>执行摘要</label><code>${esc(x.summary_path)}</code>`:''}${x.json_report?`<label>Newman原始报告</label><code>${esc(x.json_report)}</code>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开报告</button>`:''}`;
     $('#modal').classList.remove('hidden');
@@ -1334,7 +1335,7 @@ async function generateSelectedRequirementScenarioReport(){
   try{
     toast(`正在生成 ${pkg.name} 的统一场景报告…`);
     let runId=await ensureRequirementRunContext();
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/scenario-report`,{method:'POST',body:JSON.stringify({run_id:runId})});
+    let x=await requirementPackagesApi.scenarioReport(current,packageId,{run_id:runId});
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 统一场景报告</h2><p class="policy-note">这份报告按业务流程收拢 Newman、JMeter、pytest 和数据准备结果，方便人工复核和后续维护。</p>${unifiedScenarioReportHtml(x)}<label>JSON报告</label><code>${esc(x.summary_path||'')}</code>${x.markdown_path?`<label>Markdown报告</label><code>${esc(x.markdown_path)}</code>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开JSON</button>`:''}`;
     $('#modal').classList.remove('hidden');
     toast(`${pkg.name} 场景总报告：${x.status}`,x.status==='FAILED'?'error':x.status==='BLOCKED'?'warning':'success');
@@ -1362,7 +1363,7 @@ async function runSelectedRequirementPackagePytest(){
   try{
     toast(`正在运行 ${pkg.name} 的 pytest 深度证据复核…`);
     let runId=await ensureRequirementRunContext();
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/pytest/run`,{method:'POST',body:JSON.stringify({timeout:240,run_id:runId})});
+    let x=await requirementPackagesApi.runPytest(current,packageId,{timeout:240,run_id:runId});
     let report=x.evidence_report||{};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · pytest深度证据复核</h2><p class="policy-note">pytest 会按当前需求包主编排文件执行场景，并结合 HTTP、JMeter/Newman、DB/Redis 证据输出报告。</p>${pytestScenarioReportHtml(report)}<label>pytest脚本</label><code>${esc(x.pytest_file||'')}</code><label>证据报告</label><code>${esc(x.summary_path||'')}</code>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开JSON</button>`:''}`;
     $('#modal').classList.remove('hidden');
@@ -1379,7 +1380,7 @@ async function runSelectedRequirementPackagePipeline(){
     let runId=await ensureRequirementRunContext();
     closeModal();
     toast(`${pkg.name} 自动闭环已开始，请稍候…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/pipeline/run`,{method:'POST',body:JSON.stringify({run_id:runId,run_newman:true,run_pytest:true,create_load_plan:true})});
+    let x=await requirementPackagesApi.runPipeline(current,packageId,{run_id:runId,run_newman:true,run_pytest:true,create_load_plan:true});
     let s=x.summary||{},steps=x.steps||[];
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 一键执行结果</h2><p class="policy-note">同一批次完成资源预检、工具执行、原始报告回收、接口分析、统一场景报告和 AI 复盘；JMeter 持续压测仍需明确选择阶梯。</p><div class="metrics"><div class="metric"><span>结论</span><b style="font-size:20px">${esc(x.status)}</b></div><div class="metric"><span>通过</span><b>${esc(s.passed||0)}</b></div><div class="metric"><span>失败</span><b>${esc(s.failed||0)}</b></div><div class="metric"><span>阻断/提醒</span><b>${esc(s.blocked||0)}/${esc(s.warnings||0)}</b></div></div><div class="gap-list">${steps.map(item=>`<div class="gap-item ${item.status==='FAILED'?'P0':item.status==='BLOCKED'?'P1':''}"><span class="tag ${statusTag(item.status)}">${esc(item.status)}</span><div><b>${esc(item.name)}</b><p>${esc(item.message||'')}</p>${item.json_url?`<button class="small" onclick="openReport('${esc(item.json_url)}')">查看报告</button>`:''}</div></div>`).join('')}</div><div class="hub-action-row"><button class="primary" onclick="switchTab('reports');closeModal()">进入报告中心</button>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">执行摘要JSON</button>`:''}</div>`;
     $('#modal').classList.remove('hidden');
@@ -1394,7 +1395,7 @@ async function generateSelectedRequirementPackageAiReview(){
   try{
     toast(`正在复盘 ${pkg.name} 的执行证据…`);
     let runId=await ensureRequirementRunContext();
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/ai-review`,{method:'POST',body:JSON.stringify({run_id:runId})});
+    let x=await requirementPackagesApi.aiReview(current,packageId,{run_id:runId});
     let s=x.summary||{},findings=x.findings||[],actions=x.next_actions||[],cats=x.root_cause_categories||{},signals=x.execution_signals||{};
     let catLabels={authentication:'鉴权/登录态',request_contract:'请求契约',business_assertion:'业务断言',test_data:'测试数据',data_evidence:'DB/Redis证据',manual_or_timing:'人工/定时流程',performance:'性能',environment:'环境/工具',server:'服务异常',unknown:'待补证据'};
     let catText=Object.entries(cats).map(([k,v])=>`${catLabels[k]||k}:${v}`).join(' · ')||'-';
@@ -1411,7 +1412,7 @@ async function generateSelectedRequirementPerformanceAiReview(runIdOverride=''){
   try{
     toast(`正在分析 ${pkg.name} 的 JMeter 性能报告…`);
     let runId=runIdOverride||await ensureRequirementRunContext();
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/performance-ai-review`,{method:'POST',body:JSON.stringify({run_id:runId})});
+    let x=await requirementPackagesApi.performanceReview(current,packageId,{run_id:runId});
     let s=x.summary||{},a=x.analysis||{},findings=a.findings||[],recommendations=a.recommendations||[];
     let source=x.source||{};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 性能报告AI分析</h2><p class="policy-note">${esc(x.business_value||'')}</p><div class="metrics"><div class="metric"><span>错误率</span><b>${esc(s.error_rate??'-')}%</b></div><div class="metric"><span>P95 / P99</span><b>${esc(s.p95_ms??'-')} / ${esc(s.p99_ms??'-')}ms</b></div><div class="metric"><span>吞吐量</span><b>${esc(s.throughput_rps??'-')}</b><small>req/s</small></div><div class="metric"><span>风险</span><b>${esc(s.risk_level||'-')}</b></div></div><div class="summary-panel"><b>分析结论</b><p>${esc(a.conclusion||'')}</p><small>${a.mode==='configured_model'?'已使用平台配置模型':'使用内置性能分析规则'}</small></div>${findings.length?`<h3>性能发现</h3><div class="gap-list">${findings.map(f=>`<div class="gap-item ${['P0','FAILED'].includes(f.severity)?'P0':'P1'}"><span class="tag ${['P0','FAILED'].includes(f.severity)?'FAILED':'P1'}">${esc(f.severity||'P1')}</span><div><b>${esc(f.title||'性能提醒')}</b><p>${esc(f.detail||'')}</p></div></div>`).join('')}</div>`:''}<h3>处理建议</h3><ol>${recommendations.map(item=>`<li>${esc(item)}</li>`).join('')}</ol><h3>同批原始证据</h3><div class="hub-action-row">${source.jmeter_html_url?`<button class="small" onclick="openReport('${esc(source.jmeter_html_url)}')">JMeter HTML</button>`:''}${source.jmeter_jtl_url?`<button class="small" onclick="openReport('${esc(source.jmeter_jtl_url)}')">原始 JTL</button>`:''}${source.jmeter_json_url?`<button class="small" onclick="openReport('${esc(source.jmeter_json_url)}')">原始 JSON</button>`:''}</div><label>分析报告</label><code>${esc(x.summary_path||'')}</code>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开分析JSON</button>`:''}`;
@@ -1426,7 +1427,7 @@ async function generateSelectedRequirementNewmanAnalysis(runIdOverride=''){
   if(!packageId)return toast('当前没有可分析的需求包','warning');
   try{
     let runId=runIdOverride||await ensureRequirementRunContext();
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/newman-analysis`,{method:'POST',body:JSON.stringify({run_id:runId})});
+    let x=await requirementPackagesApi.newmanAnalysis(current,packageId,{run_id:runId});
     let s=x.summary||{},incidents=x.incidents||[],source=x.source||{};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · Newman接口冒烟分析</h2><p class="policy-note">${esc(x.business_value||'')}</p><div class="metrics"><div class="metric"><span>请求</span><b>${esc(s.requests||0)}</b></div><div class="metric"><span>接口</span><b>${esc(s.endpoints||0)}</b></div><div class="metric"><span>异常接口</span><b>${esc(s.failed_endpoints||0)}</b></div><div class="metric"><span>待分派</span><b>${esc(s.incidents||0)}</b></div></div><div class="summary-panel"><b>结论</b><p>${esc(x.conclusion||'')}</p></div>${incidents.length?`<h3>接口问题清单</h3><div class="gap-list">${incidents.slice(0,100).map(i=>`<div class="gap-item ${i.severity==='P0'?'P0':'P1'}"><span class="tag ${i.severity==='P0'?'FAILED':'P1'}">${esc(i.severity)}</span><div><b>${esc(i.method)} ${esc(i.path)}</b><p>${esc(i.interface)} · HTTP ${esc(i.http_status)} · ${esc(i.error)}</p><small>建议负责人：${esc(i.suggested_owner)}</small><br><small>复核动作：${esc(i.review_action)}</small></div></div>`).join('')}</div>`:'<div class="card empty"><b>本批次没有接口失败</b></div>'}<h3>原始证据</h3><div class="hub-action-row">${source.newman_json_url?`<button class="small" onclick="openReport('${esc(source.newman_json_url)}')">Newman原始JSON</button>`:''}${source.newman_summary_url?`<button class="small" onclick="openReport('${esc(source.newman_summary_url)}')">执行摘要</button>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">分析JSON</button>`:''}</div>`;
     $('#modal').classList.remove('hidden');
@@ -1440,7 +1441,7 @@ async function generateSelectedRequirementLoadPlan(){
   if(!packageId)return toast('当前没有可生成压测预案的需求包','warning');
   try{
     let runId=await ensureRequirementRunContext();
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/jmeter-load-plan`,{method:'POST',body:JSON.stringify({run_id:runId,max_error_rate:1,max_p95_ms:2000,max_p99_ms:4000})});
+    let x=await requirementPackagesApi.loadPlan(current,packageId,{run_id:runId,max_error_rate:1,max_p95_ms:2000,max_p99_ms:4000});
     let s=x.summary||{},stages=x.stages||[];
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · JMeter持续压测预案</h2><p class="policy-note">默认只纳入可重复的只读GET接口；写接口不会被自动压测。</p><div class="metrics"><div class="metric"><span>安全接口</span><b>${esc(s.safe_endpoints||0)}</b></div><div class="metric"><span>排除写接口</span><b>${esc(s.excluded_mutations||0)}</b></div><div class="metric"><span>加压阶梯</span><b>${esc(s.stages||0)}</b></div><div class="metric"><span>状态</span><b>${esc(x.status)}</b></div></div><h3>可执行阶梯</h3><div class="gap-list">${stages.map(i=>`<div class="gap-item"><span class="tag PASSED">${esc(i.stage)}</span><div><b>${esc(i.name)} · ${esc(i.threads)}线程</b><p>升压 ${esc(i.rampup_seconds)}秒 · 持续 ${esc(i.duration_seconds)}秒</p><small>${esc(i.jmx_path)}</small><br><button class="small" onclick="runSelectedRequirementLoadStage(${Number(i.stage)||1},'${esc(i.name||'压测阶梯')}',${Number(i.duration_seconds)||60})">运行此阶梯</button></div></div>`).join('')}</div><div class="summary-panel"><b>容量判断</b><p>${esc(x.capacity_rule||'')}</p></div><h3>报告要求</h3><p>每个阶梯必须保留原始 JTL、JMeter HTML 和引用同批数据的性能分析报告。</p>${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开预案JSON</button>`:''}`;
     $('#modal').classList.remove('hidden');
@@ -1456,7 +1457,7 @@ async function runSelectedRequirementLoadStage(stage,name,durationSeconds){
     let runId=await ensureRequirementRunContext();
     closeModal();
     toast(`JMeter ${name} 已开始，完成后会自动生成JTL、HTML和性能分析…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/jmeter-load-run`,{method:'POST',body:JSON.stringify({run_id:runId,stage})});
+    let x=await requirementPackagesApi.loadRun(current,packageId,{run_id:runId,stage});
     let s=x.summary||{},capacity=x.capacity_progress||{},analysis=x.performance_analysis||{};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · ${esc(name)}执行结果</h2><div class="metrics"><div class="metric"><span>请求</span><b>${esc(s.requests||0)}</b></div><div class="metric"><span>错误率</span><b>${esc(s.error_rate??'-')}%</b></div><div class="metric"><span>P95/P99</span><b>${esc(s.p95_ms??'-')}/${esc(s.p99_ms??'-')}ms</b></div><div class="metric"><span>吞吐量</span><b>${esc(s.throughput_rps??'-')}</b></div></div><div class="summary-panel"><b>容量进度</b><p>${esc(capacity.capacity_conclusion||'')}</p></div><div class="hub-action-row">${x.html_url?`<button class="small" onclick="openReport('${esc(x.html_url)}')">JMeter HTML</button>`:''}${x.jtl_url?`<button class="small" onclick="openReport('${esc(x.jtl_url)}')">原始JTL</button>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">执行JSON</button>`:''}${analysis.json_url?`<button class="small" onclick="openReport('${esc(analysis.json_url)}')">性能分析</button>`:''}</div>`;
     $('#modal').classList.remove('hidden');
@@ -1470,7 +1471,7 @@ async function generateSelectedRequirementPackageAccountModel(){
   if(!packageId)return toast('当前没有可生成账号模型的需求包','warning');
   try{
     toast(`正在生成 ${pkg.name} 的账号模型…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/account-model`,{method:'POST',body:'{}'});
+    let x=await requirementPackagesApi.accountModel(current,packageId,true);
     let roles=x.roles||[],pending=x.extensions?.pending||[];
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 账号模型</h2><p class="policy-note">这是当前需求包自己的 account_model.yaml。通用Skill只提供能力，实际启用哪些账号场景由需求和测试用例判断。</p><div class="metrics"><div class="metric"><span>模型</span><b style="font-size:20px">${esc(x.mode)}</b></div><div class="metric"><span>CSV</span><b>${x.csv_required?'需要':'不强制'}</b></div><div class="metric"><span>角色</span><b>${roles.length}</b></div><div class="metric"><span>待确认扩展</span><b>${pending.length}</b></div></div><h3>角色规则</h3><table><thead><tr><th>角色</th><th>最少账号</th><th>可复用</th><th>匹配规则</th><th>凭证来源</th></tr></thead><tbody>${roles.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.min_count)}</td><td>${r.reusable?'是':'否'}</td><td>${esc((r.match_rules||[]).join('、')||'-')}</td><td>${esc((r.credential_sources||[]).join(' -> '))}</td></tr>`).join('')}</tbody></table>${pending.length?`<h3>待确认扩展</h3><div class="gap-list">${pending.map(p=>`<div class="gap-item P1"><span class="tag P1">待确认</span><div><b>${esc(p.name)}</b><p>${esc(p.reason)}</p></div></div>`).join('')}</div>`:'<div class="card empty"><b>没有未知账号场景</b></div>'}<h3>阻断规则</h3><ol>${(x.blocking_rules||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ol><label>模型文件</label><code>${esc(x.path||'')}</code>`;
     $('#modal').classList.remove('hidden');
@@ -1484,7 +1485,7 @@ async function generateSelectedRequirementExecutionPlan(){
   if(!packageId)return toast('当前没有可规划的需求包','warning');
   try{
     toast(`正在生成 ${pkg.name} 的场景执行计划…`);
-    let x=await api(`/api/projects/${current}/requirement-packages/${packageId}/execution-plan`,{method:'POST',body:'{}'});
+    let x=await requirementPackagesApi.executionPlan(current,packageId,true);
     let s=x.summary||{},scenarios=x.scenarios||[],statusCounts=s.status_counts||{},toolCounts=s.tool_counts||{};
     let statusLabel={READY:'可执行',READY_WITH_WARNINGS:'可执行但需关注',NEEDS_REVIEW:'需人工复核',BLOCKED:'阻断'};
     $('#modalBody').innerHTML=`<h2>${esc(pkg.name)} · 场景执行计划</h2><p class="policy-note">${esc(x.business_value||'')}</p><div class="metrics"><div class="metric"><span>状态</span><b style="font-size:20px">${esc(x.status)}</b></div><div class="metric"><span>场景/用例</span><b>${esc(s.scenarios||0)}/${esc(s.cases||0)}</b></div><div class="metric"><span>待复核/阻断</span><b>${esc((statusCounts.NEEDS_REVIEW||0)+(statusCounts.READY_WITH_WARNINGS||0))}/${esc(statusCounts.BLOCKED||0)}</b></div><div class="metric"><span>N/J/P</span><b>${esc(toolCounts.newman||0)}/${esc(toolCounts.jmeter||0)}/${esc(toolCounts.pytest||0)}</b></div></div><div class="scenario-plan-list">${scenarios.map(item=>{let tasks=item.tool_tasks||[],human=item.human_review||{};return `<div class="endpoint-card scenario-plan-card"><span class="tag ${item.status==='READY'?'PASSED':item.status==='BLOCKED'?'FAILED':'P1'}">${esc(statusLabel[item.status]||item.status)}</span><h3>${esc(item.name)}</h3><p>${esc(item.business_goal||'')}</p><div class="asset-chip-row">${tasks.map(t=>`<span class="asset-chip ${t.blockers?.length?'pending':'ready'}">${esc(t.tool)} · ${esc(t.case_count||0)}</span>`).join('')}</div><small>${esc(human.review_question||'')}</small>${(human.human_actions||[]).length?`<ol>${human.human_actions.map(a=>`<li>${esc(a)}</li>`).join('')}</ol>`:''}${(human.maintenance_targets||[]).length?`<label>维护点</label><code>${esc(human.maintenance_targets.slice(0,4).join('\\n'))}</code>`:''}</div>`}).join('')}</div><label>计划文件</label><code>${esc(x.output_json||'')}</code>${x.output_markdown?`<label>Markdown</label><code>${esc(x.output_markdown)}</code>`:''}${x.json_url?`<button class="small" onclick="openReport('${esc(x.json_url)}')">打开JSON报告</button>`:''}`;

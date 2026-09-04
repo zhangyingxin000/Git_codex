@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-04T06:10:38+00:00",
+  "generated_at": "2026-09-04T07:51:15+00:00",
   "method": "static route and test-reference analysis",
   "summary": {
     "routes": 121,
-    "covered": 28,
-    "unmapped": 79,
-    "integration_required": 14,
+    "covered": 40,
+    "unmapped": 69,
+    "integration_required": 12,
     "p0": 19,
     "p0_unmapped": 0
   },
@@ -176,8 +176,10 @@
         "Execution"
       ],
       "priority": "P2",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_project_routes.py"
+      ],
       "scope": "standard"
     },
     {
@@ -191,8 +193,10 @@
         "Execution"
       ],
       "priority": "P0",
-      "coverage_status": "INTEGRATION_REQUIRED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
       "scope": "integration-required"
     },
     {
@@ -208,7 +212,9 @@
       "priority": "P2",
       "coverage_status": "COVERED",
       "evidence": [
-        "test_package_status_model.py"
+        "test_package_status_model.py",
+        "test_project_routes.py",
+        "test_requirement_routes.py"
       ],
       "scope": "standard"
     },
@@ -225,7 +231,28 @@
       "priority": "P1",
       "coverage_status": "COVERED",
       "evidence": [
-        "test_package_status_model.py"
+        "test_package_status_model.py",
+        "test_project_routes.py",
+        "test_requirement_routes.py"
+      ],
+      "scope": "standard"
+    },
+    {
+      "path": "/api/projects/{project_id}",
+      "methods": [
+        "PUT"
+      ],
+      "name": "update_project",
+      "handler": "update_project",
+      "tags": [
+        "Projects"
+      ],
+      "priority": "P1",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_package_status_model.py",
+        "test_project_routes.py",
+        "test_requirement_routes.py"
       ],
       "scope": "standard"
     },
@@ -240,8 +267,10 @@
         "Projects"
       ],
       "priority": "P2",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
       "scope": "standard"
     },
     {
@@ -255,8 +284,10 @@
         "Projects"
       ],
       "priority": "P2",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
       "scope": "standard"
     },
     {
@@ -270,8 +301,10 @@
         "Projects"
       ],
       "priority": "P2",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
       "scope": "standard"
     },
     {
@@ -287,7 +320,9 @@
       "priority": "P2",
       "coverage_status": "COVERED",
       "evidence": [
-        "test_package_status_model.py"
+        "test_package_status_model.py",
+        "test_project_routes.py",
+        "test_requirement_routes.py"
       ],
       "scope": "standard"
     },
@@ -304,7 +339,9 @@
       "priority": "P1",
       "coverage_status": "COVERED",
       "evidence": [
-        "test_package_status_model.py"
+        "test_package_status_model.py",
+        "test_project_routes.py",
+        "test_requirement_routes.py"
       ],
       "scope": "standard"
     },
@@ -319,8 +356,10 @@
         "Assets"
       ],
       "priority": "P2",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
       "scope": "standard"
     },
     {
@@ -334,8 +373,10 @@
         "Assets"
       ],
       "priority": "P1",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
       "scope": "standard"
     },
     {
@@ -415,8 +456,10 @@
         "Data Validation"
       ],
       "priority": "P2",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "handler-reference"
+      ],
       "scope": "standard"
     },
     {
@@ -430,8 +473,10 @@
         "Execution"
       ],
       "priority": "P2",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_requirement_routes.py"
+      ],
       "scope": "standard"
     },
     {
@@ -445,8 +490,10 @@
         "Execution"
       ],
       "priority": "P1",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_requirement_routes.py"
+      ],
       "scope": "standard"
     },
     {
@@ -558,7 +605,8 @@
       "priority": "P0",
       "coverage_status": "COVERED",
       "evidence": [
-        "test_package_status_model.py"
+        "test_package_status_model.py",
+        "test_requirement_routes.py"
       ],
       "scope": "demo-critical"
     },
@@ -575,6 +623,38 @@
       "priority": "P0",
       "coverage_status": "INTEGRATION_REQUIRED",
       "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-plan",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_jmeter_load_plan",
+      "handler": "requirement_jmeter_load_plan",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "INTEGRATION_REQUIRED",
+      "evidence": [],
+      "scope": "integration-required"
+    },
+    {
+      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run",
+      "methods": [
+        "POST"
+      ],
+      "name": "requirement_jmeter_load_run",
+      "handler": "requirement_jmeter_load_run",
+      "tags": [
+        "Execution"
+      ],
+      "priority": "P0",
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_requirement_routes.py"
+      ],
       "scope": "integration-required"
     },
     {
@@ -607,7 +687,8 @@
       "priority": "P2",
       "coverage_status": "COVERED",
       "evidence": [
-        "test_package_status_model.py"
+        "test_package_status_model.py",
+        "test_requirement_routes.py"
       ],
       "scope": "standard"
     },
@@ -624,7 +705,8 @@
       "priority": "P2",
       "coverage_status": "COVERED",
       "evidence": [
-        "test_package_status_model.py"
+        "test_package_status_model.py",
+        "test_requirement_routes.py"
       ],
       "scope": "standard"
     },
@@ -654,8 +736,10 @@
         "Reports"
       ],
       "priority": "P1",
-      "coverage_status": "UNMAPPED",
-      "evidence": [],
+      "coverage_status": "COVERED",
+      "evidence": [
+        "test_requirement_routes.py"
+      ],
       "scope": "standard"
     },
     {
@@ -687,36 +771,6 @@
       "coverage_status": "UNMAPPED",
       "evidence": [],
       "scope": "standard"
-    },
-    {
-      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-plan",
-      "methods": [
-        "POST"
-      ],
-      "name": "requirement_jmeter_load_plan",
-      "handler": "requirement_jmeter_load_plan",
-      "tags": [
-        "Execution"
-      ],
-      "priority": "P0",
-      "coverage_status": "INTEGRATION_REQUIRED",
-      "evidence": [],
-      "scope": "integration-required"
-    },
-    {
-      "path": "/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run",
-      "methods": [
-        "POST"
-      ],
-      "name": "requirement_jmeter_load_run",
-      "handler": "requirement_jmeter_load_run",
-      "tags": [
-        "Execution"
-      ],
-      "priority": "P0",
-      "coverage_status": "INTEGRATION_REQUIRED",
-      "evidence": [],
-      "scope": "integration-required"
     },
     {
       "path": "/api/projects/{project_id}/structured-test-cases",
@@ -1806,23 +1860,6 @@
       "priority": "P1",
       "coverage_status": "UNMAPPED",
       "evidence": [],
-      "scope": "standard"
-    },
-    {
-      "path": "/api/projects/{project_id}",
-      "methods": [
-        "PUT"
-      ],
-      "name": "update_project",
-      "handler": "update_project",
-      "tags": [
-        "Projects"
-      ],
-      "priority": "P1",
-      "coverage_status": "COVERED",
-      "evidence": [
-        "test_package_status_model.py"
-      ],
       "scope": "standard"
     },
     {

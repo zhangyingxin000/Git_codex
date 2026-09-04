@@ -15,10 +15,15 @@ from ..config import AppSettings
 from ..handlers import TaskDispatcher
 from ..services.task_queue import PersistentTaskQueue
 from ..startup import application_lifespan
-from .routes import build_system_router, build_task_router
+from .routes import (
+    build_project_router,
+    build_requirement_execution_router,
+    build_requirement_report_router,
+    build_system_router,
+    build_task_router,
+)
 from ..schemas.requests import (
     GenerateFromSourceRequest,
-    ProjectCreateRequest,
     ProjectRuntimeRequest,
     RedisInspectRequest,
     RedisScanRequest,
@@ -64,6 +69,9 @@ def create_app() -> FastAPI:
     # concrete APIRoutes keeps legacy route introspection and coverage tooling stable.
     api.router.routes.extend(build_system_router(legacy, settings).routes)
     api.router.routes.extend(build_task_router(task_queue, dispatcher).routes)
+    api.router.routes.extend(build_project_router(legacy).routes)
+    api.router.routes.extend(build_requirement_execution_router(legacy).routes)
+    api.router.routes.extend(build_requirement_report_router(legacy).routes)
 
     @api.exception_handler(HTTPException)
     def http_exception_handler(_: Request, exc: HTTPException) -> JSONResponse:
@@ -77,181 +85,6 @@ def create_app() -> FastAPI:
     @api.exception_handler(ValueError)
     def value_error_handler(_: Request, exc: ValueError) -> JSONResponse:
         return JSONResponse(status_code=400, content={"error": str(exc), "detail": str(exc)})
-
-    @api.get("/api/projects/{project_id}/environment-config", tags=["Projects"], summary="项目YAML环境配置状态")
-    def project_environment_config(project_id: str) -> dict[str, Any]:
-        try:
-            return legacy.environment_config_status(project_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @api.get("/api/projects/{project_id}/multi-account-context", tags=["Execution"], summary="多账号运行上下文")
-    def multi_account_context(project_id: str) -> dict[str, Any]:
-        try:
-            return legacy.multi_account_context_status(project_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @api.get("/api/projects/{project_id}/jmeter/generation-skill", tags=["Execution"], summary="JMeter脚本生成Skill")
-    def jmeter_generation_skill(project_id: str) -> dict[str, Any]:
-        try:
-            return legacy.jmeter_generation_skill_status(project_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @api.get("/api/projects", tags=["Projects"], summary="项目列表")
-    def projects() -> list[dict[str, Any]]:
-        return legacy.rows("SELECT * FROM projects ORDER BY updated_at DESC")
-
-    @api.post("/api/projects", status_code=201, tags=["Projects"], summary="创建项目")
-    def create_project(payload: ProjectCreateRequest) -> dict[str, Any] | None:
-        project_id = legacy.uid("prj")
-        created_at = legacy.now()
-        legacy.execute(
-            "INSERT INTO projects VALUES (?,?,?,?,?,?)",
-            (
-                project_id,
-                payload.name,
-                payload.description,
-                payload.base_url,
-                created_at,
-                created_at,
-            ),
-        )
-        return legacy.row("SELECT * FROM projects WHERE id=?", (project_id,))
-
-    @api.get("/api/projects/{project_id}/dashboard", tags=["Projects"], summary="项目工作台聚合数据")
-    def dashboard(project_id: str) -> dict[str, Any]:
-        try:
-            return legacy.project_dashboard(project_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @api.get("/api/projects/{project_id}/diagnosis", tags=["Projects"], summary="平台自动缺口诊断")
-    def diagnosis(project_id: str) -> dict[str, Any]:
-        try:
-            return legacy.project_quality_diagnosis(project_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @api.get("/api/projects/{project_id}/control-plane", tags=["Projects"], summary="AI 自动化质量中枢控制面")
-    def control_plane(project_id: str) -> dict[str, Any]:
-        try:
-            return legacy.project_control_plane(project_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @api.get("/api/projects/{project_id}/requirement-packages", tags=["Assets"], summary="需求包目录")
-    def requirement_packages(project_id: str) -> dict[str, Any]:
-        return legacy.requirement_package_catalog(project_id)
-
-    @api.post("/api/projects/{project_id}/requirement-packages", status_code=201, tags=["Assets"], summary="创建需求包")
-    def create_requirement_package(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.create_requirement_package(project_id, payload)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/account-model", tags=["Assets"], summary="需求包账号模型")
-    def requirement_account_model(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.generate_requirement_account_model(project_id, package_id, True)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/account-model", tags=["Assets"], summary="生成需求包账号模型")
-    def generate_requirement_account_model(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.generate_requirement_account_model(project_id, package_id, True)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest", tags=["Data Validation"], summary="需求包资源登记")
-    def resource_manifest(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.requirement_resource_manifest(project_id, package_id, True)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/resource-manifest", tags=["Data Validation"], summary="保存需求包资源登记")
-    def save_resource_manifest(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.save_requirement_resource_manifest(project_id, package_id, payload)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight", tags=["Data Validation"], summary="需求包资源预检")
-    def resource_preflight(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.requirement_resource_preflight(project_id, package_id)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/resource-preflight", tags=["Data Validation"], summary="重新执行需求包资源预检")
-    def rerun_resource_preflight(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.requirement_resource_preflight(project_id, package_id)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/evidence-rules", tags=["Data Validation"], summary="需求包证据规则")
-    def requirement_evidence_rules(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.requirement_evidence_rules(project_id, package_id)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan", tags=["Execution"], summary="需求包场景计划")
-    def requirement_execution_plan(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.generate_requirement_execution_plan(project_id, package_id, {})
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/execution-plan", tags=["Execution"], summary="生成需求包场景计划")
-    def generate_requirement_execution_plan(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.generate_requirement_execution_plan(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/tool-assets", tags=["Execution"], summary="生成需求包工具资产")
-    def requirement_tool_assets(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.generate_requirement_package_tool_assets(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/runs", tags=["Execution"], summary="创建需求包统一运行批次")
-    def create_requirement_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.create_requirement_run_context(project_id, package_id, payload)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/runs", tags=["Execution"], summary="需求包运行批次")
-    def requirement_runs(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.list_requirement_run_contexts(project_id, package_id)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/runs/{run_id}", tags=["Execution"], summary="需求包运行批次详情")
-    def requirement_run(project_id: str, package_id: str, run_id: str) -> dict[str, Any]:
-        return legacy.get_requirement_run_context(project_id, package_id, run_id)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/newman/run", tags=["Execution"], summary="运行需求包Newman")
-    def requirement_newman_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.run_requirement_package_newman(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/pytest/run", tags=["Execution"], summary="运行需求包pytest证据复核")
-    def requirement_pytest_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.run_requirement_package_pytest(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/pipeline/run", tags=["Execution"], summary="一键执行当前需求包闭环")
-    def requirement_pipeline_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.run_requirement_package_pipeline(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/salary-trade/jmeter-harvest", tags=["Execution"], summary="回收工资交易JMeter执行报告")
-    def salary_trade_jmeter_harvest(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.harvest_salary_trade_jmeter_mapping(project_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/scenario-report", tags=["Reports"], summary="生成需求包统一场景报告")
-    def requirement_scenario_report(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.generate_requirement_package_unified_scenario_report(project_id, package_id, payload)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/report-index", tags=["Reports"], summary="需求包运行批次与报告索引")
-    def requirement_report_index(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.requirement_package_report_index(project_id, package_id, True)
-
-    @api.get("/api/projects/{project_id}/requirement-packages/{package_id}/schema-audit", tags=["Assets"], summary="需求包Schema校验")
-    def requirement_schema_audit(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.validate_requirement_package_schemas(project_id, package_id, True)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/schema-upgrade", tags=["Assets"], summary="需求包Schema兼容升级")
-    def requirement_schema_upgrade(project_id: str, package_id: str) -> dict[str, Any]:
-        return legacy.upgrade_requirement_package_schemas(project_id, package_id)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/ai-review", tags=["Reports"], summary="生成需求包AI复盘")
-    def requirement_ai_review(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.generate_requirement_package_ai_review(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/performance-ai-review", tags=["Reports"], summary="生成当前批次性能报告AI分析")
-    def requirement_performance_ai_review(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.generate_requirement_performance_ai_review(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/newman-analysis", tags=["Reports"], summary="生成当前批次Newman接口冒烟分析")
-    def requirement_newman_analysis(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.generate_requirement_newman_analysis(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-plan", tags=["Execution"], summary="生成可执行JMeter持续压测预案")
-    def requirement_jmeter_load_plan(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.generate_requirement_jmeter_load_plan(project_id, package_id, payload)
-
-    @api.post("/api/projects/{project_id}/requirement-packages/{package_id}/jmeter-load-run", tags=["Execution"], summary="执行JMeter持续压测阶梯并回收JTL与HTML")
-    def requirement_jmeter_load_run(project_id: str, package_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-        return legacy.run_requirement_jmeter_load_stage(project_id, package_id, payload)
 
     @api.post("/api/projects/{project_id}/structured-test-cases", tags=["Assets"], summary="生成结构化测试用例")
     def structured_test_cases(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
@@ -871,20 +704,6 @@ def create_app() -> FastAPI:
     def reload_system() -> dict[str, Any]:
         threading.Timer(0.35, lambda: os._exit(75)).start()
         return {"ok": True, "message": "平台正在重新加载"}
-
-    @api.put("/api/projects/{project_id}", tags=["Projects"], summary="更新项目配置")
-    def update_project(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, bool]:
-        legacy.execute(
-            "UPDATE projects SET name=?,description=?,base_url=?,updated_at=? WHERE id=?",
-            (
-                payload.get("name", ""),
-                payload.get("description", ""),
-                payload.get("base_url", ""),
-                legacy.now(),
-                project_id,
-            ),
-        )
-        return {"ok": True}
 
     @api.put("/api/cases/{case_id}", tags=["Assets"], summary="更新测试用例")
     def update_case(case_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, bool]:
