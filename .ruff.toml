@@ -1,1 +1,1 @@
-exclude = ["requirements/*/outputs/**"]
+exclude = ["requirements/*/outputs/**","app.py"]
