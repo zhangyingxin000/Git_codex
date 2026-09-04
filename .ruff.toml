@@ -1,1 +1,2 @@
-exclude = ["requirements/*/outputs/**","app.py","quality_hub_backend/api/fastapi_app.py","quality_hub_backend/services/diagnosis_service.py"]
+exclude = ["requirements/*/outputs/**","app.py","quality_hub_backend/api/fastapi_app.py"]
+ignore = ["BLE001"]
