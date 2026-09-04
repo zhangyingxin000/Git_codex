@@ -37,11 +37,36 @@ class AIQualityControlPlaneService:
             "reports": len(self._repository.reports(project_id)),
         }
         stages = [
-            self._stage("资料理解", "识别需求、接口文档、HAR抓包、图片和描述", counts["sources"], "sources"),
-            self._stage("资产生成", "生成测试点、用例、接口覆盖和风险", counts["requirements"] and counts["cases"], "sources"),
-            self._stage("执行编排", "组织接口套件、业务流程、性能计划", counts["workflows"] or counts["suites"] or counts["performance_plans"], "automation"),
-            self._stage("数据核对", "建立 MySQL/Redis 只读映射和一致性规则", counts["consistency_rules"], "dataquality"),
-            self._stage("证据归档", "沉淀原始报告、失败归因和质量结论", counts["reports"], "reports"),
+            self._stage(
+                "资料理解",
+                "识别需求、接口文档、HAR抓包、图片和描述",
+                counts["sources"],
+                "sources",
+            ),
+            self._stage(
+                "资产生成",
+                "生成测试点、用例、接口覆盖和风险",
+                counts["requirements"] and counts["cases"],
+                "sources",
+            ),
+            self._stage(
+                "执行编排",
+                "组织接口套件、业务流程、性能计划",
+                counts["workflows"] or counts["suites"] or counts["performance_plans"],
+                "automation",
+            ),
+            self._stage(
+                "数据核对",
+                "建立 MySQL/Redis 只读映射和一致性规则",
+                counts["consistency_rules"],
+                "dataquality",
+            ),
+            self._stage(
+                "证据归档",
+                "沉淀原始报告、失败归因和质量结论",
+                counts["reports"],
+                "reports",
+            ),
         ]
         blockers = [item for item in diagnosis.items if item.severity.value == "P0"]
         attention = [item for item in diagnosis.items if item.severity.value == "P1"]
@@ -54,7 +79,11 @@ class AIQualityControlPlaneService:
             "stages": stages,
             "next_action": {
                 "title": next_item.title if next_item else "扩大测试范围",
-                "description": next_item.description if next_item else "当前基础闭环已建立，可继续导入更多接口或执行回归。",
+                "description": (
+                    next_item.description
+                    if next_item
+                    else "当前基础闭环已建立，可继续导入更多接口或执行回归。"
+                ),
                 "target": next_item.action_target if next_item else "sources",
                 "severity": next_item.severity.value if next_item else "PASSED",
             },
@@ -65,7 +94,9 @@ class AIQualityControlPlaneService:
             ],
         }
 
-    def _stage(self, name: str, description: str, ready: Any, target: str) -> dict[str, Any]:
+    def _stage(
+        self, name: str, description: str, ready: Any, target: str
+    ) -> dict[str, Any]:
         return {
             "name": name,
             "description": description,
@@ -74,4 +105,6 @@ class AIQualityControlPlaneService:
         }
 
     def _count(self, project_id: str, table: str) -> int:
-        return self._repository.row(f"SELECT COUNT(*) n FROM {table} WHERE project_id=?", (project_id,))["n"]
+        return self._repository.row(
+            f"SELECT COUNT(*) n FROM {table} WHERE project_id=?", (project_id,)
+        )["n"]

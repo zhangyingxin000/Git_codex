@@ -29,5 +29,9 @@ class QualityHubRuntime:
             credential_loader=credential_loader,
         )
         self.diagnosis = ProjectDiagnosisService(self.repository)
-        self.control_plane = AIQualityControlPlaneService(self.repository, self.diagnosis)
-        self.dashboard = ProjectDashboardService(self.repository, self.diagnosis, self.control_plane)
+        self.control_plane = AIQualityControlPlaneService(
+            self.repository, self.diagnosis
+        )
+        self.dashboard = ProjectDashboardService(
+            self.repository, self.diagnosis, self.control_plane
+        )

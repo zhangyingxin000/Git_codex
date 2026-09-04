@@ -1,0 +1,2 @@
+exclude = ["requirements/*/outputs/**","app.py","quality_hub_backend/api/fastapi_app.py"]
+ignore = ["BLE001"]

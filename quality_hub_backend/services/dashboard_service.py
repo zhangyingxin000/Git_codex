@@ -163,6 +163,8 @@ class ProjectDashboardService:
                 """,
                 (project_id,),
             ),
-            "diagnosis": self._diagnosis_service.diagnose(project_id).model_dump(mode="json"),
+            "diagnosis": self._diagnosis_service.diagnose(project_id).model_dump(
+                mode="json"
+            ),
             "control_plane": self._control_plane_service.control_plane(project_id),
         }
