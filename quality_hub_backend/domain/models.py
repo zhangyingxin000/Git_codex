@@ -63,7 +63,9 @@ class DataValidationRule(BaseModel):
     mysql_table: str | None = None
     mysql_condition_template: str | None = None
     redis_key_pattern: str | None = None
-    expectation: Literal["unchanged", "changed", "equals_api_response", "exists"] = "unchanged"
+    expectation: Literal["unchanged", "changed", "equals_api_response", "exists"] = (
+        "unchanged"
+    )
     readonly: bool = True
 
 

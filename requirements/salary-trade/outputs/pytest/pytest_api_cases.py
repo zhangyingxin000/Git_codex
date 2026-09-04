@@ -13,1858 +13,1722 @@ BASE_URL = os.getenv("AUTOTEST_BASE_URL", "https://test2westarlive.gzxchate.com/
 PACKAGE_ID = "salary-trade"
 PACKAGE_ROOT_HINT = "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade"
 CASES = [
-  {
-    "id": "tc_3c2aa3f293",
-    "title": "返回工资快速结算创建入口开关：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_c4f56bbedb",
-    "title": "返回工资快速结算创建入口开关：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_586b91c352",
-    "title": "进入入口时查询可结算额度：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/quota?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_cb0f14e257",
-    "title": "按国家和币种选择代理用户：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agents?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_ddc2782339",
-    "title": "提交收款信息并创建待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_2c8302c8bf",
-    "title": "查看本人快速结算订单列表：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_ed495e60ee",
-    "title": "查看本人订单详情：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_4a361f2e73",
-    "title": "取消待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_da1f72545f",
-    "title": "确认已收到代理转账：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_be228a1cd1",
-    "title": "待确认收款时提交投诉：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_8ea08e4145",
-    "title": "补充上传本人订单凭证：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_3b931425b2",
-    "title": "查看本人订单凭证：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_634b8077e8",
-    "title": "查看本人订单流转记录：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/logs?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_8038c2a2f7",
-    "title": "查看自己的交易公告编辑页信息：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_92bfaeecaf",
-    "title": "保存自己的交易公告：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_6e4c0c21e9",
-    "title": "查看可处理或已承接的订单列表：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_b05f2ae271",
-    "title": "查看代理侧订单详情：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_e07f18ed5f",
-    "title": "接受待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_d1023be903",
-    "title": "拒绝待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_3fea7697b2",
-    "title": "标记已完成线下转账：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_343e941fe3",
-    "title": "待确认收款时提交投诉：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_aaf3603a09",
-    "title": "补充上传付款或投诉凭证：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_41124614a0",
-    "title": "返回工资快速结算创建入口开关：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_6e7337e6e9",
-    "title": "返回工资快速结算创建入口开关：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_babf6074f7",
-    "title": "进入入口时查询可结算额度：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/quota?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_6ff142e9f5",
-    "title": "按国家和币种选择代理用户：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agents?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_6f8644c487",
-    "title": "提交收款信息并创建待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_1cb94e5edc",
-    "title": "查看本人快速结算订单列表：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_91b7086290",
-    "title": "查看本人订单详情：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_9cce4f325a",
-    "title": "取消待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_94914f389f",
-    "title": "确认已收到代理转账：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_a38fbdd48f",
-    "title": "待确认收款时提交投诉：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_41d65a3338",
-    "title": "补充上传本人订单凭证：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_d1f6bc0f3e",
-    "title": "查看本人订单凭证：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_df72e0207d",
-    "title": "查看本人订单流转记录：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/logs?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_8c2efcbd7d",
-    "title": "查看自己的交易公告编辑页信息：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_afc760e2ba",
-    "title": "保存自己的交易公告：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_d0163abe31",
-    "title": "查看可处理或已承接的订单列表：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_8701a0bd85",
-    "title": "查看代理侧订单详情：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_8942a7db0b",
-    "title": "接受待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_36f4222004",
-    "title": "拒绝待代理处理订单：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_27de387073",
-    "title": "标记已完成线下转账：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_3c1ef0b151",
-    "title": "待确认收款时提交投诉：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_3c4461d66e",
-    "title": "补充上传付款或投诉凭证：正常请求",
-    "scenario_type": "正常请求",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_a29da10d78",
-    "title": "返回工资快速结算创建入口开关：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_931a51df47",
-    "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_4186d63f07",
-    "title": "返回工资快速结算创建入口开关：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_25bb4b4110",
-    "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_ffe359e00e",
-    "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_71d4c8f02c",
-    "title": "进入入口时查询可结算额度：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/quota",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_43c6c779d8",
-    "title": "进入入口时查询可结算额度：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/quota",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_520d95529f",
-    "title": "按国家和币种选择代理用户：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agents",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_09f5709402",
-    "title": "按国家和币种选择代理用户：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agents",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_9e9ab12cdd",
-    "title": "提交收款信息并创建待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_e2826cb5f1",
-    "title": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_7b37235a8c",
-    "title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_cec2930031",
-    "title": "查看本人快速结算订单列表：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_09a3bd659e",
-    "title": "查看本人快速结算订单列表：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_040bef7520",
-    "title": "查看本人订单详情：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_1c37a1d263",
-    "title": "查看本人订单详情：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_fd3c65bfca",
-    "title": "取消待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_ea40bd1230",
-    "title": "取消待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_5e834a4d16",
-    "title": "取消待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_82c425f44c",
-    "title": "确认已收到代理转账：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_d280272aef",
-    "title": "确认已收到代理转账：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_d5cae5cd7e",
-    "title": "确认已收到代理转账：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_60ad3df5c9",
-    "title": "待确认收款时提交投诉：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_78189ffc40",
-    "title": "待确认收款时提交投诉：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_ac39a4c15e",
-    "title": "待确认收款时提交投诉：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_6501f71533",
-    "title": "补充上传本人订单凭证：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_2e9af91fa2",
-    "title": "补充上传本人订单凭证：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_92a0e95d19",
-    "title": "补充上传本人订单凭证：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_894bfa0bef",
-    "title": "查看本人订单凭证：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_44f440f8ec",
-    "title": "查看本人订单凭证：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_204821a151",
-    "title": "查看本人订单流转记录：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/logs",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_3995b1037b",
-    "title": "查看本人订单流转记录：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/logs",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_148e1062ae",
-    "title": "查看自己的交易公告编辑页信息：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_970acf530c",
-    "title": "查看自己的交易公告编辑页信息：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_aa5fd1ad97",
-    "title": "保存自己的交易公告：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_456ee46651",
-    "title": "保存自己的交易公告：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_5754cedeaa",
-    "title": "保存自己的交易公告：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_92de8ee503",
-    "title": "查看可处理或已承接的订单列表：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_f96f0a6e7c",
-    "title": "查看可处理或已承接的订单列表：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_67d008fb3c",
-    "title": "查看代理侧订单详情：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_13d2898449",
-    "title": "查看代理侧订单详情：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_d5b812d9bc",
-    "title": "接受待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_2cbdc73c2a",
-    "title": "接受待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_6d0fa5869e",
-    "title": "接受待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_ae8f94bb13",
-    "title": "拒绝待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_e7f828e13a",
-    "title": "拒绝待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_e3fe32d890",
-    "title": "拒绝待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_7b351242d9",
-    "title": "标记已完成线下转账：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_81ca4518aa",
-    "title": "标记已完成线下转账：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_cecc2e452e",
-    "title": "标记已完成线下转账：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_63b49481af",
-    "title": "待确认收款时提交投诉：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_9703f0d4b0",
-    "title": "待确认收款时提交投诉：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_6d43b840fc",
-    "title": "待确认收款时提交投诉：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_a252cf3ccf",
-    "title": "补充上传付款或投诉凭证：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_4754618c13",
-    "title": "补充上传付款或投诉凭证：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_8f0fbfb1e9",
-    "title": "补充上传付款或投诉凭证：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_33bebd5371",
-    "title": "返回工资快速结算创建入口开关：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_168f41460d",
-    "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_bac78ca4b2",
-    "title": "返回工资快速结算创建入口开关：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_e50c04090a",
-    "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_fee04cee2e",
-    "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_bb7afdaec1",
-    "title": "进入入口时查询可结算额度：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/quota",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_c42b64b285",
-    "title": "进入入口时查询可结算额度：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/quota",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_b96f244486",
-    "title": "按国家和币种选择代理用户：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agents",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_5c6a8b6e6b",
-    "title": "按国家和币种选择代理用户：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agents",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_29ae76a3e3",
-    "title": "提交收款信息并创建待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_ae27bbd8fb",
-    "title": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_8aac818fe6",
-    "title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_bcaafeea5a",
-    "title": "查看本人快速结算订单列表：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_bce7f0b1de",
-    "title": "查看本人快速结算订单列表：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_98f4e0db33",
-    "title": "查看本人订单详情：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_61b2cc4cee",
-    "title": "查看本人订单详情：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_9f5be4623d",
-    "title": "取消待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_0517361e1a",
-    "title": "取消待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_432f1720e0",
-    "title": "取消待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_090c1808f0",
-    "title": "确认已收到代理转账：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_040a77f5fc",
-    "title": "确认已收到代理转账：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_f6bc6b6313",
-    "title": "确认已收到代理转账：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_c4b5e635f7",
-    "title": "待确认收款时提交投诉：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_ce9183787a",
-    "title": "待确认收款时提交投诉：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_6f03ba81cf",
-    "title": "待确认收款时提交投诉：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_703aba0d61",
-    "title": "补充上传本人订单凭证：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_6ff1104c86",
-    "title": "补充上传本人订单凭证：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_7da441dd85",
-    "title": "补充上传本人订单凭证：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_106998984f",
-    "title": "查看本人订单凭证：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_63b5a08d94",
-    "title": "查看本人订单凭证：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/evidence/list",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_3e7984c960",
-    "title": "查看本人订单流转记录：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/logs",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_a1f392e60e",
-    "title": "查看本人订单流转记录：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/logs",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_4f4462577f",
-    "title": "查看自己的交易公告编辑页信息：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_c5e7cc7a5a",
-    "title": "查看自己的交易公告编辑页信息：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/notice",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_c69289c871",
-    "title": "保存自己的交易公告：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_5d168a6591",
-    "title": "保存自己的交易公告：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_bceb2b7ba5",
-    "title": "保存自己的交易公告：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_bc46fc0c40",
-    "title": "查看可处理或已承接的订单列表：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_81660bd59d",
-    "title": "查看可处理或已承接的订单列表：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/page",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_a32323adbc",
-    "title": "查看代理侧订单详情：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_94b6d42347",
-    "title": "查看代理侧订单详情：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "GET",
-    "path": "/userserv/salary/trade/agent/order/detail",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_faa2ab7c86",
-    "title": "接受待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_f26a9456cf",
-    "title": "接受待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_a001066bcb",
-    "title": "接受待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_45166545a3",
-    "title": "拒绝待代理处理订单：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_73f8c0f05a",
-    "title": "拒绝待代理处理订单：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_c1da29bb4c",
-    "title": "拒绝待代理处理订单：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_d17c532894",
-    "title": "标记已完成线下转账：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_27dd9da1a1",
-    "title": "标记已完成线下转账：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_c240887ef3",
-    "title": "标记已完成线下转账：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_150ccec0dd",
-    "title": "待确认收款时提交投诉：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_050931dc62",
-    "title": "待确认收款时提交投诉：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_e28e6a08e2",
-    "title": "待确认收款时提交投诉：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  },
-  {
-    "id": "tc_2e5e8738c3",
-    "title": "补充上传付款或投诉凭证：缺失必填参数",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_1857980542",
-    "title": "补充上传付款或投诉凭证：字段边界与类型错误",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload",
-    "headers": {},
-    "payload": "",
-    "expected_status": 400
-  },
-  {
-    "id": "tc_147643288b",
-    "title": "补充上传付款或投诉凭证：重复提交与幂等性",
-    "scenario_type": "接口契约",
-    "coverage_tool": "",
-    "method": "POST",
-    "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
-    "headers": {
-      "t": "1788320194771"
-    },
-    "payload": "",
-    "expected_status": 200
-  }
+    {
+        "id": "tc_3c2aa3f293",
+        "title": "返回工资快速结算创建入口开关：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_c4f56bbedb",
+        "title": "返回工资快速结算创建入口开关：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_586b91c352",
+        "title": "进入入口时查询可结算额度：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/quota?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_cb0f14e257",
+        "title": "按国家和币种选择代理用户：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agents?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_ddc2782339",
+        "title": "提交收款信息并创建待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_2c8302c8bf",
+        "title": "查看本人快速结算订单列表：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_ed495e60ee",
+        "title": "查看本人订单详情：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_4a361f2e73",
+        "title": "取消待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_da1f72545f",
+        "title": "确认已收到代理转账：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_be228a1cd1",
+        "title": "待确认收款时提交投诉：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_8ea08e4145",
+        "title": "补充上传本人订单凭证：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_3b931425b2",
+        "title": "查看本人订单凭证：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/evidence/list?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_634b8077e8",
+        "title": "查看本人订单流转记录：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/logs?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_8038c2a2f7",
+        "title": "查看自己的交易公告编辑页信息：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/notice?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_92bfaeecaf",
+        "title": "保存自己的交易公告：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_6e4c0c21e9",
+        "title": "查看可处理或已承接的订单列表：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_b05f2ae271",
+        "title": "查看代理侧订单详情：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_e07f18ed5f",
+        "title": "接受待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_d1023be903",
+        "title": "拒绝待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_3fea7697b2",
+        "title": "标记已完成线下转账：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_343e941fe3",
+        "title": "待确认收款时提交投诉：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_aaf3603a09",
+        "title": "补充上传付款或投诉凭证：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_41124614a0",
+        "title": "返回工资快速结算创建入口开关：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_6e7337e6e9",
+        "title": "返回工资快速结算创建入口开关：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_babf6074f7",
+        "title": "进入入口时查询可结算额度：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/quota?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_6ff142e9f5",
+        "title": "按国家和币种选择代理用户：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agents?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_6f8644c487",
+        "title": "提交收款信息并创建待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_1cb94e5edc",
+        "title": "查看本人快速结算订单列表：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_91b7086290",
+        "title": "查看本人订单详情：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_9cce4f325a",
+        "title": "取消待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_94914f389f",
+        "title": "确认已收到代理转账：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_a38fbdd48f",
+        "title": "待确认收款时提交投诉：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_41d65a3338",
+        "title": "补充上传本人订单凭证：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_d1f6bc0f3e",
+        "title": "查看本人订单凭证：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/evidence/list?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_df72e0207d",
+        "title": "查看本人订单流转记录：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/logs?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_8c2efcbd7d",
+        "title": "查看自己的交易公告编辑页信息：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/notice?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_afc760e2ba",
+        "title": "保存自己的交易公告：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_d0163abe31",
+        "title": "查看可处理或已承接的订单列表：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/page?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_8701a0bd85",
+        "title": "查看代理侧订单详情：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/detail?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_8942a7db0b",
+        "title": "接受待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_36f4222004",
+        "title": "拒绝待代理处理订单：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_27de387073",
+        "title": "标记已完成线下转账：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_3c1ef0b151",
+        "title": "待确认收款时提交投诉：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_3c4461d66e",
+        "title": "补充上传付款或投诉凭证：正常请求",
+        "scenario_type": "正常请求",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_a29da10d78",
+        "title": "返回工资快速结算创建入口开关：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_931a51df47",
+        "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_4186d63f07",
+        "title": "返回工资快速结算创建入口开关：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_25bb4b4110",
+        "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_ffe359e00e",
+        "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_71d4c8f02c",
+        "title": "进入入口时查询可结算额度：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/quota",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_43c6c779d8",
+        "title": "进入入口时查询可结算额度：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/quota",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_520d95529f",
+        "title": "按国家和币种选择代理用户：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agents",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_09f5709402",
+        "title": "按国家和币种选择代理用户：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agents",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_9e9ab12cdd",
+        "title": "提交收款信息并创建待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_e2826cb5f1",
+        "title": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_7b37235a8c",
+        "title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_cec2930031",
+        "title": "查看本人快速结算订单列表：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_09a3bd659e",
+        "title": "查看本人快速结算订单列表：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_040bef7520",
+        "title": "查看本人订单详情：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_1c37a1d263",
+        "title": "查看本人订单详情：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_fd3c65bfca",
+        "title": "取消待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_ea40bd1230",
+        "title": "取消待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_5e834a4d16",
+        "title": "取消待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_82c425f44c",
+        "title": "确认已收到代理转账：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_d280272aef",
+        "title": "确认已收到代理转账：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_d5cae5cd7e",
+        "title": "确认已收到代理转账：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_60ad3df5c9",
+        "title": "待确认收款时提交投诉：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_78189ffc40",
+        "title": "待确认收款时提交投诉：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_ac39a4c15e",
+        "title": "待确认收款时提交投诉：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_6501f71533",
+        "title": "补充上传本人订单凭证：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_2e9af91fa2",
+        "title": "补充上传本人订单凭证：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_92a0e95d19",
+        "title": "补充上传本人订单凭证：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_894bfa0bef",
+        "title": "查看本人订单凭证：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/evidence/list",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_44f440f8ec",
+        "title": "查看本人订单凭证：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/evidence/list",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_204821a151",
+        "title": "查看本人订单流转记录：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/logs",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_3995b1037b",
+        "title": "查看本人订单流转记录：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/logs",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_148e1062ae",
+        "title": "查看自己的交易公告编辑页信息：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/notice",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_970acf530c",
+        "title": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/notice",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_aa5fd1ad97",
+        "title": "保存自己的交易公告：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_456ee46651",
+        "title": "保存自己的交易公告：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_5754cedeaa",
+        "title": "保存自己的交易公告：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_92de8ee503",
+        "title": "查看可处理或已承接的订单列表：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_f96f0a6e7c",
+        "title": "查看可处理或已承接的订单列表：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_67d008fb3c",
+        "title": "查看代理侧订单详情：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_13d2898449",
+        "title": "查看代理侧订单详情：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_d5b812d9bc",
+        "title": "接受待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_2cbdc73c2a",
+        "title": "接受待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_6d0fa5869e",
+        "title": "接受待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_ae8f94bb13",
+        "title": "拒绝待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_e7f828e13a",
+        "title": "拒绝待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_e3fe32d890",
+        "title": "拒绝待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_7b351242d9",
+        "title": "标记已完成线下转账：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_81ca4518aa",
+        "title": "标记已完成线下转账：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_cecc2e452e",
+        "title": "标记已完成线下转账：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_63b49481af",
+        "title": "待确认收款时提交投诉：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_9703f0d4b0",
+        "title": "待确认收款时提交投诉：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_6d43b840fc",
+        "title": "待确认收款时提交投诉：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_a252cf3ccf",
+        "title": "补充上传付款或投诉凭证：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_4754618c13",
+        "title": "补充上传付款或投诉凭证：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_8f0fbfb1e9",
+        "title": "补充上传付款或投诉凭证：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_33bebd5371",
+        "title": "返回工资快速结算创建入口开关：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_168f41460d",
+        "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_bac78ca4b2",
+        "title": "返回工资快速结算创建入口开关：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_e50c04090a",
+        "title": "返回工资快速结算创建入口开关：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_fee04cee2e",
+        "title": "返回工资快速结算创建入口开关：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/union/getAnchorApplyRecord?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_bb7afdaec1",
+        "title": "进入入口时查询可结算额度：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/quota",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_c42b64b285",
+        "title": "进入入口时查询可结算额度：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/quota",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_b96f244486",
+        "title": "按国家和币种选择代理用户：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agents",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_5c6a8b6e6b",
+        "title": "按国家和币种选择代理用户：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agents",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_29ae76a3e3",
+        "title": "提交收款信息并创建待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_ae27bbd8fb",
+        "title": "提交收款信息并创建待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_8aac818fe6",
+        "title": "提交收款信息并创建待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/create?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_bcaafeea5a",
+        "title": "查看本人快速结算订单列表：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_bce7f0b1de",
+        "title": "查看本人快速结算订单列表：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_98f4e0db33",
+        "title": "查看本人订单详情：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_61b2cc4cee",
+        "title": "查看本人订单详情：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_9f5be4623d",
+        "title": "取消待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_0517361e1a",
+        "title": "取消待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_432f1720e0",
+        "title": "取消待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/cancel?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_090c1808f0",
+        "title": "确认已收到代理转账：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_040a77f5fc",
+        "title": "确认已收到代理转账：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_f6bc6b6313",
+        "title": "确认已收到代理转账：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/confirm?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_c4b5e635f7",
+        "title": "待确认收款时提交投诉：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_ce9183787a",
+        "title": "待确认收款时提交投诉：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_6f03ba81cf",
+        "title": "待确认收款时提交投诉：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_703aba0d61",
+        "title": "补充上传本人订单凭证：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_6ff1104c86",
+        "title": "补充上传本人订单凭证：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_7da441dd85",
+        "title": "补充上传本人订单凭证：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_106998984f",
+        "title": "查看本人订单凭证：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/evidence/list",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_63b5a08d94",
+        "title": "查看本人订单凭证：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/evidence/list",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_3e7984c960",
+        "title": "查看本人订单流转记录：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/logs",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_a1f392e60e",
+        "title": "查看本人订单流转记录：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/logs",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_4f4462577f",
+        "title": "查看自己的交易公告编辑页信息：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/notice",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_c5e7cc7a5a",
+        "title": "查看自己的交易公告编辑页信息：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/notice",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_c69289c871",
+        "title": "保存自己的交易公告：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_5d168a6591",
+        "title": "保存自己的交易公告：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_bceb2b7ba5",
+        "title": "保存自己的交易公告：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/notice/save?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_bc46fc0c40",
+        "title": "查看可处理或已承接的订单列表：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_81660bd59d",
+        "title": "查看可处理或已承接的订单列表：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/page",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_a32323adbc",
+        "title": "查看代理侧订单详情：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_94b6d42347",
+        "title": "查看代理侧订单详情：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "GET",
+        "path": "/userserv/salary/trade/agent/order/detail",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_faa2ab7c86",
+        "title": "接受待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_f26a9456cf",
+        "title": "接受待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_a001066bcb",
+        "title": "接受待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/accept?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_45166545a3",
+        "title": "拒绝待代理处理订单：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_73f8c0f05a",
+        "title": "拒绝待代理处理订单：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_c1da29bb4c",
+        "title": "拒绝待代理处理订单：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/reject?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_d17c532894",
+        "title": "标记已完成线下转账：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_27dd9da1a1",
+        "title": "标记已完成线下转账：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_c240887ef3",
+        "title": "标记已完成线下转账：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/paid?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_150ccec0dd",
+        "title": "待确认收款时提交投诉：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_050931dc62",
+        "title": "待确认收款时提交投诉：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_e28e6a08e2",
+        "title": "待确认收款时提交投诉：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/order/appeal?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
+    {
+        "id": "tc_2e5e8738c3",
+        "title": "补充上传付款或投诉凭证：缺失必填参数",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_1857980542",
+        "title": "补充上传付款或投诉凭证：字段边界与类型错误",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload",
+        "headers": {},
+        "payload": "",
+        "expected_status": 400,
+    },
+    {
+        "id": "tc_147643288b",
+        "title": "补充上传付款或投诉凭证：重复提交与幂等性",
+        "scenario_type": "接口契约",
+        "coverage_tool": "",
+        "method": "POST",
+        "path": "/userserv/salary/trade/agent/evidence/upload?appCode=100154&version=100.1.5.4&appsflyerId=1787628595990-5267637366511328587&ispType=4&osVersion=16&channel=google&systemLanguage=zh&os=android&appVersion=100.1.5.4&netType=2&appid=soulfree&isVpnConnected=0&model=SM-A546B&organic=Organic&deviceType=0&packageName=com.soulfree.happiness&deviceId=8fcce1f1-5153-3207-9786-0240140a524a&language=en",
+        "headers": {"t": "1788320194771"},
+        "payload": "",
+        "expected_status": 200,
+    },
 ]
 RUNTIME_STATE = {}
 
@@ -1879,7 +1743,11 @@ def package_root():
 
 def project_root():
     root = package_root()
-    return root.parents[1] if len(root.parents) > 1 and root.parent.name == "requirements" else root
+    return (
+        root.parents[1]
+        if len(root.parents) > 1 and root.parent.name == "requirements"
+        else root
+    )
 
 
 def load_json(path, default):
@@ -1896,6 +1764,7 @@ def load_yaml(path, default):
         return default
     try:
         import yaml
+
         return yaml.safe_load(p.read_text(encoding="utf-8")) or default
     except Exception as exc:
         return {"_load_error": str(exc), "rules": []}
@@ -1945,7 +1814,9 @@ def runtime_variables():
         value = os.getenv(env_key, "")
         if value:
             runtime[name] = value
-    runtime.update({key: value for key, value in RUNTIME_STATE.items() if value not in (None, "")})
+    runtime.update(
+        {key: value for key, value in RUNTIME_STATE.items() if value not in (None, "")}
+    )
     if "orderNo" in runtime and "order_no" not in runtime:
         runtime["order_no"] = runtime["orderNo"]
     if "salary_order_no" in runtime and "order_no" not in runtime:
@@ -2049,11 +1920,32 @@ def ensure_common_query_params(path):
         "orderNo": runtime.get("orderNo") or runtime.get("order_no"),
         "orderId": runtime.get("orderId") or runtime.get("order_id"),
     }
-    for key in ("deviceType", "systemLanguage", "appVersion", "os", "netType", "channel", "appsflyerId", "language", "appCode", "deviceId", "version", "osVersion", "isVpnConnected", "appid", "model", "packageName", "ispType", "organic"):
+    for key in (
+        "deviceType",
+        "systemLanguage",
+        "appVersion",
+        "os",
+        "netType",
+        "channel",
+        "appsflyerId",
+        "language",
+        "appCode",
+        "deviceId",
+        "version",
+        "osVersion",
+        "isVpnConnected",
+        "appid",
+        "model",
+        "packageName",
+        "ispType",
+        "organic",
+    ):
         if runtime.get(key):
             mapping[key] = runtime.get(key)
     for query_key in re.findall(r"[?&]([A-Za-z_][A-Za-z0-9_]*)=", "?" + parsed.query):
-        alias_names = [query_key, snake_case(query_key), camel_case(query_key)] + list(aliases.get(query_key) or [])
+        alias_names = [query_key, snake_case(query_key), camel_case(query_key)] + list(
+            aliases.get(query_key) or []
+        )
         for name in alias_names:
             if runtime.get(name) not in (None, ""):
                 mapping[query_key] = runtime.get(name)
@@ -2065,12 +1957,16 @@ def ensure_common_query_params(path):
     if not additions:
         return path
     query = urllib.parse.urlencode(query_pairs + additions, safe="{}")
-    return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
+    return urllib.parse.urlunsplit(
+        (parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment)
+    )
 
 
 def update_runtime_from_response(case, body):
     try:
-        payload = json.loads(body[body.find("{"):]) if "{" in body else json.loads(body)
+        payload = (
+            json.loads(body[body.find("{") :]) if "{" in body else json.loads(body)
+        )
     except Exception:
         return
     data = payload.get("data") if isinstance(payload, dict) else None
@@ -2084,10 +1980,21 @@ def update_runtime_from_response(case, body):
         if data.get("countryCode") not in (None, ""):
             RUNTIME_STATE["country_code"] = data.get("countryCode")
             RUNTIME_STATE["countryCode"] = data.get("countryCode")
-        if isinstance(data.get("supportCurrencies"), list) and data.get("supportCurrencies") and not RUNTIME_STATE.get("currency"):
+        if (
+            isinstance(data.get("supportCurrencies"), list)
+            and data.get("supportCurrencies")
+            and not RUNTIME_STATE.get("currency")
+        ):
             RUNTIME_STATE["currency"] = data["supportCurrencies"][0]
-        for key, target in (("orderNo", "order_no"), ("order_no", "order_no"), ("orderId", "order_id"), ("id", "order_id")):
-            if data.get(key) not in (None, "") and ("order" in path or "salary/trade" in path):
+        for key, target in (
+            ("orderNo", "order_no"),
+            ("order_no", "order_no"),
+            ("orderId", "order_id"),
+            ("id", "order_id"),
+        ):
+            if data.get(key) not in (None, "") and (
+                "order" in path or "salary/trade" in path
+            ):
                 RUNTIME_STATE[target] = data.get(key)
                 if target == "order_no":
                     RUNTIME_STATE["orderNo"] = data.get(key)
@@ -2097,10 +2004,16 @@ def update_runtime_from_response(case, body):
                 if "agents" in path and first.get("uid") not in (None, ""):
                     RUNTIME_STATE["proxy_uid"] = first.get("uid")
                     RUNTIME_STATE["agentUid"] = first.get("uid")
-                if first.get("countryCode") not in (None, "") and not RUNTIME_STATE.get("country_code"):
+                if first.get("countryCode") not in (None, "") and not RUNTIME_STATE.get(
+                    "country_code"
+                ):
                     RUNTIME_STATE["country_code"] = first.get("countryCode")
                     RUNTIME_STATE["countryCode"] = first.get("countryCode")
-                if isinstance(first.get("supportCurrencies"), list) and first.get("supportCurrencies") and not RUNTIME_STATE.get("currency"):
+                if (
+                    isinstance(first.get("supportCurrencies"), list)
+                    and first.get("supportCurrencies")
+                    and not RUNTIME_STATE.get("currency")
+                ):
                     RUNTIME_STATE["currency"] = first["supportCurrencies"][0]
                 if first.get("orderNo") not in (None, ""):
                     RUNTIME_STATE["order_no"] = first.get("orderNo")
@@ -2119,9 +2032,21 @@ def run_case(case):
     case["path"] = ensure_common_query_params(fill_runtime(case.get("path", "")))
     case["headers"] = fill_runtime(case.get("headers") or {})
     case["payload"] = fill_runtime(case.get("payload"))
-    url = case["path"] if case["path"].startswith("http") else BASE_URL.rstrip("/") + "/" + case["path"].lstrip("/")
+    url = (
+        case["path"]
+        if case["path"].startswith("http")
+        else BASE_URL.rstrip("/") + "/" + case["path"].lstrip("/")
+    )
     body = case.get("payload")
-    data = None if body in ("", None) else (body.encode("utf-8") if isinstance(body, str) else json.dumps(body, ensure_ascii=False).encode("utf-8"))
+    data = (
+        None
+        if body in ("", None)
+        else (
+            body.encode("utf-8")
+            if isinstance(body, str)
+            else json.dumps(body, ensure_ascii=False).encode("utf-8")
+        )
+    )
     headers = dict(case.get("headers") or {})
     runtime = runtime_variables()
     if runtime.get("t"):
@@ -2130,7 +2055,9 @@ def run_case(case):
         headers["sn"] = str(runtime.get("sn"))
     if data and "Content-Type" not in headers:
         headers["Content-Type"] = "application/json"
-    request = urllib.request.Request(url, data=data, headers=headers, method=case["method"])
+    request = urllib.request.Request(
+        url, data=data, headers=headers, method=case["method"]
+    )
     try:
         with urllib.request.urlopen(request, timeout=20) as response:
             return response.status, response.read(200000).decode("utf-8", "replace")
@@ -2145,16 +2072,41 @@ def run_case(case):
 def parse_jtl(path):
     p = Path(path or "")
     if not p.is_file():
-        return {"path": str(p) if path else "", "exists": False, "samples": 0, "failures": 0, "failed_labels": []}
+        return {
+            "path": str(p) if path else "",
+            "exists": False,
+            "samples": 0,
+            "failures": 0,
+            "failed_labels": [],
+        }
     if p.suffix.lower() == ".xml":
         root = ET.parse(p).getroot()
         samples = [x for x in root.iter() if x.attrib.get("lb")]
-        failed = [x.attrib.get("lb", "") for x in samples if x.attrib.get("s") == "false"]
-        return {"path": str(p), "exists": True, "samples": len(samples), "failures": len(failed), "failed_labels": failed[:30]}
+        failed = [
+            x.attrib.get("lb", "") for x in samples if x.attrib.get("s") == "false"
+        ]
+        return {
+            "path": str(p),
+            "exists": True,
+            "samples": len(samples),
+            "failures": len(failed),
+            "failed_labels": failed[:30],
+        }
     with p.open("r", encoding="utf-8-sig", errors="replace", newline="") as f:
         rows = list(csv.DictReader(f))
-    failed = [r.get("label", "") for r in rows if str(r.get("success", "")).lower() == "false" or str(r.get("responseCode", "")).startswith(("4", "5"))]
-    return {"path": str(p), "exists": True, "samples": len(rows), "failures": len(failed), "failed_labels": failed[:30]}
+    failed = [
+        r.get("label", "")
+        for r in rows
+        if str(r.get("success", "")).lower() == "false"
+        or str(r.get("responseCode", "")).startswith(("4", "5"))
+    ]
+    return {
+        "path": str(p),
+        "exists": True,
+        "samples": len(rows),
+        "failures": len(failed),
+        "failed_labels": failed[:30],
+    }
 
 
 def load_newman(path):
@@ -2162,7 +2114,12 @@ def load_newman(path):
     run = payload.get("run", {}) if isinstance(payload, dict) else {}
     failures = run.get("failures", []) if isinstance(run, dict) else []
     stats = run.get("stats", {}) if isinstance(run, dict) else {}
-    return {"path": path or "", "exists": bool(payload), "failures": len(failures), "stats": stats}
+    return {
+        "path": path or "",
+        "exists": bool(payload),
+        "failures": len(failures),
+        "stats": stats,
+    }
 
 
 def sql_value(value):
@@ -2181,11 +2138,12 @@ def render_template(template, variables, missing):
             missing.add(name)
             return "NULL"
         return sql_value(variables.get(name))
+
     return re.sub(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", repl, str(template or ""))
 
 
 def mysql_query(sql):
-    if not re.match(r"^\s*(select|show|describe|explain)\b", sql, re.I):
+    if not re.match(r"^\s*(select|show|describe|explain)\b", sql, re.IGNORECASE):
         raise RuntimeError("pytest evidence only allows read-only SQL")
     try:
         import pymysql
@@ -2217,7 +2175,9 @@ def redis_read(rule, variables):
     except Exception as exc:
         raise RuntimeError("redis package is not installed: " + str(exc))
     query = rule.get("query") if isinstance(rule.get("query"), dict) else {}
-    key_template = query.get("key") or query.get("pattern") or rule.get("redis_key") or ""
+    key_template = (
+        query.get("key") or query.get("pattern") or rule.get("redis_key") or ""
+    )
     key = key_template
     missing = set()
     for name in re.findall(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", key_template):
@@ -2228,9 +2188,12 @@ def redis_read(rule, variables):
         raise RuntimeError("missing runtime variables: " + ",".join(sorted(missing)))
     client = redis.Redis(
         host=os.getenv("AUTOTEST_REDIS_HOST", os.getenv("REDIS_HOST", "")),
-        port=int(os.getenv("AUTOTEST_REDIS_PORT", os.getenv("REDIS_PORT", "6379")) or "6379"),
+        port=int(
+            os.getenv("AUTOTEST_REDIS_PORT", os.getenv("REDIS_PORT", "6379")) or "6379"
+        ),
         db=int(os.getenv("AUTOTEST_REDIS_DB", os.getenv("REDIS_DB", "0")) or "0"),
-        ssl=str(os.getenv("AUTOTEST_REDIS_SSL", "false")).lower() in ("1", "true", "yes"),
+        ssl=str(os.getenv("AUTOTEST_REDIS_SSL", "false")).lower()
+        in ("1", "true", "yes"),
         socket_timeout=8,
         decode_responses=True,
     )
@@ -2243,7 +2206,9 @@ def redis_read(rule, variables):
 
 
 def values_for_field(records, field):
-    return [item.get(field) for item in records if isinstance(item, dict) and field in item]
+    return [
+        item.get(field) for item in records if isinstance(item, dict) and field in item
+    ]
 
 
 def resolve_expected(value, variables):
@@ -2267,7 +2232,11 @@ def run_assertion(assertion, records, variables):
     elif operator == "contains":
         passed = any(str(expected) in str(v or "") for v in values)
     elif operator == "contains_any":
-        items = expected if isinstance(expected, list) else re.split(r"[,，\s]+", str(expected or ""))
+        items = (
+            expected
+            if isinstance(expected, list)
+            else re.split(r"[,，\s]+", str(expected or ""))
+        )
         items = [str(x).strip() for x in items if str(x).strip()]
         passed = bool(items) and any(str(v) in items for v in values)
     elif operator == "not_empty":
@@ -2279,7 +2248,14 @@ def run_assertion(assertion, records, variables):
             passed = False
     else:
         passed = False
-    return {"field": field, "operator": operator, "expected": expected, "actual": first if len(values) <= 1 else values[:20], "passed": bool(passed), "reason": "" if passed else "assertion not satisfied"}
+    return {
+        "field": field,
+        "operator": operator,
+        "expected": expected,
+        "actual": first if len(values) <= 1 else values[:20],
+        "passed": bool(passed),
+        "reason": "" if passed else "assertion not satisfied",
+    }
 
 
 def rule_identifier(rule):
@@ -2306,7 +2282,9 @@ def run_evidence_rules(rule_ids=None):
             if source == "mysql":
                 missing = set()
                 table = str(query.get("table") or rule.get("table") or "")
-                where = render_template(query.get("where") or rule.get("where") or "1=1", variables, missing)
+                where = render_template(
+                    query.get("where") or rule.get("where") or "1=1", variables, missing
+                )
                 if missing:
                     blockers.append("缺少运行变量：" + ",".join(sorted(missing)))
                 elif not table:
@@ -2322,18 +2300,54 @@ def run_evidence_rules(rule_ids=None):
             blockers.append(str(exc))
         assertions = []
         if not blockers:
-            assertions.append({"field": "__rows__", "operator": "exists", "expected": "至少1行", "actual": len(records), "passed": len(records) > 0, "reason": "" if records else "query returned no rows"})
+            assertions.append(
+                {
+                    "field": "__rows__",
+                    "operator": "exists",
+                    "expected": "至少1行",
+                    "actual": len(records),
+                    "passed": len(records) > 0,
+                    "reason": "" if records else "query returned no rows",
+                }
+            )
             for assertion in rule.get("assertions") or []:
                 assertions.append(run_assertion(assertion, records, variables))
-        status = "BLOCKED" if blockers else "PASSED" if assertions and all(x.get("passed") for x in assertions) else "FAILED"
-        results.append({"id": rule.get("id"), "name": rule.get("name"), "source": source, "sql": sql, "status": status, "rows": len(records), "assertions": assertions, "blockers": blockers, "sample": records[:3]})
+        status = (
+            "BLOCKED"
+            if blockers
+            else (
+                "PASSED"
+                if assertions and all(x.get("passed") for x in assertions)
+                else "FAILED"
+            )
+        )
+        results.append(
+            {
+                "id": rule.get("id"),
+                "name": rule.get("name"),
+                "source": source,
+                "sql": sql,
+                "status": status,
+                "rows": len(records),
+                "assertions": assertions,
+                "blockers": blockers,
+                "sample": records[:3],
+            }
+        )
     return results
 
 
 def redact_text(text):
     text = str(text or "")
-    text = re.sub(r"eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+", "***jwt***", text)
-    text = re.sub(r'("?(?:access_token|ticket|token)"?\s*[:=]\s*")([^"]+)(")', r'\1***\3', text, flags=re.I)
+    text = re.sub(
+        r"eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+", "***jwt***", text
+    )
+    text = re.sub(
+        r'("?(?:access_token|ticket|token)"?\s*[:=]\s*")([^"]+)(")',
+        r"\1***\3",
+        text,
+        flags=re.IGNORECASE,
+    )
     return text
 
 
@@ -2341,7 +2355,9 @@ def redact_obj(value):
     if isinstance(value, dict):
         out = {}
         for key, item in value.items():
-            if any(word in str(key).lower() for word in ("ticket", "token", "password")):
+            if any(
+                word in str(key).lower() for word in ("ticket", "token", "password")
+            ):
                 out[key] = "***"
             else:
                 out[key] = redact_obj(item)
@@ -2361,7 +2377,9 @@ def load_package_manifest():
 def resolve_package_asset_path(*relative_candidates):
     root = package_root()
     manifest = load_package_manifest()
-    orchestration = manifest.get("orchestration") if isinstance(manifest, dict) else None
+    orchestration = (
+        manifest.get("orchestration") if isinstance(manifest, dict) else None
+    )
     paths = []
     if isinstance(orchestration, dict):
         for key in ("primary_plan", "execution_plan", "scenario_plan", "path"):
@@ -2391,17 +2409,30 @@ def case_scenario_index():
     mapping = {}
     order = []
     for scenario in load_execution_plan():
-        scenario_id = scenario.get("scenario_id") or scenario.get("id") or scenario.get("name") or "unassigned"
+        scenario_id = (
+            scenario.get("scenario_id")
+            or scenario.get("id")
+            or scenario.get("name")
+            or "unassigned"
+        )
         scenario_name = scenario.get("name") or scenario_id
         for case in scenario.get("cases") or []:
             case_id = case.get("id") if isinstance(case, dict) else case
             if case_id:
-                mapping[str(case_id)] = {"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": scenario.get("status")}
+                mapping[str(case_id)] = {
+                    "scenario_id": scenario_id,
+                    "scenario_name": scenario_name,
+                    "scenario_status": scenario.get("status"),
+                }
                 order.append(str(case_id))
         for task in scenario.get("tool_tasks") or []:
             for case_id in task.get("cases") or []:
                 if case_id:
-                    mapping[str(case_id)] = {"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": scenario.get("status")}
+                    mapping[str(case_id)] = {
+                        "scenario_id": scenario_id,
+                        "scenario_name": scenario_name,
+                        "scenario_status": scenario.get("status"),
+                    }
                     order.append(str(case_id))
     return {"mapping": mapping, "order": order}
 
@@ -2414,7 +2445,11 @@ def scenario_for_case(case, index=None):
         return item
     scenario_name = case.get("scenario_type") or "未分组场景"
     scenario_id = snake_case(scenario_name) or "unassigned"
-    return {"scenario_id": scenario_id, "scenario_name": scenario_name, "scenario_status": ""}
+    return {
+        "scenario_id": scenario_id,
+        "scenario_name": scenario_name,
+        "scenario_status": "",
+    }
 
 
 def ordered_cases(cases, index=None):
@@ -2441,7 +2476,12 @@ def planned_scenario_batches(cases, index=None):
     seen = set()
     batches = []
     for scenario in load_execution_plan():
-        scenario_id = scenario.get("scenario_id") or scenario.get("id") or scenario.get("name") or "unassigned"
+        scenario_id = (
+            scenario.get("scenario_id")
+            or scenario.get("id")
+            or scenario.get("name")
+            or "unassigned"
+        )
         scenario_name = scenario.get("name") or scenario_id
         case_ids = []
         evidence_rule_ids = []
@@ -2465,16 +2505,18 @@ def planned_scenario_batches(cases, index=None):
                 batch_cases.append(case_by_id[case_id])
                 seen.add(case_id)
         if batch_cases:
-            batches.append({
-                "scenario_id": scenario_id,
-                "scenario_name": scenario_name,
-                "scenario_status": scenario.get("status"),
-                "cases": batch_cases,
-                "evidence_rule_ids": sorted(set(evidence_rule_ids)),
-                "uses_explicit_evidence_rules": bool(evidence_rule_ids),
-                "source": "orchestration",
-                "raw": scenario,
-            })
+            batches.append(
+                {
+                    "scenario_id": scenario_id,
+                    "scenario_name": scenario_name,
+                    "scenario_status": scenario.get("status"),
+                    "cases": batch_cases,
+                    "evidence_rule_ids": sorted(set(evidence_rule_ids)),
+                    "uses_explicit_evidence_rules": bool(evidence_rule_ids),
+                    "source": "orchestration",
+                    "raw": scenario,
+                }
+            )
     fallback = {}
     for case in cases:
         case_id = str(case.get("id") or "")
@@ -2482,12 +2524,35 @@ def planned_scenario_batches(cases, index=None):
             continue
         scenario = scenario_for_case(case, index)
         key = scenario.get("scenario_id") or "unassigned"
-        item = fallback.setdefault(key, {"scenario_id": key, "scenario_name": scenario.get("scenario_name") or key, "scenario_status": scenario.get("scenario_status") or "", "cases": [], "evidence_rule_ids": [], "uses_explicit_evidence_rules": False, "source": "scenario_type", "raw": {}})
+        item = fallback.setdefault(
+            key,
+            {
+                "scenario_id": key,
+                "scenario_name": scenario.get("scenario_name") or key,
+                "scenario_status": scenario.get("scenario_status") or "",
+                "cases": [],
+                "evidence_rule_ids": [],
+                "uses_explicit_evidence_rules": False,
+                "source": "scenario_type",
+                "raw": {},
+            },
+        )
         item["cases"].append(case)
         seen.add(case_id)
     batches.extend(fallback.values())
     if not batches:
-        batches.append({"scenario_id": "package_review", "scenario_name": "需求包证据复核", "scenario_status": "", "cases": [], "evidence_rule_ids": [], "uses_explicit_evidence_rules": False, "source": "empty", "raw": {}})
+        batches.append(
+            {
+                "scenario_id": "package_review",
+                "scenario_name": "需求包证据复核",
+                "scenario_status": "",
+                "cases": [],
+                "evidence_rule_ids": [],
+                "uses_explicit_evidence_rules": False,
+                "source": "empty",
+                "raw": {},
+            }
+        )
     return batches
 
 
@@ -2498,7 +2563,21 @@ def apply_scenario_runtime(scenario):
         item = raw.get(key)
         if isinstance(item, dict):
             values.update(item)
-    for key in ("scenario_id", "account_slot", "order_variable", "order_no", "orderNo", "order_id", "orderId", "applicant_uid", "proxy_uid", "agent_uid", "country_code", "countryCode", "currency"):
+    for key in (
+        "scenario_id",
+        "account_slot",
+        "order_variable",
+        "order_no",
+        "orderNo",
+        "order_id",
+        "orderId",
+        "applicant_uid",
+        "proxy_uid",
+        "agent_uid",
+        "country_code",
+        "countryCode",
+        "currency",
+    ):
         value = raw.get(key, scenario.get(key))
         if value not in (None, ""):
             values[key] = value
@@ -2514,13 +2593,29 @@ def run_single_case(case, scenario):
     business_code = ""
     business_message = ""
     try:
-        parsed_body = json.loads(body[body.find("{"):]) if "{" in body else json.loads(body)
+        parsed_body = (
+            json.loads(body[body.find("{") :]) if "{" in body else json.loads(body)
+        )
         if isinstance(parsed_body, dict):
             business_code = parsed_body.get("code", "")
             business_message = parsed_body.get("message", "")
     except Exception:
         pass
-    return {"id": case.get("id"), "title": case["title"], "scenario_id": scenario.get("scenario_id"), "scenario_name": scenario.get("scenario_name"), "method": case["method"], "path": redact_text(ensure_common_query_params(fill_runtime(case.get("path", "")))), "status": status, "expected_status": case["expected_status"], "business_code": business_code, "business_message": business_message, "response_preview": redact_text(body[:800])}
+    return {
+        "id": case.get("id"),
+        "title": case["title"],
+        "scenario_id": scenario.get("scenario_id"),
+        "scenario_name": scenario.get("scenario_name"),
+        "method": case["method"],
+        "path": redact_text(
+            ensure_common_query_params(fill_runtime(case.get("path", "")))
+        ),
+        "status": status,
+        "expected_status": case["expected_status"],
+        "business_code": business_code,
+        "business_message": business_message,
+        "response_preview": redact_text(body[:800]),
+    }
 
 
 def run_scenario_batch(scenario, base_runtime_state=None):
@@ -2535,7 +2630,12 @@ def run_scenario_batch(scenario, base_runtime_state=None):
     for item in evidence:
         item["scenario_id"] = scenario.get("scenario_id")
         item["scenario_name"] = scenario.get("scenario_name")
-    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status") or str(x.get("business_code") or "200") != "200")
+    http_failed = sum(
+        1
+        for x in http_results
+        if x.get("status") != x.get("expected_status")
+        or str(x.get("business_code") or "200") != "200"
+    )
     failed = sum(1 for x in evidence if x.get("status") == "FAILED")
     blocked = sum(1 for x in evidence if x.get("status") == "BLOCKED")
     status = "BLOCKED" if blocked else "FAILED" if failed or http_failed else "PASSED"
@@ -2548,8 +2648,19 @@ def run_scenario_batch(scenario, base_runtime_state=None):
         "http_cases": len(http_results),
         "http_failed": http_failed,
         "evidence_rule_ids": rule_ids,
-        "evidence_rules": [{"id": x.get("id"), "name": x.get("name"), "status": x.get("status"), "source": x.get("source")} for x in evidence],
-        "runtime_variables": {k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v) for k, v in runtime_variables().items()},
+        "evidence_rules": [
+            {
+                "id": x.get("id"),
+                "name": x.get("name"),
+                "status": x.get("status"),
+                "source": x.get("source"),
+            }
+            for x in evidence
+        ],
+        "runtime_variables": {
+            k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v)
+            for k, v in runtime_variables().items()
+        },
         "http_results": http_results,
         "evidence_results": evidence,
     }
@@ -2560,9 +2671,22 @@ def build_evidence_report(scenario_runs):
     plan_path = resolve_package_asset_path("outputs/execution-plan.json")
     jtl = parse_jtl(os.getenv("AUTOTEST_JTL_PATH", ""))
     newman = load_newman(os.getenv("AUTOTEST_NEWMAN_JSON", ""))
-    http_results = [item for scenario in scenario_runs for item in scenario.get("http_results") or []]
-    evidence = [item for scenario in scenario_runs for item in scenario.get("evidence_results") or []]
-    http_failed = sum(1 for x in http_results if x.get("status") != x.get("expected_status") or str(x.get("business_code") or "200") != "200")
+    http_results = [
+        item
+        for scenario in scenario_runs
+        for item in scenario.get("http_results") or []
+    ]
+    evidence = [
+        item
+        for scenario in scenario_runs
+        for item in scenario.get("evidence_results") or []
+    ]
+    http_failed = sum(
+        1
+        for x in http_results
+        if x.get("status") != x.get("expected_status")
+        or str(x.get("business_code") or "200") != "200"
+    )
     failed = sum(1 for x in evidence if x["status"] == "FAILED")
     blocked = sum(1 for x in evidence if x["status"] == "BLOCKED")
     for scenario in scenario_runs:
@@ -2574,8 +2698,23 @@ def build_evidence_report(scenario_runs):
         "report_type": "PYTEST_DEEP_EVIDENCE_REVIEW",
         "package_id": PACKAGE_ID or root.name,
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-        "status": "BLOCKED" if blocked else "FAILED" if failed or http_failed or jtl.get("failures") or newman.get("failures") else "PASSED",
-        "orchestration": {"path": str(plan_path), "exists": plan_path.is_file(), "fallback": "scenario_type" if not plan_path.is_file() else ""},
+        "status": (
+            "BLOCKED"
+            if blocked
+            else (
+                "FAILED"
+                if failed
+                or http_failed
+                or jtl.get("failures")
+                or newman.get("failures")
+                else "PASSED"
+            )
+        ),
+        "orchestration": {
+            "path": str(plan_path),
+            "exists": plan_path.is_file(),
+            "fallback": "scenario_type" if not plan_path.is_file() else "",
+        },
         "summary": {
             "http_cases": len(http_results),
             "http_failed": http_failed,
@@ -2586,7 +2725,10 @@ def build_evidence_report(scenario_runs):
             "jtl_failures": jtl.get("failures", 0),
             "newman_failures": newman.get("failures", 0),
         },
-        "runtime_variables": {k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v) for k, v in runtime_variables().items()},
+        "runtime_variables": {
+            k: ("***" if "ticket" in k.lower() or "token" in k.lower() else v)
+            for k, v in runtime_variables().items()
+        },
         "scenarios": scenario_runs,
         "http_results": http_results,
         "jmeter": jtl,
@@ -2598,7 +2740,10 @@ def build_evidence_report(scenario_runs):
     out = Path(os.getenv("AUTOTEST_PYTEST_EVIDENCE_OUT", str(out_dir / "summary.json")))
     out.parent.mkdir(parents=True, exist_ok=True)
     safe_report = redact_obj(report)
-    out.write_text(json.dumps(safe_report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    out.write_text(
+        json.dumps(safe_report, ensure_ascii=False, indent=2, default=str),
+        encoding="utf-8",
+    )
     safe_report["summary_path"] = str(out)
     return safe_report
 
@@ -2608,8 +2753,17 @@ def test_api_cases():
     bootstrap_env()
     scenario_index = case_scenario_index()
     base_runtime_state = dict(RUNTIME_STATE)
-    scenario_runs = [run_scenario_batch(scenario, base_runtime_state) for scenario in planned_scenario_batches(CASES, scenario_index)]
+    scenario_runs = [
+        run_scenario_batch(scenario, base_runtime_state)
+        for scenario in planned_scenario_batches(CASES, scenario_index)
+    ]
     report = build_evidence_report(scenario_runs)
-    strict = os.getenv("AUTOTEST_STRICT_EVIDENCE", "true").lower() not in ("0", "false", "no")
+    strict = os.getenv("AUTOTEST_STRICT_EVIDENCE", "true").lower() not in (
+        "0",
+        "false",
+        "no",
+    )
     if strict:
-        assert report["status"] == "PASSED", "pytest evidence review failed: " + report.get("summary_path", "")
+        assert (
+            report["status"] == "PASSED"
+        ), "pytest evidence review failed: " + report.get("summary_path", "")

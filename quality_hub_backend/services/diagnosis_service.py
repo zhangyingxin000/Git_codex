@@ -81,34 +81,140 @@ class ProjectDiagnosisService:
                 "sources",
             )
         if not requirements:
-            add(DiagnosisSeverity.p1, "sources", "补齐结构化需求", "当前还没有可追踪的需求条目，后续报告无法证明需求覆盖。", "生成需求资产", "sources")
+            add(
+                DiagnosisSeverity.p1,
+                "sources",
+                "补齐结构化需求",
+                "当前还没有可追踪的需求条目，后续报告无法证明需求覆盖。",
+                "生成需求资产",
+                "sources",
+            )
         if not endpoints:
-            add(DiagnosisSeverity.p0, "sources", "补齐接口定义", "当前没有接口资产。可导入 OpenAPI、HAR 抓包记录或手工接口片段，否则接口自动化、性能测试和数据验证都无法闭环。", "导入接口", "sources")
-        if endpoints and not any(case.get("method") and case.get("path") for case in cases):
-            add(DiagnosisSeverity.p0, "sources", "补齐可执行用例", "已有接口但缺少可直接执行的用例，需要从接口文档、HAR 抓包样例或需求资料生成。", "生成用例", "sources")
+            add(
+                DiagnosisSeverity.p0,
+                "sources",
+                "补齐接口定义",
+                "当前没有接口资产。可导入 OpenAPI、HAR 抓包记录或手工接口片段，否则接口自动化、性能测试和数据验证都无法闭环。",
+                "导入接口",
+                "sources",
+            )
+        if endpoints and not any(
+            case.get("method") and case.get("path") for case in cases
+        ):
+            add(
+                DiagnosisSeverity.p0,
+                "sources",
+                "补齐可执行用例",
+                "已有接口但缺少可直接执行的用例，需要从接口文档、HAR 抓包样例或需求资料生成。",
+                "生成用例",
+                "sources",
+            )
         if endpoints and "openapi" not in source_kinds:
-            add(DiagnosisSeverity.p1, "sources", "补齐接口文档基线", "当前接口资产没有正式 OpenAPI/Swagger 来源。若文档过旧，可以先导入 HAR 抓包样例，再由平台反向沉淀接口文档。", "导入接口文档", "sources")
+            add(
+                DiagnosisSeverity.p1,
+                "sources",
+                "补齐接口文档基线",
+                "当前接口资产没有正式 OpenAPI/Swagger 来源。若文档过旧，可以先导入 HAR 抓包样例，再由平台反向沉淀接口文档。",
+                "导入接口文档",
+                "sources",
+            )
         if endpoints and "har" not in source_kinds:
-            add(DiagnosisSeverity.p2, "sources", "补齐真实抓包样例", "已有接口资产，但缺少真实抓包样例。抓包可帮助平台补齐请求头、设备上下文、参数示例和链路变量。", "导入HAR", "sources")
-        if endpoints and requirements and not any(int(link.get("selected") or 0) == 1 for link in trace_links):
-            add(DiagnosisSeverity.p1, "sources", "补齐需求到接口覆盖关系", "需求、接口都已存在，但尚未形成可展示的需求到接口追踪链。", "计算覆盖", "sources")
+            add(
+                DiagnosisSeverity.p2,
+                "sources",
+                "补齐真实抓包样例",
+                "已有接口资产，但缺少真实抓包样例。抓包可帮助平台补齐请求头、设备上下文、参数示例和链路变量。",
+                "导入HAR",
+                "sources",
+            )
+        if (
+            endpoints
+            and requirements
+            and not any(int(link.get("selected") or 0) == 1 for link in trace_links)
+        ):
+            add(
+                DiagnosisSeverity.p1,
+                "sources",
+                "补齐需求到接口覆盖关系",
+                "需求、接口都已存在，但尚未形成可展示的需求到接口追踪链。",
+                "计算覆盖",
+                "sources",
+            )
         if not project.get("base_url"):
-            add(DiagnosisSeverity.p0, "automation", "补齐测试环境地址", "缺少 Base URL，平台不能调用企业认可的接口测试工具执行真实请求。", "配置环境", "automation")
+            add(
+                DiagnosisSeverity.p0,
+                "automation",
+                "补齐测试环境地址",
+                "缺少 Base URL，平台不能调用企业认可的接口测试工具执行真实请求。",
+                "配置环境",
+                "automation",
+            )
         if not accounts:
-            add(DiagnosisSeverity.p1, "automation", "补齐测试账号池", "登录态、鉴权接口、业务链路和部分数据验证需要测试账号与凭证。", "添加账号", "automation")
-        elif not any(account.get("has_ticket") or account.get("has_password") for account in accounts):
-            add(DiagnosisSeverity.p1, "automation", "补齐可复用凭证", "已有账号资料，但没有可复用 Ticket 或加密密码，真实链路容易被登录步骤阻断。", "补凭证", "automation")
-        if not project_settings.get("max_p95_ms") or not project_settings.get("max_error_rate"):
-            add(DiagnosisSeverity.p1, "automation", "补齐项目 SLA 阈值", "缺少团队认可的性能准入阈值。可先填写冒烟/基准默认值，后续接入监控数据后再校准。", "配置SLA", "automation")
+            add(
+                DiagnosisSeverity.p1,
+                "automation",
+                "补齐测试账号池",
+                "登录态、鉴权接口、业务链路和部分数据验证需要测试账号与凭证。",
+                "添加账号",
+                "automation",
+            )
+        elif not any(
+            account.get("has_ticket") or account.get("has_password")
+            for account in accounts
+        ):
+            add(
+                DiagnosisSeverity.p1,
+                "automation",
+                "补齐可复用凭证",
+                "已有账号资料，但没有可复用 Ticket 或加密密码，真实链路容易被登录步骤阻断。",
+                "补凭证",
+                "automation",
+            )
+        if not project_settings.get("max_p95_ms") or not project_settings.get(
+            "max_error_rate"
+        ):
+            add(
+                DiagnosisSeverity.p1,
+                "automation",
+                "补齐项目 SLA 阈值",
+                "缺少团队认可的性能准入阈值。可先填写冒烟/基准默认值，后续接入监控数据后再校准。",
+                "配置SLA",
+                "automation",
+            )
         if not project_settings.get("monitoring_url"):
-            add(DiagnosisSeverity.p2, "automation", "补齐监控数据来源", "尚未登记监控或 APM 看板地址，平台暂不能根据历史线上指标推荐 SLA。", "登记监控", "automation")
+            add(
+                DiagnosisSeverity.p2,
+                "automation",
+                "补齐监控数据来源",
+                "尚未登记监控或 APM 看板地址，平台暂不能根据历史线上指标推荐 SLA。",
+                "登记监控",
+                "automation",
+            )
         data_validation_started = bool(rules or runs or db_maps or redis_maps)
-        if data_validation_started and not any(source.get("status") == "connected" for source in redis_sources):
-            add(DiagnosisSeverity.p2, "dataquality", "可补齐 Redis 只读连接", "当前需求未强制 Redis 核对；仅当需要缓存前后比对时再接入只读 Redis。", "配置Redis", "dataquality")
+        if data_validation_started and not any(
+            source.get("status") == "connected" for source in redis_sources
+        ):
+            add(
+                DiagnosisSeverity.p2,
+                "dataquality",
+                "可补齐 Redis 只读连接",
+                "当前需求未强制 Redis 核对；仅当需要缓存前后比对时再接入只读 Redis。",
+                "配置Redis",
+                "dataquality",
+            )
         if data_validation_started and not db_tables:
-            add(DiagnosisSeverity.p2, "dataquality", "可补齐 MySQL Schema", "当前需求未强制数据库映射；仅当需要用库表证明状态、金额或流水一致时再补充 Schema。", "导入Schema", "dataquality")
+            add(
+                DiagnosisSeverity.p2,
+                "dataquality",
+                "可补齐 MySQL Schema",
+                "当前需求未强制数据库映射；仅当需要用库表证明状态、金额或流水一致时再补充 Schema。",
+                "导入Schema",
+                "dataquality",
+            )
 
-        endpoint_details = self._endpoint_closure_gaps(endpoints, cases, rules, runs, db_maps, redis_maps)
+        endpoint_details = self._endpoint_closure_gaps(
+            endpoints, cases, rules, runs, db_maps, redis_maps
+        )
         if endpoint_details:
             has_execution_blocker = any(
                 "可执行用例" in detail["missing"] or "响应断言字段" in detail["missing"]
@@ -136,13 +242,38 @@ class ProjectDiagnosisService:
                 failed_runs,
             )
         if not reports:
-            add(DiagnosisSeverity.p1, "reports", "补齐可归档报告", "尚未形成接口、性能、数据验证或完整证据报告，无法支撑企业交付和面试展示。", "执行并归档", "automation")
+            add(
+                DiagnosisSeverity.p1,
+                "reports",
+                "补齐可归档报告",
+                "尚未形成接口、性能、数据验证或完整证据报告，无法支撑企业交付和面试展示。",
+                "执行并归档",
+                "automation",
+            )
         if not items:
-            add(DiagnosisSeverity.passed, "reports", "当前闭环材料已齐", "项目已有资产、执行、数据验证和报告证据，可继续扩大接口范围或做回归。", "查看报告", "reports")
+            add(
+                DiagnosisSeverity.passed,
+                "reports",
+                "当前闭环材料已齐",
+                "项目已有资产、执行、数据验证和报告证据，可继续扩大接口范围或做回归。",
+                "查看报告",
+                "reports",
+            )
 
-        items = sorted(items, key=lambda item: (self._severity_order(item.severity), item.module, item.title))
+        items = sorted(
+            items,
+            key=lambda item: (
+                self._severity_order(item.severity),
+                item.module,
+                item.title,
+            ),
+        )
         summary = self._summary(items)
-        status = "PASSED" if items and items[0].severity == DiagnosisSeverity.passed else "BLOCKED" if summary.p0 else "ATTENTION"
+        status = (
+            "PASSED"
+            if items and items[0].severity == DiagnosisSeverity.passed
+            else "BLOCKED" if summary.p0 else "ATTENTION"
+        )
         diagnosis = ProjectDiagnosis(
             project_id=project_id,
             generated_at=datetime.now().astimezone(),
@@ -190,18 +321,30 @@ class ProjectDiagnosisService:
             endpoint_case = cases_by_endpoint.get(key)
             has_db_mapping = bool(db_by_endpoint.get(endpoint["id"]))
             has_redis_mapping = bool(redis_by_endpoint.get(endpoint["id"]))
-            has_run_evidence = bool(endpoint_case and endpoint_case.get("execution_status") == "PASSED")
+            has_run_evidence = bool(
+                endpoint_case and endpoint_case.get("execution_status") == "PASSED"
+            )
             missing = []
             if not endpoint_case:
                 missing.append("可执行用例")
-            data_validation_enabled = bool(endpoint_rules or has_db_mapping or has_redis_mapping)
+            data_validation_enabled = bool(
+                endpoint_rules or has_db_mapping or has_redis_mapping
+            )
             if setup_only:
                 pass
-            elif has_db_mapping and any(rule.get("mysql_table") and not rule.get("mysql_condition") for rule in endpoint_rules):
+            elif has_db_mapping and any(
+                rule.get("mysql_table") and not rule.get("mysql_condition")
+                for rule in endpoint_rules
+            ):
                 missing.append("MySQL查询条件")
             if setup_only:
                 pass
-            elif data_validation_enabled and endpoint_rules and not any(rule["id"] in run_rule_ids for rule in endpoint_rules) and not has_run_evidence:
+            elif (
+                data_validation_enabled
+                and endpoint_rules
+                and not any(rule["id"] in run_rule_ids for rule in endpoint_rules)
+                and not has_run_evidence
+            ):
                 missing.append("验证执行证据")
             try:
                 responses = json.loads(endpoint.get("responses") or "{}")

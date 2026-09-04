@@ -13,8 +13,12 @@ class ProjectCreateRequest(BaseModel):
 
 class SourceCreateRequest(BaseModel):
     name: str = Field(default="资料", description="资料或迭代名称")
-    kind: Literal["requirement", "openapi", "har", "rules"] = Field(default="requirement", description="资料类型")
-    content: str = Field(default="", description="粘贴的需求、规则、OpenAPI 或 HAR 内容")
+    kind: Literal["requirement", "openapi", "har", "rules"] = Field(
+        default="requirement", description="资料类型"
+    )
+    content: str = Field(
+        default="", description="粘贴的需求、规则、OpenAPI 或 HAR 内容"
+    )
     source_url: str = Field(default="", description="需求文档或接口文档链接")
     browser_capture: bool = Field(default=False, description="是否启用网页登录采集")
     file_name: str = Field(default="", description="上传文件名")
@@ -28,7 +32,9 @@ class TestAccountSaveRequest(BaseModel):
     short_id: str = Field(description="短 ID")
     uid: int = Field(description="账号 UID")
     wealth_level: int | None = Field(default=None, description="财富等级")
-    role: Literal["general", "sender", "receiver", "boundary"] = Field(default="general", description="账号用途")
+    role: Literal["general", "sender", "receiver", "boundary"] = Field(
+        default="general", description="账号用途"
+    )
     mutable: bool = Field(default=False, description="是否允许执行会改变业务数据的场景")
     ticket: str = Field(default="", description="可复用 Ticket，保存时本机加密")
     encrypted_password: str = Field(default="", description="加密密码，保存时本机加密")
@@ -59,6 +65,8 @@ class GenerateFromSourceRequest(BaseModel):
 class ProjectRuntimeRequest(BaseModel):
     model_config = ConfigDict(extra="allow")
 
-    performance_requests: int = Field(default=20, ge=1, le=100, description="快速性能冒烟请求次数")
+    performance_requests: int = Field(
+        default=20, ge=1, le=100, description="快速性能冒烟请求次数"
+    )
     run_jmeter: bool = Field(default=True, description="是否调用 JMeter")
     extra: dict[str, Any] = Field(default_factory=dict, description="预留运行参数")

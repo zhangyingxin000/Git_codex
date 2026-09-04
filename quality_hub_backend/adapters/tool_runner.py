@@ -34,11 +34,19 @@ class ToolRunner:
             stderr=asyncio.subprocess.PIPE,
         )
         try:
-            stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout_seconds)
-        except asyncio.TimeoutError:
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(), timeout=timeout_seconds
+            )
+        except TimeoutError:
             process.kill()
             stdout, stderr = await process.communicate()
-            return ToolResult(command, 124, stdout.decode("utf-8", "replace"), stderr.decode("utf-8", "replace"), report_paths or [])
+            return ToolResult(
+                command,
+                124,
+                stdout.decode("utf-8", "replace"),
+                stderr.decode("utf-8", "replace"),
+                report_paths or [],
+            )
         return ToolResult(
             command=command,
             exit_code=process.returncode or 0,
