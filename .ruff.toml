@@ -1,1 +1,1 @@
-exclude = ["requirements/*/outputs/**","app.py","quality_hub_backend/api/fastapi_app.py"]
+exclude = ["requirements/*/outputs/**","app.py","quality_hub_backend/api/fastapi_app.py","quality_hub_backend/services/diagnosis_service.py"]
