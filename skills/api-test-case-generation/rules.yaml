@@ -1,74 +1,122 @@
-schema_version: '1.0'
+schema_version: '2.0'
 skill: api-test-case-generation
-source_priority:
-  - openapi_schema
-  - captured_request_example
-  - requirement_rule
-  - manual_confirmation
-dimensions:
-  - functional
-  - response_contract
-  - parameter_validation
-  - equivalence_partition
-  - boundary_value
-  - authentication_authorization
-  - exception_handling
-  - reliability_idempotency
-  - concurrency
-  - isolated_security
-boundary_matrix:
-  numeric: [min-1, min, min+1, max-1, max, max+1]
-  length: [minLength-1, minLength, minLength+1, maxLength-1, maxLength, maxLength+1]
-  collection: [empty, one_item, maxItems, maxItems+1]
-protocol_contract:
-  - unsupported_http_method
-  - missing_required_body
-  - mismatched_content_type
-  - malformed_json
-response_contract:
-  - http_status
-  - business_code
-  - required_fields
-  - field_types
-  - enum_values
-  - sensitive_field_leakage
-equivalence_rules:
-  required: [present_valid, missing]
-  type: [valid_type, invalid_type]
-  enum: [each_declared_value, undeclared_value]
-  nullable: [non_null, null]
-  format: [valid_format, invalid_format]
-tool_routing:
-  newman: [functional, parameter_validation, equivalence_partition, boundary_value, authentication_smoke]
-  pytest: [authorization, business_assertion, idempotency, data_evidence, isolated_security]
-  jmeter: [concurrency, repeated_request, performance_interface]
-automation_policy:
-  standard_cases: READY
-  security_cases: REVIEW_REQUIRED
-  mutation_concurrency: REVIEW_REQUIRED
-  missing_schema_or_assertion: NEEDS_DESIGN
-security_policy:
-  environment: isolated_test_only
+scope: interface_test_case_design_only
+
+coverage:
+  normal:
+    weight: 40
+    includes: [required_fields_present, typical_business_data, success_status]
+  exception:
+    weight: 40
+    includes: [authentication_failure, missing_or_wrong_parameter, resource_not_found, business_rule_conflict]
+  boundary:
+    weight: 20
+    includes: [minimum, maximum, empty, oversized_string, special_character, type_confusion]
+
+inference:
+  allow_missing_constraints: true
+  mark_field: inferred
+  defaults:
+    string_min_length: 1
+    string_max_length: 255
+    max_response_ms: 500
+  forbidden:
+    - invent_enum_values
+    - present_inferred_constraint_as_documented
+
+data_generation:
+  phone: '{{random_phone}}'
+  identity_card: GB_11643_valid
+  uuid: '{{random_uuid}}'
+  amount: decimal_2_places
+  time: '{{now_iso}}'
+  enum: '{{random_enum(allowed_values)}}'
+  email: '{{random_email}}'
+  text: mixed_chinese_english_spaces_and_punctuation
+
+assertion_order:
+  - protocol
+  - schema
+  - business_logic
+  - db_check
+  - performance
+assertion_requirements:
+  response_headers: [Content-Type, X-Request-Id_when_declared]
+  arrays: validate_length
+  pagination: validate_items_and_total
+  forbidden_shortcuts: [only_code_zero, only_http_200]
+
+mandatory_exception_library:
+  - empty_payload
+  - one_megabyte_field
+  - unicode_null_character
+  - type_confusion
+  - sql_injection
+  - xss
+  - duplicate_submission
+  - oversized_integer_id
+  - negative_amount
+  - timeout_when_supported
+
+protocol_detection:
+  rest:
+    signals: ['/api/', GET, POST, PUT, PATCH, DELETE]
+    assertions: [http_status, method, path_parameters, query_parameters]
+  grpc:
+    signals: ['.proto', service]
+    assertions: [grpc_status, response_message]
+  graphql:
+    signals: ['query {', 'mutation {', schema]
+    assertions: [field_errors, nested_depth, data_shape]
+  ws:
+    signals: ['ws://', 'wss://', 'Upgrade: websocket']
+    assertions: [message_sequence, ping_pong, disconnect_reconnect, close_code]
+  file:
+    signals: [application/octet-stream]
+    assertions: [file_size, md5, chunk_integrity]
+  message_queue:
+    signals: [topic, queue, producer, consumer, message_schema]
+    assertions: [publish_ack, message_key, headers, ordering, retry, dead_letter, consumption]
+
+special_handling:
+  incomplete_constraints: infer_and_mark
+  circular_dependency: mark_cycle_and_recommend_mock
+  missing_database_connection: skip_db_check_and_request_once
+  more_than_ten_interfaces: core_crud_first
+  third_party_callback: generate_mock_expectation
+
+functions:
+  - random_int
+  - random_phone
+  - random_uuid
+  - now_iso
+  - timestamp
+  - random_string
+  - random_email
+  - random_enum
+
+case_contract:
+  id_pattern: '^TC_[A-Z0-9_]+_[0-9]{3}_(normal|exception|boundary)$'
+  required_fields: [case_id, description, meta, context, payload, assertions, cleanup, tags]
+
+quality_gate:
+  minimum_exception_types: 5
+  require_amount_sum_rule: true
+  require_cleanup_for_create: true
+  require_concurrency_or_duplicate: true
+  require_all_required_response_fields_in_schema: true
+  require_iso_8601_utc: true
+  require_all_variables_defined: true
+  require_dependency_order: true
+  minimum_performance_assertion_coverage_percent: 50
+
+safety:
+  review_required: [one_megabyte_field, unicode_null_character, sql_injection, xss, duplicate_submission, timeout, mutation, concurrency]
+  isolated_test_environment_only: true
   production_execution: forbidden
-  sensitive_values_in_output: forbidden
-output_contract:
-  scope: interface_test_cases_only
-  must_not_overwrite: outputs/structured-test-cases.*
+
+output:
   formats: [json, markdown, xlsx]
-  required_summary: [interfaces, cases, dimensions, tools, review_required]
-  required_case_fields:
-    - case_id
-    - operation_id
-    - interface
-    - method
-    - path
-    - dimension
-    - design_technique
-    - equivalence_partition
-    - request_mutation
-    - preconditions
-    - steps
-    - expected_result
-    - recommended_tool
-    - automation_status
-    - security_policy
+  roots:
+    design: outputs/api-test-cases
+    executable: outputs/interface-tests

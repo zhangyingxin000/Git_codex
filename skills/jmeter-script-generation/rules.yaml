@@ -1,6 +1,20 @@
 schema_version: "1.0"
 skill: jmeter-script-generation
 purpose: "从需求包和结构化测试用例生成可维护的 JMeter 执行资产"
+execution_modes:
+  jmeter_scenario:
+    purpose: "复杂业务流程、状态机、多角色、多账号和接口间变量传递"
+    output_root: "outputs/jmeter/scenario"
+    report_focus: [step_status, business_state, role_ownership, extracted_variables, data_evidence]
+  jmeter_performance:
+    purpose: "基准、负载、稳定性、并发和压力测试"
+    output_root: "outputs/jmeter/performance"
+    profiles: [smoke, baseline, load, concurrency, spike, stress, soak]
+    report_focus: [response_time, p50, p90, p95, p99, throughput, tps_qps, concurrent_users, error_rate, load_stage, capacity_inflection, recovery]
+separation_rules:
+  - "业务场景正确性与性能容量不得共用同一个线程组结论"
+  - "场景JMX、性能JMX、运行批次和报告必须分别保存"
+  - "复杂链路作为性能负载模型时必须复制为独立性能计划并声明profile"
 input_contract:
   required:
     - requirement_package_id
@@ -32,6 +46,16 @@ jmeter_components:
   jsr223_assertion: "做严格业务断言、状态流转和变量归属校验"
   jdbc_sampler: "只读查询 DB 证据，禁止写业务库"
   listener: "GUI脚本包含查看树、汇总、聚合、JTL写入"
+generation_boundary:
+  skill: "解析输入、选择Profile并生成受约束JMX"
+  gate: "结构校验和一次确定性格式修正，不得改变业务语义"
+  mcp: "只导入校验通过的JMX、执行并回收JTL/HTML/执行元数据"
+gate_contract:
+  allowed_corrections: [json_extractor_element, blank_script_filename, json_match_numbers]
+  forbidden_changes: [thread_groups, requests, endpoints, payloads, assertions, load_settings, thresholds, business_order]
+  correction_passes: 1
+  on_remaining_error: BLOCKED
+  audit: [original_sha256, corrected_sha256, correction_list, semantic_change]
 assertion_rules:
   - "HTTP 状态码"
   - "业务 code/message"
@@ -50,7 +74,13 @@ performance_metrics:
   - p95_ms
   - p99_ms
   - throughput_rps
+  - request_throughput_rps
+  - transaction_throughput_tps
   - response_codes
+  - concurrent_users
+  - load_stage
+  - capacity_inflection
+  - recovery_status
 output_contract:
   - "JMX 脚本"
   - "启动脚本或启动命令"
@@ -58,3 +88,9 @@ output_contract:
   - "运行参数说明"
   - "JTL 和 HTML 报告归档位置"
   - "已知阻断和人工待确认项"
+baseline_contract:
+  states: [unset, candidate, active, invalid]
+  comparison_results: [not_compared, pass, improved, regressed]
+  matching_keys: [environment, profile, target_fingerprint]
+  approval: manual
+  first_run: candidate

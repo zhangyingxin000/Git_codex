@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "project_id": "prj_e3515817c4",
+  "package_id": "salary-trade",
+  "created_at": "2026-09-06T19:56:10+08:00",
+  "source_kind": "skill_constrained_template",
+  "generation_contract": {
+    "name": "jmeter-script-generation",
+    "schema_version": "1.0",
+    "rules_path": "skills/jmeter-script-generation/rules.yaml",
+    "profile": "baseline",
+    "adapter": "deterministic_template",
+    "upstream_reference": {
+      "name": "jmeter-ai-generator",
+      "alias": "jmeter-generator",
+      "source": "https://github.com/ShanNanBean/jmeter-ai-generator-skill",
+      "revision": "a7b37bcb4e86ff432f31fbf8f8c73d50d2910082",
+      "contract": "SKILL.md"
+    }
+  },
+  "status": "PASS_WITH_WARNINGS",
+  "corrections": [],
+  "blockers": [],
+  "warnings": [
+    {
+      "code": "request_only_no_tps",
+      "message": "This plan measures request throughput only; business TPS remains unavailable until a validated multi-step transaction is selected."
+    }
+  ],
+  "checks": {
+    "xml": true,
+    "tree_structure": true,
+    "thread_groups": true,
+    "http_samplers": true,
+    "sampler_method_and_path": true,
+    "credentials_runtime_only": true,
+    "portable_paths": true,
+    "assertions_present": true,
+    "business_transaction_present": false,
+    "transaction_mode": "request_only",
+    "synchronizing_timer_present": false
+  },
+  "summary": {
+    "thread_groups": 1,
+    "http_samplers": 1,
+    "assertions": 2,
+    "transactions": 0,
+    "synchronizing_timers": 0,
+    "defined_variables": 86,
+    "used_variables": 20,
+    "approved_runtime_paths": 0
+  },
+  "audit": {
+    "correction_passes": 1,
+    "original_sha256": "eec96dd204c3dbd11a177d710dbaabec66edada41ed88b4e5b2eae01b9a2a675",
+    "corrected_sha256": "eec96dd204c3dbd11a177d710dbaabec66edada41ed88b4e5b2eae01b9a2a675",
+    "semantic_change": false,
+    "allowed_corrections": [
+      "json_extractor_element",
+      "blank_script_filename",
+      "json_match_numbers"
+    ]
+  },
+  "skills": {
+    "generation": {
+      "name": "jmeter-ai-generator",
+      "alias": "jmeter-generator",
+      "source": "https://github.com/ShanNanBean/jmeter-ai-generator-skill",
+      "revision": "a7b37bcb4e86ff432f31fbf8f8c73d50d2910082",
+      "contract": "SKILL.md"
+    },
+    "correlation_and_correction": {
+      "name": "Smart-GenAI-Powered-JMeter",
+      "source": "https://github.com/aditiaa2578/Smart-GenAI-Powered-JMeter",
+      "revision": "551cf99943988b3fa2b26c207280271b552ed60b",
+      "license": "MIT",
+      "packaging": "jmeter-plugin",
+      "agent_skill_installable": false,
+      "reason": "The upstream repository has no SKILL.md; its correlation and correction rules are used as provenance for the deterministic pre-execution gate."
+    },
+    "execution": {
+      "name": "jmeter-mcp-server",
+      "version": "0.3.1",
+      "responsibility": "Import an approved JMX, execute it, and collect JTL/HTML/analysis artifacts only."
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": "2.0",
+  "name": "Soulfree测试服 - salary-trade",
+  "metadata": {
+    "project_id": "prj_e3515817c4",
+    "package_id": "salary-trade",
+    "source": "skill_constrained_template",
+    "generation_skill": {
+      "name": "jmeter-script-generation",
+      "schema_version": "1.0",
+      "rules_path": "skills/jmeter-script-generation/rules.yaml",
+      "profile": "stress",
+      "adapter": "deterministic_template",
+      "upstream_reference": {
+        "name": "jmeter-ai-generator",
+        "alias": "jmeter-generator",
+        "source": "https://github.com/ShanNanBean/jmeter-ai-generator-skill",
+        "revision": "a7b37bcb4e86ff432f31fbf8f8c73d50d2910082",
+        "contract": "SKILL.md"
+      }
+    },
+    "correction_skill": {
+      "name": "Smart-GenAI-Powered-JMeter",
+      "source": "https://github.com/aditiaa2578/Smart-GenAI-Powered-JMeter",
+      "revision": "551cf99943988b3fa2b26c207280271b552ed60b",
+      "license": "MIT",
+      "packaging": "jmeter-plugin",
+      "agent_skill_installable": false,
+      "reason": "The upstream repository has no SKILL.md; its correlation and correction rules are used as provenance for the deterministic pre-execution gate."
+    },
+    "preflight_path": "requirements/salary-trade/outputs/jmeter/load-test/stage-04-capacity-search.preflight.json",
+    "preflight_status": "PASS",
+    "execution_engine": "jmeter-mcp-server@0.3.1",
+    "execution_mode": "import_only"
+  },
+  "source_jmx": "requirements/salary-trade/outputs/jmeter/load-test/stage-04-capacity-search.jmx",
+  "thresholds": {
+    "max_error_rate_pct": 1.0,
+    "max_p95_ms": 2000
+  }
+}

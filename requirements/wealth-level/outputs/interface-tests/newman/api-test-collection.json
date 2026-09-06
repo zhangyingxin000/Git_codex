@@ -1,0 +1,2235 @@
+{
+  "info": {
+    "name": "财富等级 接口测试集合",
+    "description": "由接口测试用例设计编译生成；不包含复杂业务场景和性能测试计划。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://test2westarlive.gzxchate.com/"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const pad = (n) => String(n).padStart(2, '0');",
+          "pm.collectionVariables.set('random_phone', '1' + String(300 + Math.floor(Math.random() * 100)).padStart(3, '0') + String(Math.floor(Math.random() * 10000000)).padStart(7, '0'));",
+          "pm.collectionVariables.set('random_email', 'test_' + Math.random().toString(36).slice(2, 10) + '@example.com');",
+          "pm.collectionVariables.set('random_uuid', 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));",
+          "pm.collectionVariables.set('now_iso', new Date().toISOString());",
+          "pm.collectionVariables.set('timestamp', String(Math.floor(Date.now() / 1000)));",
+          "pm.collectionVariables.set('random_boolean', Math.random() >= 0.5 ? 'true' : 'false');"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "功能",
+      "item": [
+        {
+          "name": "[TC_WEALTH_LEVEL_001_normal] 获取财富等级经验及等级权益：有效等价类正常请求",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "返回成功状态，响应Schema及核心业务结果正确。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_001_normal\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_001_normal",
+            "dimension": "功能",
+            "partition": "valid",
+            "mutation": {
+              "action": "use_valid_baseline",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "响应契约",
+      "item": [
+        {
+          "name": "[TC_WEALTH_LEVEL_002_normal] 获取财富等级经验及等级权益：响应状态与Schema契约",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "HTTP状态、业务码、必填响应字段、字段类型和枚举均符合OpenAPI契约，不泄露未声明敏感字段。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_002_normal\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }",
+                  "pm.test(autotestCaseId + \" 响应为合法JSON对象\", function () { pm.expect(responseJson).to.be.an(\"object\"); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_002_normal",
+            "dimension": "响应契约",
+            "partition": "valid",
+            "mutation": {
+              "action": "validate_response_contract",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "异常处理",
+      "item": [
+        {
+          "name": "[TC_WEALTH_LEVEL_003_exception] 获取财富等级经验及等级权益：使用不支持的HTTP方法",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "返回405或明确的业务拒绝，不执行原接口业务写入。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_003_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_003_exception",
+            "dimension": "异常处理",
+            "partition": "invalid",
+            "mutation": {
+              "action": "use_unsupported_http_method",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_058_exception] 获取财富等级经验及等级权益：空请求或空参数",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get",
+            "description": "返回400或明确的参数缺失错误，不产生500和部分业务写入。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_058_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_058_exception",
+            "dimension": "异常处理",
+            "partition": "invalid",
+            "mutation": {
+              "action": "empty_request",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "参数校验",
+      "item": [
+        {
+          "name": "[TC_WEALTH_LEVEL_004_exception] 获取财富等级经验及等级权益：缺失必填字段 query.ticket",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口明确拒绝请求，不产生错误业务数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_004_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_004_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "remove",
+              "field": "query.ticket",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_005_exception] 获取财富等级经验及等级权益：query.ticket 非法null",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=None&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口拒绝必填且不可为空字段的null值，不产生500或脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_005_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_005_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": null,
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_007_exception] 获取财富等级经验及等级权益：query.ticket 类型错误",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=123456&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口返回参数错误，不产生500和业务脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_007_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_007_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": 123456,
+              "expected_type": "string",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_014_exception] 获取财富等级经验及等级权益：缺失必填字段 query.uid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口明确拒绝请求，不产生错误业务数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_014_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_014_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "remove",
+              "field": "query.uid",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_015_exception] 获取财富等级经验及等级权益：query.uid 非法null",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=None&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口拒绝必填且不可为空字段的null值，不产生500或脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_015_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_015_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": null,
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_017_exception] 获取财富等级经验及等级权益：query.uid 类型错误",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=123456&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口返回参数错误，不产生500和业务脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_017_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_017_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": 123456,
+              "expected_type": "string",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_027_exception] 获取财富等级经验及等级权益：query.language 类型错误",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=123456&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口返回参数错误，不产生500和业务脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_027_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_027_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": 123456,
+              "expected_type": "string",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_035_exception] 获取财富等级经验及等级权益：query.systemLanguage 类型错误",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=123456&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口返回参数错误，不产生500和业务脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_035_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_035_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": 123456,
+              "expected_type": "string",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_043_exception] 获取财富等级经验及等级权益：query.appVersion 类型错误",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=123456&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口返回参数错误，不产生500和业务脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_043_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_043_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": 123456,
+              "expected_type": "string",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_051_exception] 获取财富等级经验及等级权益：query.deviceType 类型错误",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=123456",
+            "description": "接口返回参数错误，不产生500和业务脏数据。",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"__debug\": true}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_051_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_051_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": 123456,
+              "expected_type": "string",
+              "exploratory_injection": {
+                "field": "__debug",
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_059_exception] 获取财富等级经验及等级权益：通用类型混淆",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=123456&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "字符串、数字或布尔类型混淆时应返回明确参数错误。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_059_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_059_exception",
+            "dimension": "参数校验",
+            "partition": "invalid",
+            "mutation": {
+              "action": "type_confusion",
+              "field": "query.ticket",
+              "value": 123456,
+              "expected_type": "string"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "边界值",
+      "item": [
+        {
+          "name": "[TC_WEALTH_LEVEL_006_boundary] 获取财富等级经验及等级权益：query.ticket 空值边界",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口按Schema和业务规则接受或明确拒绝，不能产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_006_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_006_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": ""
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_008_boundary] 获取财富等级经验及等级权益：query.ticket minLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_008_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_008_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": "",
+              "boundary": "minLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_009_boundary] 获取财富等级经验及等级权益：query.ticket minLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=a&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_009_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_009_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": "a",
+              "boundary": "minLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_010_boundary] 获取财富等级经验及等级权益：query.ticket minLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=aa&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_010_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_010_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": "aa",
+              "boundary": "minLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_011_boundary] 获取财富等级经验及等级权益：query.ticket maxLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_011_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_011_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_012_boundary] 获取财富等级经验及等级权益：query.ticket maxLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_012_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_012_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_013_boundary] 获取财富等级经验及等级权益：query.ticket maxLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_013_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_013_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.ticket",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_016_boundary] 获取财富等级经验及等级权益：query.uid 空值边界",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口按Schema和业务规则接受或明确拒绝，不能产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_016_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_016_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": ""
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_018_boundary] 获取财富等级经验及等级权益：query.uid minLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_018_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_018_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": "",
+              "boundary": "minLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_019_boundary] 获取财富等级经验及等级权益：query.uid minLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=a&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_019_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_019_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": "a",
+              "boundary": "minLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_020_boundary] 获取财富等级经验及等级权益：query.uid minLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=aa&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_020_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_020_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": "aa",
+              "boundary": "minLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_021_boundary] 获取财富等级经验及等级权益：query.uid maxLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_021_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_021_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_022_boundary] 获取财富等级经验及等级权益：query.uid maxLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_022_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_022_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_023_boundary] 获取财富等级经验及等级权益：query.uid maxLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_023_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_023_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.uid",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_026_boundary] 获取财富等级经验及等级权益：query.language 空值边界",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口按Schema和业务规则接受或明确拒绝，不能产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_026_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_026_boundary",
+            "dimension": "边界值",
+            "partition": "boundary",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": ""
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_028_boundary] 获取财富等级经验及等级权益：query.language minLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_028_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_028_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": "",
+              "boundary": "minLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_029_boundary] 获取财富等级经验及等级权益：query.language minLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=a&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_029_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_029_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": "a",
+              "boundary": "minLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_030_boundary] 获取财富等级经验及等级权益：query.language minLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=aa&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_030_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_030_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": "aa",
+              "boundary": "minLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_031_boundary] 获取财富等级经验及等级权益：query.language maxLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_031_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_031_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_032_boundary] 获取财富等级经验及等级权益：query.language maxLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_032_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_032_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_033_boundary] 获取财富等级经验及等级权益：query.language maxLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_033_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_033_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.language",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_034_boundary] 获取财富等级经验及等级权益：query.systemLanguage 空值边界",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口按Schema和业务规则接受或明确拒绝，不能产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_034_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_034_boundary",
+            "dimension": "边界值",
+            "partition": "boundary",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": ""
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_036_boundary] 获取财富等级经验及等级权益：query.systemLanguage minLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_036_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_036_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": "",
+              "boundary": "minLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_037_boundary] 获取财富等级经验及等级权益：query.systemLanguage minLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=a&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_037_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_037_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": "a",
+              "boundary": "minLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_038_boundary] 获取财富等级经验及等级权益：query.systemLanguage minLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=aa&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_038_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_038_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": "aa",
+              "boundary": "minLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_039_boundary] 获取财富等级经验及等级权益：query.systemLanguage maxLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_039_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_039_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_040_boundary] 获取财富等级经验及等级权益：query.systemLanguage maxLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_040_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_040_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_041_boundary] 获取财富等级经验及等级权益：query.systemLanguage maxLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_041_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_041_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.systemLanguage",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_042_boundary] 获取财富等级经验及等级权益：query.appVersion 空值边界",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "接口按Schema和业务规则接受或明确拒绝，不能产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_042_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_042_boundary",
+            "dimension": "边界值",
+            "partition": "boundary",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": ""
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_044_boundary] 获取财富等级经验及等级权益：query.appVersion minLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_044_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_044_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": "",
+              "boundary": "minLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_045_boundary] 获取财富等级经验及等级权益：query.appVersion minLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=a&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_045_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_045_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": "a",
+              "boundary": "minLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_046_boundary] 获取财富等级经验及等级权益：query.appVersion minLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=aa&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_046_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_046_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": "aa",
+              "boundary": "minLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_047_boundary] 获取财富等级经验及等级权益：query.appVersion maxLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_047_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_047_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_048_boundary] 获取财富等级经验及等级权益：query.appVersion maxLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_048_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_048_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_049_boundary] 获取财富等级经验及等级权益：query.appVersion maxLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_049_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_049_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.appVersion",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_050_boundary] 获取财富等级经验及等级权益：query.deviceType 空值边界",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=",
+            "description": "接口按Schema和业务规则接受或明确拒绝，不能产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_050_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_050_boundary",
+            "dimension": "边界值",
+            "partition": "boundary",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": ""
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_052_boundary] 获取财富等级经验及等级权益：query.deviceType minLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_052_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_052_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": "",
+              "boundary": "minLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_053_boundary] 获取财富等级经验及等级权益：query.deviceType minLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=a",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_053_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_053_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": "a",
+              "boundary": "minLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_054_boundary] 获取财富等级经验及等级权益：query.deviceType minLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=aa",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_054_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_054_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": "aa",
+              "boundary": "minLength+1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_055_boundary] 获取财富等级经验及等级权益：query.deviceType maxLength-1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_055_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_055_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength-1"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_056_boundary] 获取财富等级经验及等级权益：query.deviceType maxLength",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_056_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" HTTP请求成功\", function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\")) { pm.test(autotestCaseId + \" 业务码成功\", function () { pm.expect([0, 200, \"0\", \"200\"]).to.include(responseJson.code); }); }"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_056_boundary",
+            "dimension": "边界值",
+            "partition": "valid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_057_boundary] 获取财富等级经验及等级权益：query.deviceType maxLength+1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "description": "边界归属符合Schema；越界值被拒绝且不产生500。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_057_boundary\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_057_boundary",
+            "dimension": "边界值",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace",
+              "field": "query.deviceType",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "boundary": "maxLength+1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "认证授权",
+      "item": [
+        {
+          "name": "[TC_WEALTH_LEVEL_067_exception] 获取财富等级经验及等级权益：缺失认证凭证",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "返回401或403，不返回受保护业务数据。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_067_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });",
+                  "pm.test(autotestCaseId + \" 未返回受保护成功数据\", function () { const denied = [401, 403].includes(pm.response.code) || (responseJson && ![0, 200, \"0\", \"200\"].includes(responseJson.code)); pm.expect(Boolean(denied)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_067_exception",
+            "dimension": "认证授权",
+            "partition": "invalid",
+            "mutation": {
+              "action": "remove_auth"
+            }
+          }
+        },
+        {
+          "name": "[TC_WEALTH_LEVEL_068_exception] 获取财富等级经验及等级权益：无效或伪造认证凭证",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/level/exeperience/v2/get?ticket=invalid-token&uid=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&language=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&systemLanguage=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&appVersion=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82&deviceType=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95+Test+data%EF%BC%8C%E6%AD%A3%E5%B8%B8%E5%80%BC%E3%80%82",
+            "description": "返回401或403，不泄露凭证校验细节。"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const autotestCaseId = \"TC_WEALTH_LEVEL_068_exception\";",
+                  "pm.test(autotestCaseId + \" 不出现服务端未处理异常\", function () { pm.expect(pm.response.code).to.be.below(500); });",
+                  "let responseJson = null;",
+                  "try { responseJson = pm.response.json(); } catch (e) { responseJson = null; }",
+                  "pm.test(autotestCaseId + \" 无效输入被明确处理\", function () { const rejectedByHttp = pm.response.code >= 400 && pm.response.code < 500; const rejectedByBusiness = responseJson && Object.prototype.hasOwnProperty.call(responseJson, \"code\") && ![0, 200, \"0\", \"200\"].includes(responseJson.code); pm.expect(Boolean(rejectedByHttp || rejectedByBusiness)).to.eql(true); });",
+                  "pm.test(autotestCaseId + \" 未返回受保护成功数据\", function () { const denied = [401, 403].includes(pm.response.code) || (responseJson && ![0, 200, \"0\", \"200\"].includes(responseJson.code)); pm.expect(Boolean(denied)).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "x-autotest-case": {
+            "case_id": "TC_WEALTH_LEVEL_068_exception",
+            "dimension": "认证授权",
+            "partition": "invalid",
+            "mutation": {
+              "action": "replace_auth",
+              "value": "invalid-token"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -42,7 +42,12 @@ class ProjectDashboardService:
                 (project_id,),
             ),
             "trace_links": self._repository.rows(
-                "SELECT * FROM trace_links WHERE project_id=? ORDER BY confidence DESC",
+                """
+                SELECT id,requirement_id,target_type,target_id,confidence,reason,selected,sort_order
+                FROM trace_links
+                WHERE project_id=? AND target_type='endpoint'
+                ORDER BY confidence DESC
+                """,
                 (project_id,),
             ),
             "points": self._repository.rows(

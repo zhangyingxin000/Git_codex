@@ -35,47 +35,47 @@
   },
   "artifacts": {
     "account_model": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
+      "path": "requirements/salary-trade/account_model.yaml",
       "exists": true,
-      "updated_at": "2026-09-02T18:50:02+08:00"
+      "updated_at": "2026-09-05T00:37:45+08:00"
     },
     "resource_manifest": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\resource_manifest.yaml",
+      "path": "requirements/salary-trade/resource_manifest.yaml",
       "exists": true,
-      "updated_at": "2026-09-02T17:17:32+08:00"
+      "updated_at": "2026-09-06T17:31:21+08:00"
     },
     "test_cases": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-manual-test-cases.md",
+      "path": "outputs/salary-trade-manual-test-cases.md",
       "exists": false,
       "updated_at": ""
     },
     "jmeter": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-state-machine.jmx",
+      "path": "outputs/salary-trade-state-machine.jmx",
       "exists": true,
-      "updated_at": "2026-09-03T18:06:39+08:00"
+      "updated_at": "2026-09-04T21:17:18+08:00"
     },
     "launcher": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\open-salary-trade-state-machine.ps1",
+      "path": "outputs/open-salary-trade-state-machine.ps1",
       "exists": true,
-      "updated_at": "2026-09-03T18:06:35+08:00"
+      "updated_at": "2026-09-04T21:15:51+08:00"
     },
     "manifest": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-jmeter-manifest.json",
+      "path": "outputs/salary-trade-case-jmeter-manifest.json",
       "exists": true,
-      "updated_at": "2026-09-02T18:50:02+08:00"
+      "updated_at": "2026-09-05T00:37:51+08:00"
     },
     "applicant_csv": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
+      "path": "data/salary-trade-applicants.csv",
       "exists": true,
       "updated_at": "2026-08-31T18:49:49+08:00"
     },
     "proxy_csv": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-proxies.csv",
+      "path": "data/salary-trade-proxies.csv",
       "exists": true,
       "updated_at": "2026-09-02T11:32:16+08:00"
     },
     "jtl": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\reports\\latest\\salary-trade-result.jtl",
+      "path": "reports/latest/salary-trade-result.jtl",
       "exists": false,
       "updated_at": ""
     }
@@ -97,5 +97,5 @@
     "redis_patterns": [],
     "scope_reason": "工资代理结算只围绕代理白名单、订单主表、订单日志和投诉凭证取证；身份认证由申请人/代理CSV或登录接口提供，Redis不参与本需求执行。"
   },
-  "updated_at": "2026-09-04T16:32:37+08:00"
+  "updated_at": "2026-09-06T17:34:25+08:00"
 }

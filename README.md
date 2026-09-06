@@ -114,7 +114,11 @@ cd <AutoTest-AI项目目录>
 
 ## 工程维护入口
 
-平台已经开始把旧的单文件实现渐进拆分为可维护模块：后端采用 `routes / handlers / services / startup / config` 边界，前端按 `services / components / routers` 拆分；长时间执行通过 SQLite 持久化后台任务队列运行。详细职责、任务状态流转和新增功能放置规则见 [工程架构说明](docs/engineering-architecture.md)。
+平台已经开始把旧的单文件实现渐进拆分为可维护模块：后端采用 `routes / handlers / services / adapters / repositories / startup / config` 边界，前端按 `services / components / routers` 拆分；长时间执行通过 SQLite 持久化后台任务队列运行。
+
+核心技术栈：Python 3.12+、FastAPI、Uvicorn、Pydantic、SQLAlchemy/Alembic、SQLite、PyYAML、PyMySQL、Redis Client、httpx、pytest，以及外部执行工具 Newman、Apache JMeter、`jmeter-mcp-server`、Apifox CLI 和可选 Allure。浏览器端目前使用原生 HTML/CSS/JavaScript，不需要前端构建步骤。
+
+详细技术选型、模块调用关系、需求包数据流、后台任务状态和工作台收紧方案见 [工程架构说明](docs/engineering-architecture.md)。
 
 路由与测试覆盖矩阵位于 `docs/route-test-coverage.md` 和 `docs/route-test-coverage.json`。它会区分普通测试已覆盖、尚未映射以及必须依赖 JMeter/Newman/MySQL/Redis 的集成验证，避免把外部工具路由误报为单元测试已覆盖。
 
@@ -158,11 +162,11 @@ AutoTest AI 的定位是 AI 自动化质量中枢，不是替代 JMeter、Postma
 2. 生成测试点、测试用例和结构化测试用例。
 3. 生成当前需求包的 `account_model.yaml`，判断单账号、多角色、多流程槽位和 CSV/运行参数策略。
 4. 维护 `resource_manifest.yaml` 并执行资源预检，确认账号文件、数据库表、Redis Key、运行参数和接口变量依赖是否齐全。
-5. 按 JMeter Skill 规则生成 Newman、JMeter、pytest 执行资产。
-6. 执行 Newman/JMeter，并把原始报告回收到当前需求包。
+5. 按 JMeter Skill 规则把用例、OpenAPI和性能Profile生成标准JMX，并通过静态门禁校验。
+6. 通过 JMeter MCP 加载已通过门禁的JMX进行非GUI执行，并把JTL、原生HTML和分析结果回收到当前需求包。
 7. 用接口响应、DB/Redis证据、JMeter/Newman结果生成 AI 复盘。
 
-这条链路的原则是：测试用例决定“测什么”，账号模型决定“用谁测”，JMeter/Newman/pytest 负责“怎么执行”，DB/Redis 元数据负责“证据是否真实存在”，AI 复盘负责“把失败原因讲清楚”。
+这条链路的原则是：测试用例决定“测什么”，账号模型决定“用谁测”，JMeter Skill和场景计划负责生成并约束JMX，JMeter MCP只负责加载与非GUI执行，DB/Redis元数据负责“证据是否真实存在”，AI复盘负责“把失败原因讲清楚”。
 
 ## 需求资源登记与预检
 
@@ -219,6 +223,8 @@ JMeter 生成规则位于 `skills/jmeter-script-generation/SKILL.md` 和 `skills
 
 JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生成当前需求包的 `account_model.yaml`，再由 JMeter Skill 决定是否启用单账号、双角色、多流程槽位、CSV、登录接口、Redis 登录态或 MySQL 只读证据。
 
+平台只暴露一个默认 JMeter 执行内核：`jmeter-mcp-server@0.3.1`。JMX统一由JMeter Skill或受约束模板生成，静态门禁最多做一次格式修正；MCP工作流只保存`source_jmx`并负责执行和报告回收。JMeter GUI仅用于人工查看和维护脚本，不作为平台默认执行入口。
+
 多账号预检会输出申请人槽位、国家/币种组合、代理匹配情况和凭证来源摘要，用于执行前排查 401、50017、代理白名单缺失和账号复用问题。
 
 ## 需求测试用例生成 Skill
@@ -226,6 +232,12 @@ JMeter 不直接猜测账号来源。平台会先根据需求和测试用例生�
 业务需求用例规则位于 `skills/requirement-test-case-generation/SKILL.md` 和 `rules.yaml`。它从需求文档、验收标准、流程图和业务规则中识别角色、权限、业务对象、状态机、主流程、分支、异常、超时、补偿、幂等、数据一致性和人工检查点，输出到当前需求包的 `outputs/structured-test-cases.*`。
 
 需求用例以需求包为维护单位。Newman、JMeter、pytest 和人工验证可以执行不同部分，但不会把同一个需求拆成多套无法维护的用例。生成后的用例继续驱动账号模型、资源预检、候选证据规则和执行计划；已维护的 `account_model.yaml`、`resource_manifest.yaml`、`evidence_rules.yaml` 和正式执行计划不会被自动覆盖。
+
+平台生成结构化需求用例时会自动读取该 Skill，并把本次实际使用的规则与质量门禁写入 `outputs/requirement-test-case-skill-contract.json`。因此 Skill 不是只供阅读的文档，而是每次生成资产的可追溯输入。
+
+需求发生变化时，可在工作台“结构化测试用例”区域选择回归范围，按需求ID、接口、数据库表、Redis Key、角色、状态或业务关键词筛选。平台将直接命中用例、共享需求/接口/场景/证据的关联用例以及可选P0关键路径写入 `outputs/regression-selection.json`，不会裁剪或覆盖完整用例集；没有变更范围时会直接阻断选择。
+
+测试用例生命周期与执行结果分开维护：`DRAFT` 表示待评审，`ACTIVE` 表示可以进入回归和正式执行，`DEPRECATED` 表示保留历史但默认不再执行。新生成用例默认是 `DRAFT`，升级前的历史用例会一次性迁移为 `ACTIVE`。回归选择器默认只读取 `ACTIVE`，工作台可按需查看、恢复或显式包含草稿和废弃用例。
 
 职责边界：需求测试用例验证业务流程、角色和状态结果；接口测试用例验证单接口协议、参数和Schema；性能测试验证基准、负载、稳定性、并发和压力容量。三类资产可以互相引用，但分别设计、执行和归档。
 
@@ -409,6 +421,24 @@ pytest 报告会优先读取 `manifest.json` 里声明的 `orchestration.primary
 - 代理人可以复用，但必须先由数据库白名单确认国家和币种匹配，再由 CSV、登录接口或 Redis 补齐真实 ticket。
 - token/ticket 必须校验 uid 归属，不允许拿 A 用户的 ticket 跑 B 用户接口。
 - 未知角色或新业务约束先写入当前需求包 `extensions.pending`，由测试确认后再生效；多次复用后再升级到通用 Skill。
+
+## 报告与回归治理
+
+报告中心按“需求包 -> 运行批次 -> 报告类型”建立索引。每个需求包同时维护 `reports/report-index.json` 和 `reports/latest/report-index.json`；默认保留最近 10 个完整批次或 30 天内的报告，置顶批次和基线批次受保护。`report-retention-preview` 只生成清理候选，不会自动删除 JMX、测试用例、CSV、配置或需求文档。
+
+性能结果在 `run-context.json` 中维护独立的 `performance.baseline` 和 `performance.comparison`。首次有效结果只会成为候选基线，必须由报告中心人工批准后才能参与历史对比；环境、Profile或目标接口指纹不同的批次不会强行比较。JTL可以确认响应时间、错误率、响应码、RPS和慢请求，但没有DB、Redis、APM或主机监控证据时，AI只能给出待验证的瓶颈假设，不能直接断言根因。报告中心同时展示外部监控证据的 `COMPLETE/PARTIAL/MISSING` 状态和已接入分类。
+
+RPS 与 TPS 采用严格分离口径：单接口或未选择场景时只发布请求 RPS；只有 `execution-plan.json` 中明确定义、通过预检且至少包含两个有序步骤的业务事务，才允许生成 Transaction Controller 并发布 TPS。即使旧 JTL 里存在 `TX::` 父采样，当前预案没有合法事务上下文时也不会将其计入 TPS。
+
+性能复盘参考 PerfAI 的“JTL解析 -> 指标摘要 -> AI诊断 -> 报告”思路，但移除了 Streamlit、固定60秒吞吐量和对 Azure OpenAI 的硬绑定。平台直接按JTL真实采样窗口计算P50/P90/P95/P99、RPS、错误分类和慢接口，再输出性能评估、已确认慢点、待验证瓶颈假设、证据需求、可执行建议及验证方法。外部模型分析保持显式开关；未授权时只执行本地确定性诊断，不向外部API发送接口或性能数据。
+
+回归选择器会优先读取当前需求包 OpenAPI，并与上一版或已保存基线比较；有真实上一版时，也会比较需求文本、数据库表元数据和 Redis Key 元数据。首次 OpenAPI 按全量接口建立范围，缺少上一版的其他来源只告警，不臆造变更。选择结果写入 `outputs/regression-selection.json`，来源基线写入 `outputs/regression-source-baseline.json`。
+
+测试用例生命周期为 `DRAFT`、`ACTIVE`、`DEPRECATED`。工作台支持勾选后批量激活、退回草稿或废弃；每次变更都会记录前后状态、备注、操作者和批次号。只有 `ACTIVE` 用例默认进入回归和真实执行。
+
+AI 复盘的脱敏结论会写入 `outputs/ai-review-conclusions.json`，最多保留 20 次。下一轮复盘会读取最近一次结论，用于对比未解决根因和行动项；原始响应、ticket、数据库密码等敏感证据不会写入复盘记忆。
+
+JMeter 资产使用 `project_root` 运行属性定位 CSV、运行参数和 JTL。平台打开或执行 JMeter 时会自动传入当前项目目录；独立 PowerShell 启动脚本从自身位置计算项目目录，并通过 `AUTOTEST_JMETER`、`AUTOTEST_JMETER_HOME` 或系统命令寻找 JMeter，不依赖固定用户名或盘符。
 
 ## Git 版本管理
 

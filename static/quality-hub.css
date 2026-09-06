@@ -31,6 +31,12 @@
 .summary-panel:last-child{border-bottom:0}
 .summary-panel b{color:#183526}
 .summary-panel p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.account-usage-block{grid-column:1/-1;min-width:0;padding:12px 0;border-top:1px solid var(--line)}
+.account-usage-block>p{margin:4px 0 10px;color:var(--muted);font-size:12px}
+.account-usage-block table{width:100%;table-layout:fixed}
+.account-usage-block th,.account-usage-block td{overflow-wrap:anywhere;vertical-align:top}
+.account-usage-block th:first-child,.account-usage-block td:first-child{width:28%}
+.account-usage-block th:last-child,.account-usage-block td:last-child{width:72px}
 .evidence-list{display:grid;gap:10px}
 .evidence-item{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fbfdfc}
 .evidence-item b{display:block;margin-bottom:4px}
@@ -120,6 +126,7 @@
 .execution-step{border:1px solid var(--line);background:#fff;border-radius:8px;padding:14px;min-height:150px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:8px}
 .execution-step:hover{border-color:#8db69f;box-shadow:0 10px 24px #10261d12}
 .execution-step span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#eaf3ed;color:#126b49;font-weight:800;font-size:12px}
+.task-progress{min-width:220px;display:grid;gap:5px}.task-progress-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.task-progress-head b{font-size:12px;color:#244c39}.task-progress-head span{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.task-progress-track{height:6px;overflow:hidden;background:#e5ede8;border-radius:999px}.task-progress-track i{display:block;height:100%;background:#17825b;border-radius:inherit;transition:width .25s ease}.task-progress small{display:block;max-width:420px;color:var(--muted);line-height:1.45}
 .execution-step b{font-size:15px;color:#183526}
 .execution-step small{color:var(--muted);font-size:12px;line-height:1.55;flex:1}
 .execution-step em{font-style:normal;color:#126b49;font-weight:700;font-size:12px}

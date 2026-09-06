@@ -4,65 +4,21 @@
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
   "package_name": "工资代理快速结算",
-  "run_id": "run-20260902-194100-0935f9",
-  "run_context_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\runs\\run-20260902-194100-0935f9\\run-context.json",
+  "run_id": "run-20260906-195602-13e595",
+  "run_context_path": "requirements/salary-trade/runs/run-20260906-195602-13e595/run-context.json",
   "status": "READY",
-  "created_at": "2026-09-03T16:50:32+08:00",
+  "created_at": "2026-09-06T19:56:13+08:00",
   "summary": {
-    "safe_endpoints": 10,
-    "excluded_mutations": 96,
-    "stages": 4
+    "safe_endpoints": 1,
+    "blocked_targets": 0,
+    "excluded_mutations": 12,
+    "stages": 1
   },
   "safe_endpoints": [
     {
       "method": "GET",
-      "path": "/union/getAnchorApplyRecord",
+      "path": "/union/getAnchorApplyRecord?uid={{uid}}&ticket={{ticket}}&deviceType={{deviceType}}&systemLanguage={{systemLanguage}}&appVersion={{appVersion}}&os={{os}}&netType={{netType}}&channel={{channel}}&appsflyerId={{appsflyerId}}&language={{language}}&appCode={{appCode}}&deviceId={{deviceId}}&version={{version}}&osVersion={{osVersion}}&isVpnConnected={{isVpnConnected}}&appid={{appid}}&model={{model}}&packageName={{packageName}}&ispType={{ispType}}&organic={{organic}}",
       "name": "返回工资快速结算创建入口开关：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/quota",
-      "name": "进入入口时查询可结算额度：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/agents",
-      "name": "按国家和币种选择代理用户：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/order/page",
-      "name": "查看本人快速结算订单列表：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/order/detail",
-      "name": "查看本人订单详情：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/evidence/list",
-      "name": "查看本人订单凭证：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/logs",
-      "name": "查看本人订单流转记录：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/agent/notice",
-      "name": "查看自己的交易公告编辑页信息：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/agent/order/page",
-      "name": "查看可处理或已承接的订单列表：正常请求"
-    },
-    {
-      "method": "GET",
-      "path": "/userserv/salary/trade/agent/order/detail",
-      "name": "查看代理侧订单详情：正常请求"
     }
   ],
   "excluded_mutations": [
@@ -125,475 +81,787 @@
       "method": "POST",
       "path": "/userserv/salary/trade/agent/evidence/upload",
       "name": "补充上传付款或投诉凭证：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/union/getAnchorApplyRecord",
-      "name": "返回工资快速结算创建入口开关：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/create",
-      "name": "提交收款信息并创建待代理处理订单：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/cancel",
-      "name": "取消待代理处理订单：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/confirm",
-      "name": "确认已收到代理转账：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/appeal",
-      "name": "待确认收款时提交投诉：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/evidence/upload",
-      "name": "补充上传本人订单凭证：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/notice/save",
-      "name": "保存自己的交易公告：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/accept",
-      "name": "接受待代理处理订单：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/reject",
-      "name": "拒绝待代理处理订单：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/paid",
-      "name": "标记已完成线下转账：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/appeal",
-      "name": "待确认收款时提交投诉：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/evidence/upload",
-      "name": "补充上传付款或投诉凭证：正常请求"
-    },
-    {
-      "method": "POST",
-      "path": "/union/getAnchorApplyRecord",
-      "name": "返回工资快速结算创建入口开关：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/union/getAnchorApplyRecord",
-      "name": "返回工资快速结算创建入口开关：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/union/getAnchorApplyRecord",
-      "name": "返回工资快速结算创建入口开关：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/create",
-      "name": "提交收款信息并创建待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/create",
-      "name": "提交收款信息并创建待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/create",
-      "name": "提交收款信息并创建待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/cancel",
-      "name": "取消待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/cancel",
-      "name": "取消待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/cancel",
-      "name": "取消待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/confirm",
-      "name": "确认已收到代理转账：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/confirm",
-      "name": "确认已收到代理转账：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/confirm",
-      "name": "确认已收到代理转账：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/appeal",
-      "name": "待确认收款时提交投诉：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/appeal",
-      "name": "待确认收款时提交投诉：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/appeal",
-      "name": "待确认收款时提交投诉：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/evidence/upload",
-      "name": "补充上传本人订单凭证：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/evidence/upload",
-      "name": "补充上传本人订单凭证：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/evidence/upload",
-      "name": "补充上传本人订单凭证：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/notice/save",
-      "name": "保存自己的交易公告：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/notice/save",
-      "name": "保存自己的交易公告：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/notice/save",
-      "name": "保存自己的交易公告：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/accept",
-      "name": "接受待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/accept",
-      "name": "接受待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/accept",
-      "name": "接受待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/reject",
-      "name": "拒绝待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/reject",
-      "name": "拒绝待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/reject",
-      "name": "拒绝待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/paid",
-      "name": "标记已完成线下转账：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/paid",
-      "name": "标记已完成线下转账：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/paid",
-      "name": "标记已完成线下转账：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/appeal",
-      "name": "待确认收款时提交投诉：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/appeal",
-      "name": "待确认收款时提交投诉：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/appeal",
-      "name": "待确认收款时提交投诉：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/evidence/upload",
-      "name": "补充上传付款或投诉凭证：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/evidence/upload",
-      "name": "补充上传付款或投诉凭证：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/evidence/upload",
-      "name": "补充上传付款或投诉凭证：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/union/getAnchorApplyRecord",
-      "name": "返回工资快速结算创建入口开关：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/union/getAnchorApplyRecord",
-      "name": "返回工资快速结算创建入口开关：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/union/getAnchorApplyRecord",
-      "name": "返回工资快速结算创建入口开关：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/create",
-      "name": "提交收款信息并创建待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/create",
-      "name": "提交收款信息并创建待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/create",
-      "name": "提交收款信息并创建待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/cancel",
-      "name": "取消待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/cancel",
-      "name": "取消待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/cancel",
-      "name": "取消待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/confirm",
-      "name": "确认已收到代理转账：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/confirm",
-      "name": "确认已收到代理转账：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/confirm",
-      "name": "确认已收到代理转账：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/appeal",
-      "name": "待确认收款时提交投诉：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/appeal",
-      "name": "待确认收款时提交投诉：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/order/appeal",
-      "name": "待确认收款时提交投诉：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/evidence/upload",
-      "name": "补充上传本人订单凭证：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/evidence/upload",
-      "name": "补充上传本人订单凭证：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/evidence/upload",
-      "name": "补充上传本人订单凭证：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/notice/save",
-      "name": "保存自己的交易公告：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/notice/save",
-      "name": "保存自己的交易公告：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/notice/save",
-      "name": "保存自己的交易公告：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/accept",
-      "name": "接受待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/accept",
-      "name": "接受待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/accept",
-      "name": "接受待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/reject",
-      "name": "拒绝待代理处理订单：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/reject",
-      "name": "拒绝待代理处理订单：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/reject",
-      "name": "拒绝待代理处理订单：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/paid",
-      "name": "标记已完成线下转账：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/paid",
-      "name": "标记已完成线下转账：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/paid",
-      "name": "标记已完成线下转账：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/appeal",
-      "name": "待确认收款时提交投诉：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/appeal",
-      "name": "待确认收款时提交投诉：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/order/appeal",
-      "name": "待确认收款时提交投诉：重复提交与幂等性"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/evidence/upload",
-      "name": "补充上传付款或投诉凭证：缺失必填参数"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/evidence/upload",
-      "name": "补充上传付款或投诉凭证：字段边界与类型错误"
-    },
-    {
-      "method": "POST",
-      "path": "/userserv/salary/trade/agent/evidence/upload",
-      "name": "补充上传付款或投诉凭证：重复提交与幂等性"
     }
   ],
+  "target_preflight": {
+    "status": "READY",
+    "summary": {
+      "targets": 1,
+      "ready": 1,
+      "blocked": 0
+    },
+    "available_variables": [
+      "access_token",
+      "account_source",
+      "agentTicket",
+      "agentUid",
+      "anchorTicket",
+      "anchorUid",
+      "appCode",
+      "appVersion",
+      "appid",
+      "applicant_applicant_ticket",
+      "applicant_applicant_uid",
+      "applicant_bankAccount",
+      "applicant_bankName",
+      "applicant_bankReceiverAddress",
+      "applicant_bankReceiverName",
+      "applicant_bankReceiverPhone",
+      "applicant_countryCode",
+      "applicant_currency",
+      "applicant_salaryAmount",
+      "applicant_source",
+      "applicant_swiftCode",
+      "applicant_ticket",
+      "applicant_uid",
+      "appsflyerId",
+      "bankAccount",
+      "bankName",
+      "bankReceiverAddress",
+      "bankReceiverName",
+      "bankReceiverPhone",
+      "channel",
+      "countryCode",
+      "country_code",
+      "credential_uid",
+      "currency",
+      "current_time_ms",
+      "deviceId",
+      "deviceType",
+      "enabled",
+      "isVpnConnected",
+      "ispType",
+      "language",
+      "login_context_keys",
+      "model",
+      "netType",
+      "now",
+      "organic",
+      "os",
+      "osVersion",
+      "packageName",
+      "pageNo",
+      "pageSize",
+      "proxyUid",
+      "proxy_countryCode",
+      "proxy_currency",
+      "proxy_enabled",
+      "proxy_proxy_ticket",
+      "proxy_proxy_uid",
+      "proxy_remark",
+      "proxy_source",
+      "proxy_status",
+      "proxy_supportCurrencies",
+      "proxy_ticket",
+      "proxy_uid",
+      "receiveAccountType",
+      "receiver_uid",
+      "remark",
+      "requested_uid",
+      "room_uid",
+      "salaryAmount",
+      "source",
+      "status",
+      "supportCurrencies",
+      "swiftCode",
+      "systemLanguage",
+      "t",
+      "threadNum",
+      "thread_num",
+      "ticket",
+      "timestamp",
+      "type",
+      "uid",
+      "uids",
+      "uids_1",
+      "uids_2",
+      "uids_3",
+      "version"
+    ],
+    "produced_variables": [],
+    "targets": [
+      {
+        "key": "GET /union/getAnchorApplyRecord",
+        "method": "GET",
+        "path": "/union/getAnchorApplyRecord",
+        "name": "返回工资快速结算创建入口开关：正常请求",
+        "status": "READY",
+        "required_inputs": [
+          {
+            "name": "uid",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "ticket",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "deviceType",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "systemLanguage",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "appVersion",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "os",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "netType",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "channel",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "appsflyerId",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "language",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "appCode",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "deviceId",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "version",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "osVersion",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "isVpnConnected",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "appid",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "model",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "packageName",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "ispType",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          },
+          {
+            "name": "organic",
+            "location": "query",
+            "declared_by": "requirement_resource_manifest"
+          }
+        ],
+        "referenced_variables": [],
+        "missing": [],
+        "resolved_inputs": {
+          "uid": "{{uid}}",
+          "ticket": "{{ticket}}",
+          "deviceType": "{{deviceType}}",
+          "systemLanguage": "{{systemLanguage}}",
+          "appVersion": "{{appVersion}}",
+          "os": "{{os}}",
+          "netType": "{{netType}}",
+          "channel": "{{channel}}",
+          "appsflyerId": "{{appsflyerId}}",
+          "language": "{{language}}",
+          "appCode": "{{appCode}}",
+          "deviceId": "{{deviceId}}",
+          "version": "{{version}}",
+          "osVersion": "{{osVersion}}",
+          "isVpnConnected": "{{isVpnConnected}}",
+          "appid": "{{appid}}",
+          "model": "{{model}}",
+          "packageName": "{{packageName}}",
+          "ispType": "{{ispType}}",
+          "organic": "{{organic}}"
+        },
+        "resolved_headers": {},
+        "resolved_body": {},
+        "resolved_body_content_type": "",
+        "input_sources": {
+          "uid": {
+            "type": "csv",
+            "variable": "uid",
+            "validated": true
+          },
+          "ticket": {
+            "type": "csv",
+            "variable": "ticket",
+            "validated": true
+          },
+          "deviceType": {
+            "type": "package_literal",
+            "variable": "deviceType",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "systemLanguage": {
+            "type": "package_literal",
+            "variable": "systemLanguage",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "appVersion": {
+            "type": "package_literal",
+            "variable": "appVersion",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "os": {
+            "type": "package_literal",
+            "variable": "os",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "netType": {
+            "type": "package_literal",
+            "variable": "netType",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "channel": {
+            "type": "package_literal",
+            "variable": "channel",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "appsflyerId": {
+            "type": "package_literal",
+            "variable": "appsflyerId",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "language": {
+            "type": "package_literal",
+            "variable": "language",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "appCode": {
+            "type": "package_literal",
+            "variable": "appCode",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "deviceId": {
+            "type": "package_literal",
+            "variable": "deviceId",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "version": {
+            "type": "package_literal",
+            "variable": "version",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "osVersion": {
+            "type": "package_literal",
+            "variable": "osVersion",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "isVpnConnected": {
+            "type": "package_literal",
+            "variable": "isVpnConnected",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "appid": {
+            "type": "package_literal",
+            "variable": "appid",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "model": {
+            "type": "package_literal",
+            "variable": "model",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "packageName": {
+            "type": "package_literal",
+            "variable": "packageName",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "ispType": {
+            "type": "package_literal",
+            "variable": "ispType",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          },
+          "organic": {
+            "type": "package_literal",
+            "variable": "organic",
+            "validated": true,
+            "path": "requirements/salary-trade/runtime_aliases.yaml"
+          }
+        },
+        "resolved_path": "/union/getAnchorApplyRecord?uid={{uid}}&ticket={{ticket}}&deviceType={{deviceType}}&systemLanguage={{systemLanguage}}&appVersion={{appVersion}}&os={{os}}&netType={{netType}}&channel={{channel}}&appsflyerId={{appsflyerId}}&language={{language}}&appCode={{appCode}}&deviceId={{deviceId}}&version={{version}}&osVersion={{osVersion}}&isVpnConnected={{isVpnConnected}}&appid={{appid}}&model={{model}}&packageName={{packageName}}&ispType={{ispType}}&organic={{organic}}",
+        "openapi_matched": true,
+        "response_contract": {}
+      }
+    ],
+    "path": "requirements/salary-trade/outputs/jmeter/load-test/target-resource-preflight.json"
+  },
+  "account_pool": {
+    "status": "READY",
+    "policy": "strict_unique",
+    "threads": 1,
+    "accounts": 8,
+    "reuse_ratio": 0.12,
+    "message": "账号数量满足1个线程的独立首轮分配。",
+    "columns": [
+      "account_source",
+      "anchorTicket",
+      "anchorUid",
+      "applicant_source",
+      "applicant_ticket",
+      "applicant_uid",
+      "bankAccount",
+      "bankName",
+      "bankReceiverAddress",
+      "bankReceiverName",
+      "bankReceiverPhone",
+      "countryCode",
+      "country_code",
+      "currency",
+      "receiveAccountType",
+      "salaryAmount",
+      "swiftCode",
+      "ticket",
+      "uid"
+    ],
+    "allocations": [
+      {
+        "slot": 1,
+        "applicant_uid": "1454696",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "MA",
+        "currency": "USD",
+        "proxy_uid": "",
+        "proxy_source": ""
+      },
+      {
+        "slot": 2,
+        "applicant_uid": "1455141",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "SA",
+        "currency": "SAR",
+        "proxy_uid": "",
+        "proxy_source": ""
+      },
+      {
+        "slot": 3,
+        "applicant_uid": "1454724",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "QA",
+        "currency": "QAR",
+        "proxy_uid": "",
+        "proxy_source": ""
+      },
+      {
+        "slot": 4,
+        "applicant_uid": "1454744",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "USD",
+        "currency": "USD",
+        "proxy_uid": "",
+        "proxy_source": ""
+      },
+      {
+        "slot": 5,
+        "applicant_uid": "1454723",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "QA",
+        "currency": "QAR",
+        "proxy_uid": "",
+        "proxy_source": ""
+      },
+      {
+        "slot": 6,
+        "applicant_uid": "1455185",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "MA",
+        "currency": "USD",
+        "proxy_uid": "",
+        "proxy_source": ""
+      },
+      {
+        "slot": 7,
+        "applicant_uid": "1454617",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "SA",
+        "currency": "USD",
+        "proxy_uid": "",
+        "proxy_source": ""
+      },
+      {
+        "slot": 8,
+        "applicant_uid": "1455113",
+        "applicant_source": "data/salary-trade-applicants.csv",
+        "country_code": "USD",
+        "currency": "USD",
+        "proxy_uid": "",
+        "proxy_source": ""
+      }
+    ],
+    "skipped": [],
+    "role_requirements": {
+      "applicant_auth": true,
+      "proxy_reference": false,
+      "proxy_auth": false
+    }
+  },
+  "transaction": {
+    "status": "NOT_SELECTED",
+    "transaction_mode": "request_only"
+  },
+  "runtime_params": {},
+  "runtime_param_names": [],
   "stages": [
     {
       "code": "baseline",
-      "name": "基线",
-      "threads": 2,
-      "rampup_seconds": 30,
-      "duration_seconds": 180,
+      "name": "基准测试",
+      "profile": "baseline",
+      "threads": 1,
+      "rampup_seconds": 1,
+      "duration_seconds": 20,
+      "warmup_samples_per_label": 1,
+      "workload_model": "single_user_steady",
+      "account_reuse_policy": "strict_unique",
+      "transaction_mode": "request_only",
+      "pacing_ms": 300,
       "stage": 1,
-      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-01-baseline.jmx",
-      "jtl_property": "load_result_jtl"
-    },
-    {
-      "code": "light-load",
-      "name": "轻负载",
-      "threads": 5,
-      "rampup_seconds": 60,
-      "duration_seconds": 300,
-      "stage": 2,
-      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-02-light-load.jmx",
-      "jtl_property": "load_result_jtl"
-    },
-    {
-      "code": "target-load",
-      "name": "目标负载",
-      "threads": 10,
-      "rampup_seconds": 120,
-      "duration_seconds": 600,
-      "stage": 3,
-      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-03-target-load.jmx",
-      "jtl_property": "load_result_jtl"
-    },
-    {
-      "code": "capacity-search",
-      "name": "容量探索",
-      "threads": 20,
-      "rampup_seconds": 180,
-      "duration_seconds": 900,
-      "stage": 4,
-      "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\stage-04-capacity-search.jmx",
-      "jtl_property": "load_result_jtl"
+      "jmx_path": "requirements/salary-trade/outputs/jmeter/load-test/stage-01-baseline.jmx",
+      "workflow_path": "requirements/salary-trade/outputs/jmeter/load-test/stage-01-baseline-workflow.json",
+      "engine": "jmeter-mcp-server@0.3.1",
+      "transaction_name": "",
+      "transaction_semantics": "request_rps_only",
+      "auto_stop": {
+        "enabled": true,
+        "sample_interval_seconds": 2,
+        "grace_period_seconds": 5,
+        "min_samples": 10,
+        "latency_consecutive_windows": 2,
+        "error_consecutive_windows": 1,
+        "warmup_samples_per_label": 1
+      },
+      "account_pool": {
+        "status": "READY",
+        "policy": "strict_unique",
+        "threads": 1,
+        "accounts": 8,
+        "reuse_ratio": 0.12,
+        "message": "账号数量满足1个线程的独立首轮分配。",
+        "columns": [
+          "account_source",
+          "anchorTicket",
+          "anchorUid",
+          "applicant_source",
+          "applicant_ticket",
+          "applicant_uid",
+          "bankAccount",
+          "bankName",
+          "bankReceiverAddress",
+          "bankReceiverName",
+          "bankReceiverPhone",
+          "countryCode",
+          "country_code",
+          "currency",
+          "receiveAccountType",
+          "salaryAmount",
+          "swiftCode",
+          "ticket",
+          "uid"
+        ],
+        "allocations": [
+          {
+            "slot": 1,
+            "applicant_uid": "1454696",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "MA",
+            "currency": "USD",
+            "proxy_uid": "",
+            "proxy_source": ""
+          },
+          {
+            "slot": 2,
+            "applicant_uid": "1455141",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "SA",
+            "currency": "SAR",
+            "proxy_uid": "",
+            "proxy_source": ""
+          },
+          {
+            "slot": 3,
+            "applicant_uid": "1454724",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "QA",
+            "currency": "QAR",
+            "proxy_uid": "",
+            "proxy_source": ""
+          },
+          {
+            "slot": 4,
+            "applicant_uid": "1454744",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "USD",
+            "currency": "USD",
+            "proxy_uid": "",
+            "proxy_source": ""
+          },
+          {
+            "slot": 5,
+            "applicant_uid": "1454723",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "QA",
+            "currency": "QAR",
+            "proxy_uid": "",
+            "proxy_source": ""
+          },
+          {
+            "slot": 6,
+            "applicant_uid": "1455185",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "MA",
+            "currency": "USD",
+            "proxy_uid": "",
+            "proxy_source": ""
+          },
+          {
+            "slot": 7,
+            "applicant_uid": "1454617",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "SA",
+            "currency": "USD",
+            "proxy_uid": "",
+            "proxy_source": ""
+          },
+          {
+            "slot": 8,
+            "applicant_uid": "1455113",
+            "applicant_source": "data/salary-trade-applicants.csv",
+            "country_code": "USD",
+            "currency": "USD",
+            "proxy_uid": "",
+            "proxy_source": ""
+          }
+        ],
+        "skipped": [],
+        "role_requirements": {
+          "applicant_auth": true,
+          "proxy_reference": false,
+          "proxy_auth": false
+        }
+      }
     }
   ],
+  "execution_context": {
+    "status": "PLANNED",
+    "test_type": "baseline",
+    "profile": "baseline",
+    "profiles": [
+      "baseline"
+    ],
+    "target_api": "GET /union/getAnchorApplyRecord",
+    "target_apis": [
+      "GET /union/getAnchorApplyRecord"
+    ],
+    "env": "https://test2westarlive.gzxchate.com/",
+    "stages": [
+      {
+        "code": "baseline",
+        "name": "基准测试",
+        "profile": "baseline",
+        "threads": 1,
+        "rampup_seconds": 1,
+        "duration_seconds": 20,
+        "warmup_samples_per_label": 1,
+        "workload_model": "single_user_steady",
+        "account_reuse_policy": "strict_unique",
+        "transaction_mode": "request_only",
+        "pacing_ms": 300,
+        "stage": 1,
+        "jmx_path": "requirements/salary-trade/outputs/jmeter/load-test/stage-01-baseline.jmx",
+        "workflow_path": "requirements/salary-trade/outputs/jmeter/load-test/stage-01-baseline-workflow.json",
+        "engine": "jmeter-mcp-server@0.3.1",
+        "transaction_name": "",
+        "transaction_semantics": "request_rps_only",
+        "auto_stop": {
+          "enabled": true,
+          "sample_interval_seconds": 2,
+          "grace_period_seconds": 5,
+          "min_samples": 10,
+          "latency_consecutive_windows": 2,
+          "error_consecutive_windows": 1,
+          "warmup_samples_per_label": 1
+        },
+        "account_pool": {
+          "status": "READY",
+          "policy": "strict_unique",
+          "threads": 1,
+          "accounts": 8,
+          "reuse_ratio": 0.12,
+          "message": "账号数量满足1个线程的独立首轮分配。",
+          "columns": [
+            "account_source",
+            "anchorTicket",
+            "anchorUid",
+            "applicant_source",
+            "applicant_ticket",
+            "applicant_uid",
+            "bankAccount",
+            "bankName",
+            "bankReceiverAddress",
+            "bankReceiverName",
+            "bankReceiverPhone",
+            "countryCode",
+            "country_code",
+            "currency",
+            "receiveAccountType",
+            "salaryAmount",
+            "swiftCode",
+            "ticket",
+            "uid"
+          ],
+          "allocations": [
+            {
+              "slot": 1,
+              "applicant_uid": "1454696",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "MA",
+              "currency": "USD",
+              "proxy_uid": "",
+              "proxy_source": ""
+            },
+            {
+              "slot": 2,
+              "applicant_uid": "1455141",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "SA",
+              "currency": "SAR",
+              "proxy_uid": "",
+              "proxy_source": ""
+            },
+            {
+              "slot": 3,
+              "applicant_uid": "1454724",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "QA",
+              "currency": "QAR",
+              "proxy_uid": "",
+              "proxy_source": ""
+            },
+            {
+              "slot": 4,
+              "applicant_uid": "1454744",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "USD",
+              "currency": "USD",
+              "proxy_uid": "",
+              "proxy_source": ""
+            },
+            {
+              "slot": 5,
+              "applicant_uid": "1454723",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "QA",
+              "currency": "QAR",
+              "proxy_uid": "",
+              "proxy_source": ""
+            },
+            {
+              "slot": 6,
+              "applicant_uid": "1455185",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "MA",
+              "currency": "USD",
+              "proxy_uid": "",
+              "proxy_source": ""
+            },
+            {
+              "slot": 7,
+              "applicant_uid": "1454617",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "SA",
+              "currency": "USD",
+              "proxy_uid": "",
+              "proxy_source": ""
+            },
+            {
+              "slot": 8,
+              "applicant_uid": "1455113",
+              "applicant_source": "data/salary-trade-applicants.csv",
+              "country_code": "USD",
+              "currency": "USD",
+              "proxy_uid": "",
+              "proxy_source": ""
+            }
+          ],
+          "skipped": [],
+          "role_requirements": {
+            "applicant_auth": true,
+            "proxy_reference": false,
+            "proxy_auth": false
+          }
+        }
+      }
+    ],
+    "thresholds": {
+      "max_error_rate": 10.0,
+      "max_p95_ms": 3000.0,
+      "max_p99_ms": 5000.0,
+      "min_throughput_rps": 0.0,
+      "min_transaction_tps": 0.0
+    },
+    "created_at": "2026-09-06T19:56:10+08:00"
+  },
   "thresholds": {
-    "max_error_rate": 1.0,
-    "max_p95_ms": 2000.0,
-    "max_p99_ms": 4000.0,
-    "min_throughput_rps": 0.0
+    "max_error_rate": 10.0,
+    "max_p95_ms": 3000.0,
+    "max_p99_ms": 5000.0,
+    "min_throughput_rps": 0.0,
+    "min_transaction_tps": 0.0
   },
   "stop_conditions": [
     "错误率超过阈值",
@@ -604,8 +872,9 @@
   "capacity_rule": "最后一个满足错误率、P95/P99和吞吐量门槛的阶梯视为当前可接受容量；首次持续越界的阶梯作为容量拐点候选，不直接等同生产极限。",
   "execution_pipeline": [
     "平台选择压测场景",
-    "生成可执行JMX",
-    "JMeter持续运行",
+    "JMeter Skill生成JMX",
+    "静态门禁校验与一次确定性修正",
+    "JMeter MCP加载并执行JMX",
     "回收JTL和HTML",
     "自动生成性能分析"
   ],
@@ -614,5 +883,22 @@
     "jmeter_html": "必须生成并提供原地址",
     "ai_analysis": "引用同一批JTL/HTML，不替代原始报告"
   },
-  "plan_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\load-test\\load-test-plan.json"
+  "runtime_contract": {
+    "version": "5.5",
+    "engine": "jmeter-mcp-server@0.3.1",
+    "auth": "process_scoped_thread_bound_account_pool",
+    "credentials_embedded": false,
+    "preflight": "source_aware_target_resources_and_live_account_pool",
+    "runtime_scope": "request_required_only",
+    "runtime_param_persistence": "explicit_non_sensitive_only",
+    "thread_identity": "thread_pinned_with_next_iteration_401_failover",
+    "request_timestamp": "per_sample",
+    "runtime_dataset": "base64_process_environment",
+    "auth_diagnostics": "redacted_once_per_thread",
+    "account_usage_reporting": "jtl_thread_uid_source_rotation",
+    "target_input_resolution": "runtime_csv_safe_openapi_or_executed_producer_only",
+    "request_body_resolution": "registered_runtime_csv_or_executed_producer_only",
+    "throughput_semantics": "request_only_reports_rps_business_transaction_reports_tps"
+  },
+  "plan_path": "requirements/salary-trade/outputs/jmeter/load-test/load-test-plan.json"
 }

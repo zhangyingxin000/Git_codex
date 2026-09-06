@@ -215,7 +215,7 @@
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="工资交易账号数据集：申请人CSV">
         <stringProp name="delimiter">,</stringProp>
         <stringProp name="fileEncoding">UTF-8</stringProp>
-        <stringProp name="filename">C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-applicants.csv</stringProp>
+        <stringProp name="filename">${__P(project_root,.)}/data/salary-trade-applicants.csv</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
         <boolProp name="quotedData">true</boolProp>
         <boolProp name="recycle">true</boolProp>
@@ -279,7 +279,7 @@
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="检查 JMeter 运行凭证是否注入" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -380,7 +380,7 @@ SampleResult.setResponseData((&apos;凭证自检通过：申请人ticket长度=&
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -695,7 +695,7 @@ SampleResult.setResponseData((&apos;取消后订单详情 状态断言通过：&
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -1184,7 +1184,7 @@ SampleResult.setResponseData((&apos;完成后申请人详情 状态断言通过�
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -1625,7 +1625,7 @@ SampleResult.setResponseData((&apos;投诉后申请人详情 状态断言通过�
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -2066,7 +2066,7 @@ SampleResult.setResponseData((&apos;代理投诉后申请人详情 状态断言�
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易公共初始化：双角色与表单参数" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -2411,7 +2411,7 @@ if (String.valueOf(value) != &apos;60&apos;) {
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易公共初始化：双角色与表单参数" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -2871,7 +2871,7 @@ if (String.valueOf(value) != &apos;20&apos;) {
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File(&apos;${__P(project_root,.)}/work/salary-trade-runtime.properties&apos;)
 def isBlankOrPlaceholder = { value -&gt;
     value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
 }
@@ -3328,7 +3328,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\工资代理结算-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
@@ -3365,7 +3365,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\工资代理结算-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
@@ -3402,7 +3402,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\工资代理结算-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true">
@@ -3439,7 +3439,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\工资代理结算-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="true">
@@ -3476,7 +3476,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\工资代理结算-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
     </hashTree>

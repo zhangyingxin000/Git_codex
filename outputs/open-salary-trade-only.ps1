@@ -217,17 +217,20 @@ function Invoke-MobileLogin {
     return @{ ticket = [string]$response.data.access_token; uid = [string]$response.data.uid }
 }
 
-$ProjectRoot = "C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI"
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $Jmx = Join-Path $ProjectRoot "outputs\salary-trade-only.jmx"
-$ResultDir = "D:\apache-jmeter-5.6.3\jmx\20260826"
-$JMeter = "D:\apache-jmeter-5.6.3\bin\jmeter.bat"
-$JMeterHome = "D:\apache-jmeter-5.6.3\bin"
+$ResultDir = Join-Path $ProjectRoot "reports\latest"
+$JMeter = [string]$env:AUTOTEST_JMETER
+if ([string]::IsNullOrWhiteSpace($JMeter) -and $env:AUTOTEST_JMETER_HOME) { $JMeter = Join-Path $env:AUTOTEST_JMETER_HOME "bin\jmeter.bat" }
+if ([string]::IsNullOrWhiteSpace($JMeter)) { $JMeter = (Get-Command jmeter.bat,jmeter -ErrorAction SilentlyContinue | Select-Object -First 1).Source }
+$JMeterHome = if ($JMeter) { Split-Path -Parent $JMeter } else { "" }
 $RuntimeProperties = Join-Path $ProjectRoot "work\salary-trade-runtime.properties"
 $ApplicantCsv = Join-Path $ProjectRoot "data\salary-trade-applicants.csv"
 $AccountCsv = Join-Path $ProjectRoot "data\salary-trade-accounts.csv"
 
 if (!(Test-Path -LiteralPath $Jmx)) { throw "Salary trade JMX not found: $Jmx" }
-if (!(Test-Path -LiteralPath $JMeter)) { throw "JMeter launcher not found: $JMeter" }
+if (!$JMeter -or !(Test-Path -LiteralPath $JMeter)) { throw "JMeter launcher not found. Set AUTOTEST_JMETER or AUTOTEST_JMETER_HOME." }
+New-Item -ItemType Directory -Force -Path $ResultDir | Out-Null
 if (!(Test-Path -LiteralPath (Split-Path $RuntimeProperties))) {
     New-Item -ItemType Directory -Path (Split-Path $RuntimeProperties) | Out-Null
 }
@@ -366,6 +369,6 @@ Write-Host "Ticket state: applicant=ready, proxy=ready"
 if ($NoOpen) {
     Write-Host "NoOpen enabled: runtime parameters prepared; JMeter was not opened."
 } else {
-    Start-Process -FilePath $JMeter -ArgumentList @("-q", $RuntimeProperties, "-t", $Jmx) -WorkingDirectory $JMeterHome
+    Start-Process -FilePath $JMeter -ArgumentList @("-q", $RuntimeProperties, "-Jproject_root=$ProjectRoot", "-t", $Jmx) -WorkingDirectory $JMeterHome
 }
 

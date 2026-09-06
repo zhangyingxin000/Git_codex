@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "skill": "requirement-test-case-generation",
+  "skill_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\requirement-test-case-generation\\SKILL.md",
+  "rules_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\requirement-test-case-generation\\rules.yaml",
+  "scope": {
+    "output_directory": "outputs",
+    "structured_json": "structured-test-cases.json",
+    "structured_markdown": "structured-test-cases.md",
+    "structured_excel": "structured-test-cases.xlsx",
+    "excludes": [
+      "single_interface_parameter_enumeration",
+      "protocol_fuzzing",
+      "performance_capacity_plan"
+    ]
+  },
+  "design_techniques": {
+    "workflow": "scenario_analysis",
+    "lifecycle": "state_transition",
+    "conditional_rules": "decision_table",
+    "field_business_classes": "equivalence_partition",
+    "business_thresholds": "boundary_value",
+    "large_combinations": "pairwise",
+    "historical_risk": "error_guessing"
+  },
+  "coverage_categories": [
+    "main_flow",
+    "alternate_flow",
+    "exception_flow",
+    "business_boundary",
+    "permission_and_ownership",
+    "invalid_state_transition",
+    "duplicate_and_idempotency",
+    "timeout_and_expiration",
+    "retry_and_recovery",
+    "compensation",
+    "downstream_and_callback",
+    "consistency_and_audit"
+  ],
+  "automation_statuses": [
+    "SCRIPT_GENERATION_READY",
+    "SCRIPTABLE_EVIDENCE_PENDING",
+    "DATA_BLOCKED",
+    "MANUAL_ONLY",
+    "NOT_APPLICABLE"
+  ],
+  "quality_statuses": [
+    "READY",
+    "NEEDS_REQUIREMENT_REVIEW",
+    "NEEDS_RESOURCE",
+    "NEEDS_EVIDENCE",
+    "NEEDS_EVIDENCE_REVIEW",
+    "MANUAL_ONLY"
+  ],
+  "source_rules": {
+    "infer_accounts_from_cases": true,
+    "default_account_mode": "single_account",
+    "default_csv_required": false,
+    "default_database_required": false,
+    "default_redis_required": false,
+    "persist_confirmed_sources": true,
+    "formal_assets_are_not_overwritten": true
+  },
+  "quality_gate": {
+    "requirement_traceability_rate": 100,
+    "acceptance_criteria_coverage_rate": 100,
+    "expected_result_required": true,
+    "state_path_required_for_stateful_scenarios": true,
+    "write_cleanup_or_compensation_required": true,
+    "unresolved_business_rule_must_be_reported": true,
+    "duplicate_case_ids_allowed": false,
+    "orphan_cases_allowed": false
+  },
+  "package_id": "wealth-level",
+  "generated_at": "2026-09-04T18:31:16+08:00",
+  "applied_to": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json",
+  "quality_result": {
+    "status": "PASS",
+    "checks": {
+      "cases_generated": true,
+      "case_ids_unique": true,
+      "requirement_traceability": true,
+      "expected_results_complete": true,
+      "automation_classified": true
+    },
+    "policy": {
+      "requirement_traceability_rate": 100,
+      "acceptance_criteria_coverage_rate": 100,
+      "expected_result_required": true,
+      "state_path_required_for_stateful_scenarios": true,
+      "write_cleanup_or_compensation_required": true,
+      "unresolved_business_rule_must_be_reported": true,
+      "duplicate_case_ids_allowed": false,
+      "orphan_cases_allowed": false
+    }
+  }
+}

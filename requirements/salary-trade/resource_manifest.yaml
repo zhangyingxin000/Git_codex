@@ -62,11 +62,23 @@ runtime_parameters: []
 variable_extractions:
 - variable: salary_order_no
   source: 创建订单响应
+  source_method: POST
+  source_path: /userserv/salary/trade/order/create
   json_paths:
   - $.data.orderNo
   - $.data.order_no
   - $.data.id
   required: true
+endpoint_input_contracts:
+- method: GET
+  path: /union/getAnchorApplyRecord
+  purpose: 查询工资快速结算入口前需要申请人身份与移动端公共参数
+  include_common_query: true
+  required_inputs:
+  - name: uid
+    location: query
+  - name: ticket
+    location: query
 disabled_resources:
 - redis
 confirmed_ignored: []

@@ -30,6 +30,13 @@ def build_task_router(
             raise HTTPException(status_code=404, detail="后台任务不存在")
         return task
 
+    @router.post("/{task_id}/cancel", summary="停止后台任务")
+    def cancel_task(task_id: str) -> dict[str, Any]:
+        task = task_queue.request_cancel(task_id)
+        if task is None:
+            raise HTTPException(status_code=404, detail="后台任务不存在")
+        return task
+
     @router.post("", status_code=202, summary="提交后台任务")
     def submit_task(payload: BackgroundTaskCreateRequest) -> dict[str, Any]:
         task_payload = payload.model_dump(exclude={"task_type"})

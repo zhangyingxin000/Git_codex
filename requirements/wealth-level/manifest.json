@@ -34,34 +34,34 @@
   },
   "artifacts": {
     "account_model": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\account_model.yaml",
+      "path": "requirements/wealth-level/account_model.yaml",
       "exists": true,
-      "updated_at": "2026-09-03T15:09:48+08:00"
+      "updated_at": "2026-09-04T23:15:11+08:00"
     },
     "resource_manifest": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\resource_manifest.yaml",
+      "path": "requirements/wealth-level/resource_manifest.yaml",
       "exists": true,
       "updated_at": "2026-09-02T17:17:31+08:00"
     },
     "jmeter": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\jmeter\\wealth-level-performance.jmx",
+      "path": "jmeter/wealth-level-performance.jmx",
       "exists": true,
       "updated_at": "2026-08-20T17:04:06+08:00"
     },
     "runtime_csv": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\wealth-level-runtime.csv",
+      "path": "data/wealth-level-runtime.csv",
       "exists": false,
       "updated_at": ""
     },
     "jtl": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\reports\\latest\\wealth-level-result.jtl",
+      "path": "reports/latest/wealth-level-result.jtl",
       "exists": false,
       "updated_at": ""
     },
     "skill": {
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\SKILL.md",
+      "path": "skills/jmeter-script-generation/SKILL.md",
       "exists": true,
-      "updated_at": "2026-09-01T12:32:05+08:00"
+      "updated_at": "2026-09-05T20:23:50+08:00"
     }
   },
   "portable_layout": {
@@ -71,5 +71,5 @@
     "outputs": "Newman/JMeter/pytest生成物",
     "reports": "执行报告和AI复盘"
   },
-  "updated_at": "2026-09-03T15:09:48+08:00"
+  "updated_at": "2026-09-05T20:39:25+08:00"
 }

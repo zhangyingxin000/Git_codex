@@ -792,7 +792,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
@@ -829,7 +829,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
@@ -866,7 +866,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true">
@@ -903,7 +903,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="true">
@@ -940,7 +940,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree/>
     </hashTree>

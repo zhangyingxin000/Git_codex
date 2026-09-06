@@ -5,7 +5,7 @@
   "package_id": "wealth-level",
   "package_name": "财富等级",
   "status": "READY_WITH_WARNINGS",
-  "generated_at": "2026-09-03T14:29:39+08:00",
+  "generated_at": "2026-09-04T23:15:37+08:00",
   "source": {
     "skill": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\test-tool-routing\\SKILL.md",
     "basis": "结构化测试用例、JMeter映射、账号模型、证据规则和需求包资产"

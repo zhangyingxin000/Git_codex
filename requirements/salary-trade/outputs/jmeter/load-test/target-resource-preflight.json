@@ -1,0 +1,358 @@
+{
+  "status": "READY",
+  "summary": {
+    "targets": 1,
+    "ready": 1,
+    "blocked": 0
+  },
+  "available_variables": [
+    "access_token",
+    "account_source",
+    "agentTicket",
+    "agentUid",
+    "anchorTicket",
+    "anchorUid",
+    "appCode",
+    "appVersion",
+    "appid",
+    "applicant_applicant_ticket",
+    "applicant_applicant_uid",
+    "applicant_bankAccount",
+    "applicant_bankName",
+    "applicant_bankReceiverAddress",
+    "applicant_bankReceiverName",
+    "applicant_bankReceiverPhone",
+    "applicant_countryCode",
+    "applicant_currency",
+    "applicant_salaryAmount",
+    "applicant_source",
+    "applicant_swiftCode",
+    "applicant_ticket",
+    "applicant_uid",
+    "appsflyerId",
+    "bankAccount",
+    "bankName",
+    "bankReceiverAddress",
+    "bankReceiverName",
+    "bankReceiverPhone",
+    "channel",
+    "countryCode",
+    "country_code",
+    "credential_uid",
+    "currency",
+    "current_time_ms",
+    "deviceId",
+    "deviceType",
+    "enabled",
+    "isVpnConnected",
+    "ispType",
+    "language",
+    "login_context_keys",
+    "model",
+    "netType",
+    "now",
+    "organic",
+    "os",
+    "osVersion",
+    "packageName",
+    "pageNo",
+    "pageSize",
+    "proxyUid",
+    "proxy_countryCode",
+    "proxy_currency",
+    "proxy_enabled",
+    "proxy_proxy_ticket",
+    "proxy_proxy_uid",
+    "proxy_remark",
+    "proxy_source",
+    "proxy_status",
+    "proxy_supportCurrencies",
+    "proxy_ticket",
+    "proxy_uid",
+    "receiveAccountType",
+    "receiver_uid",
+    "remark",
+    "requested_uid",
+    "room_uid",
+    "salaryAmount",
+    "source",
+    "status",
+    "supportCurrencies",
+    "swiftCode",
+    "systemLanguage",
+    "t",
+    "threadNum",
+    "thread_num",
+    "ticket",
+    "timestamp",
+    "type",
+    "uid",
+    "uids",
+    "uids_1",
+    "uids_2",
+    "uids_3",
+    "version"
+  ],
+  "produced_variables": [],
+  "targets": [
+    {
+      "key": "GET /union/getAnchorApplyRecord",
+      "method": "GET",
+      "path": "/union/getAnchorApplyRecord",
+      "name": "返回工资快速结算创建入口开关：正常请求",
+      "status": "READY",
+      "required_inputs": [
+        {
+          "name": "uid",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "ticket",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "deviceType",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "systemLanguage",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "appVersion",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "os",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "netType",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "channel",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "appsflyerId",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "language",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "appCode",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "deviceId",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "version",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "osVersion",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "isVpnConnected",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "appid",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "model",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "packageName",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "ispType",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        },
+        {
+          "name": "organic",
+          "location": "query",
+          "declared_by": "requirement_resource_manifest"
+        }
+      ],
+      "referenced_variables": [],
+      "missing": [],
+      "resolved_inputs": {
+        "uid": "{{uid}}",
+        "ticket": "{{ticket}}",
+        "deviceType": "{{deviceType}}",
+        "systemLanguage": "{{systemLanguage}}",
+        "appVersion": "{{appVersion}}",
+        "os": "{{os}}",
+        "netType": "{{netType}}",
+        "channel": "{{channel}}",
+        "appsflyerId": "{{appsflyerId}}",
+        "language": "{{language}}",
+        "appCode": "{{appCode}}",
+        "deviceId": "{{deviceId}}",
+        "version": "{{version}}",
+        "osVersion": "{{osVersion}}",
+        "isVpnConnected": "{{isVpnConnected}}",
+        "appid": "{{appid}}",
+        "model": "{{model}}",
+        "packageName": "{{packageName}}",
+        "ispType": "{{ispType}}",
+        "organic": "{{organic}}"
+      },
+      "resolved_headers": {},
+      "resolved_body": {},
+      "resolved_body_content_type": "",
+      "input_sources": {
+        "uid": {
+          "type": "csv",
+          "variable": "uid",
+          "validated": true
+        },
+        "ticket": {
+          "type": "csv",
+          "variable": "ticket",
+          "validated": true
+        },
+        "deviceType": {
+          "type": "package_literal",
+          "variable": "deviceType",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "systemLanguage": {
+          "type": "package_literal",
+          "variable": "systemLanguage",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "appVersion": {
+          "type": "package_literal",
+          "variable": "appVersion",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "os": {
+          "type": "package_literal",
+          "variable": "os",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "netType": {
+          "type": "package_literal",
+          "variable": "netType",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "channel": {
+          "type": "package_literal",
+          "variable": "channel",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "appsflyerId": {
+          "type": "package_literal",
+          "variable": "appsflyerId",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "language": {
+          "type": "package_literal",
+          "variable": "language",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "appCode": {
+          "type": "package_literal",
+          "variable": "appCode",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "deviceId": {
+          "type": "package_literal",
+          "variable": "deviceId",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "version": {
+          "type": "package_literal",
+          "variable": "version",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "osVersion": {
+          "type": "package_literal",
+          "variable": "osVersion",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "isVpnConnected": {
+          "type": "package_literal",
+          "variable": "isVpnConnected",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "appid": {
+          "type": "package_literal",
+          "variable": "appid",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "model": {
+          "type": "package_literal",
+          "variable": "model",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "packageName": {
+          "type": "package_literal",
+          "variable": "packageName",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "ispType": {
+          "type": "package_literal",
+          "variable": "ispType",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        },
+        "organic": {
+          "type": "package_literal",
+          "variable": "organic",
+          "validated": true,
+          "path": "requirements/salary-trade/runtime_aliases.yaml"
+        }
+      },
+      "resolved_path": "/union/getAnchorApplyRecord?uid={{uid}}&ticket={{ticket}}&deviceType={{deviceType}}&systemLanguage={{systemLanguage}}&appVersion={{appVersion}}&os={{os}}&netType={{netType}}&channel={{channel}}&appsflyerId={{appsflyerId}}&language={{language}}&appCode={{appCode}}&deviceId={{deviceId}}&version={{version}}&osVersion={{osVersion}}&isVpnConnected={{isVpnConnected}}&appid={{appid}}&model={{model}}&packageName={{packageName}}&ispType={{ispType}}&organic={{organic}}",
+      "openapi_matched": true,
+      "response_contract": {}
+    }
+  ]
+}

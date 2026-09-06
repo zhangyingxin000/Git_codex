@@ -3,7 +3,32 @@
   "project_id": "prj_e3515817c4",
   "package_id": "wealth-level",
   "package_name": "财富等级",
-  "generated_at": "2026-09-03T14:29:39+08:00",
+  "generated_at": "2026-09-04T18:31:16+08:00",
+  "source_skill": {
+    "name": "requirement-test-case-generation",
+    "schema_version": "1.0",
+    "contract_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\requirement-test-case-skill-contract.json"
+  },
+  "skill_quality_gate": {
+    "status": "PASS",
+    "checks": {
+      "cases_generated": true,
+      "case_ids_unique": true,
+      "requirement_traceability": true,
+      "expected_results_complete": true,
+      "automation_classified": true
+    },
+    "policy": {
+      "requirement_traceability_rate": 100,
+      "acceptance_criteria_coverage_rate": 100,
+      "expected_result_required": true,
+      "state_path_required_for_stateful_scenarios": true,
+      "write_cleanup_or_compensation_required": true,
+      "unresolved_business_rule_must_be_reported": true,
+      "duplicate_case_ids_allowed": false,
+      "orphan_cases_allowed": false
+    }
+  },
   "summary": {
     "cases": 195,
     "with_db_checks": 0,
@@ -5856,7 +5881,7 @@
         "schema_version": "1.1",
         "package_id": "wealth-level",
         "package_name": "财富等级",
-        "generated_at": "2026-09-03T14:29:39+08:00",
+        "generated_at": "2026-09-04T18:31:16+08:00",
         "status": "READY_WITH_WARNINGS",
         "summary": {
           "blocked": 0,

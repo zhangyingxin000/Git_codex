@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.1",
+  "report_type": "REQUIREMENT_PACKAGE_ACCOUNT_POOL_PREFLIGHT",
+  "package_id": "salary-trade",
+  "status": "PASSED",
+  "created_at": "2026-09-06T19:56:27+08:00",
+  "summary": {
+    "required_applicants": 1,
+    "required_roles": [
+      "applicant"
+    ],
+    "applicants_total": 8,
+    "applicants_valid": 1,
+    "proxies_total": 0,
+    "proxies_valid": 0,
+    "required_currencies": [],
+    "missing_proxy_currencies": []
+  },
+  "applicants": [
+    {
+      "row": 1,
+      "uid": "1454696",
+      "status": "FAILED",
+      "http_status": 401,
+      "business_code": 401,
+      "message": "Authentication failed",
+      "country_code": "MA",
+      "currency": "USD",
+      "support_currencies": "USD"
+    },
+    {
+      "row": 2,
+      "uid": "1455141",
+      "status": "FAILED",
+      "http_status": 401,
+      "business_code": 401,
+      "message": "Authentication failed",
+      "country_code": "SA",
+      "currency": "SAR",
+      "support_currencies": "SAR"
+    },
+    {
+      "row": 3,
+      "uid": "1454724",
+      "status": "FAILED",
+      "http_status": 401,
+      "business_code": 401,
+      "message": "Authentication failed",
+      "country_code": "QA",
+      "currency": "QAR",
+      "support_currencies": "QAR"
+    },
+    {
+      "row": 4,
+      "uid": "1454744",
+      "status": "FAILED",
+      "http_status": 401,
+      "business_code": 401,
+      "message": "Authentication failed",
+      "country_code": "USD",
+      "currency": "USD",
+      "support_currencies": "USD"
+    },
+    {
+      "row": 5,
+      "uid": "1454723",
+      "status": "FAILED",
+      "http_status": 401,
+      "business_code": 401,
+      "message": "Authentication failed",
+      "country_code": "QA",
+      "currency": "QAR",
+      "support_currencies": "QAR"
+    },
+    {
+      "row": 6,
+      "uid": "1455185",
+      "status": "FAILED",
+      "http_status": 401,
+      "business_code": 401,
+      "message": "Authentication failed",
+      "country_code": "MA",
+      "currency": "USD",
+      "support_currencies": "USD"
+    },
+    {
+      "row": 7,
+      "uid": "1454617",
+      "status": "FAILED",
+      "http_status": 401,
+      "business_code": 401,
+      "message": "Authentication failed",
+      "country_code": "SA",
+      "currency": "USD",
+      "support_currencies": "USD"
+    },
+    {
+      "row": 8,
+      "uid": "1455113",
+      "status": "PASSED",
+      "http_status": 200,
+      "business_code": 200,
+      "message": "success",
+      "country_code": "USD",
+      "currency": "USD",
+      "support_currencies": "USD"
+    }
+  ],
+  "proxies": [],
+  "message": "当前目标所需账号池可用于测试服执行。",
+  "summary_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\runtime-account-preflight.json",
+  "json_url": "/requirement-reports/salary-trade/outputs/runtime-account-preflight.json"
+}

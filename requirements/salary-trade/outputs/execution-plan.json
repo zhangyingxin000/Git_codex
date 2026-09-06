@@ -5,7 +5,7 @@
   "package_id": "salary-trade",
   "package_name": "工资代理快速结算",
   "status": "BLOCKED",
-  "generated_at": "2026-09-02T18:49:56+08:00",
+  "generated_at": "2026-09-06T15:29:56+08:00",
   "source": {
     "skill": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\test-tool-routing\\SKILL.md",
     "basis": "结构化测试用例、JMeter映射、账号模型、证据规则和需求包资产"
@@ -64,6 +64,38 @@
       "status": "READY",
       "account_slot": "applicant_01",
       "order_variable": "flow_a_order_no",
+      "transaction_status": "READY",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        },
+        {
+          "order": 2,
+          "role": "applicant",
+          "action": "取消订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/cancel",
+          "case_id": "tc_4a361f2e73",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [],
       "cases": [
         {
           "id": "tc_4a361f2e73",
@@ -151,18 +183,12 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_4a361f2e73",
-            "tc_9cce4f325a",
-            "tc_fd3c65bfca",
-            "tc_ea40bd1230",
-            "tc_5e834a4d16",
-            "tc_9f5be4623d",
-            "tc_0517361e1a",
-            "tc_432f1720e0"
+            "tc_6f8644c487",
+            "tc_4a361f2e73"
           ],
-          "case_count": 8,
+          "case_count": 2,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程A：创建后申请人取消",
           "evidence_rules": [
@@ -224,6 +250,38 @@
       "status": "READY_WITH_WARNINGS",
       "account_slot": "applicant_02",
       "order_variable": "flow_b_order_no",
+      "transaction_status": "READY",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        },
+        {
+          "order": 2,
+          "role": "proxy",
+          "action": "拒绝订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/reject",
+          "case_id": "tc_36f4222004",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [],
       "cases": [
         {
           "id": "tc_d1023be903",
@@ -311,18 +369,12 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_d1023be903",
-            "tc_36f4222004",
-            "tc_ae8f94bb13",
-            "tc_e7f828e13a",
-            "tc_e3fe32d890",
-            "tc_45166545a3",
-            "tc_73f8c0f05a",
-            "tc_c1da29bb4c"
+            "tc_6f8644c487",
+            "tc_36f4222004"
           ],
-          "case_count": 8,
+          "case_count": 2,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程B：创建后代理拒绝",
           "evidence_rules": [
@@ -382,6 +434,66 @@
       "status": "READY_WITH_WARNINGS",
       "account_slot": "applicant_03",
       "order_variable": "flow_c_order_no",
+      "transaction_status": "READY",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        },
+        {
+          "order": 2,
+          "role": "proxy",
+          "action": "接受订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/accept",
+          "case_id": "tc_8942a7db0b",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        },
+        {
+          "order": 3,
+          "role": "proxy",
+          "action": "标记已转账",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "case_id": "tc_27de387073",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        },
+        {
+          "order": 4,
+          "role": "applicant",
+          "action": "确认收款",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/confirm",
+          "case_id": "tc_94914f389f",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [],
       "cases": [
         {
           "id": "tc_be228a1cd1",
@@ -613,34 +725,14 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_be228a1cd1",
-            "tc_3fea7697b2",
-            "tc_343e941fe3",
-            "tc_a38fbdd48f",
+            "tc_6f8644c487",
+            "tc_8942a7db0b",
             "tc_27de387073",
-            "tc_3c1ef0b151",
-            "tc_60ad3df5c9",
-            "tc_78189ffc40",
-            "tc_ac39a4c15e",
-            "tc_7b351242d9",
-            "tc_81ca4518aa",
-            "tc_cecc2e452e",
-            "tc_63b49481af",
-            "tc_9703f0d4b0",
-            "tc_6d43b840fc",
-            "tc_c4b5e635f7",
-            "tc_ce9183787a",
-            "tc_6f03ba81cf",
-            "tc_d17c532894",
-            "tc_27dd9da1a1",
-            "tc_c240887ef3",
-            "tc_150ccec0dd",
-            "tc_050931dc62",
-            "tc_e28e6a08e2"
+            "tc_94914f389f"
           ],
-          "case_count": 24,
+          "case_count": 4,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程C：完整成交",
           "evidence_rules": [
@@ -722,6 +814,68 @@
       "status": "READY_WITH_WARNINGS",
       "account_slot": "applicant_04",
       "order_variable": "flow_d_order_no",
+      "transaction_status": "BLOCKED",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        },
+        {
+          "order": 2,
+          "role": "proxy",
+          "action": "接受订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/accept",
+          "case_id": "tc_8942a7db0b",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        },
+        {
+          "order": 3,
+          "role": "proxy",
+          "action": "标记已转账",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "case_id": "tc_27de387073",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        },
+        {
+          "order": 4,
+          "role": "applicant",
+          "action": "提交投诉",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "case_id": "tc_a38fbdd48f",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [
+        "缺少运营处理投诉失败的可执行接口或测试环境触发入口。"
+      ],
       "cases": [
         {
           "id": "tc_3c2aa3f293",
@@ -813,18 +967,14 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_3c2aa3f293",
-            "tc_c4f56bbedb",
-            "tc_cb0f14e257",
-            "tc_ddc2782339",
-            "tc_2c8302c8bf",
-            "tc_ed495e60ee",
-            "tc_4a361f2e73",
-            "tc_da1f72545f"
+            "tc_6f8644c487",
+            "tc_8942a7db0b",
+            "tc_27de387073",
+            "tc_a38fbdd48f"
           ],
-          "case_count": 8,
+          "case_count": 4,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程D：投诉失败",
           "evidence_rules": [
@@ -838,7 +988,9 @@
             "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
             "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
           ],
-          "blockers": []
+          "blockers": [
+            "缺少运营处理投诉失败的可执行接口或测试环境触发入口。"
+          ]
         },
         {
           "tool": "pytest",
@@ -900,6 +1052,68 @@
       "status": "READY_WITH_WARNINGS",
       "account_slot": "applicant_05",
       "order_variable": "flow_e_order_no",
+      "transaction_status": "BLOCKED",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        },
+        {
+          "order": 2,
+          "role": "proxy",
+          "action": "接受订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/accept",
+          "case_id": "tc_8942a7db0b",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        },
+        {
+          "order": 3,
+          "role": "proxy",
+          "action": "标记已转账",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "case_id": "tc_27de387073",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        },
+        {
+          "order": 4,
+          "role": "applicant",
+          "action": "提交投诉",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/appeal",
+          "case_id": "tc_a38fbdd48f",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [
+        "缺少运营处理投诉成功的可执行接口或测试环境触发入口。"
+      ],
       "cases": [
         {
           "id": "tc_3c2aa3f293",
@@ -991,18 +1205,14 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_3c2aa3f293",
-            "tc_c4f56bbedb",
-            "tc_cb0f14e257",
-            "tc_ddc2782339",
-            "tc_2c8302c8bf",
-            "tc_ed495e60ee",
-            "tc_4a361f2e73",
-            "tc_da1f72545f"
+            "tc_6f8644c487",
+            "tc_8942a7db0b",
+            "tc_27de387073",
+            "tc_a38fbdd48f"
           ],
-          "case_count": 8,
+          "case_count": 4,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程E：投诉成功",
           "evidence_rules": [
@@ -1016,7 +1226,9 @@
             "salary_trade_post_userserv_salary_trade_order_confirm_anchor_salary_trade_order",
             "salary_trade_post_userserv_salary_trade_order_create_anchor_salary_trade_order"
           ],
-          "blockers": []
+          "blockers": [
+            "缺少运营处理投诉成功的可执行接口或测试环境触发入口。"
+          ]
         },
         {
           "tool": "pytest",
@@ -1078,6 +1290,24 @@
       "status": "BLOCKED",
       "account_slot": "applicant_06",
       "order_variable": "flow_f_order_no",
+      "transaction_status": "BLOCKED",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [],
       "cases": [
         {
           "id": "tc_3c2aa3f293",
@@ -1169,18 +1399,11 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_3c2aa3f293",
-            "tc_c4f56bbedb",
-            "tc_cb0f14e257",
-            "tc_ddc2782339",
-            "tc_2c8302c8bf",
-            "tc_ed495e60ee",
-            "tc_4a361f2e73",
-            "tc_da1f72545f"
+            "tc_6f8644c487"
           ],
-          "case_count": 8,
+          "case_count": 1,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程F：待接单超时",
           "evidence_rules": [
@@ -1280,6 +1503,38 @@
       "status": "BLOCKED",
       "account_slot": "applicant_07",
       "order_variable": "flow_g_order_no",
+      "transaction_status": "READY",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        },
+        {
+          "order": 2,
+          "role": "proxy",
+          "action": "接受订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/accept",
+          "case_id": "tc_8942a7db0b",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [],
       "cases": [
         {
           "id": "tc_3c2aa3f293",
@@ -1371,18 +1626,12 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_3c2aa3f293",
-            "tc_c4f56bbedb",
-            "tc_cb0f14e257",
-            "tc_ddc2782339",
-            "tc_2c8302c8bf",
-            "tc_ed495e60ee",
-            "tc_4a361f2e73",
-            "tc_da1f72545f"
+            "tc_6f8644c487",
+            "tc_8942a7db0b"
           ],
-          "case_count": 8,
+          "case_count": 2,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程G：已接受未转账超时",
           "evidence_rules": [
@@ -1482,6 +1731,52 @@
       "status": "BLOCKED",
       "account_slot": "applicant_08",
       "order_variable": "flow_h_order_no",
+      "transaction_status": "READY",
+      "transaction_steps": [
+        {
+          "order": 1,
+          "role": "applicant",
+          "action": "创建订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/order/create",
+          "case_id": "tc_6f8644c487",
+          "produces": [
+            "salary_order_no"
+          ],
+          "consumes": [],
+          "requires_proxy_reference": true,
+          "status": "READY"
+        },
+        {
+          "order": 2,
+          "role": "proxy",
+          "action": "接受订单",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/accept",
+          "case_id": "tc_8942a7db0b",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        },
+        {
+          "order": 3,
+          "role": "proxy",
+          "action": "标记已转账",
+          "method": "POST",
+          "path": "/userserv/salary/trade/agent/order/paid",
+          "case_id": "tc_27de387073",
+          "produces": [],
+          "consumes": [
+            "salary_order_no"
+          ],
+          "requires_proxy_reference": false,
+          "status": "READY"
+        }
+      ],
+      "transaction_blockers": [],
       "cases": [
         {
           "id": "tc_3c2aa3f293",
@@ -1573,18 +1868,13 @@
         },
         {
           "tool": "jmeter",
-          "purpose": "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。",
+          "purpose": "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。",
           "cases": [
-            "tc_3c2aa3f293",
-            "tc_c4f56bbedb",
-            "tc_cb0f14e257",
-            "tc_ddc2782339",
-            "tc_2c8302c8bf",
-            "tc_ed495e60ee",
-            "tc_4a361f2e73",
-            "tc_da1f72545f"
+            "tc_6f8644c487",
+            "tc_8942a7db0b",
+            "tc_27de387073"
           ],
-          "case_count": 8,
+          "case_count": 3,
           "asset": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx",
           "thread_group": "工资交易流程H：已转账未确认超时完成",
           "evidence_rules": [

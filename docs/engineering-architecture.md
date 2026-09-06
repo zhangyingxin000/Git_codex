@@ -2,6 +2,112 @@
 
 本文说明当前工程化拆分的边界，以及新增功能应该放在哪里。目标不是一次性重写旧平台，而是在保持现有功能可运行的前提下，把高频变化部分逐步迁出 `app.py` 和 `static/app.js`。
 
+## 技术栈
+
+| 层次 | 技术 | 在平台中的职责 |
+| --- | --- | --- |
+| 运行环境 | Python 3.12+、项目 `.venv` | 隔离平台依赖，保证迁移后可重复安装和运行 |
+| Web API | FastAPI、Uvicorn | 提供项目、需求包、执行、证据、报告和后台任务 API |
+| 数据模型 | Pydantic | 校验 API 请求参数和配置结构，减少错误数据进入执行层 |
+| 平台数据 | SQLite、SQLAlchemy、Alembic | 保存项目、接口、用例、映射、执行记录和后台任务状态 |
+| 配置 | PyYAML、环境变量 | 管理多环境地址、工具路径、开关、报告策略和非敏感数据源配置 |
+| HTTP 调用 | httpx | 平台预检、接口请求和外部服务访问 |
+| MySQL 证据 | PyMySQL | 查询测试环境业务表和元数据；平台默认只读 |
+| Redis 证据 | redis-py | 按需求读取登录态、缓存值、TTL 和元数据；不默认强制接入 |
+| 接口执行 | Postman Collection、Newman、Apifox CLI | 接口冒烟、轻量回归和发布前卡点 |
+| 流程与性能 | Apache JMeter、Java、JMeter Skill、`jmeter-mcp-server` | Skill按用例、OpenAPI和Profile生成受约束JMX，静态门禁校验后由MCP仅负责非GUI执行并回收JTL/HTML |
+| 深度验证 | pytest | 场景驱动执行、业务断言、DB/Redis 证据和复盘输入 |
+| 报告 | JTL、JMeter HTML、Newman JSON、pytest JSON、可选 Allure | 保留原始结果，并生成统一场景报告和 AI 分析 |
+| 前端 | 原生 HTML、CSS、JavaScript | 无构建启动，负责工作台导航、状态展示和执行入口 |
+
+`requirements.txt` 与 `pyproject.toml` 当前声明相同的 Python 运行依赖。JMeter、Java、Node.js、Newman、Apifox CLI 和 Allure 属于外部工具，不安装进 Python 虚拟环境，由工具链预检识别。
+
+## 总体结构
+
+平台采用“控制面 + 外部执行器 + 证据源 + 报告归档”的结构：
+
+```text
+浏览器工作台
+  -> FastAPI routes
+  -> handler / service
+  -> 需求包资产与平台 SQLite
+  -> adapter 调用 Newman / JMeter MCP / pytest / Apifox CLI
+  -> MySQL / Redis 只读证据
+  -> 原始报告
+  -> 统一场景报告与 AI 复盘
+```
+
+平台不是重新实现 Newman、JMeter 或 pytest。平台负责决定测什么、准备什么数据、用哪个工具、如何关联结果；JMeter 路径统一由 `jmeter-mcp-server` 生成或导入 JMX 并触发非GUI执行，Apache JMeter 负责真实发压和原生 HTML。
+
+## 模块关联
+
+| 模块 | 上游 | 下游 | 主要输出 |
+| --- | --- | --- | --- |
+| `api/fastapi_app.py` | 浏览器、CLI、外部调用方 | `api/routes`、兼容层 | FastAPI 应用、异常处理、静态页面 |
+| `api/routes/` | FastAPI | handlers、services、`app.py` 兼容函数 | HTTP 响应，不承载长业务逻辑 |
+| `handlers/` | API 路由、后台队列 | services、兼容层执行函数 | 单次任务编排和安全默认值 |
+| `services/` | handlers、routes | repositories、adapters、需求包文件 | 用例生成、回归选择、诊断、报告索引、任务状态 |
+| `adapters/` | services、handlers | JMeter、Newman、pytest 等进程 | 标准化工具命令、退出码和原始结果 |
+| `repositories/` | services | SQLite | 平台读模型和持久化访问 |
+| `config/` | 启动入口、services | YAML、环境变量 | 统一运行配置和路径解析 |
+| `schemas/` | routes | Pydantic | 请求和响应的数据边界 |
+| `startup/` | Uvicorn/FastAPI | 任务队列、生命周期资源 | 启动和关闭资源 |
+| `security/`、`storage_policy.py` | routes、services | 外部地址和本地文件操作 | 写操作、目标地址和存储边界控制 |
+| `demo/` | `platform.cmd demo`、后台任务 | 合成 SQLite 和回放数据 | 不连接测试服的可复现演示结果 |
+| `app.py` | 新 FastAPI 模块 | 旧数据库函数、生成器和执行器 | 兼容现有功能；仍在渐进拆分 |
+
+调用原则：`route -> handler/service -> repository/adapter`。下层模块不反向依赖页面；外部工具命令不应直接写在路由里；需求包业务规则不应进入启动模块。
+
+## 需求包数据流
+
+每个需求都以 `requirements/<package_id>/` 为维护边界：
+
+```text
+需求文档 / OpenAPI / 抓包
+  -> 需求测试用例 + 接口测试用例
+  -> account_model.yaml + resource_manifest.yaml
+  -> execution-plan.json + evidence_rules.yaml
+  -> Newman / JMeter / pytest 工具资产
+  -> run-context 独立运行批次
+  -> 原始执行报告 + DB/Redis 证据
+  -> 统一场景报告
+  -> AI 复盘结论
+```
+
+关键关联关系：
+
+1. 测试用例决定“测什么”，接口用例和业务流程用例分开维护。
+2. `account_model.yaml` 决定单账号、多账号、角色和账号互斥要求。
+3. `resource_manifest.yaml` 登记 CSV、MySQL、Redis、运行变量等真实来源。
+4. `execution-plan.json` 组织场景顺序，并把场景分配给 Newman、JMeter、pytest 或人工复核。
+5. `evidence_rules.yaml` 定义接口执行后如何查询 DB/Redis 和判断业务结果。
+6. `run-context` 把同一轮工具结果绑定到一个批次，避免历史报告和当前执行混合。
+7. 统一场景报告按用例 ID、场景 ID、订单号等变量关联原始结果，不替代原始报告。
+
+## 工作台职责与收紧方案
+
+当前工作台功能完整，但存在明显入口冗余：同一个需求包可以从质量总览、需求包卡片、执行中心、高级工具链多处生成资产或启动工具；历史执行状态与当前运行批次也会同时出现。功能没有丢失，但人工会难以判断“现在应该点哪个”。
+
+目标只保留四个主工作区：
+
+| 页面 | 只负责什么 | 不再放什么 |
+| --- | --- | --- |
+| 质量总览 | 项目健康度、当前需求包、阻断项和唯一下一步 | 不直接执行 Newman/JMeter/pytest，不重复展示全部维护按钮 |
+| 需求资产 | 需求包、文档、接口、测试用例、账号模型、资源登记和场景计划 | 不展示历史报告和性能执行按钮 |
+| 执行中心 | 选择当前需求包、创建运行批次、数据预检、启动工具、查看实时任务 | 不展示完整资产维护表，不混入 demo/其他需求包任务 |
+| 报告中心 | 按需求包、运行批次、报告类型查看原始报告和 AI 结论 | 不再提供生成脚本或修改资源入口 |
+
+高级能力保留在折叠区域：工具路径、YAML、JMeter Skill、Apifox 交换、原始参数和人工报告回收。普通主流程不需要反复看到这些配置。
+
+建议按以下顺序继续收紧：
+
+1. 总览页只保留一个“继续下一步”按钮，跳转到对应资产或执行步骤。
+2. 执行中心将十多个工具按钮收成“准备、执行、复盘”三个阶段；具体工具由场景计划决定。
+3. 当前批次状态与历史最近状态分开标注，禁止用旧报告冒充本轮已执行。
+4. 需求包目录只展示正式需求包；手工接口和未归档资料放入“待整理”区域。
+5. 报告中心默认按需求包和批次折叠，只展开最新一轮，原始 JSON/JTL/HTML 放在二级详情。
+6. 高级工具链只保留一处入口，不在多个页面重复出现。
+
 ## 后端边界
 
 FastAPI 应用入口位于 `quality_hub_backend/api/fastapi_app.py`，并由 `create_app()` 创建。新代码按以下边界放置：

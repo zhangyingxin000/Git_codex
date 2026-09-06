@@ -31,6 +31,7 @@ import uuid
 import ctypes
 from ctypes import wintypes
 from datetime import datetime, timezone, timedelta
+from decimal import Decimal, InvalidOperation
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -44,6 +45,64 @@ from quality_hub_backend.config.environment import (
 from quality_hub_backend.services.api_case_design import (
     generate_api_case_design,
     write_case_design,
+)
+from quality_hub_backend.services.api_case_execution import (
+    compile_api_cases_to_postman,
+    write_api_execution_assets,
+)
+from quality_hub_backend.services.regression_selection import infer_change_scope, select_regression_cases
+from quality_hub_backend.services.skill_runtime import SkillRuntime
+from quality_hub_backend.services.review_memory import load_review_memory, persist_review_memory
+from quality_hub_backend.services.jmeter_mcp_workflow import (
+    build_jmeter_mcp_import_workflow,
+    read_jmeter_execution_progress,
+)
+from quality_hub_backend.services.jmeter_runtime_plan import prepare_runtime_jmx
+from quality_hub_backend.services.jmeter_skill_gate import (
+    external_jmeter_skill_registry,
+    validate_and_correct_jmx,
+)
+from quality_hub_backend.services.performance_analysis import (
+    diagnose_performance as _diagnose_performance_service,
+    evaluate_gate as _evaluate_performance_gate_service,
+    percentile as _performance_percentile_service,
+    summarize_jtl as _summarize_jtl_service,
+    thresholds_for as _performance_thresholds_service,
+)
+from quality_hub_backend.services.performance_baseline import (
+    approve_candidate as _approve_performance_candidate,
+    baseline_identity as _performance_baseline_identity,
+    build_run_performance_state as _build_run_performance_state,
+    matching_active_baseline as _matching_active_performance_baseline,
+    normalize_performance_state as _normalize_run_performance_state,
+    target_fingerprint as _performance_target_fingerprint,
+)
+from quality_hub_backend.services.performance_review import (
+    build_builtin_performance_review as _build_builtin_performance_review,
+    build_performance_ai_prompt as _build_performance_ai_prompt,
+    merge_model_performance_review as _merge_model_performance_review,
+)
+from quality_hub_backend.services.performance_skill_generator import (
+    build_execution_context as _build_performance_execution_context,
+    build_profile_stages as _build_performance_profile_stages,
+    profile_catalog as _performance_profile_catalog,
+    validate_transaction_stage_durations as _validate_performance_transaction_stage_durations,
+)
+from quality_hub_backend.services.performance_preflight import (
+    apply_resolved_inputs as _apply_performance_resolved_inputs,
+    build_target_readiness as _build_performance_target_readiness,
+    normalize_account_pool as _normalize_performance_account_pool,
+    public_account_pool as _public_performance_account_pool,
+    summarize_missing_runtime_inputs as _summarize_performance_missing_inputs,
+)
+from quality_hub_backend.services.performance_observability import (
+    attach_observability_to_diagnosis as _attach_performance_observability,
+    build_database_status_evidence as _build_database_status_evidence,
+    collect_observability_evidence as _collect_performance_observability,
+    describe_observability_configuration as _describe_performance_observability,
+)
+from quality_hub_backend.services.performance_history import (
+    build_performance_trends as _build_performance_trends,
 )
 
 
@@ -100,6 +159,15 @@ def _path_from_config(value, default=""):
         return Path("")
     path = Path(text)
     return path if path.is_absolute() else ROOT / path
+
+
+def _portable_project_path(path):
+    """Store maintained asset references relative to the project root."""
+    path = Path(path)
+    try:
+        return path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except (OSError, ValueError):
+        return path.as_posix()
 
 
 class _DataBlob(ctypes.Structure):
@@ -262,44 +330,111 @@ def percentile_value(values, percentile):
     return ordered[index]
 
 
-def run_jmeter_wealth(ticket, login_uid, threads=2, loops=5, rampup=2):
-    """Run the real JMeter plan with an in-memory token and return a safe summary."""
-    threads=max(1,min(int(threads),50)); loops=max(1,min(int(loops),100)); rampup=max(0,min(int(rampup),300))
-    jmeter=Path(str(_jmeter_command()))
-    plan=ROOT/"jmeter"/"wealth-level-performance.jmx"
-    if not jmeter.exists(): return {"status":"BLOCKED","message":"本机未找到 JMeter，请配置 AUTOTEST_JMETER","engine":"JMeter"}
-    if not plan.exists(): return {"status":"BLOCKED","message":"JMeter 脚本不存在","engine":"JMeter"}
-    stamp=datetime.now().strftime("%Y%m%d-%H%M%S")
-    report_dir=ROOT/"reports"/f"jmeter-wealth-{stamp}"; html_dir=report_dir/"html"; report_dir.mkdir(parents=True,exist_ok=True)
-    jtl=report_dir/"result.jtl"
-    env=os.environ.copy(); env["AUTOTEST_RUNTIME_TICKET"]=str(ticket)
-    command=[str(jmeter),"-n","-t",str(plan),"-l",str(jtl),"-e","-o",str(html_dir),f"-Jthreads={threads}",f"-Jloops={loops}",f"-Jrampup={rampup}",f"-Juid={login_uid}","-Jjmeter.save.saveservice.url=false","-Jjmeter.save.saveservice.response_data=false","-Jjmeter.save.saveservice.requestHeaders=false","-Jjmeter.save.saveservice.responseHeaders=false"]
-    started=time.perf_counter()
+def run_jmeter_wealth(project_id, ticket, login_uid, threads=2, loops=5, rampup=2, wealth_case=None):
+    """Run the wealth performance probe through the single JMeter MCP gateway."""
+    threads = max(1, min(int(threads), 50))
+    loops = max(1, min(int(loops), 100))
+    rampup = max(0, min(int(rampup), 300))
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,))
+    if not project:
+        return {"status": "BLOCKED", "message": "项目不存在", "engine": JMETER_MCP_ENGINE}
+    if not wealth_case:
+        try:
+            wealth_case = resolve_executable_case(project_id, "GET", "/level/exeperience/v2/get")
+        except Exception as exc:
+            return {"status": "BLOCKED", "message": f"财富等级用例不可执行：{exc}", "engine": JMETER_MCP_ENGINE}
+
+    package_id = "wealth-level"
+    package = requirement_package_by_id(project_id, package_id)
+    run_context = _ensure_requirement_run_context(
+        project_id,
+        package_id,
+        {"name": "财富等级业务链 MCP 性能验证"},
+    )
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    report_dir = Path(package["root"]) / "reports" / f"jmeter-business-chain-{stamp}"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    workflow_path = report_dir / "jmeter-mcp-workflow.json"
+    generated_jmx = report_dir / "jmeter-plan.jmx"
+    runtime_context = {"ticket": str(ticket), "uid": str(login_uid)}
+    execution_options = {
+        "performance_profile": "smoke",
+        "max_error_rate": 0,
+        "max_p95_ms": 3000,
+        "max_p99_ms": 5000,
+    }
     try:
-        completed=subprocess.run(command,cwd=str(ROOT),env=env,capture_output=True,text=True,timeout=max(120,threads*loops*25),creationflags=getattr(subprocess,"CREATE_NO_WINDOW",0))
-    except subprocess.TimeoutExpired:
-        return {"status":"FAILED","message":"JMeter 执行超时","engine":"JMeter","threads":threads,"loops":loops,"rampup_seconds":rampup}
-    if completed.returncode!=0 or not jtl.exists():
-        message=(completed.stderr or completed.stdout or "JMeter 未生成结果")[-1000:]
-        return {"status":"FAILED","message":message,"engine":"JMeter","threads":threads,"loops":loops,"rampup_seconds":rampup}
-    with jtl.open("r",encoding="utf-8-sig",newline="") as handle:
-        samples=list(csv.DictReader(handle))
-    elapsed=[int(x.get("elapsed") or 0) for x in samples]
-    errors=[x for x in samples if str(x.get("success","")).lower()!="true"]
-    codes={}
-    for item in samples:
-        code=str(item.get("responseCode") or "UNKNOWN"); codes[code]=codes.get(code,0)+1
-    starts=[int(x.get("timeStamp") or 0) for x in samples]
-    ends=[int(x.get("timeStamp") or 0)+int(x.get("elapsed") or 0) for x in samples]
-    sample_seconds=max(.001,(max(ends)-min(starts))/1000) if samples else .001
-    failure_reason=""
-    if errors:
-        if codes and set(codes)=={"401"}: failure_reason="所有请求均返回401：本次登录会话未被服务端接受或已失效"
-        elif codes and set(codes)=={"403"}: failure_reason="所有请求均返回403：账号或环境权限不足"
-        elif any(x.get("failureMessage") for x in errors): failure_reason="JMeter业务断言未通过"
-        else: failure_reason="存在网络错误或非预期HTTP响应"
-    result={"status":"PASSED" if samples and not errors else "FAILED","engine":"JMeter","requests":len(samples),"success":len(samples)-len(errors),"errors":len(errors),"error_rate":round(len(errors)/len(samples)*100,2) if samples else 100,"throughput_rps":round(len(samples)/sample_seconds,2),"average_ms":round(statistics.mean(elapsed),2) if elapsed else 0,"min_ms":min(elapsed) if elapsed else 0,"max_ms":max(elapsed) if elapsed else 0,"p50_ms":percentile_value(elapsed,.50),"p90_ms":percentile_value(elapsed,.90),"p95_ms":percentile_value(elapsed,.95),"p99_ms":percentile_value(elapsed,.99),"response_codes":codes,"failure_reason":failure_reason,"threads":threads,"loops":loops,"rampup_seconds":rampup,"jtl_path":str(jtl),"html_report":str(html_dir/"index.html"),"security_note":"Token仅通过进程环境变量注入，JTL与HTML不保存请求URL、请求头或响应正文"}
-    (report_dir/"summary.json").write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8")
+        asset = _write_jmeter_mcp_asset(
+            project_id=project_id,
+            package_id=package_id,
+            project=project,
+            cases=[wealth_case],
+            target_path=generated_jmx,
+            workflow_path=workflow_path,
+            runtime_context=runtime_context,
+            threads=threads,
+            rampup_seconds=rampup,
+            loops=loops,
+            max_error_rate=execution_options["max_error_rate"],
+            max_p95_ms=execution_options["max_p95_ms"],
+            performance_profile=execution_options["performance_profile"],
+        )
+        mcp_run = _execute_jmeter_mcp_workflow(
+            workflow_path,
+            report_dir / "mcp-run",
+            runtime_context,
+            timeout_seconds=max(120, threads * loops * 25),
+        )
+        jtl_path = Path(mcp_run["jtl_path"])
+        result = _normalize_jmeter_result(
+            _sanitize_tool_result(mcp_run, runtime_context),
+            jtl_path,
+            execution_options,
+        )
+        result.update({
+            "engine": JMETER_MCP_ENGINE,
+            "execution_mode": "mcp_non_gui",
+            "requests": int(result.get("requests") or 0),
+            "success": max(0, int(result.get("requests") or 0) - int(result.get("errors") or 0)),
+            "threads": threads,
+            "loops": loops,
+            "rampup_seconds": rampup,
+            "workflow_path": str(workflow_path),
+            "jmx_path": asset["jmx_path"],
+            "jtl_path": str(jtl_path),
+            "html_report": mcp_run["html_path"] if Path(mcp_run["html_path"]).is_file() else "",
+            "mcp_analysis": mcp_run["analysis_path"] if Path(mcp_run["analysis_path"]).is_file() else "",
+            "security_note": "Ticket仅通过JMeter子进程环境传递，不进入JMX、workflow、JTL、HTML、MCP摘要或AI报告。",
+        })
+        if result.get("status") not in {"PASSED", "FAILED"}:
+            result["status"] = "PASSED" if result["requests"] and not result.get("errors") else "FAILED"
+    except Exception as exc:
+        result = {
+            "status": "FAILED",
+            "message": _redact_runtime_text(str(exc), runtime_context),
+            "engine": JMETER_MCP_ENGINE,
+            "execution_mode": "mcp_non_gui",
+            "threads": threads,
+            "loops": loops,
+            "rampup_seconds": rampup,
+        }
+
+    summary_path = report_dir / "summary.json"
+    result.update({
+        "report_type": "REQUIREMENT_PACKAGE_JMETER_RUN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "run_id": run_context["run_id"],
+        "summary_path": str(summary_path),
+        "json_url": "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix(),
+        "html_url": (
+            "/requirement-reports/" + Path(result["html_report"]).relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+            if result.get("html_report") and Path(result["html_report"]).is_file()
+            else ""
+        ),
+    })
+    summary_path.write_text(json.dumps(result, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_context["run_id"], "jmeter", result["status"], result)
     return result
 
 
@@ -319,17 +454,21 @@ def load_environment_config(env_name=None):
     return config
 
 
+SKILL_RUNTIME = SkillRuntime(SKILL_DIR, _load_yaml_file)
+
+
 def environment_config_status(project_id=None):
     config = load_environment_config()
     project = row("SELECT * FROM projects WHERE id=?", (project_id,)) if project_id else None
-    jmeter_home = str(deep_get(config, "tools.jmeter.home", "") or "").strip()
+    jmeter_home = _expand_config_value(os.getenv("AUTOTEST_JMETER_HOME") or deep_get(config, "tools.jmeter.home", ""))
     jmeter_bat = Path(jmeter_home) / "bin" / "jmeter.bat" if jmeter_home else Path("")
+    mcp_settings = _jmeter_mcp_settings()
     redis = deep_get(config, "data_sources.redis", {}) or {}
     mysql = deep_get(config, "data_sources.mysql", {}) or {}
     accounts = deep_get(config, "accounts", {}) or {}
     base_url = str(deep_get(config, "project.base_url", "") or (project.get("base_url") if project else "") or "")
     return {
-        "status": "READY" if base_url and (jmeter_bat.exists() or bool(shutil.which("jmeter"))) else "ATTENTION",
+        "status": "READY" if base_url and not mcp_settings.get("blockers") else "ATTENTION",
         "build": BUILD_ID,
         "env_name": config.get("env_name", "test"),
         "env_file": config.get("env_file", ""),
@@ -342,6 +481,9 @@ def environment_config_status(project_id=None):
         "tools": {
             "jmeter_home": jmeter_home,
             "jmeter_command": str(jmeter_bat) if jmeter_bat.exists() else _jmeter_command(),
+            "jmeter_engine": JMETER_MCP_ENGINE,
+            "jmeter_mcp_ready": not bool(mcp_settings.get("blockers")),
+            "jmeter_mcp_blockers": mcp_settings.get("blockers") or [],
             "newman_enabled": bool(deep_get(config, "tools.newman.enabled", True)),
         },
         "data_sources": {
@@ -856,7 +998,7 @@ def generate_requirement_account_model(project_id, package_id, persist=True):
         "package_name": package.get("name"),
         "generated_at": now(),
         "source": {
-            "skill": str(SKILL_DIR / "account-model-generation" / "SKILL.md"),
+            "skill": _portable_project_path(SKILL_DIR / "account-model-generation" / "SKILL.md"),
             "decision_basis": "需求包测试用例、接口参数、业务角色、账号互斥和数据证据规则",
         },
         "mode": strategy.get("mode"),
@@ -884,7 +1026,7 @@ def generate_requirement_account_model(project_id, package_id, persist=True):
 def _file_status(path):
     path = Path(path)
     return {
-        "path": str(path),
+        "path": _portable_project_path(path),
         "exists": path.is_file(),
         "updated_at": datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(timespec="seconds") if path.is_file() else "",
     }
@@ -1086,6 +1228,7 @@ def upgrade_requirement_package_schemas(project_id, package_id):
 PACKAGE_EXECUTION_REPORT_TYPES = {
     "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN": "apifox",
     "REQUIREMENT_PACKAGE_NEWMAN_RUN": "newman",
+    "REQUIREMENT_PACKAGE_INTERFACE_TEST_RUN": "interface_test",
     "REQUIREMENT_PACKAGE_JMETER_RUN": "jmeter",
     "REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN": "pytest",
     "PYTEST_DEEP_EVIDENCE_REVIEW": "pytest",
@@ -1097,8 +1240,8 @@ PACKAGE_REVIEW_REPORT_TYPES = {
     "REQUIREMENT_PACKAGE_AI_REVIEW",
 }
 
-RUN_CONTEXT_SCHEMA_VERSION = "1.0"
-RUN_CONTEXT_TOOLS = ("pipeline", "apifox", "newman", "newman_review", "jmeter", "load_test_plan", "pytest", "data_evidence", "performance_review", "scenario_report", "ai_review")
+RUN_CONTEXT_SCHEMA_VERSION = "1.1"
+RUN_CONTEXT_TOOLS = ("pipeline", "apifox", "newman", "interface_test", "newman_review", "jmeter", "load_test_plan", "pytest", "data_evidence", "performance_review", "scenario_report", "ai_review")
 
 
 def _safe_run_id(value):
@@ -1158,6 +1301,7 @@ def create_requirement_run_context(project_id, package_id, options=None):
     if path.is_file():
         payload = _read_json_asset(path)
         if payload:
+            _normalize_run_performance_state(payload)
             payload["run_context_path"] = str(path)
             return payload
     created_at = now()
@@ -1173,6 +1317,38 @@ def create_requirement_run_context(project_id, package_id, options=None):
         "updated_at": created_at,
         "scenarios": _run_context_scenarios(package["root"]),
         "runtime_variables": options.get("runtime_variables") or {},
+        "pinned": bool(options.get("pinned", False)),
+        "baseline": bool(options.get("baseline", False)),
+        "performance": {
+            "execution_context": {
+                "status": "UNSET",
+                "test_type": None,
+                "profile": None,
+                "profiles": [],
+                "target_api": None,
+                "target_apis": [],
+                "env": None,
+                "stages": [],
+                "thresholds": {},
+            },
+            "baseline": {
+                "status": "unset",
+                "baseline_run_id": None,
+                "profile": None,
+                "environment": None,
+                "target_fingerprint": None,
+                "approved_by": None,
+                "approved_at": None,
+                "metrics": {},
+            },
+            "comparison": {
+                "status": "not_compared",
+                "reference_run_id": None,
+                "result": "unknown",
+                "changes": {},
+                "reason": "",
+            },
+        },
         "tools": {name: {"status": "NOT_RUN", "reports": []} for name in RUN_CONTEXT_TOOLS},
         "reports": [],
     }
@@ -1194,6 +1370,7 @@ def update_requirement_run_context(project_id, package_id, run_id, tool, status,
     if not context:
         context = create_requirement_run_context(project_id, package_id, {"run_id": run_id})
         context.pop("run_context_path", None)
+    _normalize_run_performance_state(context)
     tool = str(tool or "").strip().lower()
     if tool not in RUN_CONTEXT_TOOLS:
         raise ValueError(f"不支持的运行批次工具：{tool}")
@@ -1204,17 +1381,82 @@ def update_requirement_run_context(project_id, package_id, run_id, tool, status,
         report_ref = {
             "report_type": report.get("report_type") or "UNKNOWN",
             "status": report.get("status") or status,
+            "stage": deep_get(report, "summary.stage"),
             "summary_path": report.get("summary_path") or report.get("report") or "",
             "json_url": report.get("json_url") or report.get("report_url") or "",
             "html_url": report.get("html_url") or "",
             "created_at": report.get("created_at") or report.get("executed_at") or now(),
         }
         refs = tool_state.setdefault("reports", [])
-        if not any(item.get("summary_path") == report_ref["summary_path"] for item in refs):
-            refs.append(report_ref)
+        def same_report_slot(item):
+            if item.get("summary_path") == report_ref["summary_path"]:
+                return True
+            if item.get("report_type") != report_ref["report_type"]:
+                return False
+            existing_stage = item.get("stage")
+            incoming_stage = report_ref.get("stage")
+            return incoming_stage in (None, "") or existing_stage in (None, "", incoming_stage)
+
+        refs[:] = [item for item in refs if not same_report_slot(item)]
+        refs.append(report_ref)
         all_refs = context.setdefault("reports", [])
-        if not any(item.get("summary_path") == report_ref["summary_path"] for item in all_refs):
-            all_refs.append({**report_ref, "tool": tool})
+        all_refs[:] = [
+            item for item in all_refs
+            if not (item.get("tool") == tool and same_report_slot(item))
+        ]
+        all_refs.append({**report_ref, "tool": tool})
+        performance = report.get("performance_summary")
+        if not isinstance(performance, dict) and str(report.get("report_type") or "").upper() in {
+            "REQUIREMENT_PACKAGE_JMETER_RUN",
+            "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN",
+        } and any(key in report for key in ("p95_ms", "error_rate", "throughput_rps")):
+            performance = report
+        if tool == "jmeter" and isinstance(performance, dict):
+            gate = report.get("performance_gate") or {}
+            project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
+            environment = str(
+                report.get("environment")
+                or deep_get(report, "execution_context.environment")
+                or project.get("base_url")
+                or "default"
+            )
+            profile = str(gate.get("profile") or report.get("performance_profile") or "smoke")
+            target_hint = str(
+                report.get("target_api")
+                or deep_get(report, "execution_context.target_api")
+                or package_id
+            )
+            fingerprint = _performance_target_fingerprint(performance, target_hint)
+            execution_context = dict((context.get("performance") or {}).get("execution_context") or {})
+            measurement_mode = str(
+                performance.get("measurement_mode")
+                or execution_context.get("transaction_mode")
+                or ("business_transaction" if int(performance.get("transaction_samples") or 0) > 0 else "request_only")
+            ).strip().lower()
+            identity = _performance_baseline_identity(
+                profile,
+                environment,
+                fingerprint,
+                measurement_mode,
+            )
+            active_baseline = _matching_active_performance_baseline(
+                _run_contexts_from_root(package["root"]),
+                identity,
+                exclude_run_id=run_id,
+            )
+            context["performance"] = {
+                "execution_context": execution_context,
+                **_build_run_performance_state(
+                run_id=run_id,
+                summary=performance,
+                profile=profile,
+                environment=environment,
+                fingerprint=fingerprint,
+                measurement_mode=measurement_mode,
+                active_baseline=active_baseline,
+                gate_status=str(gate.get("status") or status),
+                ),
+            }
     context["updated_at"] = now()
     context["status"] = _run_context_status(context)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -1243,6 +1485,7 @@ def get_requirement_run_context(project_id, package_id, run_id):
     payload = _read_json_asset(path)
     if not payload:
         raise ValueError("没有找到这个运行批次")
+    _normalize_run_performance_state(payload)
     payload["status"] = _run_context_status(payload)
     payload["run_context_path"] = str(path)
     return payload
@@ -1256,11 +1499,49 @@ def _run_contexts_from_root(package_root):
             payload = _read_json_asset(path)
             if not payload:
                 continue
+            _normalize_run_performance_state(payload)
             payload["run_context_path"] = str(path)
             payload["status"] = _run_context_status(payload)
             contexts.append(payload)
     contexts.sort(key=lambda item: item.get("created_at") or item.get("updated_at") or "", reverse=True)
     return contexts
+
+
+def approve_requirement_performance_baseline(project_id, package_id, run_id, approved_by="manual"):
+    package = requirement_package_by_id(project_id, package_id)
+    path = _run_context_file(package["root"], run_id)
+    context = _read_json_asset(path)
+    if not context:
+        raise ValueError("没有找到要批准的性能基线批次。")
+    _normalize_run_performance_state(context)
+    candidate = context["performance"]["baseline"]
+    identity = {
+        key: str(candidate.get(key) or "")
+        for key in ("profile", "environment", "target_fingerprint", "measurement_mode")
+    }
+    if not all(identity.values()):
+        raise ValueError("当前批次缺少性能Profile、环境或目标指纹，不能批准为基线。")
+
+    for previous in _run_contexts_from_root(package["root"]):
+        previous_baseline = previous.get("performance", {}).get("baseline", {})
+        if previous.get("run_id") == run_id or previous_baseline.get("status") != "active":
+            continue
+        if not all(str(previous_baseline.get(key) or "") == value for key, value in identity.items()):
+            continue
+        previous_baseline["status"] = "invalid"
+        previous_baseline["invalidated_at"] = now()
+        previous_baseline["invalidated_by_run_id"] = run_id
+        previous["baseline"] = False
+        previous["updated_at"] = now()
+        previous_path = _run_context_file(package["root"], previous["run_id"])
+        previous_path.write_text(json.dumps(previous, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+
+    approved = _approve_performance_candidate(context, approved_by=approved_by, approved_at=now())
+    approved["schema_version"] = RUN_CONTEXT_SCHEMA_VERSION
+    approved["updated_at"] = now()
+    path.write_text(json.dumps(approved, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    approved["run_context_path"] = str(path)
+    return approved
 
 
 def _normalized_package_status(value, default="ATTENTION"):
@@ -1296,6 +1577,7 @@ def _package_report_name(report_type):
     return {
         "REQUIREMENT_PACKAGE_APIFOX_CLI_RUN": "Apifox CLI发布冒烟",
         "REQUIREMENT_PACKAGE_NEWMAN_RUN": "Newman接口回归",
+        "REQUIREMENT_PACKAGE_INTERFACE_TEST_RUN": "接口测试用例执行",
         "REQUIREMENT_PACKAGE_NEWMAN_ANALYSIS": "Newman接口冒烟分析",
         "REQUIREMENT_PACKAGE_JMETER_RUN": "JMeter流程与性能",
         "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN": "JMeter持续压测执行",
@@ -1329,7 +1611,7 @@ def _package_report_summary_text(payload):
         errors = summary.get("errors", summary.get("jmeter_errors", 0))
         return f"请求{requests} · 错误{errors} · P95 {summary.get('p95_ms', deep_get(payload, 'performance_summary.p95_ms', '-'))}ms"
     if report_type == "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN":
-        return f"阶梯{summary.get('stage', '-')} · 线程{summary.get('threads', '-')} · 请求{summary.get('requests', 0)} · 错误率{summary.get('error_rate', '-')}% · P95 {summary.get('p95_ms', '-')}ms"
+        return f"{summary.get('profile', 'load')} · 阶梯{summary.get('stage', '-')} · 线程{summary.get('threads', '-')} · 请求{summary.get('requests', 0)} · 错误率{summary.get('error_rate', '-')}% · P95 {summary.get('p95_ms', '-')}ms"
     if report_type in {"REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN", "PYTEST_DEEP_EVIDENCE_REVIEW"}:
         return f"HTTP失败{summary.get('http_failed', 0)} · 证据失败{summary.get('rules_failed', 0)} · 阻断{summary.get('rules_blocked', 0)}"
     if report_type == "REQUIREMENT_PACKAGE_DATA_EVIDENCE_RUN":
@@ -1337,7 +1619,7 @@ def _package_report_summary_text(payload):
     if report_type == "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT":
         return f"场景{summary.get('scenarios', 0)} · 通过{summary.get('passed', 0)} · 失败{summary.get('failed', 0)} · 阻断{summary.get('blocked', 0)}"
     if report_type == "REQUIREMENT_PACKAGE_PERFORMANCE_AI_REVIEW":
-        return f"错误率{summary.get('error_rate', '-')}% · P95 {summary.get('p95_ms', '-')}ms · 风险{summary.get('risk_level', '-')}"
+        return f"错误率{summary.get('error_rate', '-')}% · P95 {summary.get('p95_ms', '-')}ms · 基线{summary.get('baseline_result', 'unknown')} · 风险{summary.get('risk_level', '-')}"
     if report_type == "REQUIREMENT_PACKAGE_AI_REVIEW":
         return f"P0 {summary.get('p0', 0)} · P1 {summary.get('p1', 0)} · HTTP失败{summary.get('http_failed', 0)}"
     return str(payload.get("message") or payload.get("conclusion") or "报告原始证据已归档")
@@ -1358,7 +1640,8 @@ def _package_report_records(package_root):
     if not report_root.exists():
         return []
     records = []
-    for summary_path in report_root.glob("*/summary.json"):
+    report_files = list(report_root.rglob("summary.json")) + list(report_root.rglob("ai-analysis.json"))
+    for summary_path in sorted(set(report_files)):
         try:
             payload = json.loads(summary_path.read_text(encoding="utf-8"))
         except Exception:
@@ -1395,12 +1678,55 @@ def _report_retention_policy():
     config = load_environment_config()
     reports = deep_get(config, "reports", {}) or {}
     return {
+        "keep_latest_complete_runs": max(1, int(reports.get("keep_latest_complete_runs") or 10)),
+        "retention_days": max(1, int(reports.get("retention_days") or 30)),
         "keep_latest_per_type": max(1, int(reports.get("keep_latest_per_type") or 5)),
         "archive_after_days": max(0, int(reports.get("archive_after_days") or 14)),
         "delete_after_days": max(0, int(reports.get("delete_after_days") or 0)),
         "archive_mode": str(reports.get("archive_mode") or "index_only"),
-        "rule": "默认只生成索引和保留建议，不自动删除报告；需要清理时由人工确认。",
+        "protect_pinned_and_baseline": True,
+        "preview_only": True,
+        "rule": "保留最近10个完整运行批次或30天内报告；置顶/基线批次永久保护。默认只生成清理预览，不自动删除。",
     }
+
+
+def _run_retention_decisions(contexts, policy, now_ts):
+    complete_statuses = {"PASSED", "FAILED", "BLOCKED", "ATTENTION"}
+    complete_runs = [
+        item for item in contexts
+        if _normalized_package_status(item.get("status"), _run_context_status(item)) in complete_statuses
+    ]
+    complete_rank = {item.get("run_id"): index for index, item in enumerate(complete_runs, start=1)}
+    decisions = {}
+    for context in contexts:
+        run_id = context.get("run_id") or ""
+        created_at = context.get("updated_at") or context.get("created_at") or ""
+        try:
+            created_ts = datetime.fromisoformat(str(created_at).replace("Z", "+00:00")).timestamp()
+        except (TypeError, ValueError):
+            created_ts = now_ts
+        age_days = round(max(0, now_ts - created_ts) / 86400, 2)
+        protected = bool(context.get("pinned") or context.get("baseline"))
+        status = _normalized_package_status(context.get("status"), _run_context_status(context))
+        rank = complete_rank.get(run_id, 0)
+        complete = status in complete_statuses
+        outside_count = bool(complete and rank > policy["keep_latest_complete_runs"])
+        outside_days = bool(complete and age_days >= policy["retention_days"])
+        cleanup_candidate = bool(not protected and outside_count and outside_days)
+        decisions[run_id] = {
+            "complete": complete,
+            "complete_rank": rank,
+            "age_days": age_days,
+            "protected": protected,
+            "protection_reason": "pinned" if context.get("pinned") else "baseline" if context.get("baseline") else "",
+            "cleanup_candidate": cleanup_candidate,
+            "reason": (
+                "置顶或基线批次受保护" if protected else
+                "超过完整批次保留数量且超过保留天数" if cleanup_candidate else
+                "未同时超过批次数量和保留天数"
+            ),
+        }
+    return decisions
 
 
 def requirement_package_report_index(project_id, package_id, persist=True):
@@ -1414,6 +1740,8 @@ def requirement_package_report_index(project_id, package_id, persist=True):
     history = []
     now_ts = time.time()
     policy = _report_retention_policy()
+    run_retention = _run_retention_decisions(contexts, policy, now_ts)
+    performance_trends = _build_performance_trends(contexts)
     for record in records:
         report_type = record.get("report_type") or "UNKNOWN"
         if report_type not in latest_by_type:
@@ -1426,7 +1754,8 @@ def requirement_package_report_index(project_id, package_id, persist=True):
         same_type_sorted = [item for item in records if item.get("report_type") == report_type]
         index_in_type = next((idx for idx, item in enumerate(same_type_sorted, start=1) if item["path"] == record["path"]), 0)
         should_archive = index_in_type > policy["keep_latest_per_type"] or age_days >= policy["archive_after_days"]
-        should_delete = bool(policy["delete_after_days"] and age_days >= policy["delete_after_days"])
+        run_decision = run_retention.get(record.get("run_id") or "", {})
+        should_delete = bool(run_decision.get("cleanup_candidate"))
         history.append({
             "batch_id": run_dir.name,
             "run_id": record.get("run_id") or "",
@@ -1451,7 +1780,8 @@ def requirement_package_report_index(project_id, package_id, persist=True):
                 "rank_in_type": index_in_type,
                 "should_archive": should_archive,
                 "should_delete": should_delete,
-                "reason": "超出同类型最新保留数量或达到归档天数" if should_archive else "保留为当前可见历史",
+                "protected": bool(run_decision.get("protected")),
+                "reason": run_decision.get("reason") or ("超出同类型最新保留数量或达到归档天数" if should_archive else "保留为当前可见历史"),
             },
         })
     latest = [
@@ -1488,9 +1818,11 @@ def requirement_package_report_index(project_id, package_id, persist=True):
             "updated_at": context.get("updated_at") or "",
             "scenario_count": len(context.get("scenarios") or []),
             "tools": context.get("tools") or {},
+            "performance": context.get("performance") or {},
             "report_count": len(run_reports),
             "latest_reports": list(latest_for_run.values()),
             "reports": run_reports,
+            "retention": run_retention.get(run_id) or {},
         })
     report = {
         "schema_version": ASSET_SCHEMA_VERSION,
@@ -1508,20 +1840,70 @@ def requirement_package_report_index(project_id, package_id, persist=True):
             "ignored_legacy_reports": len(all_records) - len(records),
             "archive_candidates": sum(1 for item in history if deep_get(item, "retention.should_archive")),
             "delete_candidates": sum(1 for item in history if deep_get(item, "retention.should_delete")),
+            "cleanup_candidate_runs": sum(1 for item in runs if deep_get(item, "retention.cleanup_candidate")),
+            "protected_runs": sum(1 for item in runs if deep_get(item, "retention.protected")),
         },
         "retention_policy": policy,
         "latest_run_id": runs[0].get("run_id") if runs else "",
         "runs": runs,
         "latest_reports": latest,
         "history": history,
+        "performance_trends": performance_trends,
     }
     if persist:
         out = package_root / "reports" / "report-index.json"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        latest_out = package_root / "reports" / "latest" / "report-index.json"
+        latest_out.parent.mkdir(parents=True, exist_ok=True)
+        latest_payload = {
+            "schema_version": report["schema_version"],
+            "report_type": "REQUIREMENT_PACKAGE_LATEST_REPORT_INDEX",
+            "project_id": project_id,
+            "package_id": package_id,
+            "generated_at": report["generated_at"],
+            "latest_run_id": report["latest_run_id"],
+            "latest_reports": report["latest_reports"],
+            "performance_trends": performance_trends,
+        }
+        latest_out.write_text(json.dumps(latest_payload, ensure_ascii=False, indent=2), encoding="utf-8")
         report["report_path"] = str(out)
         report["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+        report["latest_index_path"] = str(latest_out)
+        report["latest_index_url"] = "/requirement-reports/" + latest_out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     return report
+
+
+def requirement_package_report_retention_preview(project_id, package_id):
+    index = requirement_package_report_index(project_id, package_id, True)
+    candidates = [
+        {
+            "run_id": item.get("run_id"),
+            "name": item.get("name"),
+            "status": item.get("status"),
+            "created_at": item.get("created_at"),
+            "report_count": item.get("report_count", 0),
+            "retention": item.get("retention") or {},
+        }
+        for item in index.get("runs") or []
+        if deep_get(item, "retention.cleanup_candidate")
+    ]
+    return {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_REPORT_RETENTION_PREVIEW",
+        "project_id": project_id,
+        "package_id": package_id,
+        "status": "ATTENTION" if candidates else "READY",
+        "generated_at": now(),
+        "policy": index.get("retention_policy") or {},
+        "summary": {
+            "runs": len(index.get("runs") or []),
+            "protected_runs": deep_get(index, "summary.protected_runs") or 0,
+            "cleanup_candidate_runs": len(candidates),
+        },
+        "candidates": candidates,
+        "message": "这里只是清理预览，没有删除任何报告、脚本、CSV、配置或需求资产。",
+    }
 
 
 def _package_asset_status(counts, artifacts):
@@ -3071,6 +3453,8 @@ def _default_requirement_resource_manifest(project_id, package_id, package):
         extractions.append({
             "variable": "salary_order_no",
             "source": "创建订单响应",
+            "source_method": "POST",
+            "source_path": "/userserv/salary/trade/order/create",
             "json_paths": ["$.data.orderNo", "$.data.order_no", "$.data.id"],
             "required": True,
         })
@@ -3085,6 +3469,7 @@ def _default_requirement_resource_manifest(project_id, package_id, package):
         "redis_patterns": redis_patterns,
         "runtime_parameters": [],
         "variable_extractions": extractions,
+        "endpoint_input_contracts": [],
         "disabled_resources": disabled_resources,
         "confirmed_ignored": [],
     }
@@ -3113,7 +3498,7 @@ def save_requirement_resource_manifest(project_id, package_id, payload=None):
         ignored.add(str(payload["confirm_ignore_gap_id"]).strip())
         current["confirmed_ignored"] = sorted(ignored)
     else:
-        for key in ("credentials", "datasets", "mysql_tables", "redis_patterns", "runtime_parameters", "variable_extractions", "disabled_resources", "confirmed_ignored"):
+        for key in ("credentials", "datasets", "mysql_tables", "redis_patterns", "runtime_parameters", "variable_extractions", "endpoint_input_contracts", "disabled_resources", "confirmed_ignored"):
             if key in payload and isinstance(payload[key], list):
                 current[key] = payload[key]
         if payload.get("policy"):
@@ -3720,8 +4105,32 @@ def _write_structured_cases_xlsx(path, enhanced):
         archive.writestr("xl/worksheets/sheet1.xml", worksheet)
 
 
+def _requirement_case_skill_contract():
+    loaded = SKILL_RUNTIME.load_rules("requirement-test-case-generation", required=True)
+    rules = loaded["rules"]
+    return {
+        "schema_version": loaded["schema_version"],
+        "skill": loaded["skill"],
+        "skill_path": loaded["skill_path"],
+        "rules_path": loaded["rules_path"],
+        "scope": rules.get("scope") or {},
+        "design_techniques": rules.get("design_techniques") or {},
+        "coverage_categories": rules.get("coverage_categories") or [],
+        "automation_statuses": rules.get("automation_statuses") or [],
+        "quality_statuses": rules.get("quality_statuses") or [],
+        "lifecycle_statuses": rules.get("lifecycle_statuses") or {},
+        "source_rules": rules.get("source_rules") or {},
+        "quality_gate": rules.get("quality_gate") or {},
+    }
+
+
+def _structured_case_skill_gate(cases, contract):
+    return SKILL_RUNTIME.structured_case_quality_gate(cases, contract.get("quality_gate") or {})
+
+
 def generate_structured_test_cases(project_id, payload=None):
     payload = payload or {}
+    skill_contract = _requirement_case_skill_contract()
     package_id = str(payload.get("package_id") or "").strip() or "salary-trade"
     package = requirement_package_by_id(project_id, package_id)
     package_root = Path(package["root"])
@@ -3800,6 +4209,8 @@ def generate_structured_test_cases(project_id, payload=None):
             "id": case.get("id"),
             "title": case.get("title"),
             "priority": case.get("priority"),
+            "lifecycle_status": str(case.get("lifecycle_status") or "ACTIVE").upper(),
+            "lifecycle_note": case.get("lifecycle_note") or "",
             "scenario_type": case.get("scenario_type"),
             "method": case.get("method"),
             "path": case.get("path"),
@@ -3852,12 +4263,20 @@ def generate_structured_test_cases(project_id, payload=None):
     xlsx_path = out_dir / "structured-test-cases.xlsx"
     jmeter_mapping_path = out_dir / "case-jmeter-mapping.json"
     data_preflight_path = out_dir / "data-preflight-check.json"
+    skill_contract_path = out_dir / "requirement-test-case-skill-contract.json"
+    skill_gate = _structured_case_skill_gate(enhanced, skill_contract)
     payload_out = {
         "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
         "generated_at": now(),
+        "source_skill": {
+            "name": skill_contract["skill"],
+            "schema_version": skill_contract["schema_version"],
+            "contract_path": str(skill_contract_path),
+        },
+        "skill_quality_gate": skill_gate,
         "summary": summary,
         "coverage_dashboard": coverage_dashboard,
         "gap_list": gap_list,
@@ -3866,6 +4285,13 @@ def generate_structured_test_cases(project_id, payload=None):
         "cases": enhanced,
     }
     json_path.write_text(json.dumps(payload_out, ensure_ascii=False, indent=2), encoding="utf-8")
+    skill_contract_path.write_text(json.dumps({
+        **skill_contract,
+        "package_id": package_id,
+        "generated_at": payload_out["generated_at"],
+        "applied_to": str(json_path),
+        "quality_result": skill_gate,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
     jmeter_mapping_path.write_text(json.dumps({
         "schema_version": ASSET_SCHEMA_VERSION,
         "project_id": project_id,
@@ -3892,6 +4318,8 @@ def generate_structured_test_cases(project_id, payload=None):
         f"- 质量分级：{json.dumps(summary['quality_counts'], ensure_ascii=False)}",
         f"- 脚本生成就绪：{json.dumps(summary['readiness_counts'], ensure_ascii=False)}",
         f"- 总览：{coverage_dashboard['headline']}",
+        f"- 需求用例Skill：{skill_contract['skill']} v{skill_contract['schema_version']}",
+        f"- Skill质量门禁：{skill_gate['status']}",
         "",
         "## 生成前数据准备检查",
         "",
@@ -3971,7 +4399,7 @@ def generate_structured_test_cases(project_id, payload=None):
         "project_id": project_id,
         "package_id": package_id,
         "package_name": package.get("name"),
-        "status": "READY" if enhanced else "ATTENTION",
+        "status": "READY" if enhanced and skill_gate["status"] == "PASS" else "READY_WITH_REVIEW" if enhanced else "ATTENTION",
         "created_at": now(),
         "summary": summary,
         "coverage_dashboard": coverage_dashboard,
@@ -3983,6 +4411,8 @@ def generate_structured_test_cases(project_id, payload=None):
         "excel_path": str(xlsx_path),
         "jmeter_mapping_path": str(jmeter_mapping_path),
         "data_preflight_path": str(data_preflight_path),
+        "skill_contract_path": str(skill_contract_path),
+        "skill_quality_gate": skill_gate,
         "conclusion": "已生成自带接口字段、DB/Redis证据校验点、用例质量分级和脚本生成就绪状态的结构化测试用例。",
     }
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -3992,6 +4422,81 @@ def generate_structured_test_cases(project_id, payload=None):
     report["json_url"] = "/reports/" + out.name
     report["file_name"] = out.name
     return report
+
+
+def generate_requirement_regression_selection(project_id, package_id, payload=None):
+    payload = payload or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_root = Path(package["root"])
+    structured_path = package_root / "outputs" / "structured-test-cases.json"
+    if not structured_path.is_file() or payload.get("regenerate_cases"):
+        generate_structured_test_cases(project_id, {"package_id": package_id})
+    structured = _read_json_asset(structured_path)
+    baseline_path = package_root / "outputs" / "regression-source-baseline.json"
+    baseline = _read_json_asset(baseline_path)
+    openapi_candidates = (
+        package_root / "apifox" / "openapi.json",
+        package_root / "outputs" / "apifox" / "openapi.json",
+        package_root / "openapi.json",
+    )
+    current_openapi_path = next((path for path in openapi_candidates if path.is_file()), None)
+    current_openapi = _read_json_asset(current_openapi_path) if current_openapi_path else {}
+    if not baseline.get("openapi") and current_openapi_path:
+        history_root = current_openapi_path.parent / "history"
+        previous = sorted(history_root.glob("openapi-*.json"), key=lambda path: path.stat().st_mtime, reverse=True) if history_root.is_dir() else []
+        if previous:
+            baseline["openapi"] = _read_json_asset(previous[0])
+    requirement_path = package_root / "README.md"
+    current_requirement = requirement_path.read_text(encoding="utf-8") if requirement_path.is_file() else ""
+    resource_manifest = _load_yaml_file(package_root / "resource_manifest.yaml")
+    current_db_metadata = {"tables": resource_manifest.get("mysql_tables") or []}
+    current_redis_metadata = {"keys": resource_manifest.get("redis_patterns") or []}
+    supplied_sources = payload.get("change_sources") if isinstance(payload.get("change_sources"), dict) else {}
+    automatic = infer_change_scope({
+        "current_openapi": supplied_sources.get("current_openapi", current_openapi),
+        "baseline_openapi": supplied_sources.get("baseline_openapi", baseline.get("openapi")),
+        "current_requirement": supplied_sources.get("current_requirement", current_requirement),
+        "baseline_requirement": supplied_sources.get("baseline_requirement", baseline.get("requirement")),
+        "current_db_metadata": supplied_sources.get("current_db_metadata", current_db_metadata),
+        "baseline_db_metadata": supplied_sources.get("baseline_db_metadata", baseline.get("db_metadata")),
+        "current_redis_metadata": supplied_sources.get("current_redis_metadata", current_redis_metadata),
+        "baseline_redis_metadata": supplied_sources.get("baseline_redis_metadata", baseline.get("redis_metadata")),
+    })
+    selection_payload = dict(payload)
+    explicit_scope = selection_payload.get("change_scope") if isinstance(selection_payload.get("change_scope"), dict) else {}
+    def scope_values(value):
+        if isinstance(value, (list, tuple, set)):
+            return {str(item).strip().lower() for item in value if str(item).strip()}
+        return {item.strip().lower() for item in re.split(r"[,;\n，；]+", str(value or "")) if item.strip()}
+    merged_scope = {}
+    for key in automatic["change_scope"]:
+        merged_scope[key] = sorted(scope_values(explicit_scope.get(key)) | scope_values(automatic["change_scope"].get(key)))
+    selection_payload["change_scope"] = merged_scope
+    selection = select_regression_cases(structured, selection_payload)
+    if payload.get("update_baseline", True):
+        baseline_path.parent.mkdir(parents=True, exist_ok=True)
+        baseline_path.write_text(json.dumps({
+            "schema_version": ASSET_SCHEMA_VERSION,
+            "updated_at": now(),
+            "openapi": current_openapi,
+            "requirement": current_requirement,
+            "db_metadata": current_db_metadata,
+            "redis_metadata": current_redis_metadata,
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+    selection.update({
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "generated_at": now(),
+        "source_cases_path": str(structured_path),
+        "change_detection": automatic,
+        "baseline_path": str(baseline_path),
+    })
+    output_path = package_root / "outputs" / "regression-selection.json"
+    output_path.write_text(json.dumps(selection, ensure_ascii=False, indent=2), encoding="utf-8")
+    selection["path"] = str(output_path)
+    selection["message"] = selection.get("message") or f"已从 {selection['summary']['source_cases']} 条需求用例中选择 {selection['summary']['selected']} 条回归用例。"
+    return selection
 
 
 def _requirement_package_keywords(package_id):
@@ -4004,13 +4509,98 @@ def _requirement_package_keywords(package_id):
 
 def _requirement_package_cases(project_id, package_id):
     keywords = _requirement_package_keywords(package_id)
-    all_cases = rows("SELECT * FROM test_cases WHERE project_id=? ORDER BY priority,created_at", (project_id,))
+    all_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY priority,created_at", (project_id,))
     result = []
     for case in all_cases:
         text = "\n".join(str(case.get(key) or "") for key in ("title", "requirement_ref", "steps", "expected", "scenario_type", "executor_type", "path"))
         if any(word.lower() in text.lower() for word in keywords):
             result.append(case)
     return result
+
+
+TEST_CASE_LIFECYCLE_STATUSES = {"DRAFT", "ACTIVE", "DEPRECATED"}
+
+
+def set_test_case_lifecycle(case_id, lifecycle_status, note="", actor="workbench", batch_id=""):
+    target = str(lifecycle_status or "").strip().upper()
+    if target not in TEST_CASE_LIFECYCLE_STATUSES:
+        raise ValueError("用例生命周期只允许 DRAFT、ACTIVE 或 DEPRECATED")
+    current = row("SELECT id,project_id,lifecycle_status FROM test_cases WHERE id=?", (case_id,))
+    if not current:
+        raise ValueError("用例不存在")
+    changed_at = now()
+    previous = str(current.get("lifecycle_status") or "ACTIVE").upper()
+    history_id = uid("life")
+    with db() as conn:
+        conn.execute(
+            "UPDATE test_cases SET lifecycle_status=?,lifecycle_note=?,lifecycle_updated_at=? WHERE id=?",
+            (target, str(note or "").strip(), changed_at, case_id),
+        )
+        conn.execute(
+            "INSERT INTO test_case_lifecycle_history VALUES (?,?,?,?,?,?,?,?,?)",
+            (history_id, case_id, current.get("project_id"), previous, target, str(note or "").strip(), str(actor or "workbench"), str(batch_id or ""), changed_at),
+        )
+    return {
+        "case_id": case_id,
+        "previous_status": previous,
+        "lifecycle_status": target,
+        "note": str(note or "").strip(),
+        "updated_at": changed_at,
+        "history_id": history_id,
+    }
+
+
+def bulk_set_test_case_lifecycle(project_id, case_ids, lifecycle_status, note="", actor="workbench"):
+    target = str(lifecycle_status or "").strip().upper()
+    if target not in TEST_CASE_LIFECYCLE_STATUSES:
+        raise ValueError("用例生命周期只允许 DRAFT、ACTIVE 或 DEPRECATED")
+    selected_ids = list(dict.fromkeys(str(item).strip() for item in (case_ids or []) if str(item).strip()))
+    if not selected_ids:
+        raise ValueError("请至少选择一条测试用例")
+    placeholders = ",".join("?" for _ in selected_ids)
+    batch_id = uid("life_batch")
+    changed_at = now()
+    with db() as conn:
+        current_rows = [dict(item) for item in conn.execute(
+            f"SELECT id,project_id,lifecycle_status FROM test_cases WHERE project_id=? AND id IN ({placeholders})",
+            (project_id, *selected_ids),
+        ).fetchall()]
+        if len(current_rows) != len(selected_ids):
+            found = {item["id"] for item in current_rows}
+            missing = [case_id for case_id in selected_ids if case_id not in found]
+            raise ValueError("部分用例不存在或不属于当前项目：" + ", ".join(missing))
+        for current in current_rows:
+            previous = str(current.get("lifecycle_status") or "ACTIVE").upper()
+            conn.execute(
+                "UPDATE test_cases SET lifecycle_status=?,lifecycle_note=?,lifecycle_updated_at=? WHERE id=?",
+                (target, str(note or "").strip(), changed_at, current["id"]),
+            )
+            conn.execute(
+                "INSERT INTO test_case_lifecycle_history VALUES (?,?,?,?,?,?,?,?,?)",
+                (uid("life"), current["id"], project_id, previous, target, str(note or "").strip(), str(actor or "workbench"), batch_id, changed_at),
+            )
+    return {
+        "status": "READY",
+        "project_id": project_id,
+        "batch_id": batch_id,
+        "lifecycle_status": target,
+        "updated": len(selected_ids),
+        "case_ids": selected_ids,
+        "note": str(note or "").strip(),
+        "updated_at": changed_at,
+    }
+
+
+def test_case_lifecycle_history(case_id):
+    if not row("SELECT id FROM test_cases WHERE id=?", (case_id,)):
+        raise ValueError("用例不存在")
+    return {
+        "case_id": case_id,
+        "history": rows(
+            "SELECT * FROM test_case_lifecycle_history WHERE case_id=? ORDER BY created_at DESC, id DESC",
+            (case_id,),
+        ),
+    }
 
 
 def _write_package_file(package_root, relative_path, content):
@@ -4020,25 +4610,626 @@ def _write_package_file(package_root, relative_path, content):
     return str(path)
 
 
+def _portable_asset_record(record):
+    result = dict(record)
+    for key in ("path", "workflow", "source", "manifest", "skill_contract"):
+        value = result.get(key)
+        if isinstance(value, str) and value and not value.startswith(("http://", "https://", "/reports/", "/requirement-reports/")):
+            result[key] = _portable_project_path(value)
+    return result
+
+
+def _portable_asset_payload(value):
+    if isinstance(value, dict):
+        return {key: _portable_asset_payload(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_portable_asset_payload(item) for item in value]
+    if isinstance(value, str) and value:
+        root_variants = (str(ROOT), ROOT.as_posix())
+        if any(value.startswith(root) for root in root_variants):
+            return _portable_project_path(value)
+    return value
+
+
 def _jmeter_skill_contract():
-    path = SKILL_DIR / "jmeter-script-generation" / "rules.yaml"
-    payload = _load_yaml_file(path)
-    if not payload:
-        payload = {
+    loaded = SKILL_RUNTIME.load_rules(
+        "jmeter-script-generation",
+        fallback={
             "schema_version": ASSET_SCHEMA_VERSION,
             "skill": "jmeter-script-generation",
             "purpose": "从需求包和结构化测试用例生成 JMeter 执行资产",
             "output_contract": ["JMX脚本", "映射清单", "运行参数说明", "报告归档位置"],
-        }
+        },
+    )
     return {
-        "path": str(path),
-        "rules": payload,
+        "path": loaded["rules_path"],
+        "rules": loaded["rules"],
+        "external_skills": external_jmeter_skill_registry(),
     }
 
 
+JMETER_MCP_ENGINE = "jmeter-mcp-server@0.3.1"
+PERFORMANCE_RUNTIME_CONTRACT_VERSION = "5.5"
+JMETER_MCP_TEMPLATE_RE = re.compile(r"\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\}\}")
+JMETER_VARIABLE_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
+
+
+def _jmeter_mcp_settings():
+    config = load_environment_config()
+    bridge = _path_from_config(deep_get(config, "tools.jmeter.mcp.bridge"), "tools/jmeter-mcp/bridge.mjs")
+    workspace = _path_from_config(deep_get(config, "tools.jmeter.mcp.workspace"), "work/jmeter-mcp")
+    node_text = _expand_config_value(os.getenv("AUTOTEST_NODE") or shutil.which("node") or "")
+    home_text = _expand_config_value(os.getenv("AUTOTEST_JMETER_HOME") or deep_get(config, "tools.jmeter.home", ""))
+    if not home_text:
+        jmeter_command = _jmeter_command()
+        if jmeter_command and Path(str(jmeter_command)).is_file():
+            home_text = str(Path(str(jmeter_command)).resolve().parent.parent)
+    home = Path(home_text) if home_text else Path("")
+    dependency = bridge.parent / "node_modules" / "jmeter-mcp-server" / "dist" / "index.js"
+    blockers = []
+    if not node_text or not Path(node_text).is_file():
+        blockers.append("未找到 Node.js")
+    if not bridge.is_file():
+        blockers.append(f"缺少 MCP bridge：{bridge}")
+    if not dependency.is_file():
+        blockers.append("JMeter MCP依赖未安装，请执行 npm install --prefix .\\tools\\jmeter-mcp")
+    if not home_text or not (home / "bin" / "jmeter.bat").is_file():
+        blockers.append("未找到 JMeter Home，请配置 AUTOTEST_JMETER_HOME")
+    return {
+        "engine": JMETER_MCP_ENGINE,
+        "node": Path(node_text) if node_text else Path(""),
+        "bridge": bridge,
+        "workspace": workspace,
+        "jmeter_home": home,
+        "blockers": blockers,
+    }
+
+
+def _run_jmeter_mcp_bridge(
+    workflow_path,
+    output_dir,
+    *,
+    generate_only=False,
+    timeout_seconds=1800,
+    env=None,
+    should_cancel=None,
+    on_progress=None,
+):
+    settings = _jmeter_mcp_settings()
+    if settings["blockers"]:
+        raise ValueError("；".join(settings["blockers"]))
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    progress_path = output_dir / "execution-progress.json"
+    progress_path.unlink(missing_ok=True)
+    command = [
+        str(settings["node"]),
+        str(settings["bridge"]),
+        "--workflow", str(Path(workflow_path)),
+        "--output-dir", str(output_dir),
+        "--jmeter-home", str(settings["jmeter_home"]),
+        "--workspace", str(settings["workspace"]),
+        "--project-root", str(ROOT),
+        "--execution-timeout-seconds", str(max(1, int(timeout_seconds))),
+    ]
+    if generate_only:
+        command.append("--generate-only")
+    def relay_progress(state):
+        if on_progress is None:
+            return
+        on_progress(read_jmeter_execution_progress(progress_path, state))
+
+    result = _run_command_capture(
+        command,
+        ROOT,
+        max(60, int(timeout_seconds) + 60),
+        env or os.environ.copy(),
+        should_cancel=should_cancel,
+        on_progress=relay_progress if on_progress is not None else None,
+    )
+    if on_progress is not None:
+        relay_progress({"elapsed_seconds": round(result.get("duration_ms", 0) / 1000, 1)})
+    summary_path = output_dir / ("generation-summary.json" if generate_only else "run-summary.json")
+    if result.get("status") == "CANCELLED":
+        return {**result, "summary": {}, "summary_path": str(summary_path), "engine": JMETER_MCP_ENGINE}
+    summary = _read_json_asset(summary_path)
+    if result.get("exit_code") != 0 or not summary:
+        detail = str(result.get("stderr") or result.get("stdout") or "JMeter MCP未返回执行摘要")[-2000:]
+        raise ValueError(f"JMeter MCP执行失败：{detail}")
+    return {**result, "summary": summary, "summary_path": str(summary_path), "engine": JMETER_MCP_ENGINE}
+
+
+def _jmeter_mcp_template_value(value, aliases=None):
+    aliases = aliases or {}
+    if isinstance(value, dict):
+        return {key: _jmeter_mcp_template_value(item, aliases) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_jmeter_mcp_template_value(item, aliases) for item in value]
+    text = str(value or "")
+    return JMETER_MCP_TEMPLATE_RE.sub(lambda match: "${" + aliases.get(match.group(1), match.group(1)) + "}", text)
+
+
+def _jmeter_mcp_csv_data_sets(package_root, roles=None):
+    manifest = _load_yaml_file(Path(package_root) / "resource_manifest.yaml")
+    role_filter = {str(role).lower() for role in (roles or []) if str(role).strip()}
+    data_sets = []
+    for item in manifest.get("datasets") or []:
+        if str(item.get("type") or "").lower() != "csv" or not item.get("path"):
+            continue
+        role = str(item.get("role") or "").lower()
+        if role_filter and role not in role_filter:
+            continue
+        csv_path = _resolve_resource_path(item["path"])
+        if not csv_path.is_file():
+            continue
+        try:
+            with csv_path.open("r", encoding="utf-8-sig", newline="") as handle:
+                headers = next(csv.reader(handle), [])
+        except Exception:
+            headers = []
+        data_sets.append({
+            "name": str(item.get("id") or f"{role or 'runtime'} accounts"),
+            "filename": _portable_project_path(csv_path),
+            "variable_names": ",".join(str(name).strip() for name in headers if str(name).strip()),
+            "delimiter": ",",
+            "ignore_first_line": bool(headers),
+            "recycle": True,
+            "stop_thread": False,
+        })
+    return data_sets
+
+
+def _jmeter_mcp_case_model(project, case, runtime_context=None, csv_columns=None):
+    runtime_context = runtime_context or {}
+    csv_columns = set(csv_columns or [])
+    case_runtime = _runtime_context_for_case(case, runtime_context)
+    path, headers, payload = _case_request_with_runtime_context(case, case_runtime)
+    lower_path = str(path or "").lower()
+    proxy_side = "/userserv/salary/trade/agent/" in lower_path
+    aliases = {name: name for name in csv_columns}
+    aliases["t"] = "__time(,)"
+    if proxy_side and {"proxy_uid", "proxy_ticket"}.issubset(csv_columns):
+        aliases.update({"uid": "proxy_uid", "ticket": "proxy_ticket", "agentUid": "proxy_uid", "proxyUid": "proxy_uid"})
+    elif {"applicant_uid", "applicant_ticket"}.issubset(csv_columns):
+        aliases.update({"uid": "applicant_uid", "ticket": "applicant_ticket"})
+    if "proxy_uid" in csv_columns:
+        aliases.update({"agentUid": "proxy_uid", "proxyUid": "proxy_uid"})
+    if "/salary/trade/" in lower_path:
+        aliases.update({"orderNo": "salary_order_no", "order_no": "salary_order_no"})
+    normalized_headers = _jmeter_mcp_template_value(headers, aliases)
+    for key, value in list(normalized_headers.items()):
+        if re.search(r"authorization|cookie|ticket|token|x-api-key", str(key), re.I) and "${" not in str(value):
+            normalized_headers[key] = "${" + aliases.get("ticket", "ticket") + "}"
+    normalized = {
+        "id": str(case.get("id") or case.get("case_id") or ""),
+        "title": str(case.get("title") or case.get("description") or f"{case.get('method')} {path}"),
+        "method": str(case.get("method") or "").upper(),
+        "path": _jmeter_mcp_template_value(path, aliases),
+        "headers": normalized_headers,
+        "payload": _jmeter_mcp_template_value(payload, aliases),
+        "expected_status": _tool_expected_status(case),
+        "max_duration_ms": int(case.get("max_duration_ms") or 1000),
+    }
+    extractors = case.get("extractors") or case.get("extract_rules") or []
+    if isinstance(extractors, str):
+        extractors = _safe_json(extractors, [])
+    if extractors:
+        normalized["extractors"] = extractors
+    elif normalized["method"] == "POST" and "/salary/trade/order/create" in lower_path:
+        normalized["extractors"] = [{
+            "name": "提取工资交易订单号",
+            "reference_name": "salary_order_no",
+            "json_path": "$.data.orderNo",
+            "default_value": "NOT_FOUND",
+        }]
+    serialized = json.dumps(normalized, ensure_ascii=False, default=str)
+    variables = {name for name in JMETER_VARIABLE_RE.findall(serialized) if not name.startswith("__")}
+    return normalized, variables
+
+
+def _jmeter_case_ids_from_plan(plan):
+    case_ids = set()
+    for scenario in (plan or {}).get("scenarios") or []:
+        for task in scenario.get("tool_tasks") or []:
+            if str(task.get("tool") or "").lower() == "jmeter":
+                case_ids.update(str(value) for value in task.get("cases") or [] if str(value).strip())
+    return case_ids
+
+
+def _write_jmeter_mcp_asset(
+    *,
+    project_id,
+    package_id,
+    project,
+    cases,
+    target_path,
+    workflow_path,
+    scenario_plan=None,
+    csv_data_sets=None,
+    runtime_context=None,
+    source_jmx=None,
+    threads=1,
+    rampup_seconds=1,
+    loops=1,
+    duration_seconds=None,
+    max_error_rate=0,
+    max_p95_ms=1000,
+    max_p99_ms=2000,
+    auto_stop=None,
+    performance_profile="smoke",
+    allowed_runtime_variables=None,
+    account_columns=None,
+    account_reuse_policy="round_robin",
+    transaction_name="",
+    transaction_mode="request_only",
+    pacing_ms=300,
+    workload_phase="",
+    extraction_rules=None,
+    targets_prevalidated=False,
+):
+    target_path = Path(target_path)
+    workflow_path = Path(workflow_path)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    workflow_path.parent.mkdir(parents=True, exist_ok=True)
+    csv_data_sets = csv_data_sets or []
+    csv_columns = {
+        name.strip()
+        for item in csv_data_sets
+        for name in str(item.get("variable_names") or "").split(",")
+        if name.strip()
+    }
+    runtime_variables = {
+        re.sub(r"[^A-Za-z0-9_]", "_", str(key))
+        for key, value in (runtime_context or {}).items()
+        if not str(key).startswith("_") and value not in (None, "")
+    }
+    runtime_variables.update(csv_columns)
+    runtime_variables.update(
+        re.sub(r"[^A-Za-z0-9_]", "_", str(name))
+        for name in (allowed_runtime_variables or [])
+        if str(name).strip()
+    )
+    runtime_variables.update(
+        str(item.get("variable") or "").strip()
+        for item in (extraction_rules or [])
+        if isinstance(item, dict) and str(item.get("variable") or "").strip()
+    )
+    skill_registry = external_jmeter_skill_registry()
+    platform_skill = _jmeter_skill_contract()
+    platform_rules = platform_skill.get("rules") or {}
+    allowed_profiles = set(deep_get(platform_rules, "execution_modes.jmeter_performance.profiles", []) or [])
+    normalized_profile = str(performance_profile or "smoke").strip().lower()
+    if allowed_profiles and normalized_profile not in allowed_profiles:
+        raise ValueError(
+            f"JMeter Skill不支持性能Profile：{normalized_profile}；允许值：{', '.join(sorted(allowed_profiles))}"
+        )
+    generation_contract = {
+        "name": platform_rules.get("skill") or "jmeter-script-generation",
+        "schema_version": platform_rules.get("schema_version") or "1.0",
+        "rules_path": _portable_project_path(platform_skill.get("path") or ""),
+        "profile": normalized_profile,
+        "adapter": "deterministic_template",
+        "upstream_reference": skill_registry.get("generation") or {},
+    }
+    if source_jmx:
+        source_path = Path(source_jmx)
+        if not source_path.is_file():
+            raise ValueError(f"JMeter Skill输入JMX不存在：{source_path}")
+        generated_text = source_path.read_text(encoding="utf-8")
+        source_kind = "maintained_jmx"
+        generation_summary = {
+            "mode": "maintained_jmx",
+            "source_jmx": _portable_project_path(source_path),
+            "generator": "manual_or_previous_skill_output",
+        }
+    else:
+        case_ids = _jmeter_case_ids_from_plan(scenario_plan)
+        selected_cases = [case for case in cases if not case_ids or str(case.get("id") or case.get("case_id") or "") in case_ids]
+        selected_cases = selected_cases or list(cases)
+        generator_options = {
+            "jmeter_threads": max(1, int(threads)),
+            "jmeter_rampup": max(0, int(rampup_seconds)),
+            "jmeter_loops": max(1, int(loops)),
+            "jmeter_duration_seconds": max(0, int(duration_seconds or 0)),
+            "_jmeter_non_gui_plan": True,
+            "_jmeter_runtime_defaults": runtime_context or {},
+            "_jmeter_performance_profile": normalized_profile,
+            "_jmeter_account_columns": list(account_columns or []),
+            "_jmeter_account_reuse_policy": account_reuse_policy,
+            "_jmeter_transaction_name": transaction_name,
+            "_jmeter_transaction_mode": transaction_mode,
+            "_jmeter_workload_phase": workload_phase,
+            "_jmeter_extraction_rules": list(extraction_rules or []),
+            "_jmeter_targets_prevalidated": bool(targets_prevalidated),
+            "jmeter_think_time_ms": pacing_ms,
+        }
+        generated_text = build_jmeter_jmx(
+            project,
+            selected_cases,
+            runtime_context or {},
+            True,
+            generator_options,
+        )
+        source_kind = "skill_constrained_template"
+        generation_summary = {
+            "mode": "skill_constrained_template",
+            "generator": generation_contract["adapter"],
+            "skill_contract": generation_contract,
+            "cases": len(selected_cases),
+            "scenario_count": len((scenario_plan or {}).get("scenarios") or []),
+            "threads": generator_options["jmeter_threads"],
+            "rampup_seconds": generator_options["jmeter_rampup"],
+            "loops": generator_options["jmeter_loops"],
+            "duration_seconds": generator_options["jmeter_duration_seconds"],
+            "workload_model": normalized_profile,
+            "workload_phase": workload_phase,
+            "account_reuse_policy": account_reuse_policy,
+            "transaction_name": transaction_name,
+        }
+
+    portable_text = prepare_runtime_jmx(
+        _normalize_portable_jmeter_paths(generated_text),
+        ensure_result_writer=True,
+    )
+    gate = validate_and_correct_jmx(
+        portable_text,
+        allowed_runtime_variables=runtime_variables,
+        performance_profile=performance_profile,
+        transaction_mode=transaction_mode,
+    )
+    corrected_text = gate.pop("corrected_text")
+    preflight_path = target_path.with_suffix(".preflight.json")
+    gate_report = {
+        "schema_version": "1.0",
+        "project_id": project_id,
+        "package_id": package_id,
+        "created_at": now(),
+        "source_kind": source_kind,
+        "generation_contract": generation_contract,
+        **gate,
+    }
+    preflight_path.write_text(json.dumps(gate_report, ensure_ascii=False, indent=2), encoding="utf-8")
+    if gate["status"] == "BLOCKED":
+        reasons = "; ".join(item.get("message") or item.get("code") or "" for item in gate["blockers"])
+        raise ValueError(f"JMeter Skill前置门禁未通过：{reasons}。详情：{preflight_path}")
+    if not target_path.is_file() or target_path.read_text(encoding="utf-8") != corrected_text:
+        target_path.write_text(corrected_text, encoding="utf-8")
+
+    workflow = build_jmeter_mcp_import_workflow(
+        project_id=project_id,
+        package_id=package_id,
+        project_name=project.get("name") or package_id,
+        source_jmx=_portable_project_path(target_path),
+        max_error_rate_pct=max_error_rate,
+        max_p95_ms=max_p95_ms,
+        max_p99_ms=max_p99_ms,
+        auto_stop=auto_stop,
+        generation_skill=generation_contract,
+        correction_skill=skill_registry["correlation_and_correction"],
+        preflight_path=_portable_project_path(preflight_path),
+        preflight_status=gate["status"],
+        source_kind=source_kind,
+    )
+    if csv_data_sets:
+        workflow["root_csv_data_sets"] = csv_data_sets
+    workflow["transaction_mode"] = transaction_mode
+    workflow["throughput_semantics"] = (
+        "business_tps" if transaction_mode == "business_transaction" else "request_rps_only"
+    )
+    workflow_path.write_text(json.dumps(workflow, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {
+        "engine": JMETER_MCP_ENGINE,
+        "mode": "mcp_import_only",
+        "workflow_path": str(workflow_path),
+        "jmx_path": str(target_path),
+        "preflight_path": str(preflight_path),
+        "preflight_status": gate["status"],
+        "generation_summary": generation_summary,
+        "source_jmx": str(source_jmx or ""),
+    }
+
+
+def _jmeter_mcp_compatibility_source(package_root, package_id):
+    package_root = Path(package_root)
+    candidates = []
+    if package_id == "salary-trade":
+        candidates.extend([
+            package_root / "outputs" / "jmeter" / "salary-trade-case-driven.jmx",
+            ROOT / "outputs" / "salary-trade-case-driven.jmx",
+            ROOT / "outputs" / "salary-trade-state-machine.jmx",
+        ])
+    elif package_id == "wealth-level":
+        candidates.extend([
+            package_root / "outputs" / "jmeter" / "性能基线.jmx",
+            ROOT / "jmeter" / "wealth-level-performance.jmx",
+        ])
+    return next((path for path in candidates if path.is_file()), None)
+
+
+def _runtime_csv_delimiter(rows_):
+    serialized = "\n".join(
+        _safe_runtime_scalar(value)
+        for row_data in rows_ or []
+        for value in (row_data or {}).values()
+        if value not in (None, "")
+    )
+    for candidate in ("|", "^", "~", "\t"):
+        if candidate not in serialized:
+            return candidate
+    raise ValueError("运行数据同时包含全部安全分隔符，无法生成JMeter临时数据集。")
+
+
+def _execute_jmeter_mcp_workflow(
+    workflow_path,
+    output_dir,
+    runtime_context=None,
+    timeout_seconds=1800,
+    use_runtime_csv=True,
+    runtime_rows=None,
+    should_cancel=None,
+    on_progress=None,
+):
+    workflow_path = Path(workflow_path)
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    workflow = _read_json_asset(workflow_path)
+    if not workflow:
+        raise ValueError(f"JMeter MCP workflow不存在或格式错误：{workflow_path}")
+    runtime_dir = output_dir / ".runtime"
+    runtime_workflow = output_dir / "runtime-workflow.json"
+    runtime_preflight = output_dir / "runtime-plan.preflight.json"
+    runtime_values = {
+        re.sub(r"[^A-Za-z0-9_]", "_", str(key)): _safe_runtime_scalar(value)
+        for key, value in (runtime_context or {}).items()
+        if not str(key).startswith("_")
+        and str(key) not in {"source", "login_status", "login_error", "login_context_keys"}
+        and value not in (None, "")
+    }
+    # JMeter owns the request timestamp so MCP import/startup latency cannot make it stale.
+    runtime_values.pop("t", None)
+    redaction_values = dict(runtime_values)
+    try:
+        source_jmx_value = str(workflow.get("source_jmx") or "").strip()
+        if not source_jmx_value:
+            raise ValueError("JMeter MCP workflow缺少source_jmx。")
+        source_jmx = _resolve_resource_path(source_jmx_value)
+        if not source_jmx.is_file():
+            raise ValueError(f"JMeter MCP源JMX不存在：{source_jmx}")
+        runtime_data_sets = []
+        allowed_absolute_paths = []
+        allowed_runtime_variables = set(runtime_values)
+        for item in workflow.get("root_csv_data_sets") or []:
+            normalized = dict(item)
+            filename = _resolve_resource_path(normalized.get("filename") or "")
+            if not filename.is_file():
+                raise ValueError(f"JMeter运行CSV不存在：{filename}")
+            normalized["filename"] = str(filename.resolve())
+            runtime_data_sets.append(normalized)
+            allowed_absolute_paths.append(normalized["filename"])
+            allowed_runtime_variables.update(
+                name.strip() for name in str(normalized.get("variable_names") or "").split(",") if name.strip()
+            )
+        account_rows = [
+            {
+                re.sub(r"[^A-Za-z0-9_]", "_", str(key)): _safe_runtime_scalar(value)
+                for key, value in item.items()
+                if str(key).strip()
+            }
+            for item in (runtime_rows or [])
+            if isinstance(item, dict)
+        ]
+        runtime_payload_rows = []
+        if account_rows:
+            account_columns = sorted({str(key) for item in account_rows for key in item if str(key).strip()})
+            for index, item in enumerate(account_rows, start=1):
+                for key, value in item.items():
+                    if value not in (None, "") and _is_sensitive_runtime_value(key, value):
+                        redaction_values[f"account_{index}_{key}"] = _safe_runtime_scalar(value)
+            for key in list(runtime_values):
+                if key in account_columns or key in {
+                    "access_token",
+                    "agentTicket",
+                    "anchorTicket",
+                    "proxyTicket",
+                }:
+                    runtime_values.pop(key, None)
+            merged_rows = [
+                {**runtime_values, **item}
+                for item in account_rows
+            ]
+            account_columns = sorted({str(key) for item in merged_rows for key in item if str(key).strip()})
+            allowed_runtime_variables.update(account_columns)
+            runtime_payload_rows = merged_rows
+            runtime_values.clear()
+        elif use_runtime_csv and runtime_values:
+            allowed_runtime_variables.update(runtime_values)
+            runtime_payload_rows = [dict(runtime_values)]
+            runtime_values.clear()
+        runtime_dir.mkdir(parents=True, exist_ok=True)
+        runtime_jmx = runtime_dir / "runtime-plan.jmx"
+        runtime_text = prepare_runtime_jmx(
+            source_jmx.read_text(encoding="utf-8"),
+            csv_data_sets=runtime_data_sets,
+            ensure_result_writer=True,
+        )
+        performance_profile = str(
+            deep_get(workflow, "metadata.generation_skill.profile", "") or "smoke"
+        )
+        transaction_mode = str(workflow.get("transaction_mode") or "business_transaction")
+        gate = validate_and_correct_jmx(
+            runtime_text,
+            allowed_runtime_variables=allowed_runtime_variables,
+            allowed_absolute_paths=allowed_absolute_paths,
+            performance_profile=performance_profile,
+            transaction_mode=transaction_mode,
+        )
+        corrected_runtime_text = gate.pop("corrected_text")
+        runtime_preflight.write_text(
+            json.dumps({
+                "schema_version": "1.0",
+                "created_at": now(),
+                "source_jmx": _portable_project_path(source_jmx),
+                "runtime_csv_count": len(runtime_data_sets),
+                "runtime_environment_rows": len(runtime_payload_rows),
+                "runtime_environment_variable": "AUTOTEST_JMETER_RUNTIME_ROWS_B64" if runtime_payload_rows else "",
+                **gate,
+            }, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        if gate.get("status") == "BLOCKED":
+            reasons = "; ".join(
+                item.get("message") or item.get("code") or ""
+                for item in gate.get("blockers") or []
+            )
+            raise ValueError(f"JMeter运行副本门禁未通过：{reasons}。详情：{runtime_preflight}")
+        runtime_jmx.write_text(corrected_runtime_text, encoding="utf-8")
+        workflow["source_jmx"] = str(runtime_jmx.resolve())
+        workflow.pop("root_csv_data_sets", None)
+        workflow.pop("variables", None)
+        workflow.setdefault("metadata", {})["runtime_preflight_path"] = str(runtime_preflight)
+        workflow["metadata"]["execution_mode"] = "validated_import_only"
+        runtime_workflow.write_text(json.dumps(workflow, ensure_ascii=False, indent=2), encoding="utf-8")
+        bridge_options = {"timeout_seconds": timeout_seconds}
+        if runtime_payload_rows:
+            runtime_payload = json.dumps(
+                runtime_payload_rows,
+                ensure_ascii=False,
+                separators=(",", ":"),
+                default=str,
+            ).encode("utf-8")
+            bridge_env = os.environ.copy()
+            bridge_env["AUTOTEST_JMETER_RUNTIME_ROWS_B64"] = base64.b64encode(runtime_payload).decode("ascii")
+            bridge_options["env"] = bridge_env
+        if should_cancel is not None:
+            bridge_options["should_cancel"] = should_cancel
+        if on_progress is not None:
+            bridge_options["on_progress"] = on_progress
+        result = _run_jmeter_mcp_bridge(runtime_workflow, output_dir, **bridge_options)
+        jtl_path = output_dir / "result.jtl"
+        if jtl_path.is_file():
+            _redact_runtime_file(jtl_path, redaction_values)
+        result["stdout"] = _redact_runtime_text(result.get("stdout", ""), redaction_values)
+        result["stderr"] = _redact_runtime_text(result.get("stderr", ""), redaction_values)
+        persisted_workflow = dict(workflow)
+        persisted_workflow["source_jmx"] = source_jmx_value
+        persisted_workflow.setdefault("metadata", {})["runtime_plan_removed"] = True
+        runtime_workflow.write_text(json.dumps(persisted_workflow, ensure_ascii=False, indent=2), encoding="utf-8")
+        return {
+            **result,
+            "workflow_path": str(runtime_workflow),
+            "jmx_path": str(output_dir / "executed.jmx"),
+            "jtl_path": str(jtl_path),
+            "html_path": str(output_dir / "jmeter-html" / "index.html"),
+            "analysis_path": str(output_dir / "analysis.json"),
+            "runtime_preflight_path": str(runtime_preflight),
+        }
+    finally:
+        shutil.rmtree(runtime_dir, ignore_errors=True)
+
+
 def _api_test_case_skill_contract():
-    path = SKILL_DIR / "api-test-case-generation" / "rules.yaml"
-    return {"path": str(path), "rules": _load_yaml_file(path)}
+    loaded = SKILL_RUNTIME.load_rules("api-test-case-generation")
+    return {"path": loaded["rules_path"], "rules": loaded["rules"]}
 
 
 def generate_schema_api_test_cases(project_id, package_id, options=None):
@@ -4102,17 +5293,165 @@ def generate_schema_api_test_cases(project_id, package_id, options=None):
     }
 
 
-def _pytest_evidence_skill_contract():
-    path = SKILL_DIR / "pytest-evidence-review" / "SKILL.md"
-    if path.is_file():
-        body = path.read_text(encoding="utf-8", errors="replace")
-    else:
-        body = ""
+def compile_requirement_api_test_assets(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    design_path = package_root / "outputs" / "api-test-cases" / "api-test-cases.json"
+    if not design_path.is_file() or options.get("regenerate_cases"):
+        generated = generate_schema_api_test_cases(project_id, package_id, options)
+        if generated.get("status") == "NEEDS_SCHEMA":
+            return generated
+    design = _read_json_asset(design_path)
+    if not design:
+        raise ValueError("接口测试用例设计文件为空或格式错误")
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
+    compiled = compile_api_cases_to_postman(
+        design,
+        str(project.get("base_url") or ""),
+        bool(options.get("include_review_required")),
+    )
+    output_dir = package_root / "outputs" / "interface-tests" / "newman"
+    paths = write_api_execution_assets(compiled, output_dir)
+    relative_root = output_dir.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     return {
-        "path": str(path),
-        "skill": "pytest-evidence-review",
-        "purpose": "从需求包场景计划、运行变量、HTTP结果和DB/Redis证据规则生成pytest深度复核资产",
-        "inputs": [
+        "status": "READY" if compiled["summary"]["compiled_newman_cases"] else "BLOCKED",
+        "project_id": project_id,
+        "package_id": package_id,
+        "source_design": str(design_path),
+        "summary": compiled["summary"],
+        "paths": paths,
+        "collection_url": f"/requirement-reports/{relative_root}/api-test-collection.json",
+        "manifest_url": f"/requirement-reports/{relative_root}/api-test-execution-manifest.json",
+    }
+
+
+def _newman_interface_case_results(payload):
+    results = []
+    for execution in deep_get(payload, "run.executions", []) or []:
+        name = str(deep_get(execution, "item.name", ""))
+        match = re.search(r"\[((?:API-\d+)|(?:TC_[A-Z0-9_]+_\d{3}_(?:normal|exception|boundary)))\]", name)
+        assertions = execution.get("assertions") or []
+        assertion_failures = [
+            str(deep_get(item, "error.message", ""))
+            for item in assertions
+            if item.get("error")
+        ]
+        response = execution.get("response") or {}
+        results.append({
+            "case_id": match.group(1) if match else "",
+            "name": name,
+            "status": "FAILED" if assertion_failures else "PASSED",
+            "http_status": response.get("code"),
+            "response_time_ms": response.get("responseTime"),
+            "assertions": len(assertions),
+            "assertion_failures": assertion_failures,
+        })
+    return results
+
+
+def run_requirement_api_interface_tests(project_id, package_id, options=None):
+    options = options or {}
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    compiled = compile_requirement_api_test_assets(project_id, package_id, options)
+    if compiled.get("status") != "READY":
+        return compiled
+    collection = Path(compiled["paths"]["collection"])
+    run_context = _ensure_requirement_run_context(project_id, package_id, options)
+    run_id = run_context["run_id"]
+    newman = shutil.which("newman")
+    if not newman:
+        blocked = {
+            "status": "BLOCKED",
+            "report_type": "REQUIREMENT_PACKAGE_INTERFACE_TEST_RUN",
+            "package_id": package_id,
+            "run_id": run_id,
+            "message": "本机未安装 Newman；请执行 npm install -g newman 后重试。",
+            "collection": str(collection),
+        }
+        update_requirement_run_context(project_id, package_id, run_id, "interface_test", "BLOCKED", blocked)
+        return blocked
+    runtime_options = _merge_execution_profile_options(project_id, options)
+    runtime = _runtime_context(project_id, runtime_options)
+    if package_id == "salary-trade":
+        runtime = _salary_trade_interface_runtime_context(package_root, runtime)
+    required_variables = compiled["summary"].get("required_runtime_variables") or []
+    missing_variables = [name for name in required_variables if runtime.get(name) in (None, "")]
+    if missing_variables:
+        blocked = {
+            "status": "BLOCKED",
+            "report_type": "REQUIREMENT_PACKAGE_INTERFACE_TEST_RUN",
+            "package_id": package_id,
+            "run_id": run_id,
+            "message": "接口测试运行前缺少变量：" + ", ".join(missing_variables),
+            "missing_runtime_variables": missing_variables,
+            "collection": str(collection),
+        }
+        update_requirement_run_context(project_id, package_id, run_id, "interface_test", "BLOCKED", blocked)
+        return blocked
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_dir = package_root / "reports" / f"interface-newman-{stamp}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    raw_report = run_dir / "newman-report.json"
+    command = [newman, "run", str(collection), "-r", "cli,json", "--reporter-json-export", str(raw_report)]
+    safe_command = list(command)
+    for key, value in _runtime_tool_pairs(runtime):
+        if value == "":
+            continue
+        command.extend(["--env-var", f"{key}={value}"])
+        safe_value = "***" if _is_sensitive_runtime_value(key, value) else value
+        safe_command.extend(["--env-var", f"{key}={safe_value}"])
+    result = _sanitize_tool_result(
+        _run_command_capture(command, ROOT, int(options.get("timeout", 300) or 300), os.environ.copy()),
+        runtime,
+    )
+    raw_payload = _read_json_asset(raw_report)
+    case_results = _newman_interface_case_results(raw_payload)
+    failed = sum(item["status"] == "FAILED" for item in case_results)
+    status = "PASSED" if result.get("exit_code") == 0 and failed == 0 else "FAILED"
+    report = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_INTERFACE_TEST_RUN",
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "run_id": run_id,
+        "status": status,
+        "created_at": now(),
+        "source_design": compiled.get("source_design"),
+        "collection": str(collection),
+        "raw_report": str(raw_report) if raw_report.is_file() else "",
+        "command": safe_command,
+        "summary": {
+            "designed_cases": compiled["summary"].get("source_cases", 0),
+            "compiled_cases": compiled["summary"].get("compiled_newman_cases", 0),
+            "executed_cases": len(case_results),
+            "passed_cases": len(case_results) - failed,
+            "failed_cases": failed,
+            "skipped_cases": compiled["summary"].get("skipped_cases", 0),
+            "duration_ms": result.get("duration_ms"),
+        },
+        "case_results": case_results,
+        "stdout": result.get("stdout", "")[-4000:],
+        "stderr": result.get("stderr", "")[-4000:],
+    }
+    summary_path = run_dir / "summary.json"
+    report["summary_path"] = str(summary_path)
+    report["json_url"] = "/requirement-reports/" + summary_path.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    report["raw_report_url"] = "/requirement-reports/" + raw_report.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix() if raw_report.is_file() else ""
+    summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    update_requirement_run_context(project_id, package_id, run_id, "interface_test", status, report)
+    return report
+
+
+def _pytest_evidence_skill_contract():
+    contract = SKILL_RUNTIME.load_markdown_contract(
+        "pytest-evidence-review",
+        purpose="从需求包场景计划、运行变量、HTTP结果和DB/Redis证据规则生成pytest深度复核资产",
+        inputs=[
             "manifest.json",
             "manifest.orchestration.primary_plan",
             "outputs/execution-plan.json",
@@ -4122,19 +5461,20 @@ def _pytest_evidence_skill_contract():
             "runtime_aliases.yaml",
             "JMeter JTL / Newman JSON运行结果",
         ],
-        "outputs": [
+        outputs=[
             "outputs/pytest/pytest_api_cases.py",
             "reports/pytest-evidence-*/summary.json",
         ],
-        "principles": [
+        principles=[
             "pytest负责执行后深度证据复核，不替代JMeter状态机主流程",
             "主编排入口由需求包manifest声明，execution-plan.json只是默认值",
             "运行变量从环境、场景计划、账号模型和前序响应中提取",
             "DB/Redis证据只读校验，缺变量标记BLOCKED，不编造字段",
             "报告按需求包和场景归档，方便人工复核和维护",
         ],
-        "source_preview": body[:3000],
-    }
+    )
+    contract["source_preview"] = contract.pop("body", "")[:3000]
+    return contract
 
 
 def generate_requirement_package_tool_assets(project_id, package_id, options=None):
@@ -4162,6 +5502,15 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
     })
     if api_case_design.get("status") == "NEEDS_SCHEMA":
         warnings.append(api_case_design.get("message"))
+    else:
+        interface_assets = compile_requirement_api_test_assets(project_id, package_id, options)
+        generated.append({
+            "tool": "Interface Test Newman",
+            "path": (interface_assets.get("paths") or {}).get("collection", ""),
+            "status": interface_assets.get("status"),
+            "cases": (interface_assets.get("summary") or {}).get("compiled_newman_cases", 0),
+            "manifest": (interface_assets.get("paths") or {}).get("manifest", ""),
+        })
     jmeter_skill = _jmeter_skill_contract()
     skill_contract_path = package_root / "outputs" / "jmeter" / "jmeter-skill-contract.json"
     skill_contract_path.parent.mkdir(parents=True, exist_ok=True)
@@ -4170,7 +5519,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
         "project_id": project_id,
         "package_id": package_id,
         "generated_at": now(),
-        "source": jmeter_skill["path"],
+        "source": _portable_project_path(jmeter_skill["path"]),
         "contract": jmeter_skill["rules"],
         "usage": "JMeter脚本生成必须遵守本契约；如需求出现新组件或新账号模式，先扩展Skill规则，再生成脚本。",
     }, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -4184,7 +5533,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
         "project_id": project_id,
         "package_id": package_id,
         "generated_at": now(),
-        "source": pytest_skill["path"],
+        "source": _portable_project_path(pytest_skill["path"]),
         "contract": pytest_skill,
         "usage": "pytest证据复盘必须遵守本契约；复杂需求优先消费manifest声明的主编排文件、账号模型、运行别名和证据规则，不把业务流程写死在全局代码。",
     }, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -4209,40 +5558,46 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
                     build_pytest_script(project, tool_cases, runtime, True, package_id, str(package_root)),
                 ),
             })
-            generated.append({
-                "tool": "JMeter",
-                "path": _write_package_file(
-                    package_root,
-                    "outputs/jmeter/jmeter-plan.jmx",
-                    build_jmeter_jmx(project, tool_cases, runtime, True, options),
-                ),
-            })
         else:
             warnings.append("当前需求包的接口用例都依赖运行时变量，已保留需求包目录，执行前需要补运行上下文。")
     else:
         warnings.append("当前需求包还没有可直接生成 Newman/pytest 通用资产的接口用例。")
 
-    if package_id == "salary-trade":
-        salary_result = generate_salary_trade_jmeter_from_cases(project_id)
-        salary_jmx = Path(salary_result["jmx_path"])
-        if salary_jmx.is_file():
-            target = package_root / "outputs" / "jmeter" / salary_jmx.name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(salary_jmx, target)
-            generated.append({"tool": "JMeter", "path": str(target), "source": str(salary_jmx)})
-        manifest = Path(salary_result["manifest_path"])
-        if manifest.is_file():
-            target = package_root / "outputs" / "jmeter" / manifest.name
-            shutil.copy2(manifest, target)
-            generated.append({"tool": "JMeter Manifest", "path": str(target), "source": str(manifest)})
-    elif package_id == "wealth-level":
-        wealth_jmx = Path(str((package.get("artifacts") or {}).get("jmeter", {}).get("path") or ""))
-        if wealth_jmx.is_file():
-            target = package_root / "outputs" / "jmeter" / wealth_jmx.name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(wealth_jmx, target)
-            generated.append({"tool": "JMeter", "path": str(target), "source": str(wealth_jmx)})
+    jmeter_cases = tool_cases if executable_cases and "tool_cases" in locals() and tool_cases else executable_cases
+    if jmeter_cases:
+        execution_plan = _read_json_asset(package_root / "outputs" / "execution-plan.json")
+        csv_data_sets = _jmeter_mcp_csv_data_sets(package_root) if account_model.get("csv_required") else []
+        compatibility_source = _jmeter_mcp_compatibility_source(package_root, package_id)
+        jmeter_asset = _write_jmeter_mcp_asset(
+            project_id=project_id,
+            package_id=package_id,
+            project=project,
+            cases=jmeter_cases,
+            target_path=package_root / "outputs" / "jmeter" / "jmeter-plan.jmx",
+            workflow_path=package_root / "outputs" / "jmeter" / "jmeter-mcp-workflow.json",
+            scenario_plan=execution_plan,
+            csv_data_sets=csv_data_sets,
+            runtime_context=runtime,
+            source_jmx=compatibility_source,
+            threads=max(1, int(options.get("jmeter_threads") or 1)),
+            rampup_seconds=max(0, int(options.get("jmeter_rampup") or 1)),
+            loops=max(1, int(options.get("jmeter_loops") or 1)),
+            duration_seconds=int(options.get("jmeter_duration_seconds") or 0) or None,
+            max_error_rate=float(options.get("max_error_rate") or 0),
+            max_p95_ms=int(options.get("max_p95_ms") or 1000),
+            performance_profile=str(options.get("performance_profile") or "smoke"),
+        )
+        generated.append({
+            "tool": "JMeter",
+            "path": jmeter_asset["jmx_path"],
+            "workflow": jmeter_asset["workflow_path"],
+            "engine": jmeter_asset["engine"],
+            "mode": jmeter_asset["mode"],
+        })
+    else:
+        warnings.append("当前需求包没有可交给JMeter Skill生成JMX的HTTP用例。")
 
+    generated = [_portable_asset_record(item) for item in generated]
     package = ensure_requirement_package_manifest(project_id, _requirement_package_template(project_id, package_id))
     result_manifest = {
         "schema_version": ASSET_SCHEMA_VERSION,
@@ -4252,21 +5607,27 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
         "generated_at": now(),
         "status": "READY_WITH_WARNINGS" if warnings else "READY",
         "account_model": {
-            "path": account_model.get("path", ""),
+            "path": _portable_project_path(account_model.get("path", "")),
             "mode": account_model.get("mode", ""),
             "csv_required": bool(account_model.get("csv_required")),
             "roles": [role.get("name") for role in account_model.get("roles", [])],
             "rule": "先由需求包 account_model.yaml 决定账号模式，再生成 Newman/JMeter/pytest 资产。",
         },
         "jmeter_skill_contract": {
-            "path": str(skill_contract_path),
-            "source": jmeter_skill["path"],
+            "path": _portable_project_path(skill_contract_path),
+            "source": _portable_project_path(jmeter_skill["path"]),
             "rule_count": sum(len(value) for value in jmeter_skill["rules"].values() if isinstance(value, list)),
             "principle": "测试用例决定要测什么，JMeter Skill 决定如何稳定生成线程组、请求、CSV、断言、监听器和报告。",
         },
+        "jmeter_engine": {
+            "name": JMETER_MCP_ENGINE,
+            "mode": "single_gateway",
+            "workflow": _portable_project_path(package_root / "outputs" / "jmeter" / "jmeter-mcp-workflow.json"),
+            "principle": "平台保留需求解析和场景编排，JMX生成与非GUI执行统一交给JMeter MCP。",
+        },
         "pytest_evidence_skill_contract": {
-            "path": str(pytest_skill_contract_path),
-            "source": pytest_skill["path"],
+            "path": _portable_project_path(pytest_skill_contract_path),
+            "source": _portable_project_path(pytest_skill["path"]),
             "input_count": len(pytest_skill.get("inputs") or []),
             "principle": "pytest Skill 决定如何把HTTP、JMeter/Newman结果、DB/Redis证据和运行变量收敛成可复核JSON。",
         },
@@ -4274,6 +5635,7 @@ def generate_requirement_package_tool_assets(project_id, package_id, options=Non
         "warnings": warnings,
         "rule": "同一需求包独立生成 Newman、JMeter、pytest 资产；报告也按需求包回收。",
     }
+    result_manifest = _portable_asset_payload(result_manifest)
     manifest_path = package_root / "outputs" / "tool-assets-manifest.json"
     manifest_path.write_text(json.dumps(result_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     return {
@@ -4329,11 +5691,41 @@ def _salary_trade_csv_runtime_context(package_root, runtime):
         proxy_rows = matching
     proxy_row, proxy_uid, proxy_ticket = _csv_role_identity(proxy_rows, "proxy")
     context = dict(runtime or {})
+    input_sources = dict(context.get("_input_sources") or {})
+    applicant_source = {
+        "type": "csv",
+        "path": _portable_project_path(applicant_path),
+        "role": "applicant",
+        "validated": True,
+    }
+    proxy_source = {
+        "type": "csv",
+        "path": _portable_project_path(proxy_path),
+        "role": "proxy",
+        "validated": True,
+    }
+    for key, value in applicant_row.items():
+        if value not in (None, ""):
+            context.setdefault(str(key), str(value))
+            context.setdefault(f"applicant_{key}", str(value))
+            input_sources.setdefault(str(key), applicant_source)
+            input_sources.setdefault(f"applicant_{key}", applicant_source)
+    for key, value in proxy_row.items():
+        if value not in (None, ""):
+            context.setdefault(str(key), str(value))
+            context.setdefault(f"proxy_{key}", str(value))
+            input_sources.setdefault(str(key), proxy_source)
+            input_sources.setdefault(f"proxy_{key}", proxy_source)
     aliases = _load_yaml_file(Path(package_root) / "runtime_aliases.yaml")
     common_query = aliases.get("common_query") if isinstance(aliases.get("common_query"), dict) else {}
     for key, value in common_query.items():
         if value not in (None, ""):
             context[str(key)] = str(value)
+            input_sources[str(key)] = {
+                "type": "package_literal",
+                "path": _portable_project_path(Path(package_root) / "runtime_aliases.yaml"),
+                "validated": True,
+            }
     if applicant_uid and applicant_ticket:
         context.update({
             "uid": applicant_uid,
@@ -4343,6 +5735,9 @@ def _salary_trade_csv_runtime_context(package_root, runtime):
             "countryCode": str(applicant_row.get("countryCode") or applicant_row.get("country_code") or ""),
             "country_code": str(applicant_row.get("countryCode") or applicant_row.get("country_code") or ""),
             "currency": currency,
+            "anchorUid": applicant_uid,
+            "anchorTicket": applicant_ticket,
+            "access_token": applicant_ticket,
         })
     if proxy_uid and proxy_ticket:
         context.update({
@@ -4350,10 +5745,379 @@ def _salary_trade_csv_runtime_context(package_root, runtime):
             "proxy_ticket": proxy_ticket,
             "proxyUid": proxy_uid,
             "agentUid": proxy_uid,
+            "agentTicket": proxy_ticket,
         })
     if applicant_uid or proxy_uid:
         context["source"] = "requirement_package_csv"
+    if input_sources:
+        context["_input_sources"] = input_sources
     return _normalize_auth_runtime_context(context)
+
+
+def _salary_trade_interface_runtime_context(package_root, runtime):
+    context = _salary_trade_csv_runtime_context(package_root, runtime)
+    input_sources = dict(context.get("_input_sources") or {})
+    try:
+        requested_order_no = str(
+            context.get("orderNo") or context.get("salary_order_no") or ""
+        ).strip()
+        if requested_order_no:
+            matched = _mysql_rows(
+                f"SELECT order_no FROM {SALARY_TRADE_DB_TABLES['order']} "
+                f"WHERE order_no = {_evidence_sql_value(requested_order_no)}",
+                1,
+            )
+            if matched and matched[0].get("order_no"):
+                context["orderNo"] = str(matched[0]["order_no"])
+                context["salary_order_no"] = context["orderNo"]
+                source = {
+                    "type": "mysql",
+                    "table": SALARY_TRADE_DB_TABLES["order"],
+                    "field": "order_no",
+                    "validated": True,
+                    "selection": "explicit_order_no",
+                }
+                input_sources["orderNo"] = source
+                input_sources["salary_order_no"] = source
+            else:
+                context.pop("orderNo", None)
+                context.pop("salary_order_no", None)
+                warnings = list(context.get("_runtime_warnings") or [])
+                warnings.append("提供的订单号未在业务库中找到，已从性能运行上下文移除。")
+                context["_runtime_warnings"] = warnings
+        else:
+            condition = _salary_trade_latest_order_condition(context)
+            latest = _mysql_rows(
+                f"SELECT order_no FROM {SALARY_TRADE_DB_TABLES['order']} WHERE {condition} ORDER BY id DESC",
+                1,
+            )
+            if latest and latest[0].get("order_no"):
+                context["orderNo"] = str(latest[0]["order_no"])
+                context["salary_order_no"] = context["orderNo"]
+                source = {
+                    "type": "mysql",
+                    "table": SALARY_TRADE_DB_TABLES["order"],
+                    "field": "order_no",
+                    "validated": True,
+                    "selection": "latest_matching_order",
+                }
+                input_sources["orderNo"] = source
+                input_sources["salary_order_no"] = source
+    except Exception as exc:
+        warnings = list(context.get("_runtime_warnings") or [])
+        warnings.append("数据库订单变量读取失败：" + _redact_runtime_text(str(exc))[:300])
+        context["_runtime_warnings"] = warnings
+    if input_sources:
+        context["_input_sources"] = input_sources
+    context["source"] = "requirement_resource_manifest"
+    return context
+
+
+def update_requirement_performance_execution_context(project_id, package_id, run_id, execution_context):
+    package = requirement_package_by_id(project_id, package_id)
+    path = _run_context_file(package["root"], run_id)
+    context = _read_json_asset(path)
+    if not context:
+        context = create_requirement_run_context(project_id, package_id, {"run_id": run_id})
+        context.pop("run_context_path", None)
+    _normalize_run_performance_state(context)
+    performance = context.setdefault("performance", {})
+    performance["execution_context"] = dict(execution_context or {})
+    context["updated_at"] = now()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(context, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    context["run_context_path"] = str(path)
+    return context
+
+
+def _salary_trade_auth_preflight(project, cases, runtime_context):
+    role_specs = (
+        (
+            "applicant",
+            "申请人",
+            lambda case: "/userserv/salary/trade/agent/" not in str(case.get("path") or "").lower(),
+            ("/userserv/salary/trade/quota", "/union/getanchorapplyrecord"),
+        ),
+        (
+            "proxy",
+            "代理人",
+            lambda case: "/userserv/salary/trade/agent/" in str(case.get("path") or "").lower(),
+            ("/userserv/salary/trade/agent/notice", "/userserv/salary/trade/agent/order/page"),
+        ),
+    )
+    checks = []
+    for role, label, belongs_to_role, preferred_paths in role_specs:
+        role_context = dict(runtime_context or {})
+        uid_value = str(role_context.get(f"{role}_uid") or role_context.get("uid") or "").strip()
+        ticket_value = str(role_context.get(f"{role}_ticket") or role_context.get("ticket") or "").strip()
+        role_context["uid"] = uid_value
+        role_context["ticket"] = ticket_value
+        if not uid_value or not ticket_value:
+            checks.append({
+                "role": role,
+                "label": label,
+                "status": "FAILED",
+                "summary": f"{label}缺少 uid 或 ticket，请检查需求包登记的数据源。",
+                "items": [],
+            })
+            continue
+        candidates = [
+            case for case in cases
+            if belongs_to_role(case)
+            and str(case.get("method") or "").upper() == "GET"
+            and _tool_expected_status(case) == 200
+        ]
+        candidates.sort(key=lambda case: next(
+            (index for index, path in enumerate(preferred_paths) if path in str(case.get("path") or "").lower()),
+            len(preferred_paths),
+        ))
+        probe = _readonly_auth_probe(
+            project,
+            candidates[:1],
+            role_context,
+            variant_names=("query_ticket",),
+            timeout=3,
+        )
+        checks.append({"role": role, "label": label, **probe})
+    failed = [item for item in checks if item.get("status") == "FAILED"]
+    skipped = [item for item in checks if item.get("status") == "SKIPPED"]
+    if failed:
+        labels = "、".join(item.get("label") or item.get("role") for item in failed)
+        return {
+            "status": "BLOCKED",
+            "message": f"运行凭证预检未通过：{labels} ticket 当前不可用或与 uid 不匹配；请更新需求包 CSV 后重新运行。",
+            "checks": checks,
+        }
+    if skipped:
+        labels = "、".join(item.get("label") or item.get("role") for item in skipped)
+        return {
+            "status": "READY_WITH_WARNINGS",
+            "message": f"{labels}没有找到可用于只读探测的接口，凭证仅完成静态检查。",
+            "checks": checks,
+        }
+    return {"status": "PASSED", "message": "申请人和代理人运行凭证均已通过只读探测。", "checks": checks}
+
+
+def _salary_trade_account_pool_preflight(
+    project,
+    package_root,
+    cases,
+    *,
+    required_applicants=None,
+    require_proxy=None,
+):
+    package_root = Path(package_root)
+    manifest = _load_yaml_file(package_root / "resource_manifest.yaml")
+    applicant_path = _role_csv_path(package_root, "applicant", "data/salary-trade-applicants.csv")
+    proxy_path = _role_csv_path(package_root, "proxy", "data/salary-trade-proxies.csv")
+    applicant_rows = _csv_rows_for_path(applicant_path)
+    proxy_rows = _csv_rows_for_path(proxy_path)
+    manifest_required_applicants = next(
+        (
+            int(item.get("min_count") or 1)
+            for item in manifest.get("credentials") or []
+            if str(item.get("role") or "").lower() == "applicant"
+        ),
+        1,
+    )
+    applicant_cases = [
+        case for case in cases
+        if "/userserv/salary/trade/agent/" not in str(case.get("path") or "").lower()
+        and str(case.get("method") or "").upper() == "GET"
+        and _tool_expected_status(case) == 200
+    ]
+    proxy_cases = [
+        case for case in cases
+        if "/userserv/salary/trade/agent/" in str(case.get("path") or "").lower()
+        and str(case.get("method") or "").upper() == "GET"
+        and _tool_expected_status(case) == 200
+    ]
+    applicant_targeted = bool(applicant_cases)
+    proxy_targeted = bool(proxy_cases)
+    required_applicants = (
+        manifest_required_applicants
+        if required_applicants is None and applicant_targeted
+        else max(0, int(required_applicants or 0))
+    )
+    require_proxy = proxy_targeted if require_proxy is None else bool(require_proxy)
+    base_runtime = _salary_trade_csv_runtime_context(package_root, {})
+
+    def check_rows(rows_, role, role_cases):
+        if not role_cases:
+            return []
+        checked = []
+        for index, row_data in enumerate(rows_, start=1):
+            enabled = str(row_data.get("enabled", "true")).strip().lower()
+            if enabled in {"0", "false", "no", "off"}:
+                continue
+            uid_names = (f"{role}_uid", "uid", "agent_uid", "agentUid")
+            ticket_names = (f"{role}_ticket", "ticket", "access_token", "token")
+            uid_value = next((str(row_data.get(name) or "").strip() for name in uid_names if str(row_data.get(name) or "").strip()), "")
+            ticket_value = next((str(row_data.get(name) or "").strip() for name in ticket_names if str(row_data.get(name) or "").strip()), "")
+            jwt_uid = str(jwt_claims_unverified(ticket_value).get("uid") or "") if _looks_like_jwt(ticket_value) else ""
+            static_ok = bool(uid_value and ticket_value and (not jwt_uid or jwt_uid == uid_value))
+            probe = {"status": "FAILED", "summary": "缺少uid/ticket或JWT uid不匹配", "items": []}
+            if static_ok and role_cases:
+                role_runtime = dict(base_runtime)
+                role_runtime.update({"uid": uid_value, "ticket": ticket_value, f"{role}_uid": uid_value, f"{role}_ticket": ticket_value})
+                if role == "applicant":
+                    role_runtime.update({
+                        "countryCode": str(row_data.get("countryCode") or row_data.get("country_code") or ""),
+                        "country_code": str(row_data.get("countryCode") or row_data.get("country_code") or ""),
+                        "currency": str(row_data.get("currency") or ""),
+                    })
+                probe = _readonly_auth_probe(project, role_cases[:1], role_runtime, variant_names=("query_ticket",), timeout=5)
+            first_item = (probe.get("items") or [{}])[0]
+            checked.append({
+                "row": index,
+                "uid": uid_value,
+                "status": probe.get("status") if static_ok else "FAILED",
+                "http_status": first_item.get("http_status"),
+                "business_code": first_item.get("business_code"),
+                "message": first_item.get("message") or probe.get("summary") or probe.get("reason") or "",
+                "country_code": str(row_data.get("countryCode") or row_data.get("country_code") or ""),
+                "currency": str(row_data.get("currency") or ""),
+                "support_currencies": str(row_data.get("support_currencies") or row_data.get("supportCurrencies") or row_data.get("currency") or ""),
+            })
+        return checked
+
+    applicants = check_rows(applicant_rows, "applicant", applicant_cases)
+    proxies = check_rows(proxy_rows, "proxy", proxy_cases)
+    valid_applicants = [item for item in applicants if item.get("status") == "PASSED"]
+    valid_proxies = [item for item in proxies if item.get("status") == "PASSED"]
+    required_currencies = sorted({
+        str(item.get("currency") or "").upper()
+        for item in valid_applicants
+        if require_proxy and item.get("currency")
+    })
+    covered_currencies = set()
+    for proxy in valid_proxies:
+        covered_currencies.update(
+            item.strip().upper()
+            for item in re.split(r"[,|;/]", proxy.get("support_currencies") or "")
+            if item.strip()
+        )
+    missing_currencies = [item for item in required_currencies if item not in covered_currencies]
+    applicants_ready = not applicant_targeted or len(valid_applicants) >= required_applicants
+    proxies_ready = not require_proxy or (bool(valid_proxies) and not missing_currencies)
+    status = "PASSED" if applicants_ready and proxies_ready else "BLOCKED"
+    result = {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "report_type": "REQUIREMENT_PACKAGE_ACCOUNT_POOL_PREFLIGHT",
+        "package_id": "salary-trade",
+        "status": status,
+        "created_at": now(),
+        "summary": {
+            "required_applicants": required_applicants,
+            "required_roles": [
+                role for role, required in (("applicant", applicant_targeted), ("proxy", require_proxy))
+                if required
+            ],
+            "applicants_total": len(applicants),
+            "applicants_valid": len(valid_applicants),
+            "proxies_total": len(proxies),
+            "proxies_valid": len(valid_proxies),
+            "required_currencies": required_currencies,
+            "missing_proxy_currencies": missing_currencies,
+        },
+        "applicants": applicants,
+        "proxies": proxies,
+        "message": (
+            "当前目标所需账号池可用于测试服执行。" if status == "PASSED" else
+            f"当前目标账号池未就绪：申请人有效 {len(valid_applicants)}/{required_applicants}"
+            + (f"，代理有效 {len(valid_proxies)}/{len(proxies)}" if require_proxy else "")
+            + ("，缺少代理币种 " + "、".join(missing_currencies) if missing_currencies else "")
+            + "。"
+        ),
+    }
+    output = package_root / "outputs" / "runtime-account-preflight.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    result["summary_path"] = str(output)
+    result["json_url"] = "/requirement-reports/" + output.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    return result
+
+
+def _salary_trade_load_runtime_context(project, package_root, cases, runtime=None):
+    """Select one currently valid applicant credential for read-only load tests."""
+    package_root = Path(package_root)
+    applicant_path = _role_csv_path(package_root, "applicant", "data/salary-trade-applicants.csv")
+    applicant_rows = _csv_rows_for_path(applicant_path)
+    applicant_cases = [
+        case for case in cases
+        if str(case.get("method") or "").upper() == "GET"
+        and _tool_expected_status(case) == 200
+        and "/userserv/salary/trade/agent/" not in str(case.get("path") or "").lower()
+    ]
+    preferred_paths = ("/union/getanchorapplyrecord", "/userserv/salary/trade/quota")
+    applicant_cases.sort(key=lambda case: next(
+        (index for index, path in enumerate(preferred_paths) if path in str(case.get("path") or "").lower()),
+        len(preferred_paths),
+    ))
+    if not applicant_cases:
+        raise ValueError("工资交易压测缺少可用于真实凭证预检的只读申请人接口。")
+
+    base_runtime = _salary_trade_csv_runtime_context(package_root, runtime or {})
+    failures = []
+    for index, row_data in enumerate(applicant_rows, start=1):
+        enabled = str(row_data.get("enabled", "true")).strip().lower()
+        if enabled in {"0", "false", "no", "off"}:
+            continue
+        uid_value = str(row_data.get("applicant_uid") or row_data.get("uid") or "").strip()
+        ticket_value = str(row_data.get("applicant_ticket") or row_data.get("ticket") or row_data.get("access_token") or row_data.get("token") or "").strip()
+        jwt_uid = str(jwt_claims_unverified(ticket_value).get("uid") or "") if _looks_like_jwt(ticket_value) else ""
+        if not uid_value or not ticket_value or (jwt_uid and jwt_uid != uid_value):
+            failures.append({"row": index, "uid": uid_value, "reason": "缺少uid/ticket或JWT uid不匹配"})
+            continue
+        candidate = dict(base_runtime)
+        for key, value in row_data.items():
+            if value not in (None, ""):
+                candidate[str(key)] = str(value)
+                candidate[f"applicant_{key}"] = str(value)
+        candidate.update({
+            "uid": uid_value,
+            "ticket": ticket_value,
+            "applicant_uid": uid_value,
+            "applicant_ticket": ticket_value,
+            "anchorUid": uid_value,
+            "anchorTicket": ticket_value,
+            "access_token": ticket_value,
+            "countryCode": str(row_data.get("countryCode") or row_data.get("country_code") or ""),
+            "country_code": str(row_data.get("countryCode") or row_data.get("country_code") or ""),
+            "currency": str(row_data.get("currency") or ""),
+            "t": str(int(time.time() * 1000)),
+            "source": "requirement_package_csv_validated_for_load",
+        })
+        candidate = _normalize_auth_runtime_context(candidate)
+        probe = _readonly_auth_probe(
+            project,
+            applicant_cases[:1],
+            candidate,
+            variant_names=("query_ticket",),
+            timeout=5,
+        )
+        if probe.get("status") == "PASSED":
+            return candidate, {
+                "status": "PASSED",
+                "role": "applicant",
+                "uid": uid_value,
+                "csv_row": index,
+                "probe_path": applicant_cases[0].get("path"),
+                "message": "已从需求包账号池选择通过只读鉴权探测的真实申请人。",
+            }
+        first_item = (probe.get("items") or [{}])[0]
+        failures.append({
+            "row": index,
+            "uid": uid_value,
+            "http_status": first_item.get("http_status"),
+            "business_code": first_item.get("business_code"),
+            "reason": first_item.get("message") or probe.get("summary") or probe.get("reason") or "只读鉴权探测失败",
+        })
+    details = "；".join(
+        f"第{item['row']}行 uid={item.get('uid') or '空'}: {item.get('http_status') or item.get('business_code') or item.get('reason')}"
+        for item in failures[:8]
+    )
+    raise ValueError("工资交易压测没有可用的真实申请人凭证，请更新账号CSV后重试。" + (" " + details if details else ""))
 
 
 def run_requirement_package_newman(project_id, package_id, options=None):
@@ -4382,7 +6146,10 @@ def run_requirement_package_newman(project_id, package_id, options=None):
     source_cases = _requirement_package_cases(project_id, package_id)
     executable_cases = [case for case in source_cases if str(case.get("method") or "").strip() and str(case.get("path") or "").strip()]
     tool_cases = _external_tool_cases(executable_cases, False)
-    if options.get("read_only_only"):
+    read_only_only = bool(options.get("read_only_only")) or (
+        package_id == "salary-trade" and not bool(options.get("allow_mutations"))
+    )
+    if read_only_only:
         tool_cases = [case for case in tool_cases if str(case.get("method") or "").upper() in {"GET", "HEAD", "OPTIONS"}]
     runtime_options = _merge_execution_profile_options(project_id, options)
     credential = load_runtime_credential(project_id)
@@ -4390,8 +6157,24 @@ def run_requirement_package_newman(project_id, package_id, options=None):
         runtime_options["login_password_encrypted"] = credential.get("encrypted_password")
         runtime_options["login_strategy"] = "force"
     runtime = _login_runtime_context(project_id, runtime_options) if runtime_options.get("login_password_encrypted") else _runtime_context(project_id, runtime_options)
+    credential_preflight = {}
     if package_id == "salary-trade":
-        runtime = _salary_trade_csv_runtime_context(package_root, runtime)
+        runtime = _salary_trade_interface_runtime_context(package_root, runtime)
+        if options.get("credential_preflight", True):
+            credential_preflight = _salary_trade_auth_preflight(project, tool_cases, runtime)
+            if credential_preflight.get("status") == "BLOCKED":
+                blocked = {
+                    "status": "BLOCKED",
+                    "report_type": "REQUIREMENT_PACKAGE_NEWMAN_RUN",
+                    "project_id": project_id,
+                    "package_id": package_id,
+                    "run_id": run_id,
+                    "message": credential_preflight.get("message"),
+                    "credential_preflight": credential_preflight,
+                    "runtime_context_source": runtime.get("source") or "",
+                }
+                update_requirement_run_context(project_id, package_id, run_id, "newman", "BLOCKED", blocked)
+                return blocked
     if project and tool_cases:
         collection = _run_context_file(package_root, run_id).parent / "newman-runtime-collection.json"
         collection.parent.mkdir(parents=True, exist_ok=True)
@@ -4423,7 +6206,8 @@ def run_requirement_package_newman(project_id, package_id, options=None):
     ]
     env = os.environ.copy()
     result = _sanitize_tool_result(_run_command_capture(command, ROOT, int(options.get("timeout", 180) or 180), env), runtime)
-    status = "PASSED" if result.get("exit_code") == 0 else "FAILED"
+    interrupted = result.get("exit_code") in {3221225786, -1073741510}
+    status = "PASSED" if result.get("exit_code") == 0 else "INTERRUPTED" if interrupted else "FAILED"
     failures = []
     newman_stats = {}
     if json_report.is_file():
@@ -4433,6 +6217,23 @@ def run_requirement_package_newman(project_id, package_id, options=None):
             newman_stats = payload.get("run", {}).get("stats") or {}
         except Exception:
             failures = []
+    observed_requests = 0
+    observed_assertion_failures = 0
+    if not newman_stats and result.get("stdout"):
+        observed_requests = len(re.findall(r"(?m)^\s*→\s+", result["stdout"]))
+        observed_assertion_failures = len(re.findall(r"AssertionError", result["stdout"]))
+        if observed_requests:
+            newman_stats = {
+                "requests": {"total": observed_requests, "failed": 0, "pending": 0},
+                "assertions": {"total": observed_assertion_failures, "failed": observed_assertion_failures, "pending": 0},
+            }
+    message = ""
+    if interrupted:
+        message = (
+            f"Newman 执行被人工中止；完整 JSON 尚未生成，已从控制台恢复至少 {observed_requests} 条请求。"
+            if observed_requests else
+            "Newman 执行被人工中止；完整 JSON 尚未生成，无法恢复准确请求数。"
+        )
     summary = {
         "report_type": "REQUIREMENT_PACKAGE_NEWMAN_RUN",
         "project_id": project_id,
@@ -4441,10 +6242,12 @@ def run_requirement_package_newman(project_id, package_id, options=None):
         "run_id": run_id,
         "run_context_path": run_context.get("run_context_path"),
         "status": status,
+        "message": message,
         "created_at": now(),
         "collection": str(collection),
         "static_collection": str(static_collection),
         "runtime_context_source": runtime.get("source") or "",
+        "credential_preflight": credential_preflight,
         "command": " ".join(command),
         "json_report": str(json_report) if json_report.is_file() else "",
         "exit_code": result.get("exit_code"),
@@ -4456,6 +6259,12 @@ def run_requirement_package_newman(project_id, package_id, options=None):
             "assertions": deep_get(newman_stats, "assertions.total", 0),
             "failed_assertions": deep_get(newman_stats, "assertions.failed", 0),
             "failures": len(failures),
+            "partial": interrupted and not json_report.is_file(),
+        },
+        "execution_policy": {
+            "read_only_only": read_only_only,
+            "mutations_allowed": bool(options.get("allow_mutations")),
+            "rule": "工资交易 Newman 默认只执行只读接口；复杂写流程由 JMeter 场景脚本执行。",
         },
         "failures": [
             {
@@ -4633,8 +6442,799 @@ def generate_requirement_newman_analysis(project_id, package_id, options=None):
     return report
 
 
+def _performance_case_target(case):
+    method = str(case.get("method") or "").upper()
+    raw_path = str(case.get("path") or "").strip()
+    parsed = urllib.parse.urlsplit(raw_path if raw_path.startswith(("http://", "https://")) else "https://local/" + raw_path.lstrip("/"))
+    path = parsed.path or "/"
+    return method, path, f"{method} {path}".strip()
+
+
+def _performance_target_cases(cases, options=None):
+    options = options or {}
+    allow_mutations = bool(options.get("allow_mutations"))
+    selected = options.get("target_apis") or options.get("target_api") or []
+    if isinstance(selected, str):
+        selected = [selected]
+    selected_keys = {str(value).strip().lower() for value in selected if str(value).strip()}
+    available = []
+    excluded_mutations = []
+    excluded_seen = set()
+    seen = set()
+    for case in cases:
+        method, path, key = _performance_case_target(case)
+        if not method or not path or NEGATIVE_CASE_RE.search(str(case.get("title") or "")):
+            continue
+        if method in {"POST", "PUT", "PATCH", "DELETE"} and not allow_mutations:
+            identity = (method, path)
+            if identity not in excluded_seen:
+                excluded_seen.add(identity)
+                excluded_mutations.append({"method": method, "path": path, "name": case.get("title")})
+            continue
+        if method not in {"GET", "HEAD", "OPTIONS"} and not allow_mutations:
+            continue
+        identity = (method, path)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        available.append({**case, "_performance_method": method, "_performance_path": path, "_performance_key": key})
+    if not selected_keys:
+        return available, excluded_mutations
+    matched = [
+        case for case in available
+        if case["_performance_key"].lower() in selected_keys
+        or case["_performance_path"].lower() in selected_keys
+    ]
+    if not matched:
+        choices = ", ".join(case["_performance_key"] for case in available[:12]) or "无可用目标"
+        raise ValueError(f"选择的性能目标接口不在当前可执行范围；可选目标：{choices}")
+    return matched, excluded_mutations
+
+
+def _performance_transaction_scenarios(package_root, cases):
+    plan = _read_json_asset(Path(package_root) / "outputs" / "execution-plan.json")
+    cases_by_id = {
+        str(case.get("id") or case.get("case_id") or ""): case
+        for case in cases
+        if str(case.get("id") or case.get("case_id") or "").strip()
+    }
+    transactions = []
+    for scenario in plan.get("scenarios") or []:
+        if not isinstance(scenario, dict):
+            continue
+        jmeter_task = next(
+            (
+                task for task in scenario.get("tool_tasks") or []
+                if isinstance(task, dict) and str(task.get("tool") or "").lower() == "jmeter"
+            ),
+            {},
+        )
+        explicit_steps = [
+            item for item in scenario.get("transaction_steps") or []
+            if isinstance(item, dict)
+        ]
+        ordered_cases = []
+        blockers = [str(item) for item in jmeter_task.get("blockers") or [] if str(item).strip()]
+        blockers.extend(
+            str(item) for item in scenario.get("transaction_blockers") or []
+            if str(item).strip()
+        )
+        resolved_steps = []
+        if not explicit_steps:
+            blockers.append("场景缺少显式有序transaction_steps，禁止从用例集合猜测业务顺序。")
+        for index, step in enumerate(explicit_steps, start=1):
+            case_id = str(step.get("case_id") or "")
+            case = cases_by_id.get(case_id)
+            method = str(step.get("method") or "").upper()
+            path = str(step.get("path") or "").strip()
+            if not case and method and path:
+                case = next(
+                    (
+                        item for item in cases
+                        if _performance_case_target(item)[:2] == (method, path)
+                        and not NEGATIVE_CASE_RE.search(str(item.get("title") or ""))
+                    ),
+                    None,
+                )
+            if not case:
+                blockers.append(f"第{index}步没有可执行用例：{method} {path}".strip())
+                resolved_steps.append({**step, "order": index, "status": "BLOCKED"})
+                continue
+            case_method, case_path, _ = _performance_case_target(case)
+            if NEGATIVE_CASE_RE.search(str(case.get("title") or "")):
+                blockers.append(f"第{index}步绑定了异常用例，不能进入业务TPS事务。")
+                continue
+            case_for_transaction = dict(case)
+            if step.get("requires_proxy_reference"):
+                case_for_transaction["_performance_requires_proxy_reference"] = True
+            ordered_cases.append(case_for_transaction)
+            resolved_steps.append({
+                "order": index,
+                "case_id": str(case.get("id") or case.get("case_id") or ""),
+                "role": str(step.get("role") or ""),
+                "action": str(step.get("action") or case.get("title") or case.get("name") or f"第{index}步"),
+                "method": case_method,
+                "path": case_path,
+                "name": case.get("title") or case.get("name"),
+                "produces": list(step.get("produces") or []),
+                "consumes": list(step.get("consumes") or []),
+                "requires_proxy_reference": bool(step.get("requires_proxy_reference")),
+                "status": "READY",
+            })
+        if len(ordered_cases) < 2:
+            blockers.append("业务TPS事务至少需要两个显式有序接口步骤。")
+        if str(scenario.get("status") or "").upper() == "BLOCKED" and not blockers:
+            blockers.append("场景计划当前标记为BLOCKED。")
+        transactions.append({
+            "scenario_id": str(scenario.get("scenario_id") or ""),
+            "name": str(scenario.get("name") or scenario.get("scenario_id") or "业务事务"),
+            "status": str(scenario.get("status") or "READY"),
+            "priority": str(scenario.get("priority") or "P1"),
+            "account_slot": str(scenario.get("account_slot") or ""),
+            "order_variable": str(scenario.get("order_variable") or ""),
+            "requires_mutation_permission": any(
+                str(case.get("method") or "").upper() in {"POST", "PUT", "PATCH", "DELETE"}
+                for case in ordered_cases
+            ),
+            "steps": resolved_steps,
+            "blockers": list(dict.fromkeys(blockers)),
+            "_cases": ordered_cases,
+        })
+    return transactions
+
+
+def _performance_stage_target_cases(project_id, package_id, package_root, plan):
+    cases = _requirement_package_cases(project_id, package_id)
+    target_apis = deep_get(plan, "execution_context.target_apis", [])
+    scenario_id = str(
+        deep_get(plan, "execution_context.scenario_id", "")
+        or deep_get(plan, "transaction.scenario_id", "")
+    ).strip()
+    if not scenario_id:
+        selected, _ = _performance_target_cases(cases, {"target_apis": target_apis})
+        return selected
+
+    transaction = next(
+        (
+            item for item in _performance_transaction_scenarios(package_root, cases)
+            if item.get("scenario_id") == scenario_id
+        ),
+        None,
+    )
+    if not transaction:
+        raise ValueError("压测预案引用的业务事务已不在当前execution-plan.json中，请重新生成预案。")
+    if transaction.get("blockers"):
+        raise ValueError("压测预案引用的业务事务当前不可执行：" + "；".join(transaction["blockers"]))
+    selected, _ = _performance_target_cases(
+        transaction.get("_cases") or [],
+        {"target_apis": target_apis, "allow_mutations": True},
+    )
+    return selected
+
+
+def _performance_plan_measurement_mode(plan, stage=None):
+    """Only an explicit, ordered multi-step scenario is allowed to publish TPS."""
+    plan = plan if isinstance(plan, dict) else {}
+    stage = stage if isinstance(stage, dict) else {}
+    transaction = plan.get("transaction") if isinstance(plan.get("transaction"), dict) else {}
+    scenario_id = str(
+        transaction.get("scenario_id")
+        or deep_get(plan, "execution_context.scenario_id", "")
+    ).strip()
+    steps = [
+        item for item in transaction.get("steps") or []
+        if isinstance(item, dict) and str(item.get("status") or "READY").upper() == "READY"
+    ]
+    blockers = [
+        str(item).strip()
+        for item in transaction.get("blockers") or []
+        if str(item).strip()
+    ]
+    requested_mode = str(
+        stage.get("transaction_mode")
+        or deep_get(plan, "execution_context.transaction_mode", "")
+        or transaction.get("transaction_mode")
+        or "request_only"
+    ).strip().lower()
+    if requested_mode != "business_transaction":
+        return "request_only"
+    if not scenario_id or len(steps) < 2 or blockers:
+        return "request_only"
+    return "business_transaction"
+
+
+def _performance_openapi_documents(package_root):
+    root = Path(package_root)
+    candidates = (
+        root / "apifox" / "openapi.json",
+        root / "outputs" / "apifox" / "openapi.json",
+        root / "openapi.json",
+    )
+    documents = []
+    seen = set()
+    for path in candidates:
+        if not path.is_file() or path.resolve() in seen:
+            continue
+        seen.add(path.resolve())
+        payload = _read_json_asset(path)
+        if isinstance(payload, dict) and isinstance(payload.get("paths"), dict):
+            documents.append(payload)
+    return documents
+
+
+def _performance_dataset_columns(package_root):
+    columns = set()
+    manifest = _load_yaml_file(Path(package_root) / "resource_manifest.yaml")
+    for item in manifest.get("datasets") or []:
+        if str(item.get("type") or "").lower() != "csv" or not item.get("path"):
+            continue
+        path = _resolve_resource_path(item["path"])
+        if not path.is_file():
+            continue
+        try:
+            with path.open("r", encoding="utf-8-sig", newline="") as handle:
+                columns.update(str(name).strip() for name in next(csv.reader(handle), []) if str(name).strip())
+        except Exception:
+            continue
+    return columns
+
+
+def _performance_manifest_runtime_context(package_root, runtime):
+    context = dict(runtime or {})
+    sources = dict(context.get("_input_sources") or {})
+    warnings = list(context.get("_runtime_warnings") or [])
+    manifest = _load_yaml_file(Path(package_root) / "resource_manifest.yaml")
+    for item in manifest.get("runtime_parameters") or []:
+        if isinstance(item, str):
+            item = {"name": item}
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or "").strip()
+        if not name or _is_sensitive_runtime_value(name, item.get("value")):
+            if name and item.get("value") not in (None, ""):
+                warnings.append(f"运行参数 {name} 属于敏感字段，需求包清单中的持久化值已忽略。")
+            continue
+        source_type = str(item.get("source") or "package_literal").strip().lower()
+        value = None
+        source = {"type": source_type, "variable": name, "validated": True}
+        if source_type in {"environment", "env"}:
+            environment_name = str(item.get("environment") or item.get("env") or name).strip()
+            value = os.getenv(environment_name)
+            source.update({"type": "environment", "environment": environment_name})
+        else:
+            value = item.get("value")
+            source["type"] = "package_literal"
+        if value in (None, ""):
+            continue
+        if context.get(name) in (None, ""):
+            context[name] = value
+            sources[name] = source
+    if sources:
+        context["_input_sources"] = sources
+    if warnings:
+        context["_runtime_warnings"] = warnings
+    return context
+
+
+_PERFORMANCE_MYSQL_STATUS_NAMES = {
+    "Threads_connected",
+    "Threads_running",
+    "Questions",
+    "Slow_queries",
+    "Innodb_row_lock_waits",
+    "Innodb_row_lock_time",
+    "Connections",
+    "Aborted_connects",
+}
+
+
+def _performance_mysql_status_snapshot():
+    try:
+        return {
+            str(item.get("Variable_name")): item.get("Value")
+            for item in _mysql_rows("SHOW GLOBAL STATUS", 10000)
+            if str(item.get("Variable_name") or "") in _PERFORMANCE_MYSQL_STATUS_NAMES
+        }
+    except Exception as exc:
+        return {"_error": _redact_runtime_text(str(exc))[:300]}
+
+
+def _performance_target_preflight(package_root, cases, runtime, extra_columns=()):
+    manifest = _load_yaml_file(Path(package_root) / "resource_manifest.yaml")
+    extraction_rules = [
+        item for item in manifest.get("variable_extractions") or []
+        if isinstance(item, dict)
+    ]
+    columns = _performance_dataset_columns(package_root)
+    columns.update(str(name) for name in extra_columns if str(name).strip())
+    endpoint_input_contracts = copy.deepcopy(
+        manifest.get("endpoint_input_contracts") or []
+    )
+    common_query = _load_yaml_file(
+        Path(package_root) / "runtime_aliases.yaml"
+    ).get("common_query") or {}
+    for contract in endpoint_input_contracts:
+        if not isinstance(contract, dict) or not contract.get("include_common_query"):
+            continue
+        required_inputs = list(contract.get("required_inputs") or [])
+        existing = {
+            (str(item.get("name") or "").lower(), str(item.get("location") or "query").lower())
+            for item in required_inputs
+            if isinstance(item, dict)
+        }
+        for name in common_query:
+            if (str(name).lower(), "query") not in existing:
+                required_inputs.append({"name": str(name), "location": "query"})
+        contract["required_inputs"] = required_inputs
+    return _build_performance_target_readiness(
+        cases,
+        runtime_values=runtime,
+        runtime_sources=(runtime or {}).get("_input_sources") or {},
+        csv_columns=columns,
+        extraction_rules=extraction_rules,
+        openapi_documents=_performance_openapi_documents(package_root),
+        endpoint_input_contracts=endpoint_input_contracts,
+    )
+
+
+def _salary_trade_performance_account_pool(
+    project,
+    package_root,
+    cases,
+    *,
+    threads,
+    reuse_policy="round_robin",
+    live_probe=False,
+):
+    package_root = Path(package_root)
+    applicant_targeted = any(
+        "/userserv/salary/trade/agent/" not in str(case.get("path") or "").lower()
+        for case in cases
+    )
+    proxy_auth_targeted = any(
+        "/userserv/salary/trade/agent/" in str(case.get("path") or "").lower()
+        for case in cases
+    )
+    create_order_targeted = any(
+        str(case.get("method") or "").upper() == "POST"
+        and urllib.parse.urlsplit(str(case.get("path") or "")).path
+        == "/userserv/salary/trade/order/create"
+        for case in cases
+    )
+    proxy_reference_targeted = proxy_auth_targeted or any(
+        bool(case.get("_performance_requires_proxy_reference"))
+        for case in cases
+    )
+    applicant_path = _role_csv_path(
+        package_root, "applicant", "data/salary-trade-applicants.csv"
+    )
+    proxy_path = _role_csv_path(
+        package_root, "proxy", "data/salary-trade-proxies.csv"
+    )
+
+    def account_source(path, role):
+        portable = _portable_project_path(path)
+        if Path(portable).is_absolute() or re.match(r"^[A-Za-z]:[/\\]", portable):
+            return f"external_csv:{role}:{Path(path).name}"
+        return portable
+
+    applicant_source = account_source(applicant_path, "applicant")
+    proxy_source = account_source(proxy_path, "proxy")
+    applicant_rows = [
+        {**item, "account_source": item.get("account_source") or applicant_source}
+        for item in _csv_rows_for_path(applicant_path)
+    ]
+    proxy_rows = [
+        {**item, "account_source": item.get("account_source") or proxy_source}
+        for item in _csv_rows_for_path(proxy_path)
+    ]
+
+    def jwt_valid(rows_, role, require_ticket=True):
+        valid = []
+        for item in rows_:
+            uid_value = str(item.get(f"{role}_uid") or item.get("uid") or item.get("agent_uid") or "").strip()
+            ticket_value = str(item.get(f"{role}_ticket") or item.get("ticket") or item.get("access_token") or "").strip()
+            jwt_uid = str(jwt_claims_unverified(ticket_value).get("uid") or "") if _looks_like_jwt(ticket_value) else ""
+            if uid_value and (ticket_value or not require_ticket) and (not jwt_uid or jwt_uid == uid_value):
+                valid.append(item)
+        return valid
+
+    applicant_rows = jwt_valid(applicant_rows, "applicant")
+    proxy_rows = jwt_valid(proxy_rows, "proxy", require_ticket=proxy_auth_targeted)
+    if not proxy_reference_targeted:
+        proxy_rows = []
+    live_result = {}
+    business_readiness = {}
+    if live_probe:
+        required_applicants = 0
+        if applicant_targeted:
+            required_applicants = (
+                int(threads)
+                if str(reuse_policy or "round_robin").strip().lower() == "strict_unique"
+                else 1
+            )
+        probe_cases = list(cases)
+        package_cases = None
+        has_applicant_probe = any(
+            "/userserv/salary/trade/agent/" not in str(case.get("path") or "").lower()
+            and str(case.get("method") or "").upper() == "GET"
+            and _tool_expected_status(case) == 200
+            for case in probe_cases
+        )
+        has_proxy_probe = any(
+            "/userserv/salary/trade/agent/" in str(case.get("path") or "").lower()
+            and str(case.get("method") or "").upper() == "GET"
+            and _tool_expected_status(case) == 200
+            for case in probe_cases
+        )
+        if (applicant_targeted and not has_applicant_probe) or (proxy_auth_targeted and not has_proxy_probe):
+            project_id = str(project.get("id") or "").strip()
+            package_cases = _requirement_package_cases(project_id, "salary-trade") if project_id else []
+        if applicant_targeted and not has_applicant_probe:
+            applicant_probe = next(
+                (
+                    case for case in package_cases or []
+                    if "/userserv/salary/trade/agent/" not in str(case.get("path") or "").lower()
+                    and str(case.get("method") or "").upper() == "GET"
+                    and _tool_expected_status(case) == 200
+                ),
+                None,
+            )
+            if applicant_probe:
+                probe_cases.append(applicant_probe)
+        if proxy_auth_targeted and not has_proxy_probe:
+            proxy_probe = next(
+                (
+                    case for case in package_cases or []
+                    if "/userserv/salary/trade/agent/" in str(case.get("path") or "").lower()
+                    and str(case.get("method") or "").upper() == "GET"
+                    and _tool_expected_status(case) == 200
+                ),
+                None,
+            )
+            if proxy_probe:
+                probe_cases.append(proxy_probe)
+        live_result = _salary_trade_account_pool_preflight(
+            project,
+            package_root,
+            probe_cases,
+            required_applicants=required_applicants,
+            require_proxy=proxy_auth_targeted,
+        )
+        valid_applicant_uids = {
+            str(item.get("uid") or "")
+            for item in live_result.get("applicants") or []
+            if item.get("status") == "PASSED"
+        }
+        valid_proxy_uids = {
+            str(item.get("uid") or "")
+            for item in live_result.get("proxies") or []
+            if item.get("status") == "PASSED"
+        }
+        if applicant_targeted:
+            applicant_rows = [
+                item for item in applicant_rows
+                if str(item.get("applicant_uid") or item.get("uid") or "") in valid_applicant_uids
+            ]
+        if proxy_auth_targeted:
+            proxy_rows = [
+                item for item in proxy_rows
+                if str(item.get("proxy_uid") or item.get("uid") or item.get("agent_uid") or "") in valid_proxy_uids
+            ]
+        if create_order_targeted:
+            if package_cases is None:
+                project_id = str(project.get("id") or "").strip()
+                package_cases = _requirement_package_cases(project_id, "salary-trade") if project_id else []
+            quota_case = next(
+                (
+                    case for case in package_cases or []
+                    if str(case.get("method") or "").upper() == "GET"
+                    and urllib.parse.urlsplit(str(case.get("path") or "")).path
+                    == "/userserv/salary/trade/quota"
+                    and _tool_expected_status(case) == 200
+                    and not NEGATIVE_CASE_RE.search(str(case.get("title") or ""))
+                ),
+                None,
+            )
+            business_readiness = _salary_trade_quota_account_preflight(
+                project,
+                quota_case,
+                applicant_rows,
+            )
+            eligible_uids = {
+                str(item.get("uid") or "")
+                for item in business_readiness.get("accounts") or []
+                if item.get("status") == "PASSED"
+            }
+            applicant_rows = [
+                item for item in applicant_rows
+                if str(item.get("applicant_uid") or item.get("uid") or "") in eligible_uids
+            ]
+    pool = _normalize_performance_account_pool(
+        applicant_rows,
+        proxy_rows,
+        threads=threads,
+        reuse_policy=reuse_policy,
+        require_proxy_ticket=proxy_auth_targeted,
+    )
+    if proxy_reference_targeted and any(not row.get("proxy_uid") for row in pool.get("rows") or []):
+        pool["status"] = "BLOCKED"
+        pool["message"] = "当前目标需要代理UID，但至少一个申请人币种没有匹配到代理账号。"
+    elif proxy_auth_targeted and any(not row.get("proxy_ticket") for row in pool.get("rows") or []):
+        pool["status"] = "BLOCKED"
+        pool["message"] = "当前目标包含代理端接口，但至少一个匹配代理没有可用ticket。"
+    pool["role_requirements"] = {
+        "applicant_auth": applicant_targeted,
+        "proxy_reference": proxy_reference_targeted,
+        "proxy_auth": proxy_auth_targeted,
+    }
+    if business_readiness:
+        pool["business_readiness"] = business_readiness
+        if business_readiness.get("status") != "PASSED":
+            pool["status"] = "BLOCKED"
+            pool["message"] = str(
+                business_readiness.get("message")
+                or "创建订单前的额度与处理中订单预检未通过。"
+            )
+    if live_result:
+        pool["live_preflight"] = {
+            "status": live_result.get("status"),
+            "summary": live_result.get("summary") or {},
+            "summary_path": live_result.get("summary_path"),
+            "json_url": live_result.get("json_url"),
+        }
+    return pool
+
+
+def _salary_trade_quota_account_preflight(project, quota_case, account_rows):
+    if not quota_case:
+        return {
+            "status": "BLOCKED",
+            "message": "创建订单前缺少可执行的额度查询GET接口，无法验证可申请工资和处理中订单。",
+            "accounts": [],
+        }
+
+    def decimal_value(value):
+        try:
+            return Decimal(str(value))
+        except (InvalidOperation, TypeError, ValueError):
+            return None
+
+    results = []
+    for row_data in account_rows or []:
+        uid_value = str(row_data.get("applicant_uid") or row_data.get("uid") or "").strip()
+        ticket_value = str(row_data.get("applicant_ticket") or row_data.get("ticket") or "").strip()
+        requested = decimal_value(row_data.get("salaryAmount") or row_data.get("salary_amount"))
+        runtime = _normalize_auth_runtime_context({
+            **row_data,
+            "uid": uid_value,
+            "ticket": ticket_value,
+            "applicant_uid": uid_value,
+            "applicant_ticket": ticket_value,
+            "currency": str(row_data.get("currency") or ""),
+            "countryCode": str(row_data.get("countryCode") or row_data.get("country_code") or ""),
+            "t": str(int(time.time() * 1000)),
+        })
+        path, base_headers, _ = _case_request_with_runtime_context(quota_case, runtime)
+        url = _replace_runtime_placeholders(
+            path if path.startswith("http") else (project.get("base_url") or "").rstrip("/") + "/" + path.lstrip("/"),
+            runtime,
+            False,
+        )
+        headers = _replace_runtime_placeholders(base_headers, runtime, False)
+        headers.setdefault("Accept", "application/json")
+        http_status = None
+        body = {}
+        reason = ""
+        try:
+            req = urllib.request.Request(url, method="GET", headers=headers)
+            try:
+                resp = urllib.request.urlopen(req, timeout=5)
+                http_status, raw = resp.status, resp.read(100000)
+            except urllib.error.HTTPError as exc:
+                http_status, raw = exc.code, exc.read(100000)
+            parsed = json.loads(raw.decode("utf-8", "replace"))
+            body = parsed if isinstance(parsed, dict) else {}
+        except Exception as exc:
+            reason = _redact_runtime_text(str(exc), runtime)[:200]
+        data = body.get("data") if isinstance(body.get("data"), dict) else {}
+        business_code = body.get("code")
+        available = decimal_value(
+            data.get("availableSalaryAmount")
+            if data.get("availableSalaryAmount") is not None
+            else data.get("availableSalary")
+        )
+        processing = decimal_value(data.get("processingSalary"))
+        minimum = decimal_value(data.get("minApplyAmount"))
+        status = "PASSED"
+        if http_status != 200 or business_code not in (None, 0, 200, "0", "200"):
+            status = "BLOCKED"
+            reason = str(body.get("message") or reason or "额度接口未成功返回")
+        elif requested is None:
+            status = "BLOCKED"
+            reason = "账号数据缺少有效salaryAmount"
+        elif available is None:
+            status = "BLOCKED"
+            reason = "额度响应缺少availableSalaryAmount/availableSalary"
+        elif minimum is not None and requested < minimum:
+            status = "BLOCKED"
+            reason = f"申请金额{requested}低于最低金额{minimum}"
+        elif available < requested:
+            status = "BLOCKED"
+            reason = f"可申请工资{available}小于申请金额{requested}"
+        elif processing is not None and processing > 0:
+            status = "BLOCKED"
+            reason = f"当前存在处理中工资{processing}"
+        results.append({
+            "uid": uid_value,
+            "status": status,
+            "http_status": http_status,
+            "business_code": business_code,
+            "requested_salary": str(requested) if requested is not None else None,
+            "available_salary": str(available) if available is not None else None,
+            "processing_salary": str(processing) if processing is not None else None,
+            "minimum_salary": str(minimum) if minimum is not None else None,
+            "reason": _redact_runtime_text(reason, runtime)[:200],
+        })
+    passed = [item for item in results if item.get("status") == "PASSED"]
+    if passed:
+        return {
+            "status": "PASSED",
+            "message": f"{len(passed)}个账号通过工资额度、最低金额和处理中订单预检。",
+            "accounts": results,
+        }
+    reasons = "；".join(
+        f"uid={item.get('uid')}：{item.get('reason')}"
+        for item in results[:5]
+    )
+    return {
+        "status": "BLOCKED",
+        "message": "没有账号通过创建订单业务数据预检" + ("：" + reasons if reasons else "。"),
+        "accounts": results,
+    }
+
+
+def requirement_performance_options(project_id, package_id):
+    package = requirement_package_by_id(project_id, package_id)
+    package_id = package.get("package_id") or package_id
+    package_root = Path(package["root"])
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
+    cases = _requirement_package_cases(project_id, package_id)
+    targets, excluded_mutations = _performance_target_cases(cases, {})
+    saved = project_execution_profile(project_id).get("performance") or {}
+    default_profile = str(saved.get("profile") or "baseline")
+    if default_profile == "smoke":
+        default_profile = "baseline"
+    runtime = _runtime_context(project_id, saved)
+    account_pool = {}
+    if package_id == "salary-trade":
+        runtime = _salary_trade_interface_runtime_context(package_root, runtime)
+        profile_defaults = next(
+            (item for item in _performance_profile_catalog() if item.get("profile") == default_profile),
+            {"threads": 1, "account_reuse_policy": "round_robin"},
+        )
+        account_pool = _salary_trade_performance_account_pool(
+            project,
+            package_root,
+            targets,
+            threads=profile_defaults.get("threads") or 1,
+            reuse_policy=profile_defaults.get("account_reuse_policy") or "round_robin",
+        )
+    runtime = _performance_manifest_runtime_context(package_root, runtime)
+    target_preflight = _performance_target_preflight(
+        package_root,
+        targets,
+        runtime,
+        account_pool.get("columns") or (),
+    )
+    readiness_by_key = {
+        item.get("key"): item for item in target_preflight.get("targets") or []
+    }
+    transactions = []
+    for transaction in _performance_transaction_scenarios(package_root, cases):
+        transaction_cases, _ = _performance_target_cases(
+            transaction.get("_cases") or [],
+            {"allow_mutations": True},
+        )
+        transaction_preflight = _performance_target_preflight(
+            package_root,
+            transaction_cases,
+            runtime,
+            account_pool.get("columns") or (),
+        )
+        blocked_inputs = [
+            item for item in transaction_preflight.get("targets") or []
+            if item.get("status") == "BLOCKED"
+        ]
+        required_runtime_inputs = _summarize_performance_missing_inputs(
+            transaction_preflight
+        )
+        input_blockers = []
+        for item in required_runtime_inputs:
+            name = str(item.get("name") or "运行输入")
+            if item.get("sensitive"):
+                input_blockers.append(
+                    f"缺少敏感凭证资源 {name}，请通过账号CSV或已登记凭证源提供。"
+                )
+            elif not item.get("fillable", True):
+                input_blockers.append(
+                    f"{name} 缺少可解析的字段结构，平台不能安全猜测完整请求体。"
+                )
+        hard_blockers = list(transaction.get("blockers") or []) + input_blockers
+        status = (
+            "BLOCKED"
+            if hard_blockers
+            else "NEEDS_INPUT"
+            if required_runtime_inputs
+            else "READY"
+        )
+        transactions.append({
+            **{key: value for key, value in transaction.items() if key != "_cases"},
+            "status": status,
+            "required_runtime_inputs": required_runtime_inputs,
+            "input_blockers": input_blockers,
+            "hard_blockers": hard_blockers,
+            "preflight": transaction_preflight,
+            "missing": [
+                {
+                    "target": item.get("key"),
+                    "inputs": item.get("missing") or [],
+                }
+                for item in blocked_inputs
+            ],
+        })
+    mysql_status = mysql_connection_status(project_id)
+    observability_configuration = _describe_performance_observability(
+        _load_yaml_file(package_root / "resource_manifest.yaml"),
+        automatic_categories=(
+            ("database",) if mysql_status.get("status") == "CONFIGURED" else ()
+        ),
+    )
+    return {
+        "schema_version": ASSET_SCHEMA_VERSION,
+        "project_id": project_id,
+        "package_id": package_id,
+        "package_name": package.get("name"),
+        "environment": project.get("base_url") or "default",
+        "profiles": [
+            profile for profile in _performance_profile_catalog()
+            if profile.get("profile") != "smoke"
+        ],
+        "default_profile": default_profile,
+        "targets": [
+            {
+                "method": case["_performance_method"],
+                "path": case["_performance_path"],
+                "key": case["_performance_key"],
+                "name": case.get("title") or case.get("name") or case["_performance_key"],
+                "status": (readiness_by_key.get(case["_performance_key"]) or {}).get("status", "READY"),
+                "missing": (readiness_by_key.get(case["_performance_key"]) or {}).get("missing", []),
+                "resolved_inputs": (readiness_by_key.get(case["_performance_key"]) or {}).get("resolved_inputs", {}),
+                "input_sources": (readiness_by_key.get(case["_performance_key"]) or {}).get("input_sources", {}),
+                "resolved_path": (readiness_by_key.get(case["_performance_key"]) or {}).get("resolved_path", case["_performance_path"]),
+                "openapi_matched": (readiness_by_key.get(case["_performance_key"]) or {}).get("openapi_matched", False),
+            }
+            for case in targets
+        ],
+        "transactions": transactions,
+        "excluded_mutations": excluded_mutations,
+        "target_preflight": target_preflight,
+        "account_pool": _public_performance_account_pool(account_pool) if account_pool else {},
+        "observability": observability_configuration,
+        "policy": {
+            "read_only_by_default": True,
+            "write_targets_require_explicit_permission": True,
+            "profile_owner": "performance_skill",
+            "mcp_role": "validated_jmx_execution_only",
+        },
+    }
+
+
 def generate_requirement_jmeter_load_plan(project_id, package_id, options=None):
     options = options or {}
+    explicit_runtime_params = _persistable_performance_runtime_params({
+        "runtime_params": options.get("runtime_params") or {},
+    })
     package = requirement_package_by_id(project_id, package_id)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
@@ -4644,53 +7244,253 @@ def generate_requirement_jmeter_load_plan(project_id, package_id, options=None):
     run_context = _ensure_requirement_run_context(project_id, package_id, options)
     run_id = run_context["run_id"]
     source_cases = _requirement_package_cases(project_id, package_id)
-    safe_cases = []
-    seen = set()
-    excluded_mutations = []
-    for case in source_cases:
-        method = str(case.get("method") or "").upper()
-        path = str(case.get("path") or "")
-        if method != "GET" or NEGATIVE_CASE_RE.search(str(case.get("title") or "")):
-            if method in {"POST", "PUT", "PATCH", "DELETE"}:
-                excluded_mutations.append({"method": method, "path": path, "name": case.get("title")})
-            continue
-        key = (method, path)
-        if key in seen:
-            continue
-        seen.add(key)
-        safe_cases.append(case)
+    selected_transaction = None
+    scenario_id = str(options.get("scenario_id") or "").strip()
+    if scenario_id:
+        selected_transaction = next(
+            (
+                item for item in _performance_transaction_scenarios(package_root, source_cases)
+                if item.get("scenario_id") == scenario_id
+            ),
+            None,
+        )
+        if not selected_transaction:
+            raise ValueError("选择的性能业务事务不在当前execution-plan.json中。")
+        if selected_transaction.get("blockers"):
+            raise ValueError("性能业务事务当前不可执行：" + "；".join(selected_transaction["blockers"]))
+        if selected_transaction.get("requires_mutation_permission") and not options.get("allow_mutations"):
+            raise ValueError("该业务事务包含测试服写操作，请明确勾选本批次允许写入后再生成。")
+        source_cases = list(selected_transaction.get("_cases") or [])
+        options = {
+            **options,
+            "allow_mutations": True,
+            "transaction_mode": "business_transaction",
+        }
+    else:
+        options = {
+            **options,
+            "transaction_mode": "request_only",
+            "stages": [
+                {**stage, "transaction_mode": "request_only"}
+                for stage in options.get("stages") or []
+                if isinstance(stage, dict)
+            ] if isinstance(options.get("stages"), list) else options.get("stages"),
+        }
+        if float(options.get("min_transaction_tps") or 0) > 0:
+            raise ValueError("最低业务事务TPS只能用于明确选择的多步业务事务。")
+    safe_cases, excluded_mutations = _performance_target_cases(source_cases, options)
     if not safe_cases:
         raise ValueError("当前需求包没有可默认进入持续压测的只读GET接口；写接口需要人工确认后才能加入。")
-    profiles = options.get("stages") or [
-        {"code": "baseline", "name": "基线", "threads": 2, "rampup_seconds": 30, "duration_seconds": 180},
-        {"code": "light-load", "name": "轻负载", "threads": 5, "rampup_seconds": 60, "duration_seconds": 300},
-        {"code": "target-load", "name": "目标负载", "threads": 10, "rampup_seconds": 120, "duration_seconds": 600},
-        {"code": "capacity-search", "name": "容量探索", "threads": 20, "rampup_seconds": 180, "duration_seconds": 900},
-    ]
+    profiles = _build_performance_profile_stages(options)
+    if selected_transaction:
+        _validate_performance_transaction_stage_durations(
+            profiles,
+            len(selected_transaction.get("steps") or []),
+        )
     output_dir = package_root / "outputs" / "jmeter" / "load-test"
     output_dir.mkdir(parents=True, exist_ok=True)
-    runtime = safe_runtime_context(_runtime_context(project_id, _merge_execution_profile_options(project_id, options)))
+    runtime_options = _merge_execution_profile_options(project_id, options)
+    runtime_options["runtime_params"] = (
+        explicit_runtime_params
+        if selected_transaction
+        else _persistable_performance_runtime_params(runtime_options)
+    )
+    runtime = _runtime_context(project_id, runtime_options)
+    account_pool = {}
+    if package_id == "salary-trade":
+        salary_runtime = _salary_trade_interface_runtime_context(
+            package_root,
+            runtime,
+        )
+        max_threads = max(int(stage.get("threads") or 1) for stage in profiles)
+        default_policy = str(
+            options.get("account_reuse_policy")
+            or profiles[0].get("account_reuse_policy")
+            or "round_robin"
+        )
+        account_pool = _salary_trade_performance_account_pool(
+            project,
+            package_root,
+            safe_cases,
+            threads=max_threads,
+            reuse_policy=default_policy,
+            live_probe=bool(selected_transaction),
+        )
+        if account_pool.get("status") == "BLOCKED":
+            raise ValueError("性能账号池预检未通过：" + str(account_pool.get("message") or "账号数据不完整"))
+        first_account = (account_pool.get("rows") or [{}])[0]
+        runtime = {
+            **salary_runtime,
+            **first_account,
+            "t": str(int(time.time() * 1000)),
+            "source": "performance_account_pool_preview",
+        }
+    runtime = _performance_manifest_runtime_context(package_root, runtime)
+    target_preflight = _performance_target_preflight(
+        package_root,
+        safe_cases,
+        runtime,
+        account_pool.get("columns") or (),
+    )
+    readiness = {
+        item.get("key"): item for item in target_preflight.get("targets") or []
+    }
+    blocked_targets = [item for item in target_preflight.get("targets") or [] if item.get("status") == "BLOCKED"]
+    explicitly_selected = bool(options.get("target_apis") or options.get("target_api"))
+    if explicitly_selected and blocked_targets:
+        detail = "；".join(
+            f"{item.get('key')}缺少" + "、".join(str(missing.get("name") or "") for missing in item.get("missing") or [])
+            for item in blocked_targets[:8]
+        )
+        raise ValueError("目标接口数据预检未通过：" + detail)
+    safe_cases = [
+        case for case in safe_cases
+        if (readiness.get(case.get("_performance_key")) or {}).get("status", "READY") == "READY"
+    ]
+    if not safe_cases:
+        raise ValueError("当前性能目标都缺少必填运行数据，请先根据目标接口预检补齐资源。")
+    safe_cases = _apply_performance_resolved_inputs(safe_cases, target_preflight)
+    if selected_transaction:
+        safe_cases = [
+            {**case, "_performance_require_business_code": True}
+            for case in safe_cases
+        ]
+    target_preflight_path = output_dir / "target-resource-preflight.json"
+    target_preflight_path.write_text(
+        json.dumps(target_preflight, ensure_ascii=False, indent=2, default=str),
+        encoding="utf-8",
+    )
+    csv_data_sets = []
     stage_assets = []
     for index, stage in enumerate(profiles, start=1):
-        stage_options = {
-            **options,
-            "jmeter_threads": max(1, min(int(stage.get("threads") or 1), 500)),
-            "jmeter_rampup": max(0, min(int(stage.get("rampup_seconds") or 0), 3600)),
-            "jmeter_duration_seconds": max(60, min(int(stage.get("duration_seconds") or 60), 86400)),
-            "jmeter_think_time_ms": max(0, min(int(stage.get("think_time_ms") or 300), 10000)),
-            "_jmeter_result_jtl": "${__P(load_result_jtl,)}",
-            "_jmeter_non_gui_plan": True,
-        }
+        threads = max(1, min(int(stage.get("threads") or 1), 500))
+        rampup_seconds = max(0, min(int(stage.get("rampup_seconds") or 0), 3600))
+        duration_seconds = max(10, min(int(stage.get("duration_seconds") or 60), 604800))
+        stage_profile = str(stage.get("profile") or options.get("performance_profile") or "load")
+        stage_transaction_mode = str(stage.get("transaction_mode") or "request_only")
         stage_code = re.sub(r"[^a-zA-Z0-9_-]", "-", str(stage.get("code") or f"stage-{index}")).strip("-") or f"stage-{index}"
+        stage_transaction_key = (
+            str(selected_transaction.get("scenario_id") or "")
+            if selected_transaction
+            else f"{package_id}:{stage_code}"
+        )
         jmx_path = output_dir / f"stage-{index:02d}-{stage_code}.jmx"
-        jmx_path.write_text(build_jmeter_jmx(project, safe_cases, runtime, True, stage_options), encoding="utf-8")
-        stage_assets.append({**stage, "stage": index, "jmx_path": str(jmx_path), "jtl_property": "load_result_jtl"})
+        workflow_path = output_dir / f"stage-{index:02d}-{stage_code}-workflow.json"
+        stage_thresholds = _performance_thresholds_service({
+            **options,
+            "performance_profile": stage_profile,
+        })
+        auto_stop = {
+            "enabled": bool(options.get("auto_stop_enabled", True)),
+            "sample_interval_seconds": max(1, min(int(options.get("auto_stop_interval_seconds") or 2), 30)),
+            "grace_period_seconds": max(
+                5,
+                min(
+                    int(options.get("auto_stop_grace_seconds") or max(5, rampup_seconds)),
+                    max(5, duration_seconds - 1),
+                ),
+            ),
+            "min_samples": max(
+                10,
+                min(int(options.get("auto_stop_min_samples") or threads * 2), 200),
+            ),
+            "latency_consecutive_windows": max(
+                2,
+                min(int(options.get("auto_stop_latency_windows") or 2), 10),
+            ),
+            "error_consecutive_windows": max(
+                1,
+                min(int(options.get("auto_stop_error_windows") or 1), 10),
+            ),
+            "warmup_samples_per_label": int(stage.get("warmup_samples_per_label") or 0),
+        }
+        stage_account_pool = account_pool
+        if package_id == "salary-trade":
+            stage_account_pool = _salary_trade_performance_account_pool(
+                project,
+                package_root,
+                safe_cases,
+                threads=threads,
+                reuse_policy=str(stage.get("account_reuse_policy") or options.get("account_reuse_policy") or "round_robin"),
+            )
+            if stage_account_pool.get("status") == "BLOCKED":
+                raise ValueError(f"{stage.get('name') or stage_code}账号池预检未通过：{stage_account_pool.get('message')}")
+        asset = _write_jmeter_mcp_asset(
+            project_id=project_id,
+            package_id=package_id,
+            project=project,
+            cases=safe_cases,
+            target_path=jmx_path,
+            workflow_path=workflow_path,
+            csv_data_sets=csv_data_sets,
+            runtime_context=runtime,
+            threads=threads,
+            rampup_seconds=rampup_seconds,
+            duration_seconds=duration_seconds,
+            max_error_rate=float(stage_thresholds.get("max_error_rate", 1)),
+            max_p95_ms=int(stage_thresholds.get("max_p95_ms", 2000)),
+            max_p99_ms=int(stage_thresholds.get("max_p99_ms", 4000)),
+            auto_stop=auto_stop,
+            performance_profile=stage_profile,
+            allowed_runtime_variables=stage_account_pool.get("columns") or (),
+            account_columns=stage_account_pool.get("columns") or (),
+            account_reuse_policy=str(
+                stage.get("account_reuse_policy")
+                or options.get("account_reuse_policy")
+                or "round_robin"
+            ),
+            transaction_name=stage_transaction_key if stage_transaction_mode == "business_transaction" else "",
+            transaction_mode=stage_transaction_mode,
+            pacing_ms=int(stage.get("pacing_ms") or 300),
+            workload_phase=stage_code,
+            extraction_rules=[
+                item
+                for item in _load_yaml_file(package_root / "resource_manifest.yaml").get("variable_extractions") or []
+                if isinstance(item, dict)
+            ],
+            targets_prevalidated=True,
+        )
+        stage_assets.append({
+            **stage,
+            "stage": index,
+            "profile": stage_profile,
+            "jmx_path": _portable_project_path(jmx_path),
+            "workflow_path": _portable_project_path(workflow_path),
+            "engine": asset["engine"],
+            "workload_model": stage.get("workload_model"),
+            "transaction_name": f"TX::{stage_transaction_key}" if stage_transaction_mode == "business_transaction" else "",
+            "transaction_semantics": "business_tps" if stage_transaction_mode == "business_transaction" else "request_rps_only",
+            "auto_stop": auto_stop,
+            "account_pool": _public_performance_account_pool(stage_account_pool) if stage_account_pool else {},
+        })
+    threshold_defaults = _performance_thresholds_service({
+        "performance_profile": stage_assets[0].get("profile") if len(stage_assets) == 1 else "load",
+        **options,
+    })
     thresholds = {
-        "max_error_rate": float(options.get("max_error_rate", 1)),
-        "max_p95_ms": float(options.get("max_p95_ms", 2000)),
-        "max_p99_ms": float(options.get("max_p99_ms", 4000)),
-        "min_throughput_rps": float(options.get("min_throughput_rps", 0)),
+        "max_error_rate": float(threshold_defaults.get("max_error_rate", 1)),
+        "max_p95_ms": float(threshold_defaults.get("max_p95_ms", 2000)),
+        "max_p99_ms": float(threshold_defaults.get("max_p99_ms", 4000)),
+        "min_throughput_rps": float(threshold_defaults.get("min_throughput_rps", 0)),
+        "min_transaction_tps": float(threshold_defaults.get("min_transaction_tps", 0)),
     }
+    execution_context = _build_performance_execution_context(
+        stages=stage_assets,
+        targets=[
+            {"method": case["_performance_method"], "path": case["_performance_path"]}
+            for case in safe_cases
+        ],
+        environment=project.get("base_url") or "default",
+        thresholds=thresholds,
+    )
+    execution_context["created_at"] = now()
+    if selected_transaction:
+        execution_context["scenario_id"] = selected_transaction.get("scenario_id")
+        execution_context["scenario_name"] = selected_transaction.get("name")
+        execution_context["transaction_mode"] = "business_transaction"
+    update_requirement_performance_execution_context(
+        project_id, package_id, run_id, execution_context
+    )
     plan = {
         "schema_version": ASSET_SCHEMA_VERSION,
         "report_type": "REQUIREMENT_PACKAGE_JMETER_LOAD_PLAN",
@@ -4698,24 +7498,40 @@ def generate_requirement_jmeter_load_plan(project_id, package_id, options=None):
         "package_id": package_id,
         "package_name": package.get("name"),
         "run_id": run_id,
-        "run_context_path": run_context.get("run_context_path"),
+        "run_context_path": _portable_project_path(run_context.get("run_context_path")),
         "status": "READY",
         "created_at": now(),
-        "summary": {"safe_endpoints": len(safe_cases), "excluded_mutations": len(excluded_mutations), "stages": len(stage_assets)},
+        "summary": {"safe_endpoints": len(safe_cases), "blocked_targets": len(blocked_targets), "excluded_mutations": len(excluded_mutations), "stages": len(stage_assets)},
         "safe_endpoints": [{"method": case.get("method"), "path": case.get("path"), "name": case.get("title")} for case in safe_cases],
         "excluded_mutations": excluded_mutations[:100],
+        "target_preflight": {
+            **target_preflight,
+            "path": _portable_project_path(target_preflight_path),
+        },
+        "account_pool": _public_performance_account_pool(account_pool) if account_pool else {},
+        "transaction": (
+            {key: value for key, value in selected_transaction.items() if key != "_cases"}
+            if selected_transaction else {
+                "status": "NOT_SELECTED",
+                "transaction_mode": "request_only",
+            }
+        ),
+        "runtime_params": explicit_runtime_params,
+        "runtime_param_names": sorted(explicit_runtime_params),
         "stages": stage_assets,
+        "execution_context": execution_context,
         "thresholds": thresholds,
         "stop_conditions": ["错误率超过阈值", "P95或P99连续两个观察窗口超过阈值", "测试环境出现明显不可用", "业务方或运维要求停止"],
         "capacity_rule": "最后一个满足错误率、P95/P99和吞吐量门槛的阶梯视为当前可接受容量；首次持续越界的阶梯作为容量拐点候选，不直接等同生产极限。",
-        "execution_pipeline": ["平台选择压测场景", "生成可执行JMX", "JMeter持续运行", "回收JTL和HTML", "自动生成性能分析"],
+        "execution_pipeline": ["平台选择压测场景", "JMeter Skill生成JMX", "静态门禁校验与一次确定性修正", "JMeter MCP加载并执行JMX", "回收JTL和HTML", "自动生成性能分析"],
         "report_contract": {"raw_jtl": "必须保留", "jmeter_html": "必须生成并提供原地址", "ai_analysis": "引用同一批JTL/HTML，不替代原始报告"},
+        "runtime_contract": {"version": PERFORMANCE_RUNTIME_CONTRACT_VERSION, "engine": JMETER_MCP_ENGINE, "auth": "process_scoped_thread_bound_account_pool", "credentials_embedded": False, "preflight": "source_aware_target_resources_and_live_account_pool", "runtime_scope": "request_required_only", "runtime_param_persistence": "explicit_non_sensitive_only", "thread_identity": "thread_pinned_with_next_iteration_401_failover", "request_timestamp": "per_sample", "runtime_dataset": "base64_process_environment", "auth_diagnostics": "redacted_once_per_thread", "account_usage_reporting": "jtl_thread_uid_source_rotation", "target_input_resolution": "runtime_csv_safe_openapi_or_executed_producer_only", "request_body_resolution": "registered_runtime_csv_or_executed_producer_only", "throughput_semantics": "request_only_reports_rps_business_transaction_reports_tps"},
     }
+    plan = _portable_asset_payload(plan)
     plan_path = output_dir / "load-test-plan.json"
-    plan["plan_path"] = str(plan_path)
+    plan["plan_path"] = _portable_project_path(plan_path)
     plan_path.write_text(json.dumps(plan, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    report_dir = package_root / "reports" / f"jmeter-load-plan-{stamp}"
+    report_dir = package_root / "reports" / run_id / "performance" / "plan"
     report_dir.mkdir(parents=True, exist_ok=True)
     summary_path = report_dir / "summary.json"
     plan["summary_path"] = str(summary_path)
@@ -4768,40 +7584,138 @@ def run_requirement_jmeter_load_stage(project_id, package_id, options=None):
     run_id = run_context["run_id"]
     plan_path = package_root / "outputs" / "jmeter" / "load-test" / "load-test-plan.json"
     plan = _read_json_asset(plan_path)
-    if not plan:
+    runtime_contract = plan.get("runtime_contract") if isinstance(plan, dict) else {}
+    if not plan or str((runtime_contract or {}).get("version") or "") != PERFORMANCE_RUNTIME_CONTRACT_VERSION:
         plan = generate_requirement_jmeter_load_plan(project_id, package_id, {**options, "run_id": run_id})
     stage_number = max(1, int(options.get("stage") or 1))
     stage = next((item for item in plan.get("stages") or [] if int(item.get("stage") or 0) == stage_number), None)
     if not stage:
         raise ValueError(f"压测预案中没有第 {stage_number} 阶梯。")
-    jmx_path = Path(str(stage.get("jmx_path") or ""))
+    jmx_path = _resolve_resource_path(stage.get("jmx_path") or "")
     if not jmx_path.is_file():
         raise ValueError(f"压测JMX不存在：{jmx_path}。请重新生成压测预案。")
-    jmeter = _jmeter_command()
-    if not (Path(str(jmeter)).exists() or shutil.which(str(jmeter))):
-        raise ValueError("本机未发现 JMeter，请先配置环境中的 JMeter 路径。")
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    report_dir = package_root / "reports" / f"jmeter-load-stage-{stage_number:02d}-{stamp}"
+    workflow_path = _resolve_resource_path(stage.get("workflow_path") or "")
+    if not workflow_path.is_file():
+        raise ValueError(f"压测MCP workflow不存在：{workflow_path}。请重新生成压测预案。")
+    stage_code = re.sub(r"[^a-zA-Z0-9_-]", "-", str(stage.get("code") or stage_number)).strip("-") or str(stage_number)
+    report_dir = package_root / "reports" / run_id / "performance" / f"stage-{stage_number:02d}-{stage_code}"
     report_dir.mkdir(parents=True, exist_ok=True)
-    jtl_path = report_dir / "result.jtl"
-    html_dir = report_dir / "html"
-    runtime = _runtime_context(project_id, _merge_execution_profile_options(project_id, options))
-    command = [str(jmeter), "-n", "-t", str(jmx_path), "-l", str(jtl_path)]
-    for key in ("ticket", "uid", "t", "deviceId", "model", "osVersion", "netType", "channel", "packageName", "appid", "appVersion", "version", "appsflyerId", "organic", "ispType", "isVpnConnected", "language", "appCode", "os", "systemLanguage", "deviceType"):
-        value = str(runtime.get(key) or "").strip()
-        if value:
-            command.append(f"-J{key}={value}")
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
+    stage_runtime_options = _performance_stage_runtime_options(plan, options)
+    merged_stage_runtime_options = _merge_execution_profile_options(
+        project_id,
+        stage_runtime_options,
+    )
+    merged_stage_runtime_options["runtime_params"] = _persistable_performance_runtime_params(
+        stage_runtime_options
+    )
+    runtime = _runtime_context(project_id, merged_stage_runtime_options)
+    credential_preflight = {}
+    runtime_rows = []
+    if package_id == "salary-trade":
+        runtime = _salary_trade_interface_runtime_context(package_root, runtime)
+        selected_cases = _performance_stage_target_cases(
+            project_id,
+            package_id,
+            package_root,
+            plan,
+        )
+        account_pool = _salary_trade_performance_account_pool(
+            project,
+            package_root,
+            selected_cases,
+            threads=int(stage.get("threads") or 1),
+            reuse_policy=str(stage.get("account_reuse_policy") or "round_robin"),
+            live_probe=True,
+        )
+        if account_pool.get("status") == "BLOCKED":
+            raise ValueError("工资交易性能账号池实时预检未通过：" + str(account_pool.get("message") or ""))
+        runtime_rows = account_pool.pop("rows", [])
+        credential_preflight = _public_performance_account_pool(account_pool)
+        account_keys = {str(key) for item in runtime_rows for key in item}
+        runtime = {
+            key: value for key, value in runtime.items()
+            if key not in account_keys and key not in {"uid", "ticket", "applicant_uid", "applicant_ticket", "proxy_uid", "proxy_ticket"}
+        }
+    runtime = _performance_manifest_runtime_context(package_root, runtime)
     timeout_seconds = int(stage.get("duration_seconds") or 60) + int(stage.get("rampup_seconds") or 0) + 180
-    result = _sanitize_tool_result(_run_command_capture(command, ROOT, timeout_seconds, os.environ.copy()), runtime)
+    task_context = options.get("_task_context") if isinstance(options.get("_task_context"), dict) else {}
+    progress = task_context.get("progress") if callable(task_context.get("progress")) else None
+    should_cancel = task_context.get("is_cancelled") if callable(task_context.get("is_cancelled")) else None
+    if progress:
+        progress({"phase": "jmeter_mcp", "percent": 20, "message": "账号和目标数据预检通过，正在执行JMeter MCP。"})
+    mysql_before = _performance_mysql_status_snapshot()
+    mcp_run = _execute_jmeter_mcp_workflow(
+        workflow_path,
+        report_dir,
+        runtime,
+        timeout_seconds=timeout_seconds,
+        use_runtime_csv=True,
+        runtime_rows=runtime_rows,
+        should_cancel=should_cancel,
+        on_progress=(
+            (lambda state: progress({"phase": "jmeter_mcp", "percent": min(85, 20 + int(state.get("elapsed_seconds", 0) / max(timeout_seconds, 1) * 65)), "message": "JMeter MCP正在执行。", **state}))
+            if progress else None
+        ),
+    )
+    if mcp_run.get("status") == "CANCELLED":
+        cancelled = {
+            "status": "CANCELLED",
+            "project_id": project_id,
+            "package_id": package_id,
+            "run_id": run_id,
+            "message": "性能任务已由用户停止。",
+        }
+        update_requirement_run_context(project_id, package_id, run_id, "jmeter", "CANCELLED", cancelled)
+        return cancelled
+    mysql_after = _performance_mysql_status_snapshot()
+    result = _sanitize_tool_result(mcp_run, runtime)
+    automatic_stop = deep_get(mcp_run, "summary.analysis.auto_stop", {}) or {}
+    jtl_path = Path(mcp_run["jtl_path"])
+    html_index = Path(mcp_run["html_path"])
+    archived_jmx = Path(mcp_run["jmx_path"])
     if not jtl_path.is_file():
-        raise ValueError("JMeter压测结束后没有生成JTL，请查看执行输出和JMX运行参数。")
-    performance = _summarize_jmeter_jtl(jtl_path)
-    gate_options = {**options, **(plan.get("thresholds") or {})}
+        raise ValueError("JMeter MCP压测结束后没有生成JTL，请查看MCP执行摘要。")
+    jtl_redacted = _redact_runtime_file(jtl_path, runtime)
+    measurement_mode = _performance_plan_measurement_mode(plan, stage)
+    performance = _summarize_jmeter_jtl(
+        jtl_path,
+        int(stage.get("warmup_samples_per_label") or 0),
+        account_allocations=credential_preflight.get("allocations") or (),
+        exclude_automatic_stop_artifacts=bool(automatic_stop.get("triggered")),
+        include_transaction_metrics=measurement_mode == "business_transaction",
+    )
+    gate_options = {
+        **options,
+        **(plan.get("thresholds") or {}),
+        "performance_profile": stage.get("profile") or options.get("performance_profile") or "load",
+    }
     gate = _performance_gate(performance, gate_options)
     diagnosis = _performance_diagnosis(performance, gate)
-    html_result = _run_command_capture([str(jmeter), "-g", str(jtl_path), "-o", str(html_dir)], ROOT, 180, os.environ.copy())
-    html_index = html_dir / "index.html"
-    status = "FAILED" if result.get("exit_code") not in {0, None} or gate.get("status") == "FAILED" else "PASSED"
+    direct_observability = copy.deepcopy(options.get("observability_evidence") or {})
+    database_evidence = _build_database_status_evidence(mysql_before, mysql_after)
+    if database_evidence:
+        direct_observability["database"] = {
+            **(direct_observability.get("database") or {}),
+            **database_evidence,
+        }
+    observability = _collect_performance_observability(
+        package_root,
+        options={**options, "observability_evidence": direct_observability},
+        manifest=_load_yaml_file(package_root / "resource_manifest.yaml"),
+        window_start_ms=performance.get("window_start_ms"),
+        window_end_ms=performance.get("window_end_ms"),
+    )
+    diagnosis = _attach_performance_observability(diagnosis, observability)
+    metrics_path = report_dir / "metrics.json"
+    diagnosis_path = report_dir / "diagnosis.json"
+    observability_path = report_dir / "observability-evidence.json"
+    metrics_path.write_text(json.dumps(performance, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    diagnosis_path.write_text(json.dumps(diagnosis, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    observability_path.write_text(json.dumps(observability, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    if progress:
+        progress({"phase": "jtl_analysis", "percent": 90, "message": "JTL和HTML已回收，正在计算指标并执行门禁诊断。"})
+    status = "FAILED" if automatic_stop.get("triggered") or result.get("exit_code") not in {0, None} or gate.get("status") == "FAILED" else "PASSED"
     report = {
         "report_type": "REQUIREMENT_PACKAGE_JMETER_LOAD_RUN",
         "project_id": project_id,
@@ -4814,27 +7728,50 @@ def run_requirement_jmeter_load_stage(project_id, package_id, options=None):
         "summary": {
             "stage": stage_number,
             "stage_name": stage.get("name"),
+            "profile": gate.get("profile"),
             "threads": stage.get("threads"),
             "rampup_seconds": stage.get("rampup_seconds"),
             "duration_seconds": stage.get("duration_seconds"),
+            "warmup_samples_per_label": stage.get("warmup_samples_per_label", 0),
+            "raw_requests": performance.get("raw_requests", performance.get("requests", 0)),
+            "warmup_samples_excluded": performance.get("warmup_samples_excluded", 0),
             "requests": performance.get("requests", 0),
             "errors": performance.get("errors", 0),
             "error_rate": performance.get("error_rate", 0),
             "p95_ms": performance.get("p95_ms", 0),
             "p99_ms": performance.get("p99_ms", 0),
             "throughput_rps": performance.get("throughput_rps", 0),
+            "transaction_throughput_tps": performance.get("transaction_throughput_tps"),
+            "measurement_mode": measurement_mode,
+            "account_threads_used": deep_get(performance, "account_usage.threads", 0),
+            "account_uids_used": deep_get(performance, "account_usage.unique_accounts", 0),
+            "account_rotations": deep_get(performance, "account_usage.rotation_count", 0),
+            "account_usage_status": deep_get(performance, "account_usage.status", "UNAVAILABLE"),
+            "auto_stop_status": "TRIGGERED" if automatic_stop.get("triggered") else "NOT_TRIGGERED",
+            "auto_stop_reason": automatic_stop.get("reason") or "",
         },
         "performance_summary": performance,
         "performance_gate": gate,
         "performance_diagnosis": diagnosis,
-        "execution": {"exit_code": result.get("exit_code"), "duration_ms": result.get("duration_ms"), "stdout": result.get("stdout", "")[-3000:], "stderr": result.get("stderr", "")[-3000:]},
+        "observability_evidence": observability,
+        "credential_preflight": credential_preflight,
+        "execution": {"engine": JMETER_MCP_ENGINE, "exit_code": result.get("exit_code"), "duration_ms": result.get("duration_ms"), "automatic_stop": automatic_stop, "stdout": result.get("stdout", "")[-3000:], "stderr": result.get("stderr", "")[-3000:]},
         "source": {
-            "jmx_path": str(jmx_path),
+            "jmx_path": str(archived_jmx),
+            "generated_jmx_path": str(jmx_path),
+            "workflow_path": str(workflow_path),
             "jtl_path": str(jtl_path),
             "archived_jtl": str(jtl_path),
             "html_report": str(html_index) if html_index.is_file() else "",
-            "html_status": html_result.get("status"),
-            "html_error": str(html_result.get("stderr") or "")[-1000:],
+            "mcp_analysis": mcp_run.get("analysis_path"),
+            "metrics_path": str(metrics_path),
+            "diagnosis_path": str(diagnosis_path),
+            "observability_path": str(observability_path),
+            "runtime_preflight_path": mcp_run.get("runtime_preflight_path"),
+            "html_status": "PASSED" if html_index.is_file() else "FAILED",
+            "html_error": "" if html_index.is_file() else "JMeter MCP未生成HTML报告",
+            "sensitive_runtime_redacted": jtl_redacted,
+            "sensitive_fields_persisted": False,
         },
     }
     summary_path = report_dir / "summary.json"
@@ -4844,10 +7781,30 @@ def run_requirement_jmeter_load_stage(project_id, package_id, options=None):
     report["html_url"] = "/requirement-reports/" + html_index.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix() if html_index.is_file() else ""
     summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     update_requirement_run_context(project_id, package_id, run_id, "jmeter", status, report)
-    performance_review = generate_requirement_performance_ai_review(project_id, package_id, {"run_id": run_id, "use_model": False})
+    if progress:
+        progress({"phase": "ai_review", "percent": 94, "message": "性能指标已归档，正在生成AI性能复盘。"})
+    performance_review = generate_requirement_performance_ai_review(
+        project_id,
+        package_id,
+        {"run_id": run_id, "use_model": bool(options.get("use_model", False)), "output_dir": str(report_dir)},
+    )
     report["performance_analysis"] = {"status": performance_review.get("status"), "json_url": performance_review.get("json_url"), "summary_path": performance_review.get("summary_path")}
+    if progress:
+        progress({"phase": "scenario_report", "percent": 97, "message": "AI复盘已完成，正在更新统一场景报告。"})
+    scenario_report = generate_requirement_package_unified_scenario_report(
+        project_id,
+        package_id,
+        {"run_id": run_id},
+    )
+    report["unified_scenario_report"] = {
+        "status": scenario_report.get("status"),
+        "json_url": scenario_report.get("json_url"),
+        "summary_path": scenario_report.get("summary_path"),
+    }
     report["capacity_progress"] = _jmeter_load_capacity_progress(package_root, run_id)
     summary_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    if progress:
+        progress({"phase": "completed", "percent": 100, "message": f"性能阶梯执行完成：{status}"})
     return report
 
 
@@ -4874,6 +7831,7 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
                 "orchestration",
                 "apply_case_query_variant",
                 "http_case_passed",
+                "runtime_override_pairs",
             )
             needs_refresh = any(marker not in existing_pytest for marker in required_markers)
         except Exception:
@@ -4895,12 +7853,14 @@ def run_requirement_package_pytest(project_id, package_id, options=None):
     summary_path = run_dir / "summary.json"
     env = os.environ.copy()
     project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
-    credential = load_runtime_credential(project_id)
     runtime_options = _merge_execution_profile_options(project_id, options)
-    if credential.get("encrypted_password") and not runtime_options.get("login_password_encrypted"):
+    credential = load_runtime_credential(project_id)
+    if package_id != "salary-trade" and credential.get("encrypted_password") and not runtime_options.get("login_password_encrypted"):
         runtime_options["login_password_encrypted"] = credential.get("encrypted_password")
         runtime_options["login_strategy"] = "force"
     runtime = _login_runtime_context(project_id, runtime_options) if runtime_options.get("login_password_encrypted") else _runtime_context(project_id, runtime_options)
+    if package_id == "salary-trade":
+        runtime = _salary_trade_interface_runtime_context(package_root, runtime)
     env["AUTOTEST_BASE_URL"] = project.get("base_url") or env.get("AUTOTEST_BASE_URL", "")
     env["AUTOTEST_RUNTIME_PARAMS_JSON"] = json.dumps(runtime, ensure_ascii=False, default=str)
     env["AUTOTEST_PYTEST_EVIDENCE_OUT"] = str(summary_path)
@@ -4951,6 +7911,7 @@ def run_requirement_package_pipeline(project_id, package_id, options=None):
     package = requirement_package_by_id(project_id, package_id)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
+    project = row("SELECT * FROM projects WHERE id=?", (project_id,)) or {}
     run_context = _ensure_requirement_run_context(project_id, package_id, options)
     run_id = run_context["run_id"]
     shared_options = {**options, "run_id": run_id}
@@ -4997,19 +7958,38 @@ def run_requirement_package_pipeline(project_id, package_id, options=None):
         steps.append({"name": "执行工具资产", "status": "REUSED", "message": "复用当前需求包 Newman/JMeter/pytest 资产。", "json_url": "", "summary_path": str(tool_manifest)})
 
     schema_audit = record("Schema校验", lambda: validate_requirement_package_schemas(project_id, package_id, True))
+    source_cases = _requirement_package_cases(project_id, package_id)
+    mutation_count = sum(1 for case in source_cases if str(case.get("method") or "").upper() in {"POST", "PUT", "PATCH", "DELETE"})
+    allow_mutations = bool(options.get("allow_mutations"))
+    account_pool_preflight = {}
+    if package_id == "salary-trade" and allow_mutations:
+        account_pool_preflight = record(
+            "真实账号池鉴权",
+            lambda: _salary_trade_account_pool_preflight(project, package_root, _external_tool_cases(source_cases, False)),
+        )
     preflight = _read_json_asset(package_root / "outputs" / "data-preflight-check.json")
-    preflight_blocked = preflight.get("status") == "BLOCKED" or schema_audit.get("status") == "FAILED"
+    preflight_blocked = (
+        preflight.get("status") == "BLOCKED"
+        or schema_audit.get("status") == "FAILED"
+        or account_pool_preflight.get("status") == "BLOCKED"
+    )
     if preflight_blocked and options.get("stop_on_preflight_blocked", True):
         steps.append({"name": "真实工具执行", "status": "BLOCKED", "message": "资源、数据或Schema预检存在阻断，未向测试环境发送请求。", "json_url": "", "summary_path": ""})
     else:
-        source_cases = _requirement_package_cases(project_id, package_id)
-        mutation_count = sum(1 for case in source_cases if str(case.get("method") or "").upper() in {"POST", "PUT", "PATCH", "DELETE"})
-        allow_mutations = bool(options.get("allow_mutations"))
+        newman_result = {}
         if options.get("run_newman", True):
-            newman_options = {**shared_options, "read_only_only": bool(mutation_count and not allow_mutations)}
-            record("Newman接口冒烟", lambda: run_requirement_package_newman(project_id, package_id, newman_options))
+            newman_options = {**shared_options, "read_only_only": bool(mutation_count)}
+            newman_result = record("Newman接口冒烟", lambda: run_requirement_package_newman(project_id, package_id, newman_options))
         if options.get("run_pytest", True):
-            if mutation_count and not allow_mutations:
+            if str(newman_result.get("status") or "").upper() == "BLOCKED":
+                steps.append({
+                    "name": "pytest深度证据",
+                    "status": "SKIPPED",
+                    "message": "Newman只读鉴权预检未通过；为避免使用失效凭证发送真实写请求，本批次未继续执行pytest。",
+                    "json_url": "",
+                    "summary_path": "",
+                })
+            elif mutation_count and not allow_mutations:
                 steps.append({
                     "name": "pytest深度证据",
                     "status": "SKIPPED",
@@ -5053,6 +8033,11 @@ def run_requirement_package_pipeline(project_id, package_id, options=None):
             "send_real_requests": bool(options.get("run_newman", True) or options.get("run_pytest", True)),
             "jmeter_load_requires_explicit_stage": True,
             "mutations_require_explicit_permission": True,
+            "execution_mode": "real_test" if options.get("allow_mutations") else "readonly",
+            "mutations_requested": bool(options.get("mutations_requested", options.get("allow_mutations"))),
+            "mutations_allowed": bool(options.get("allow_mutations")),
+            "data_write_boundary": "业务接口允许写入测试服；MySQL/Redis连接器仍用于查询和证据校验。",
+            "tool_routing": "Newman只做只读鉴权与轻量冒烟；真实业务写入由场景执行层承担；pytest负责执行后深度复核。",
         },
         "next_action": "查看同批次失败步骤和原始报告；JMeter持续压测需在压测预案中明确选择阶梯。",
     }
@@ -5066,7 +8051,9 @@ def run_requirement_package_pipeline(project_id, package_id, options=None):
 
 def _package_report_summaries(package_root, run_id=""):
     result = []
-    for file in sorted(Path(package_root).glob("reports/*/summary.json"), key=lambda x: x.stat().st_mtime, reverse=True):
+    report_root = Path(package_root) / "reports"
+    report_files = list(report_root.rglob("summary.json")) + list(report_root.rglob("ai-analysis.json")) if report_root.is_dir() else []
+    for file in sorted(set(report_files), key=lambda x: x.stat().st_mtime, reverse=True):
         if file.parent.name.startswith("ai-review-"):
             continue
         try:
@@ -5222,12 +8209,17 @@ def _jmeter_summary_from_reports(package_root, package_id, run_payload=None):
         "requests": run_summary.get("requests", 0),
         "errors": run_summary.get("errors", 0),
         "error_rate": run_summary.get("error_rate", 0),
+        "profile": run_summary.get("profile") or deep_get(run_payload, "performance_gate.profile", ""),
         "p95_ms": run_summary.get("p95_ms", 0),
+        "p99_ms": run_summary.get("p99_ms", 0),
         "throughput_rps": run_summary.get("throughput_rps", 0),
-        "failed_labels": run_summary.get("failed_labels", [])[:10],
+        "failed_labels": (run_payload.get("performance_summary") or {}).get("failed_labels", run_summary.get("failed_labels", []))[:10],
         "jmx": deep_get(manifest, "jmx.path", "") or deep_get(manifest, "jmx_file", ""),
-        "jtl": run_payload.get("jtl_path") or "",
-        "html_report": run_payload.get("html_report") or "",
+        "jtl": run_payload.get("jtl_path") or deep_get(run_payload, "source.archived_jtl", ""),
+        "jtl_url": run_payload.get("jtl_url") or "",
+        "html_report": run_payload.get("html_report") or deep_get(run_payload, "source.html_report", ""),
+        "html_url": run_payload.get("html_url") or "",
+        "json_url": run_payload.get("json_url") or "",
         "manifest": str(Path(package_root) / "outputs" / "jmeter" / f"{package_id}-case-jmeter-manifest.json") if manifest else "",
     }
 
@@ -5240,6 +8232,15 @@ def _write_unified_scenario_report_markdown(path, report):
         f"- 场景：{deep_get(report, 'summary.scenarios', 0)}",
         f"- 通过/失败/阻断/提醒：{deep_get(report, 'summary.passed', 0)}/{deep_get(report, 'summary.failed', 0)}/{deep_get(report, 'summary.blocked', 0)}/{deep_get(report, 'summary.warning', 0)}",
         f"- Apifox发布冒烟：{deep_get(report, 'tools.apifox.status', 'PENDING')}（请求 {deep_get(report, 'tools.apifox.requests', 0)}，失败 {deep_get(report, 'tools.apifox.failures', 0)}）",
+        f"- 性能评估：{deep_get(report, 'tools.performance.status', 'PENDING')}（风险 {deep_get(report, 'tools.performance.risk_level', 'UNKNOWN')}，基线 {deep_get(report, 'tools.performance.baseline_result', 'unknown')}）",
+        "",
+        "## 性能测试",
+        "",
+        f"- Profile：{deep_get(report, 'tools.jmeter.profile', '-')}",
+        f"- 请求/错误率：{deep_get(report, 'tools.jmeter.requests', 0)} / {deep_get(report, 'tools.jmeter.error_rate', 0)}%",
+        f"- P95/P99：{deep_get(report, 'tools.jmeter.p95_ms', 0)}ms / {deep_get(report, 'tools.jmeter.p99_ms', 0)}ms",
+        f"- 吞吐量：{deep_get(report, 'tools.jmeter.throughput_rps', 0)} req/s",
+        f"- 分析结论：{deep_get(report, 'tools.performance.conclusion', '尚未生成性能分析')}",
         "",
         "## 场景明细",
         "",
@@ -5285,11 +8286,35 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
     newman_item = latest_reports.get("REQUIREMENT_PACKAGE_NEWMAN_RUN") or {}
     newman_payload = newman_item.get("payload") or {}
     newman_summary = _newman_summary_for_report(newman_payload) if newman_payload else {"status": "PENDING", "requests": 0, "assertions": 0, "failed_assertions": 0, "failures": []}
-    jmeter_item = latest_reports.get("REQUIREMENT_PACKAGE_JMETER_RUN") or {}
+    scenario_jmeter_item = latest_reports.get("REQUIREMENT_PACKAGE_JMETER_RUN") or {}
+    scenario_jmeter_summary = _jmeter_summary_from_reports(
+        package_root,
+        package_id,
+        scenario_jmeter_item.get("payload") or {},
+    )
+    jmeter_item = latest_reports.get("REQUIREMENT_PACKAGE_JMETER_LOAD_RUN") or scenario_jmeter_item
     jmeter_summary = _jmeter_summary_from_reports(package_root, package_id, jmeter_item.get("payload") or {})
+    has_package_performance_run = bool(latest_reports.get("REQUIREMENT_PACKAGE_JMETER_LOAD_RUN"))
+    performance_item = latest_reports.get("REQUIREMENT_PACKAGE_PERFORMANCE_AI_REVIEW") or {}
+    performance_payload = performance_item.get("payload") or {}
+    performance_analysis = performance_payload.get("analysis") or {}
+    performance_comparison = performance_payload.get("performance_comparison") or {}
+    performance_summary = {
+        "status": performance_payload.get("status") or "PENDING",
+        "risk_level": performance_analysis.get("risk_level") or "UNKNOWN",
+        "conclusion": performance_analysis.get("conclusion") or "",
+        "baseline_result": performance_comparison.get("result") or "unknown",
+        "baseline_status": deep_get(performance_payload, "performance_baseline.status", "unset"),
+        "findings": (performance_analysis.get("findings") or [])[:10],
+        "recommendations": (performance_analysis.get("optimization_recommendations") or performance_analysis.get("recommendations") or [])[:10],
+        "json_url": performance_payload.get("json_url") or "",
+        "markdown_url": performance_payload.get("markdown_url") or "",
+    }
     source_reports = []
     for item in latest_reports.values():
         payload = item.get("payload") or {}
+        if str(payload.get("report_type") or "").upper() == "REQUIREMENT_PACKAGE_UNIFIED_SCENARIO_REPORT":
+            continue
         source_reports.append({
             "report_type": payload.get("report_type") or "UNKNOWN",
             "status": payload.get("status") or "UNKNOWN",
@@ -5305,7 +8330,7 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
         tool_names = {str(task.get("tool") or "").lower() for task in scenario.get("tool_tasks") or []}
         pytest_status = pytest_scenario.get("status") or ("PENDING" if "pytest" in tool_names else "NOT_APPLICABLE")
         newman_status = newman_summary.get("status") if "newman" in tool_names else "NOT_APPLICABLE"
-        jmeter_status = jmeter_summary.get("status") if "jmeter" in tool_names else "NOT_APPLICABLE"
+        jmeter_status = scenario_jmeter_summary.get("status") if "jmeter" in tool_names else "NOT_APPLICABLE"
         scenario_status = _aggregate_scenario_status([
             preflight.get("status"),
             pytest_status if pytest_status != "NOT_APPLICABLE" else "",
@@ -5349,7 +8374,7 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
                     "scope": "package_level" if "newman" in tool_names else "not_applicable",
                 },
                 "jmeter": {
-                    **jmeter_summary,
+                    **scenario_jmeter_summary,
                     "status": jmeter_status,
                     "scope": "scenario_mapping" if "jmeter" in tool_names else "not_applicable",
                 },
@@ -5393,6 +8418,10 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
     overall_inputs = [item.get("status") for item in scenarios]
     if apifox_payload:
         overall_inputs.append(apifox_summary.get("status"))
+    if has_package_performance_run:
+        overall_inputs.append(jmeter_summary.get("status"))
+    if performance_payload:
+        overall_inputs.append(performance_summary.get("status"))
     overall = _aggregate_scenario_status(overall_inputs)
     if overall == "PASSED" and not pytest_by_scenario:
         overall = "READY_WITH_WARNINGS"
@@ -5413,12 +8442,15 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
             "apifox_status": apifox_summary.get("status"),
             "newman_status": newman_summary.get("status"),
             "jmeter_status": jmeter_summary.get("status"),
+            "performance_status": performance_summary.get("status"),
+            "baseline_result": performance_summary.get("baseline_result"),
             "pytest_scenarios": len(pytest_by_scenario),
         },
         "tools": {
             "apifox": {**apifox_summary, "scope": "package_release_smoke"},
             "newman": {**newman_summary, "scope": "package_interface_regression"},
             "jmeter": {**jmeter_summary, "scope": "scenario_and_performance"},
+            "performance": {**performance_summary, "scope": "jtl_diagnosis_baseline_and_ai_review"},
             "pytest": {
                 "status": pytest_payload.get("status") or "PENDING",
                 "scenarios": len(pytest_by_scenario),
@@ -5429,8 +8461,7 @@ def generate_requirement_package_unified_scenario_report(project_id, package_id,
         "source_reports": source_reports,
         "business_value": "把同一需求包下 Apifox发布冒烟、Newman、JMeter、pytest、数据准备和人工维护点统一到业务场景，人工复核时按流程看，不按工具散着找。",
     }
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    out_dir = package_root / "reports" / f"scenario-report-{stamp}"
+    out_dir = package_root / "reports" / run_id / "scenario"
     out_dir.mkdir(parents=True, exist_ok=True)
     summary_path = out_dir / "summary.json"
     markdown_path = out_dir / "scenario-report.md"
@@ -5514,6 +8545,55 @@ def _scenario_report_targets(package_root, scenario_id):
     }
 
 
+def _ordered_transaction_steps(structured_cases, step_specs):
+    resolved = []
+    blockers = []
+    used_case_ids = set()
+    for order, spec in enumerate(step_specs or [], start=1):
+        method = str(spec.get("method") or "").upper()
+        path = str(spec.get("path") or "").strip()
+        candidates = []
+        for case in structured_cases:
+            case_method, case_path, _ = _performance_case_target(case)
+            case_id = str(case.get("id") or case.get("case_id") or "")
+            if (
+                case_method == method
+                and case_path == path
+                and case_id not in used_case_ids
+                and not NEGATIVE_CASE_RE.search(str(case.get("title") or ""))
+            ):
+                candidates.append(case)
+        candidates.sort(
+            key=lambda case: (
+                0 if "正常请求" in str(case.get("title") or "") else 1,
+                0 if str(case.get("coverage_tool") or "").lower() == "jmeter" else 1,
+                str(case.get("id") or ""),
+            )
+        )
+        selected = candidates[0] if candidates else None
+        if not selected:
+            blockers.append(f"第{order}步缺少正常接口用例：{method} {path}")
+        case_id = str((selected or {}).get("id") or (selected or {}).get("case_id") or "")
+        if case_id:
+            used_case_ids.add(case_id)
+        resolved.append({
+            "order": order,
+            "role": str(spec.get("role") or ""),
+            "action": str(spec.get("action") or f"第{order}步"),
+            "method": method,
+            "path": path,
+            "case_id": case_id,
+            "produces": list(spec.get("produces") or []),
+            "consumes": list(spec.get("consumes") or []),
+            "requires_proxy_reference": bool(
+                spec.get("requires_proxy_reference")
+                or (method == "POST" and path == "/userserv/salary/trade/order/create")
+            ),
+            "status": "READY" if selected else "BLOCKED",
+        })
+    return resolved, blockers
+
+
 def _salary_trade_execution_scenarios(package_root, structured_cases, mapping):
     mappings = mapping.get("mappings") or []
     mapping_by_case = {item.get("case_id"): item for item in mappings if item.get("case_id")}
@@ -5526,6 +8606,21 @@ def _salary_trade_execution_scenarios(package_root, structured_cases, mapping):
         matched = [case for case in structured_cases if _case_matches_salary_flow(case, flow)]
         if not matched:
             matched = base_order_cases[:8]
+        transaction_steps, transaction_blockers = _ordered_transaction_steps(
+            structured_cases,
+            flow.get("transaction_steps") or [],
+        )
+        if flow.get("transaction_blocker"):
+            transaction_blockers.append(str(flow["transaction_blocker"]))
+        transaction_cases_by_id = {
+            str(case.get("id") or case.get("case_id") or ""): case
+            for case in structured_cases
+        }
+        transaction_cases = [
+            transaction_cases_by_id[step["case_id"]]
+            for step in transaction_steps
+            if step.get("case_id") in transaction_cases_by_id
+        ]
         evidence = []
         for case in matched:
             map_item = mapping_by_case.get(case.get("id")) or {}
@@ -5545,10 +8640,13 @@ def _salary_trade_execution_scenarios(package_root, structured_cases, mapping):
             "status": _execution_plan_status(matched, blockers, manual),
             "account_slot": flow.get("account_slot"),
             "order_variable": flow.get("order_var"),
+            "transaction_status": "BLOCKED" if transaction_blockers or len(transaction_cases) < 2 else "READY",
+            "transaction_steps": transaction_steps,
+            "transaction_blockers": transaction_blockers,
             "cases": [_case_brief(case) for case in matched[:30]],
             "tool_tasks": [
                 _scenario_tool_task("newman", "运行额度、代理列表、订单详情等轻量接口预检，先确认鉴权和基础参数可用。", [case for case in matched if case.get("coverage_tool") == "newman"][:20], str(Path(package_root) / "outputs" / "newman" / "postman-collection.json")),
-                _scenario_tool_task("jmeter", "执行业务主流程状态机，提取同一个 orderNo 并传递到后续请求。", matched[:30], str(Path(package_root) / "outputs" / "jmeter" / "jmeter-plan.jmx"), evidence, flow.get("thread_group"), blockers),
+                _scenario_tool_task("jmeter", "按显式有序步骤执行业务事务，提取同一个 orderNo 并传递到后续请求。", transaction_cases, str(Path(package_root) / "outputs" / "jmeter" / "jmeter-plan.jmx"), evidence, flow.get("thread_group"), blockers + transaction_blockers),
                 _scenario_tool_task("pytest", "执行后复核 HTTP 结果、DB订单/日志/凭证和可选Redis证据。", matched[:30], str(Path(package_root) / "outputs" / "pytest" / "pytest_api_cases.py"), evidence),
             ] + ([_scenario_tool_task("manual", "人工复核运营处理、后台定时任务或长等待结果。", matched[:30], blockers=blockers)] if manual else []),
             "human_review": {
@@ -5990,32 +9088,37 @@ def _pytest_scenario_signals(payload):
     return signals, findings
 
 
-def _performance_ai_analysis(performance, gate, diagnosis, allow_model=True):
-    findings = list(diagnosis.get("findings") or [])
-    bottlenecks = list(diagnosis.get("bottlenecks") or [])
-    failed_checks = [item for item in gate.get("checks") or [] if not item.get("passed")]
-    risk_level = "P0" if float(performance.get("error_rate") or 0) > 0 else "P1" if failed_checks else "PASS"
-    built_in = {
-        "mode": "built_in_rules",
-        "risk_level": risk_level,
-        "conclusion": diagnosis.get("conclusion") or ("性能阈值全部通过。" if not failed_checks else "存在未通过的性能阈值。"),
-        "findings": findings[:10],
-        "recommendations": [
-            "先定位失败请求并将脚本、鉴权和业务失败分开统计，再评估响应时间。" if float(performance.get("error_rate") or 0) > 0 else "错误率已通过，可继续关注尾部延迟和吞吐量。",
-            "优先检查慢接口：" + "、".join(str(item.get("label") or "") for item in bottlenecks[:3]) if bottlenecks else "当前没有可识别的慢接口标签。",
-            "使用同一运行批次的独立JTL复测，避免历史数据影响基线。",
-        ],
+def _performance_ai_analysis(
+    performance,
+    gate,
+    diagnosis,
+    allow_model=True,
+    baseline_comparison=None,
+    observability_evidence=None,
+):
+    baseline_comparison = baseline_comparison or {
+        "status": "not_compared",
+        "result": "unknown",
+        "changes": {},
+        "reason": "当前批次尚未建立可用的历史基线对比。",
     }
+    built_in = _build_builtin_performance_review(
+        performance,
+        gate,
+        diagnosis,
+        baseline_comparison,
+        observability_evidence,
+    )
     settings = {item["key"]: item["value"] for item in rows("SELECT * FROM settings")}
     api_key = str(settings.get("api_key") or "").strip()
     if not allow_model or not api_key or api_key == "••••••••":
         return built_in
-    prompt = (
-        "你是性能测试分析师。请仅根据下面的JMeter聚合指标、阈值和慢接口证据输出JSON，"
-        "字段必须是 risk_level、conclusion、findings、recommendations。"
-        "findings为对象数组，每项包含severity、title、detail；recommendations为字符串数组。"
-        "不要编造服务端原因，无法确认时明确写需要哪些证据。\n"
-        + json.dumps({"performance": performance, "gate": gate, "diagnosis": diagnosis}, ensure_ascii=False, default=str)[:30000]
+    prompt = _build_performance_ai_prompt(
+        performance,
+        gate,
+        diagnosis,
+        baseline_comparison,
+        observability_evidence,
     )
     base = str(settings.get("api_base") or "https://api.openai.com/v1").rstrip("/")
     model = str(settings.get("model") or "gpt-5-mini")
@@ -6028,14 +9131,7 @@ def _performance_ai_analysis(performance, gate, diagnosis, allow_model=True):
         ai_payload = json.loads(match.group(0) if match else content)
         if not isinstance(ai_payload, dict):
             return built_in
-        return {
-            "mode": "configured_model",
-            "model": model,
-            "risk_level": str(ai_payload.get("risk_level") or risk_level),
-            "conclusion": str(ai_payload.get("conclusion") or built_in["conclusion"]),
-            "findings": list(ai_payload.get("findings") or findings)[:20],
-            "recommendations": list(ai_payload.get("recommendations") or built_in["recommendations"])[:12],
-        }
+        return _merge_model_performance_review(built_in, ai_payload, model)
     except Exception as exc:
         built_in["model_fallback_reason"] = _redact_runtime_text(str(exc))[:500]
         return built_in
@@ -6067,7 +9163,22 @@ def generate_requirement_performance_ai_review(project_id, package_id, options=N
     performance = jmeter_report.get("performance_summary") or jmeter_report.get("summary") or {}
     gate = jmeter_report.get("performance_gate") or _performance_gate(performance, options)
     diagnosis = jmeter_report.get("performance_diagnosis") or _performance_diagnosis(performance, gate)
-    analysis = _performance_ai_analysis(performance, gate, diagnosis, bool(options.get("use_model", True)))
+    run_context = get_requirement_run_context(project_id, package_id, run_id)
+    performance_state = run_context.get("performance") or {}
+    baseline_comparison = performance_state.get("comparison") or {}
+    observability_evidence = (
+        jmeter_report.get("observability_evidence")
+        or diagnosis.get("observability")
+        or {}
+    )
+    analysis = _performance_ai_analysis(
+        performance,
+        gate,
+        diagnosis,
+        bool(options.get("use_model", True)),
+        baseline_comparison,
+        observability_evidence,
+    )
     failed_checks = [item for item in gate.get("checks") or [] if not item.get("passed")]
     status = "FAILED" if failed_checks else "READY_WITH_WARNINGS" if analysis.get("risk_level") in {"P0", "P1"} else "PASSED"
     report = {
@@ -6086,13 +9197,21 @@ def generate_requirement_performance_ai_review(project_id, package_id, options=N
             "p95_ms": performance.get("p95_ms", 0),
             "p99_ms": performance.get("p99_ms", 0),
             "throughput_rps": performance.get("throughput_rps", 0),
+            "transaction_throughput_tps": performance.get("transaction_throughput_tps"),
+            "measurement_mode": performance.get("measurement_mode") or "request_only",
             "failed_thresholds": len(failed_checks),
             "risk_level": analysis.get("risk_level"),
+            "baseline_result": baseline_comparison.get("result", "unknown"),
+            "observability_status": observability_evidence.get("status") or "MISSING",
+            "observability_categories": observability_evidence.get("available_categories") or [],
         },
         "analysis": analysis,
         "performance_summary": performance,
         "performance_gate": gate,
         "performance_diagnosis": diagnosis,
+        "observability_evidence": observability_evidence,
+        "performance_baseline": performance_state.get("baseline") or {},
+        "performance_comparison": baseline_comparison,
         "source_jmeter_report": jmeter_item["path"],
         "source": {
             "jmeter_json": jmeter_item["path"],
@@ -6101,34 +9220,76 @@ def generate_requirement_performance_ai_review(project_id, package_id, options=N
             "jmeter_html_url": jmeter_report.get("html_url") or _package_report_file_url(deep_get(jmeter_report, "source.html_report")),
             "jmeter_jtl": deep_get(jmeter_report, "source.archived_jtl") or jmeter_report.get("jtl_path") or "",
             "jmeter_jtl_url": _package_report_file_url(deep_get(jmeter_report, "source.archived_jtl")),
+            "observability_json": deep_get(jmeter_report, "source.observability_path") or "",
+            "observability_json_url": _package_report_file_url(deep_get(jmeter_report, "source.observability_path")),
         },
         "business_value": "把JMeter原始指标转成错误率、尾部延迟、慢接口、阈值结论和人工排查建议，保留原始证据但不要求测试人员只看图表。",
     }
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    out_dir = package_root / "reports" / f"performance-ai-review-{stamp}"
+    performance_root = (package_root / "reports" / run_id / "performance").resolve()
+    requested_output_dir = str(options.get("output_dir") or "").strip()
+    out_dir = (
+        _resolve_resource_path(requested_output_dir).resolve()
+        if requested_output_dir
+        else performance_root / "analysis"
+    )
+    if not out_dir.is_relative_to(performance_root):
+        raise ValueError("性能分析只能写入当前需求包、当前运行批次的performance目录。")
     out_dir.mkdir(parents=True, exist_ok=True)
-    out = out_dir / "summary.json"
+    out = out_dir / "ai-analysis.json"
     markdown = out_dir / "review.md"
     report["summary_path"] = str(out)
     report["markdown_path"] = str(markdown)
     report["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     report["markdown_url"] = "/requirement-reports/" + markdown.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
+    structured_recommendations = analysis.get("optimization_recommendations") or []
+    recommendation_lines = []
+    if structured_recommendations and isinstance(structured_recommendations[0], dict):
+        recommendation_lines = [
+            f"{index + 1}. [{item.get('priority') or 'P2'}] {item.get('action') or '-'} 验证：{item.get('validation') or '-'}"
+            for index, item in enumerate(structured_recommendations)
+        ]
+    else:
+        recommendation_lines = [
+            f"{index + 1}. {item}"
+            for index, item in enumerate(analysis.get("recommendations") or [])
+        ]
+    confirmed_bottlenecks = deep_get(analysis, "bottleneck_analysis.confirmed_from_jtl", []) or []
+    evidence_required = deep_get(analysis, "bottleneck_analysis.evidence_required", []) or []
     markdown.write_text("\n".join([
         f"# {package.get('name') or package_id} - 性能报告AI分析",
         "",
         f"- 状态：{status}",
+        f"- 风险级别：{analysis.get('risk_level') or 'UNKNOWN'}",
+        f"- Profile：{gate.get('profile') or 'unknown'}",
         f"- 请求数：{performance.get('requests', 0)}",
         f"- 错误率：{performance.get('error_rate', 0)}%",
         f"- P95/P99：{performance.get('p95_ms', 0)}ms / {performance.get('p99_ms', 0)}ms",
-        f"- 吞吐量：{performance.get('throughput_rps', 0)} req/s",
+        f"- 请求吞吐量：{performance.get('request_throughput_rps', performance.get('throughput_rps', 0))} req/s",
+        f"- 业务事务TPS：{performance.get('transaction_throughput_tps') if performance.get('measurement_mode') == 'business_transaction' else '未启用（本次为单请求RPS模式）'}",
+        f"- 测量模式：{performance.get('measurement_mode') or 'request_only'}",
+        f"- 外部监控证据：{observability_evidence.get('status') or 'MISSING'}（{'、'.join(observability_evidence.get('available_categories') or []) or '未接入'}）",
+        f"- 基线对比：{baseline_comparison.get('result') or 'unknown'}",
         "",
         "## 结论",
         "",
         str(analysis.get("conclusion") or "-"),
         "",
+        "## JTL已确认的慢点",
+        "",
+        *[
+            f"- {item.get('label') or '未命名请求'}：P95 {item.get('p95_ms', 0)}ms，P99 {item.get('p99_ms', 0)}ms，最大 {item.get('max_ms', 0)}ms"
+            for item in confirmed_bottlenecks
+        ],
+        *( ["- 当前没有可确认的慢请求标签。"] if not confirmed_bottlenecks else [] ),
+        "",
+        "## 根因证据边界",
+        "",
+        "- JTL不能单独证明瓶颈位于应用、数据库、中间件或网络。",
+        f"- 仍需证据：{'、'.join(str(item) for item in evidence_required) or '应用日志/APM、主机、数据库与中间件监控'}",
+        "",
         "## 建议",
         "",
-        *[f"{index + 1}. {item}" for index, item in enumerate(analysis.get("recommendations") or [])],
+        *recommendation_lines,
     ]), encoding="utf-8")
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     update_requirement_run_context(project_id, package_id, run_id, "performance_review", status, report)
@@ -6140,6 +9301,8 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
     package = requirement_package_by_id(project_id, package_id)
     package_id = package.get("package_id") or package_id
     package_root = Path(package["root"])
+    review_memory_path = package_root / "outputs" / "ai-review-conclusions.json"
+    previous_review_memory = load_review_memory(review_memory_path)
     run_context = _ensure_requirement_run_context(project_id, package_id, options)
     run_id = run_context["run_id"]
     report_items = _package_report_summaries(package_root, run_id)
@@ -6308,6 +9471,7 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
             "structured_cases": output_context["structured_cases"],
             "jmeter_mapping": output_context["jmeter_mapping"],
             "data_preflight": data_preflight,
+            "previous_review": previous_review_memory.get("latest") or {},
         },
         "business_value": "把同一需求包的接口执行、JMeter/Newman结果和数据证据收束成测试可读结论，减少只看原始日志和图表的成本。",
     }
@@ -6363,6 +9527,10 @@ def generate_requirement_package_ai_review(project_id, package_id, options=None)
     review["markdown_path"] = str(md)
     review["json_url"] = "/requirement-reports/" + out.relative_to(REQUIREMENT_PACKAGE_ROOT).as_posix()
     out.write_text(json.dumps(review, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    memory = persist_review_memory(review_memory_path, review)
+    review["review_memory_path"] = str(review_memory_path)
+    review["review_memory_count"] = len(memory.get("history") or [])
+    out.write_text(json.dumps(review, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     update_requirement_run_context(project_id, package_id, run_id, "ai_review", status, review)
     return review
 
@@ -6396,7 +9564,14 @@ def init_db():
           title TEXT NOT NULL, method TEXT DEFAULT '', path TEXT DEFAULT '',
           headers TEXT DEFAULT '{}', payload TEXT DEFAULT '', expected_status INTEGER DEFAULT 200,
           expected_contains TEXT DEFAULT '', priority TEXT DEFAULT 'P1', status TEXT DEFAULT 'ready',
-          steps TEXT DEFAULT '', expected TEXT DEFAULT '', created_at TEXT NOT NULL
+          steps TEXT DEFAULT '', expected TEXT DEFAULT '', created_at TEXT NOT NULL,
+          lifecycle_status TEXT DEFAULT 'DRAFT', lifecycle_note TEXT DEFAULT '', lifecycle_updated_at TEXT DEFAULT ''
+        );
+        CREATE TABLE IF NOT EXISTS test_case_lifecycle_history (
+          id TEXT PRIMARY KEY, case_id TEXT NOT NULL, project_id TEXT NOT NULL,
+          previous_status TEXT NOT NULL, lifecycle_status TEXT NOT NULL,
+          note TEXT DEFAULT '', actor TEXT DEFAULT 'workbench', batch_id TEXT DEFAULT '',
+          created_at TEXT NOT NULL
         );
         CREATE TABLE IF NOT EXISTS runs (
           id TEXT PRIMARY KEY, project_id TEXT NOT NULL, case_id TEXT NOT NULL,
@@ -6626,6 +9801,17 @@ def init_db():
         if "selected" not in trace_cols: conn.execute("ALTER TABLE trace_links ADD COLUMN selected INTEGER DEFAULT 0")
         if "sort_order" not in trace_cols: conn.execute("ALTER TABLE trace_links ADD COLUMN sort_order INTEGER DEFAULT 0")
         if "link_source" not in trace_cols: conn.execute("ALTER TABLE trace_links ADD COLUMN link_source TEXT DEFAULT 'ai'")
+        case_cols = {x[1] for x in conn.execute("PRAGMA table_info(test_cases)").fetchall()}
+        lifecycle_added = "lifecycle_status" not in case_cols
+        if lifecycle_added: conn.execute("ALTER TABLE test_cases ADD COLUMN lifecycle_status TEXT DEFAULT 'DRAFT'")
+        if "lifecycle_note" not in case_cols: conn.execute("ALTER TABLE test_cases ADD COLUMN lifecycle_note TEXT DEFAULT ''")
+        if "lifecycle_updated_at" not in case_cols: conn.execute("ALTER TABLE test_cases ADD COLUMN lifecycle_updated_at TEXT DEFAULT ''")
+        if lifecycle_added:
+            conn.execute("UPDATE test_cases SET lifecycle_status='ACTIVE', lifecycle_note='旧用例迁移为生效状态', lifecycle_updated_at=?", (now(),))
+            conn.execute(
+                "INSERT OR IGNORE INTO platform_schema_migrations VALUES (?,?,?)",
+                ("20260904_test_case_lifecycle", "Add DRAFT/ACTIVE/DEPRECATED lifecycle to test cases", now()),
+            )
         # One-time and repeat-safe cleanup for evidence created by older builds.
         for run_id,response_data in conn.execute("SELECT id,response_data FROM runs WHERE response_data<>''").fetchall():
             cleaned=safe_response_evidence(response_data)
@@ -6867,7 +10053,7 @@ def generate_consistency_rules(project_id):
     ensure_readonly_business_gap_cases(project_id)
     mappings = rows("SELECT * FROM api_redis_mappings WHERE project_id=? AND confidence>=.55 ORDER BY confidence DESC", (project_id,))
     endpoints = {x["id"]:x for x in rows("SELECT id,method,path FROM api_endpoints WHERE project_id=?", (project_id,))}
-    cases = rows("SELECT id,method,path FROM test_cases WHERE project_id=? AND method<>''", (project_id,))
+    cases = rows("SELECT id,method,path FROM test_cases WHERE project_id=? AND method<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'", (project_id,))
     case_map = {}
     for x in cases:
         key = (x["method"].upper(), x["path"].split("?", 1)[0])
@@ -6996,7 +10182,7 @@ def _table_has_column(project_id, table_name, column_name):
 def autofill_consistency_gaps(project_id):
     runtime = _runtime_context(project_id, {})
     runtime_uid = str(runtime.get("uid") or "").strip()
-    executable_cases = rows("SELECT id,method,path FROM test_cases WHERE project_id=? AND method<>''", (project_id,))
+    executable_cases = rows("SELECT id,method,path FROM test_cases WHERE project_id=? AND method<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'", (project_id,))
     best_case = {}
     for case in executable_cases:
         key = (case["method"].upper(), case["path"].split("?", 1)[0])
@@ -8673,7 +11859,7 @@ def import_db_schema(project_id, content):
 
 def generate_workflows(project_id):
     endpoints = rows("SELECT * FROM api_endpoints WHERE project_id=?", (project_id,))
-    cases = rows("SELECT * FROM test_cases WHERE project_id=? AND title LIKE '%：正常请求'", (project_id,))
+    cases = rows("SELECT * FROM test_cases WHERE project_id=? AND title LIKE '%：正常请求' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'", (project_id,))
     case_map = {(x["method"], x["path"].split("?", 1)[0]): x["id"] for x in cases}
     title_map = {(x["method"], x["title"].removesuffix("：正常请求")): x["id"] for x in cases}
     groups = {}
@@ -8779,7 +11965,7 @@ def execute_workflow(workflow_id):
 
 def generate_nonfunctional(project_id):
     endpoints=rows("SELECT * FROM api_endpoints WHERE project_id=?",(project_id,))
-    cases=rows("SELECT * FROM test_cases WHERE project_id=?",(project_id,))
+    cases=rows("SELECT * FROM test_cases WHERE project_id=? AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'",(project_id,))
     by_key={}
     for c in cases: by_key.setdefault((c["method"],c["path"].split("?",1)[0]),[]).append(c)
     suites=[]; plans=[]; faults=[]; groups={}
@@ -8862,7 +12048,11 @@ def _tool_version(command, args):
         return ""
     try:
         result = subprocess.run([command, *args], capture_output=True, text=True, timeout=8)
-        return ((result.stdout or result.stderr or "").strip().splitlines() or [""])[0][:160]
+        output = "\n".join(part for part in (result.stdout, result.stderr) if part).strip()
+        if "jmeter" in Path(command).name.lower():
+            versions = re.findall(r"\b\d+\.\d+(?:\.\d+)?\b", output)
+            return f"Apache JMeter {versions[-1]}" if versions else ""
+        return (output.splitlines() or [""])[0][:160]
     except Exception:
         return ""
 
@@ -8900,23 +12090,52 @@ def _python_module_probe(name, module, args, install_hint):
         }
 
 
+_TOOLCHAIN_PROBE_CACHE = {"expires_at": 0.0, "tools": []}
+_TOOLCHAIN_PROBE_LOCK = threading.Lock()
+
+
+def _cached_toolchain_probes():
+    current_time = time.monotonic()
+    with _TOOLCHAIN_PROBE_LOCK:
+        if _TOOLCHAIN_PROBE_CACHE["tools"] and current_time < _TOOLCHAIN_PROBE_CACHE["expires_at"]:
+            return [dict(item) for item in _TOOLCHAIN_PROBE_CACHE["tools"]]
+        jmeter_cmd = _jmeter_command()
+        tools = [
+            _tool_probe("Java", shutil.which("java"), ["-version"], "安装 JDK 17+，用于运行 JMeter。"),
+            _tool_probe("JMeter", jmeter_cmd, ["--version"], "安装 Apache JMeter，并配置 AUTOTEST_JMETER 指向 jmeter.bat。"),
+            _jmeter_mcp_probe(),
+            _tool_probe("Node.js", shutil.which("node"), ["--version"], "安装 Node.js，用于运行 Newman。"),
+            _tool_probe("Newman", shutil.which("newman"), ["--version"], "执行 npm install -g newman。"),
+            _python_module_probe("pytest", "pytest", ["--version"], "在当前 Python 环境安装 pytest。"),
+            _tool_probe("Allure", shutil.which("allure"), ["--version"], "安装 Allure Commandline，用于归档 pytest 报告。"),
+        ]
+        _TOOLCHAIN_PROBE_CACHE["tools"] = tools
+        _TOOLCHAIN_PROBE_CACHE["expires_at"] = current_time + 300
+        return [dict(item) for item in tools]
+
+
+def _jmeter_mcp_probe():
+    settings = _jmeter_mcp_settings()
+    blockers = settings.get("blockers") or []
+    return {
+        "name": "JMeter MCP",
+        "status": "READY" if not blockers else "MISSING",
+        "command": f"{settings.get('node') or 'node'} {settings.get('bridge') or 'tools/jmeter-mcp/bridge.mjs'}",
+        "version": JMETER_MCP_ENGINE if not blockers else "",
+        "install_hint": "；".join(blockers) if blockers else "JMX生成与非GUI执行统一由MCP网关完成。",
+    }
+
+
 def enterprise_toolchain_status(project_id):
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
     endpoints = rows("SELECT * FROM api_endpoints WHERE project_id=?", (project_id,))
-    executable_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>''", (project_id,))
+    executable_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'", (project_id,))
     reports_dir = TOOL_ASSET_ROOT / project_id
-    jmeter_cmd = _jmeter_command()
-    tools = [
-        _tool_probe("Java", shutil.which("java"), ["-version"], "安装 JDK 17+，用于运行 JMeter。"),
-        _tool_probe("JMeter", jmeter_cmd, ["--version"], "安装 Apache JMeter，并配置 AUTOTEST_JMETER 指向 jmeter.bat。"),
-        _tool_probe("Node.js", shutil.which("node"), ["--version"], "安装 Node.js，用于运行 Newman。"),
-        _tool_probe("Newman", shutil.which("newman"), ["--version"], "执行 npm install -g newman。"),
-        _python_module_probe("pytest", "pytest", ["--version"], "在当前 Python 环境安装 pytest。"),
-        _tool_probe("Allure", shutil.which("allure"), ["--version"], "安装 Allure Commandline，用于归档 pytest 报告。"),
-    ]
+    tools = _cached_toolchain_probes()
     blockers = []
+    warnings = []
     if not project.get("base_url"):
         blockers.append("缺少测试环境 Base URL")
     if not endpoints:
@@ -8925,7 +12144,7 @@ def enterprise_toolchain_status(project_id):
         blockers.append("缺少可执行接口用例")
     high_risk = [item for item in endpoints if (item.get("risk_level") == "high" or int(item.get("danger_score") or 0) >= 60)]
     if high_risk:
-        blockers.append(f"{len(high_risk)} 个高风险接口需人工确认执行策略")
+        warnings.append(f"{len(high_risk)} 个高风险接口在执行前需人工确认策略")
     artifacts = [
         {"name": "Postman Collection", "path": "postman-collection.json"},
         {"name": "JMeter JMX", "path": "jmeter-plan.jmx"},
@@ -8937,9 +12156,10 @@ def enterprise_toolchain_status(project_id):
         artifact["url"] = f"/reports/tool-assets/{project_id}/{artifact['path']}" if file_path.is_file() else ""
     return {
         "project_id": project_id,
-        "status": "BLOCKED" if blockers else "READY",
+        "status": "BLOCKED" if blockers else "READY_WITH_WARNINGS" if warnings else "READY",
         "tools": tools,
         "blockers": blockers,
+        "warnings": warnings,
         "artifacts": artifacts,
         "counts": {
             "endpoints": len(endpoints),
@@ -9064,6 +12284,29 @@ def _runtime_params_from_options(options=None):
     if options.get("runtime_uid") not in (None, "") and "uid" not in params:
         params["uid"] = _safe_runtime_scalar(options.get("runtime_uid"))
     return params
+
+
+def _persistable_performance_runtime_params(options=None):
+    """Keep only explicit non-sensitive values that may travel with a load plan."""
+    params = _runtime_params_from_options(options)
+    return {
+        key: value
+        for key, value in params.items()
+        if not _is_sensitive_runtime_value(key, value)
+    }
+
+
+def _performance_stage_runtime_options(plan, options=None):
+    """Merge plan inputs into a stage run without persisting credentials."""
+    options = dict(options or {})
+    plan_params = _persistable_performance_runtime_params({
+        "runtime_params": (plan or {}).get("runtime_params") or {},
+    })
+    stage_params = _persistable_performance_runtime_params({
+        "runtime_params": options.get("runtime_params") or {},
+    })
+    options["runtime_params"] = {**plan_params, **stage_params}
+    return options
 
 
 def _merge_runtime_params(runtime, params):
@@ -9253,6 +12496,28 @@ def _append_runtime_query_params(path, context):
     return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
 
 
+def _parameterize_jmeter_query(path, runtime_variables):
+    parsed = urllib.parse.urlsplit(str(path or ""))
+    if not parsed.query:
+        return path
+    pairs = []
+    for key, value in urllib.parse.parse_qsl(parsed.query, keep_blank_values=True):
+        pairs.append((key, runtime_variables.get(key, value)))
+    query = urllib.parse.urlencode(pairs, doseq=True, safe="${}")
+    return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
+
+
+def _parameterize_jmeter_fields(value, runtime_variables):
+    if isinstance(value, dict):
+        return {
+            key: runtime_variables.get(key, _parameterize_jmeter_fields(item, runtime_variables))
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_parameterize_jmeter_fields(item, runtime_variables) for item in value]
+    return _replace_runtime_placeholders(value, runtime_variables, False)
+
+
 def _apply_case_query_variant(case, path):
     title = str(case.get("title") or "").lower()
     parsed = urllib.parse.urlsplit(path)
@@ -9292,11 +12557,12 @@ def _case_request_with_runtime_context(case, runtime_context=None):
                 headers[key] = "{{" + key + "}}"
     path = case["path"]
     if not _is_login_case(case):
-        placeholder_context = {key: "{{" + key + "}}" for key in LOGIN_CONTEXT_KEYS if runtime_context.get(key)}
-        for key in ("ticket", "uid", "countryCode", "currency", "agentUid", "proxyUid", "orderNo", "orderId"):
-            if runtime_context.get(key) not in (None, ""):
-                placeholder_context[key] = "{{" + key + "}}"
-        path = _append_runtime_query_params(path, placeholder_context)
+        if "_performance_resolved_inputs" not in case:
+            placeholder_context = {key: "{{" + key + "}}" for key in LOGIN_CONTEXT_KEYS if runtime_context.get(key)}
+            for key in ("ticket", "uid", "countryCode", "currency", "agentUid", "proxyUid", "orderNo", "orderId"):
+                if runtime_context.get(key) not in (None, ""):
+                    placeholder_context[key] = "{{" + key + "}}"
+            path = _append_runtime_query_params(path, placeholder_context)
         path = _apply_case_query_variant(case, path)
     return path, headers, payload
 
@@ -9313,6 +12579,48 @@ def _runtime_context_for_case(case, runtime_context=None):
     if role_ticket not in (None, ""):
         context["ticket"] = str(role_ticket)
     return context
+
+
+def _jmeter_case_extractor_xml(case, extraction_rules):
+    method = str(case.get("method") or "").strip().upper()
+    case_path = urllib.parse.urlsplit(str(case.get("path") or "")).path or "/"
+    blocks = []
+    for rule in extraction_rules or []:
+        if not isinstance(rule, dict):
+            continue
+        source_method = str(rule.get("source_method") or "").strip().upper()
+        source_path = urllib.parse.urlsplit(str(rule.get("source_path") or "")).path or ""
+        variable = str(rule.get("variable") or "").strip()
+        json_paths = [str(item).strip() for item in rule.get("json_paths") or [] if str(item).strip()]
+        if (
+            not variable
+            or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", variable)
+            or source_method != method
+            or source_path != case_path
+            or not json_paths
+        ):
+            continue
+        blocks.append(f"""
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取 {_xml_escape(variable)}" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">{_xml_escape(variable)}</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">{_xml_escape(json_paths[0])}</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="校验关联变量 {_xml_escape(variable)}" enabled="true">
+            <stringProp name="cacheKey">autotest-required-extraction-{_xml_escape(variable)}</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">def extracted = String.valueOf(vars.get('{_xml_escape(variable)}') ?: '')
+if (!extracted || extracted == 'NOT_FOUND') {{
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage('响应未提取到必需关联变量: {_xml_escape(variable)}')
+}}</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Assertion>
+          <hashTree/>""")
+    return "".join(blocks)
 
 
 def build_postman_collection(project, cases, runtime_context=None, redact_runtime=True):
@@ -9352,6 +12660,101 @@ def build_postman_collection(project, cases, runtime_context=None, redact_runtim
 
 def _xml_escape(value):
     return str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+
+def _jmeter_business_assertion_xml(case, expected_status):
+    if not 200 <= int(expected_status or 0) < 300:
+        return ""
+    supplied = case.get("_performance_response_contract")
+    contract = dict(supplied) if isinstance(supplied, dict) else {}
+    contract.setdefault("require_json", False)
+    contract.setdefault("required_fields", [])
+    contract.setdefault("field_types", {})
+    contract.setdefault("non_empty_fields", [])
+    if not str(contract.get("business_code_field") or "").strip():
+        contract["business_code_field"] = "code"
+    if not contract.get("success_codes"):
+        contract["success_codes"] = [0, 200, "0", "200"]
+    if not str(contract.get("message_field") or "").strip():
+        contract["message_field"] = "message"
+    contract["require_business_code"] = bool(
+        contract.get("require_business_code")
+        or case.get("_performance_require_business_code")
+    )
+    encoded = base64.b64encode(
+        json.dumps(contract, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    ).decode("ascii")
+    script = f"""def contract = new groovy.json.JsonSlurper().parseText(
+    new String(java.util.Base64.decoder.decode('{encoded}'), java.nio.charset.StandardCharsets.UTF_8)
+)
+def failOnce = {{ message ->
+    if (!AssertionResult.isFailure()) {{
+        AssertionResult.setFailure(true)
+        AssertionResult.setFailureMessage(String.valueOf(message))
+    }}
+}}
+def payload = null
+try {{
+    payload = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+}} catch (Exception ignored) {{
+    if (Boolean.valueOf(String.valueOf(contract.require_json ?: false))) {{
+        failOnce('响应不是有效JSON，无法执行OpenAPI结构校验')
+    }}
+}}
+if (payload instanceof Map) {{
+    def codeField = String.valueOf(contract.business_code_field ?: 'code')
+    def allowedCodes = (contract.success_codes instanceof List ? contract.success_codes : []).collect {{ String.valueOf(it) }}
+    if (Boolean.valueOf(String.valueOf(contract.require_business_code ?: false)) && !payload.containsKey(codeField)) {{
+        failOnce('响应缺少必需业务码字段: ' + codeField)
+    }} else if (payload.containsKey(codeField) && !allowedCodes.isEmpty()) {{
+        def actualCode = String.valueOf(payload[codeField])
+        if (!allowedCodes.contains(actualCode)) {{
+            def messageField = String.valueOf(contract.message_field ?: 'message')
+            failOnce('HTTP成功但业务码失败: ' + actualCode + ', message=' + String.valueOf(payload[messageField] ?: ''))
+        }}
+    }}
+    (contract.required_fields ?: []).each {{ field ->
+        def fieldName = String.valueOf(field)
+        if (!payload.containsKey(fieldName) || payload[fieldName] == null) {{
+            failOnce('响应缺少OpenAPI必填字段: ' + fieldName)
+        }}
+    }}
+    def typeMatches = {{ value, expected ->
+        switch (String.valueOf(expected)) {{
+            case 'object': return value instanceof Map
+            case 'array': return value instanceof List
+            case 'string': return value instanceof CharSequence
+            case 'integer': return value instanceof Number && String.valueOf(value) ==~ /-?\\d+/
+            case 'number': return value instanceof Number
+            case 'boolean': return value instanceof Boolean
+            default: return true
+        }}
+    }}
+    (contract.field_types ?: [:]).each {{ field, expectedType ->
+        def fieldName = String.valueOf(field)
+        if (payload.containsKey(fieldName) && payload[fieldName] != null && !typeMatches(payload[fieldName], expectedType)) {{
+            failOnce('响应字段类型不符合OpenAPI: ' + fieldName + ' 应为 ' + String.valueOf(expectedType))
+        }}
+    }}
+    (contract.non_empty_fields ?: []).each {{ field ->
+        def fieldName = String.valueOf(field)
+        def value = payload[fieldName]
+        if (value == null || (value instanceof Map && value.isEmpty()) || (value instanceof List && value.isEmpty()) || (value instanceof CharSequence && value.length() == 0)) {{
+            failOnce('响应字段不应为空: ' + fieldName)
+        }}
+    }}
+}} else if (payload != null && !(contract.required_fields ?: []).isEmpty()) {{
+    failOnce('响应JSON顶层不是对象，无法校验必填字段')
+}}"""
+    return f"""
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="OpenAPI结构与业务成功断言" enabled="true">
+            <stringProp name="cacheKey">autotest-response-contract-v1</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">{_xml_escape(script)}</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Assertion>
+          <hashTree/>"""
 
 
 def _jmeter_mobile_query(overrides=None):
@@ -9398,8 +12801,8 @@ def build_jmeter_wealth_requirement_workflow(project, options=None):
     return f"""
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="财富等级需求闭环（登录-钱包-送礼-财富-账单）" enabled="true">
         <stringProp name="TestPlan.comments">真实业务闭环：循环控制器执行几次，就真实送礼几次；用于证明财富经验、钱包扣款和账单归档一致。</stringProp>
-        <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">{rampup}</intProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">{rampup}</stringProp>
         <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">false</boolProp><stringProp name="LoopController.loops">1</stringProp></elementProp>
       </ThreadGroup>
@@ -9719,14 +13122,28 @@ def build_jmeter_jmx(project, cases, runtime_context=None, redact_runtime=True, 
     )
     listener_enabled = "false" if options.get("_jmeter_non_gui_plan") else "true"
     think_time = max(0, min(int(options.get("jmeter_think_time_ms", 300) or 0), 10000))
-    jtl_path = Path(options.get("_jmeter_result_jtl") or JMETER_WORKBENCH_JTL)
+    performance_profile = str(options.get("_jmeter_performance_profile") or "smoke").strip().lower()
+    workload_phase = str(options.get("_jmeter_workload_phase") or performance_profile).strip().lower()
+    account_columns = sorted({
+        re.sub(r"[^A-Za-z0-9_]", "_", str(name))
+        for name in options.get("_jmeter_account_columns") or []
+        if str(name).strip()
+    })
+    account_reuse_policy = str(
+        options.get("_jmeter_account_reuse_policy") or "round_robin"
+    ).strip().lower()
+    if account_reuse_policy not in {"round_robin", "strict_unique"}:
+        account_reuse_policy = "round_robin"
+    transaction_mode = str(options.get("_jmeter_transaction_mode") or "request_only")
+    transaction_name = str(options.get("_jmeter_transaction_name") or "").strip()
+    jtl_path = options.get("_jmeter_result_jtl") or "${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/jmeter-result.jtl)}"
     default_url = urllib.parse.urlsplit(project.get("base_url") or "http://127.0.0.1")
     default_protocol = default_url.scheme or "https"
     default_domain = default_url.hostname or "127.0.0.1"
     runtime_defaults = options.get("_jmeter_runtime_defaults") if isinstance(options.get("_jmeter_runtime_defaults"), dict) else {}
     runtime_vars = {}
     for key, value in runtime_defaults.items():
-        if key in {"source", "login_status", "login_error", "login_context_keys", "_runtime_warnings"}:
+        if str(key).startswith("_") or key in {"source", "login_status", "login_error", "login_context_keys"}:
             continue
         if key in {"ticket", "sn", "login_password_encrypted"} or _is_sensitive_runtime_value(key, value):
             continue
@@ -9740,6 +13157,20 @@ def build_jmeter_jmx(project, cases, runtime_context=None, redact_runtime=True, 
     runtime_vars["sn"] = "${__P(sn,)}"
     runtime_vars["login_password_encrypted"] = "${__P(login_password_encrypted,)}"
     runtime_vars["gift_count"] = str(max(1, min(int(options.get("jmeter_loops", 1) or 1), 1000)))
+    for name in account_columns:
+        runtime_vars.setdefault(name, "")
+    jmeter_runtime_variables = {
+        str(key): "${" + re.sub(r"[^A-Za-z0-9_]", "_", str(key)) + "}"
+        for key in runtime_defaults
+        if not str(key).startswith("_") and key not in {"source", "login_status", "login_error", "login_context_keys"}
+    }
+    jmeter_runtime_variables.update({
+        "ticket": "${ticket}",
+        "uid": "${uid}",
+        "t": "${t}",
+        "sn": "${sn}",
+        "login_password_encrypted": "${login_password_encrypted}",
+    })
     variables_xml = "".join(
         f'<elementProp name="{_xml_escape(key)}" elementType="Argument"><stringProp name="Argument.name">{_xml_escape(key)}</stringProp><stringProp name="Argument.value">{_xml_escape(value)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>'
         for key, value in sorted(runtime_vars.items())
@@ -9758,8 +13189,8 @@ def build_jmeter_jmx(project, cases, runtime_context=None, redact_runtime=True, 
         login_header_xml = "".join(f'<elementProp name="{_xml_escape(k)}" elementType="Header"><stringProp name="Header.name">{_xml_escape(k)}</stringProp><stringProp name="Header.value">{_xml_escape(v)}</stringProp></elementProp>' for k, v in login_headers.items())
         login_sampler = f"""
       <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="登录鉴权前置" enabled="{login_enabled}">
-        <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">false</boolProp><stringProp name="LoopController.loops">1</stringProp></elementProp>
       </SetupThreadGroup>
@@ -9817,16 +13248,57 @@ if (loginUid) {{
             continue
         if NEGATIVE_CASE_RE.search(str(case.get("title") or "")):
             continue
-        if re.search("|".join(map(re.escape, HIGH_RISK_WORDS)), f"{case['path']} {case['title']}".lower()):
+        if (
+            not options.get("_jmeter_targets_prevalidated")
+            and re.search("|".join(map(re.escape, HIGH_RISK_WORDS)), f"{case['path']} {case['title']}".lower())
+        ):
             continue
-        case_path, headers, payload = _case_request_with_runtime_context(case, runtime_context)
-        case_path = _replace_runtime_placeholders(case_path, runtime_context, redact_runtime)
-        headers = _replace_runtime_placeholders(headers, runtime_context, redact_runtime)
-        payload = _replace_runtime_placeholders(payload, runtime_context, redact_runtime)
+        case_runtime = _runtime_context_for_case(case, runtime_context)
+        case_variables = dict(jmeter_runtime_variables)
+        if "/userserv/salary/trade/agent/" in str(case.get("path") or "").lower():
+            case_variables.update({
+                "uid": "${proxy_uid}",
+                "ticket": "${proxy_ticket}",
+                "agentUid": "${proxy_uid}",
+                "proxyUid": "${proxy_uid}",
+            })
+        elif account_columns:
+            case_variables.update({
+                "uid": "${applicant_uid}",
+                "ticket": "${applicant_ticket}",
+                "anchorUid": "${applicant_uid}",
+                "anchorTicket": "${applicant_ticket}",
+            })
+        case_path, headers, payload = _case_request_with_runtime_context(case, case_runtime)
+        case_path = _parameterize_jmeter_query(case_path, case_variables)
+        case_path = _replace_runtime_placeholders(case_path, case_variables, False)
+        headers = _parameterize_jmeter_fields(headers, case_variables)
+        payload = _parameterize_jmeter_fields(payload, case_variables)
         parsed = urllib.parse.urlsplit(case_path if case_path.startswith("http") else (project.get("base_url") or "http://127.0.0.1").rstrip("/") + "/" + case_path.lstrip("/"))
         body = json.dumps(payload, ensure_ascii=False) if payload and not isinstance(payload, str) else (payload or "")
-        header_xml = "".join(f'<elementProp name="{_xml_escape(k)}" elementType="Header"><stringProp name="Header.name">{_xml_escape(k)}</stringProp><stringProp name="Header.value">{_xml_escape(v)}</stringProp></elementProp>' for k, v in headers.items())
+        headers.setdefault("Accept", "application/json")
+        header_xml = "".join(
+            f'<elementProp name="{_xml_escape(k)}" elementType="Header"><stringProp name="Header.name">{_xml_escape(k)}</stringProp><stringProp name="Header.value">{_xml_escape("${__time(,)}" if str(k).lower() == "t" else v)}</stringProp></elementProp>'
+            for k, v in headers.items()
+        )
         expected_status = _tool_expected_status(case)
+        expected_contains = str(case.get("expected_contains") or "").strip()
+        contains_assertion = ""
+        if expected_contains:
+            contains_assertion = f"""
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言业务响应内容" enabled="true">
+            <collectionProp name="Asserion.test_strings"><stringProp name="contains">{_xml_escape(expected_contains)}</stringProp></collectionProp>
+            <stringProp name="Assertion.custom_message">响应未包含预期业务内容</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>"""
+        business_assertion = _jmeter_business_assertion_xml(case, expected_status)
+        extractor_block = _jmeter_case_extractor_xml(
+            case,
+            options.get("_jmeter_extraction_rules") or [],
+        )
         sampler = f"""
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="{_xml_escape(case['title'])}" enabled="true">
           <stringProp name="HTTPSampler.domain">{_xml_escape(parsed.hostname)}</stringProp>
@@ -9847,9 +13319,147 @@ if (loginUid) {{
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
           <hashTree/>
+          {contains_assertion}
+          {business_assertion}
+          {extractor_block}
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="鉴权失败安全诊断" enabled="true">
+            <stringProp name="cacheKey">autotest-auth-failure-diagnostic</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">if (prev.getResponseCode() == '401') {{
+    vars.put('__performance_account_rotate_requested', 'true')
+    vars.put('__performance_account_rotate_requested_iteration', String.valueOf(vars.getIteration()))
+}}
+if (prev.getResponseCode() == '401' &amp;&amp; !vars.get('__performance_auth_failure_logged')) {{
+    def safeUrl = prev.getUrlAsString().replaceAll('(?i)(ticket=)[^&amp;]+', '$1***REDACTED***')
+    def safeHeaders = String.valueOf(prev.getRequestHeaders()).replaceAll('(?i)(Authorization:\\s*Bearer\\s+)[^\\s]+', '$1***REDACTED***')
+    log.warn('AUTOTEST_AUTH_FAILURE url=' + safeUrl + ' requestHeaders=' + safeHeaders)
+    vars.put('__performance_auth_failure_logged', 'true')
+}}</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
         </hashTree>"""
         samplers.append(sampler)
     business_workflow = build_jmeter_wealth_requirement_workflow(project, options) if options.get("_jmeter_workbench") else ""
+    account_columns_json = json.dumps(account_columns, ensure_ascii=False)
+    account_script = f"""def accountColumns = {account_columns_json}
+def accountReusePolicy = '{account_reuse_policy}'
+def encodedRows = System.getenv('AUTOTEST_JMETER_RUNTIME_ROWS_B64')
+if (!encodedRows) {{
+    throw new IllegalStateException('未取得JMeter进程级运行数据：请先通过性能账号池预检')
+}}
+def decodedJson = new String(
+    java.util.Base64.decoder.decode(encodedRows),
+    java.nio.charset.StandardCharsets.UTF_8
+)
+def runtimeRows = new groovy.json.JsonSlurper().parseText(decodedJson)
+if (!(runtimeRows instanceof java.util.List) || runtimeRows.isEmpty()) {{
+    throw new IllegalStateException('JMeter进程级运行数据为空')
+}}
+def clearPinnedAccount = {{ -&gt;
+    String.valueOf(vars.get('__performance_account_columns') ?: '').split(',').each {{ name -&gt;
+        if (!name) return
+        vars.remove(name)
+        vars.remove('__performance_account_' + name)
+    }}
+}}
+def bindAccountRow = {{ int rowIndex, int rotationCount -&gt;
+    def runtimeRow = runtimeRows[rowIndex]
+    if (!(runtimeRow instanceof java.util.Map)) {{
+        throw new IllegalStateException('JMeter进程级运行数据行格式错误')
+    }}
+    clearPinnedAccount()
+    def pinnedColumns = []
+    runtimeRow.each {{ rawName, rawValue -&gt;
+        def name = String.valueOf(rawName)
+        def value = rawValue == null ? '' : String.valueOf(rawValue)
+        if (name ==~ /[A-Za-z_][A-Za-z0-9_]*/ &amp;&amp; value &amp;&amp; value != '&lt;EOF&gt;') {{
+            vars.put('__performance_account_' + name, value)
+            vars.put(name, value)
+            pinnedColumns.add(name)
+        }}
+    }}
+    vars.put('__performance_account_columns', pinnedColumns.join(','))
+    vars.put('__performance_account_row_index', String.valueOf(rowIndex))
+    vars.put('__performance_account_rotation_count', String.valueOf(rotationCount))
+    vars.put('__performance_account_initialized', 'true')
+}}
+if (!vars.get('__performance_account_initialized')) {{
+    def initialRowIndex = Math.floorMod(ctx.getThreadNum(), runtimeRows.size())
+    bindAccountRow(initialRowIndex, 0)
+}}
+def currentIteration = String.valueOf(vars.getIteration())
+def rotateRequested = vars.get('__performance_account_rotate_requested') == 'true'
+def requestedIteration = String.valueOf(vars.get('__performance_account_rotate_requested_iteration') ?: '')
+if (rotateRequested &amp;&amp; requestedIteration != currentIteration) {{
+    def currentIndex = Integer.parseInt(String.valueOf(vars.get('__performance_account_row_index') ?: '0'))
+    def rotationCount = Integer.parseInt(String.valueOf(vars.get('__performance_account_rotation_count') ?: '0'))
+    def nextIndex = accountReusePolicy == 'strict_unique'
+        ? currentIndex + {threads}
+        : Math.floorMod(currentIndex + 1, runtimeRows.size())
+    def exhausted = accountReusePolicy == 'strict_unique'
+        ? nextIndex &gt;= runtimeRows.size()
+        : rotationCount &gt;= runtimeRows.size() - 1
+    if (exhausted) {{
+        def exhaustedUid = vars.get('applicant_uid') ?: vars.get('uid') ?: ''
+        log.error('AUTOTEST_ACCOUNT_POOL_EXHAUSTED thread=' + ctx.getThreadNum()
+            + ' uid=' + String.valueOf(exhaustedUid)
+            + ' attempts=' + String.valueOf(rotationCount))
+        vars.put('__performance_account_pool_exhausted', 'true')
+        ctx.getThread().stop()
+        throw new IllegalStateException('当前线程的性能账号候选已全部鉴权失败')
+    }}
+    bindAccountRow(nextIndex, rotationCount + 1)
+    vars.remove('__performance_account_rotate_requested')
+    vars.remove('__performance_account_rotate_requested_iteration')
+    vars.remove('__performance_auth_failure_logged')
+    def rotatedUid = vars.get('applicant_uid') ?: vars.get('uid') ?: ''
+    log.warn('AUTOTEST_ACCOUNT_ROTATED thread=' + ctx.getThreadNum()
+        + ' row=' + String.valueOf(nextIndex)
+        + ' uid=' + String.valueOf(rotatedUid)
+        + ' rotation=' + String.valueOf(rotationCount + 1))
+}}
+String.valueOf(vars.get('__performance_account_columns') ?: '').split(',').each {{ name -&gt;
+    if (!name) return
+    def value = vars.get('__performance_account_' + name)
+    if (value) vars.put(name, value)
+}}
+vars.put('t', String.valueOf(System.currentTimeMillis()))
+def token = vars.get('applicant_ticket') ?: vars.get('ticket') ?: props.get('ticket') ?: '${{__P(ticket,)}}'
+if (!token) {{
+    throw new IllegalStateException('未取得申请人ticket：请先通过性能账号池预检')
+}}
+vars.put('ticket', token)
+def loginUid = vars.get('applicant_uid') ?: vars.get('uid') ?: props.get('uid') ?: '${{__P(uid,)}}'
+if (loginUid) vars.put('uid', loginUid)
+if (!vars.get('__performance_auth_context_logged')) {{
+    log.info('AUTOTEST_AUTH_CONTEXT uid=' + String.valueOf(loginUid)
+        + ' t=' + String.valueOf(vars.get('t'))
+        + ' ticketLength=' + token.length()
+        + ' ticketSegments=' + token.split('[.]').length)
+    vars.put('__performance_auth_context_logged', 'true')
+}}"""
+    sync_timer = ""
+    if performance_profile == "concurrency" or (
+        performance_profile == "spike" and workload_phase == "spike"
+    ):
+        sync_timer = f"""
+        <SyncTimer guiclass="SyncTimerGui" testclass="SyncTimer" testname="并发同时释放" enabled="true">
+          <intProp name="groupSize">{threads}</intProp>
+          <longProp name="timeoutInMs">30000</longProp>
+        </SyncTimer>
+        <hashTree/>"""
+    sampler_block = "".join(samplers)
+    if transaction_mode == "business_transaction" and transaction_name and sampler_block:
+        sampler_block = f"""
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="TX::{_xml_escape(transaction_name)}" enabled="true">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          {sampler_block}
+        </hashTree>"""
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
@@ -9886,9 +13496,10 @@ if (loginUid) {{
       <hashTree/>
       {login_sampler}
       {business_workflow}
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="接口性能冒烟" enabled="true">
-        <intProp name="ThreadGroup.num_threads">{threads}</intProp>
-        <intProp name="ThreadGroup.ramp_time">{rampup}</intProp>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="{_xml_escape(performance_profile)} 性能执行" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <stringProp name="ThreadGroup.num_threads">{threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">{rampup}</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">{loop_forever}</boolProp><stringProp name="LoopController.loops">{loop_count}</stringProp></elementProp>
         {scheduler_xml}
       </ThreadGroup>
@@ -9897,15 +13508,7 @@ if (loginUid) {{
           <stringProp name="cacheKey">autotest-load-auth-context</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
-          <stringProp name="script">def token = props.get('ticket') ?: vars.get('ticket') ?: '${{__P(ticket,)}}'
-if (!token) {{
-    throw new IllegalStateException('未取得 ticket：请在平台先完成一次真实登录，或填写登录加密密码后重新打开 JMeter 工作台')
-}}
-vars.put('ticket', token)
-def loginUid = props.get('uid') ?: vars.get('uid') ?: '${{__P(uid,)}}'
-if (loginUid) {{
-    vars.put('uid', loginUid)
-}}</stringProp>
+          <stringProp name="script">{account_script}</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
@@ -9913,7 +13516,8 @@ if (loginUid) {{
           <stringProp name="ConstantTimer.delay">{think_time}</stringProp>
         </ConstantTimer>
         <hashTree/>
-        {''.join(samplers)}
+        {sync_timer}
+        {sampler_block}
       </hashTree>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="{listener_enabled}">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -10170,12 +13774,17 @@ def ensure_common_query_params(path):
             if runtime.get(name) not in (None, ""):
                 mapping[query_key] = runtime.get(name)
                 break
+    runtime_override_pairs = []
     for key, value in mapping.items():
-        existing = current.get(key)
-        if value not in (None, "") and (existing in (None, "", "***REDACTED***")):
+        if value in (None, ""):
+            continue
+        if key in current:
+            runtime_override_pairs.append(key)
+        else:
             additions.append((key, str(value)))
-    if not additions:
+    if not additions and not runtime_override_pairs:
         return path
+    query_pairs = [(key, str(mapping[key])) if key in runtime_override_pairs else (key, value) for key, value in query_pairs]
     query = urllib.parse.urlencode(query_pairs + additions, safe="{{}}")
     return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
 
@@ -10778,7 +14387,7 @@ def generate_enterprise_tool_assets(project_id, options=None):
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
-    cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' ORDER BY created_at", (project_id,))
+    cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY created_at", (project_id,))
     if not cases:
         raise ValueError("缺少可执行接口用例，无法生成外部工具资产")
     runtime = _runtime_context(project_id, options)
@@ -10791,7 +14400,6 @@ def generate_enterprise_tool_assets(project_id, options=None):
     redacted_runtime = dict(runtime)
     files = {
         "postman-collection.json": json.dumps(build_postman_collection(project, cases, redacted_runtime, True), ensure_ascii=False, indent=2),
-        "jmeter-plan.jmx": build_jmeter_jmx(project, cases, redacted_runtime, True, options),
         "pytest_api_cases.py": build_pytest_script(project, cases, redacted_runtime, True),
     }
     result = []
@@ -10799,6 +14407,22 @@ def generate_enterprise_tool_assets(project_id, options=None):
         path = out / name
         path.write_text(content, encoding="utf-8")
         result.append({"name": name, "path": str(path), "url": f"/reports/tool-assets/{project_id}/{name}"})
+    jmeter_asset = _write_jmeter_mcp_asset(
+        project_id=project_id,
+        package_id="enterprise-toolchain",
+        project=project,
+        cases=cases,
+        target_path=out / "jmeter-plan.jmx",
+        workflow_path=out / "jmeter-mcp-workflow.json",
+        runtime_context=runtime,
+        threads=max(1, int(options.get("jmeter_threads") or 1)),
+        rampup_seconds=max(0, int(options.get("jmeter_rampup") or 1)),
+        loops=max(1, int(options.get("jmeter_loops") or 1)),
+        duration_seconds=int(options.get("jmeter_duration_seconds") or 0) or None,
+        max_error_rate=float(options.get("max_error_rate") or 0),
+        max_p95_ms=int(options.get("max_p95_ms") or 3000),
+    )
+    result.append({"name": "jmeter-plan.jmx", "path": jmeter_asset["jmx_path"], "url": f"/reports/tool-assets/{project_id}/jmeter-plan.jmx", "engine": JMETER_MCP_ENGINE})
     return {"generated": len(result), "files": result, "toolchain": enterprise_toolchain_status(project_id)}
 
 
@@ -10807,13 +14431,10 @@ def generate_jmeter_workbench_asset(project_id, options=None):
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
-    source_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' ORDER BY created_at", (project_id,))
+    source_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY created_at", (project_id,))
     runtime = _runtime_context(project_id, options)
-    credential = load_runtime_credential(project_id)
-    saved_login_password = str(credential.get("encrypted_password") or "").strip()
     include_runtime = bool(runtime.get("ticket")) and bool(runtime.get("uid"))
     cases = _external_tool_cases(source_cases, include_runtime)
-    login_case = next((case for case in source_cases if _is_login_case(case)), None)
     if not cases:
         raise ValueError("没有可加载到 JMeter 的接口用例；请先补齐接口用例或有效运行上下文")
     out = JMETER_WORKBENCH_JMX.parent
@@ -10825,32 +14446,6 @@ def generate_jmeter_workbench_asset(project_id, options=None):
             existing_has_encoded_vars = "%24%7B" in existing_text or "%7D" in existing_text
         except Exception:
             existing_text = ""
-        if not options.get("force_regenerate") and not existing_has_encoded_vars:
-            return {
-                "path": str(JMETER_WORKBENCH_JMX),
-                "url": "",
-                "case_count": len(cases),
-                "uses_runtime_properties": include_runtime,
-                "overwrite_mode": False,
-                "reused_existing": True,
-                "message": "已读取并复用当前保存的 JMeter 工作台文件，未覆盖你的手工修改。",
-            }
-    runtime_for_jmeter = {}
-    if include_runtime:
-        for key, value in runtime.items():
-            if key in {"source", "login_status", "login_error", "login_context_keys", "_runtime_warnings"}:
-                continue
-            if key in {"ticket", "uid"}:
-                runtime_for_jmeter[key] = "${" + key + "}"
-            elif key in {"sn", "login_password_encrypted"} or _is_sensitive_runtime_value(key, value):
-                runtime_for_jmeter[key] = "${__P(" + key + ",)}"
-            else:
-                runtime_for_jmeter[key] = _safe_runtime_scalar(value)
-    if login_case:
-        options["_jmeter_login_case"] = login_case
-    options["_jmeter_workbench"] = True
-    options["_jmeter_login_password_available"] = bool(str(options.get("login_password_encrypted") or "").strip() or saved_login_password)
-    options["_jmeter_runtime_defaults"] = runtime
     jmx_path = JMETER_WORKBENCH_JMX
     if jmx_path.is_file():
         backup_path = jmx_path.with_suffix(f".backup-{datetime.now().strftime('%Y%m%d-%H%M%S')}.jmx")
@@ -10858,9 +14453,28 @@ def generate_jmeter_workbench_asset(project_id, options=None):
             backup_path.write_text(jmx_path.read_text(encoding="utf-8"), encoding="utf-8")
         except Exception:
             backup_path = None
-    jmx_path.write_text(build_jmeter_jmx(project, cases, runtime_for_jmeter, False, options), encoding="utf-8")
+    source_jmx = jmx_path if jmx_path.is_file() and not existing_has_encoded_vars and not options.get("force_regenerate") else None
+    asset = _write_jmeter_mcp_asset(
+        project_id=project_id,
+        package_id="jmeter-workbench",
+        project=project,
+        cases=cases,
+        target_path=jmx_path,
+        workflow_path=jmx_path.with_name("jmeter-mcp-workflow.json"),
+        runtime_context=runtime,
+        source_jmx=source_jmx,
+        threads=max(1, int(options.get("jmeter_threads") or 1)),
+        rampup_seconds=max(0, int(options.get("jmeter_rampup") or 1)),
+        loops=max(1, int(options.get("jmeter_loops") or 1)),
+        duration_seconds=int(options.get("jmeter_duration_seconds") or 0) or None,
+        max_error_rate=float(options.get("max_error_rate") or 0),
+        max_p95_ms=int(options.get("max_p95_ms") or 3000),
+    )
     return {
         "path": str(jmx_path),
+        "workflow_path": asset["workflow_path"],
+        "engine": asset["engine"],
+        "generation_mode": asset["mode"],
         "url": "",
         "case_count": len(cases),
         "uses_runtime_properties": include_runtime,
@@ -10891,10 +14505,20 @@ def summarize_jmeter_jmx(jmx_path):
             if prop.attrib.get("name") == "LoopController.loops":
                 loops = prop.text or ""
                 break
+        def thread_property(name):
+            return next(
+                (
+                    prop.text or ""
+                    for prop in group.iter()
+                    if prop.tag.endswith("Prop") and prop.attrib.get("name") == name
+                ),
+                "",
+            )
+
         groups.append({
             "name": group.attrib.get("testname", "Thread Group"),
-            "threads": next((p.text or "" for p in group.iter("intProp") if p.attrib.get("name") == "ThreadGroup.num_threads"), ""),
-            "rampup": next((p.text or "" for p in group.iter("intProp") if p.attrib.get("name") == "ThreadGroup.ramp_time"), ""),
+            "threads": thread_property("ThreadGroup.num_threads"),
+            "rampup": thread_property("ThreadGroup.ramp_time"),
             "loops": loops,
         })
     return {
@@ -10916,7 +14540,7 @@ def summarize_jmeter_jmx(jmx_path):
 def _package_jmeter_candidates(package_root, package_id):
     package_root = Path(package_root)
     jmeter_dir = package_root / "outputs" / "jmeter"
-    preferred = []
+    preferred = [jmeter_dir / "jmeter-plan.jmx"]
     if package_id == "salary-trade":
         preferred.extend([
             jmeter_dir / "salary-trade-case-driven.jmx",
@@ -10924,7 +14548,6 @@ def _package_jmeter_candidates(package_root, package_id):
         ])
     if package_id == "wealth-level":
         preferred.append(jmeter_dir / "性能基线.jmx")
-    preferred.append(jmeter_dir / "jmeter-plan.jmx")
     existing = [path for path in preferred if path.is_file()]
     if existing:
         return existing
@@ -11002,7 +14625,7 @@ def open_jmeter_gui(project_id, options=None):
                 f"-Jrequirement_run_id={run_context['run_id']}",
                 f"-Jplatform_jmeter_callback_url={callback_base}/api/projects/{project_id}/salary-trade/jmeter-harvest",
             ])
-    command = [str(jmeter), *command_properties, "-t", str(jmx_path)]
+    command = [str(jmeter), f"-Jproject_root={_jmeter_property_path(ROOT)}", *command_properties, "-t", str(jmx_path)]
     runtime_context = _runtime_context(project_id, options)
     credential = load_runtime_credential(project_id)
     saved_login_password = str(credential.get("encrypted_password") or "").strip()
@@ -11026,7 +14649,7 @@ def open_jmeter_gui(project_id, options=None):
         update_requirement_run_context(project_id, package.get("package_id"), run_context["run_id"], "jmeter", "OPENED")
     return {
         "status": "OPENED",
-        "message": "已调起真实 JMeter 界面，并加载平台生成的线程组脚本。",
+        "message": "已打开 JMeter 人工维护界面；平台默认生成与非GUI执行仍统一走 JMeter MCP。",
         "project_id": project_id,
         "project_name": project["name"],
         "script_key": script_key,
@@ -11035,6 +14658,8 @@ def open_jmeter_gui(project_id, options=None):
         "run_id": run_context.get("run_id") if run_context else "",
         "run_context_path": run_context.get("run_context_path") if run_context else "",
         "jmeter_command": str(jmeter),
+        "default_execution_engine": JMETER_MCP_ENGINE,
+        "gui_role": "manual_review_and_maintenance_only",
         "runtime_parameters_passed": bool(runtime_context.get("ticket") or saved_login_password or str(options.get("login_password_encrypted") or options.get("login_t") or options.get("login_sn") or "").strip()),
         "login_password_available": bool(str(options.get("login_password_encrypted") or "").strip() or saved_login_password),
         "runtime_source": runtime_context.get("source") or "saved_runtime_credential",
@@ -11044,7 +14669,7 @@ def open_jmeter_gui(project_id, options=None):
         "files": [generated] if generated else [],
         "policy": {
             "gui_for_review_and_maintenance": True,
-            "non_gui_for_report_archive": True,
+            "non_gui_execution_via_mcp": True,
             "business_datasource_readonly": True,
         },
     }
@@ -11139,7 +14764,7 @@ def generate_enterprise_tool_run_assets(project_id, out, options=None):
     project = row("SELECT * FROM projects WHERE id=?", (project_id,))
     if not project:
         raise ValueError("项目不存在")
-    cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' ORDER BY created_at", (project_id,))
+    cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY created_at", (project_id,))
     runtime = _runtime_context(project_id, options)
     include_runtime = bool(runtime.get("ticket")) and bool(runtime.get("uid"))
     cases = _external_tool_cases(cases, include_runtime)
@@ -11147,10 +14772,8 @@ def generate_enterprise_tool_run_assets(project_id, out, options=None):
         raise ValueError("没有可交给外部工具执行的用例")
     out.mkdir(parents=True, exist_ok=True)
     postman_runtime = _runtime_placeholder_context(runtime, "postman")
-    jmeter_runtime = _runtime_placeholder_context(runtime, "jmeter")
     files = {
         "postman-collection.json": json.dumps(build_postman_collection(project, cases, postman_runtime, False), ensure_ascii=False, indent=2),
-        "jmeter-plan.jmx": build_jmeter_jmx(project, cases, jmeter_runtime, False, options),
         "pytest_api_cases.py": build_pytest_script(project, cases, postman_runtime, False),
     }
     result = []
@@ -11158,6 +14781,22 @@ def generate_enterprise_tool_run_assets(project_id, out, options=None):
         path = out / name
         path.write_text(content, encoding="utf-8")
         result.append({"name": name, "path": str(path)})
+    jmeter_asset = _write_jmeter_mcp_asset(
+        project_id=project_id,
+        package_id="enterprise-toolchain-runtime",
+        project=project,
+        cases=cases,
+        target_path=out / "jmeter-plan.jmx",
+        workflow_path=out / "jmeter-mcp-workflow.json",
+        runtime_context=runtime,
+        threads=max(1, int(options.get("jmeter_threads") or 1)),
+        rampup_seconds=max(0, int(options.get("jmeter_rampup") or 1)),
+        loops=max(1, int(options.get("jmeter_loops") or 1)),
+        duration_seconds=int(options.get("jmeter_duration_seconds") or 0) or None,
+        max_error_rate=float(options.get("max_error_rate") or 0),
+        max_p95_ms=int(options.get("max_p95_ms") or 3000),
+    )
+    result.append({"name": "jmeter-plan.jmx", "path": jmeter_asset["jmx_path"], "engine": JMETER_MCP_ENGINE, "workflow": jmeter_asset["workflow_path"]})
     return {"files": result, "runtime_available": include_runtime, "runtime_uid": runtime.get("uid"), "runtime_keys": [key for key, _ in _runtime_tool_pairs(runtime)], "cases": len(cases)}
 
 
@@ -11305,9 +14944,26 @@ def _redact_runtime_text(text, context=None):
     for key, value in _runtime_tool_pairs(context or {}):
         if value and (key == "ticket" or _is_sensitive_runtime_value(key, value)):
             redacted = redacted.replace(str(value), "***REDACTED***")
-    redacted = re.sub(r"((?:access_token|ticket|token|password|secret)=)[^&\\s]+", r"\1***REDACTED***", redacted, flags=re.I)
-    redacted = re.sub(r"(Authorization:\\s*Bearer\\s+)[^\\s]+", r"\1***REDACTED***", redacted, flags=re.I)
+    redacted = re.sub(r"((?:access_token|ticket|token|password|secret)=)[^&\s]+", r"\1***REDACTED***", redacted, flags=re.I)
+    redacted = re.sub(r"(Authorization:\s*Bearer\s+)[^\s]+", r"\1***REDACTED***", redacted, flags=re.I)
+    redacted = re.sub(
+        r"\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b",
+        "***REDACTED***",
+        redacted,
+    )
     return redacted
+
+
+def _redact_runtime_file(path, context=None):
+    path = Path(path)
+    if not path.is_file():
+        return False
+    raw = path.read_text(encoding="utf-8-sig", errors="replace")
+    redacted = _redact_runtime_text(raw, context)
+    changed = redacted != raw
+    if changed:
+        path.write_text(redacted, encoding="utf-8")
+    return changed
 
 
 def _sanitize_tool_result(result, context=None):
@@ -11316,92 +14972,29 @@ def _sanitize_tool_result(result, context=None):
     return result
 
 
-def _summarize_jmeter_jtl(jtl_path):
-    path = Path(jtl_path)
-    if not path.is_file():
-        return {}
-    with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        samples = list(csv.DictReader(handle))
-    if not samples:
-        return {"requests": 0, "errors": 0, "error_rate": 100, "response_codes": {}, "failed_labels": []}
-    errors = [item for item in samples if str(item.get("success", "")).lower() != "true"]
-    codes = {}
-    failed_labels = []
-    elapsed_values = []
-    started_values = []
-    label_groups = {}
-    slow_samples = []
-    for item in samples:
-        code = str(item.get("responseCode") or "UNKNOWN")
-        codes[code] = codes.get(code, 0) + 1
-        elapsed = None
-        try:
-            elapsed = float(item.get("elapsed") or 0)
-            elapsed_values.append(elapsed)
-        except Exception:
-            pass
-        label = item.get("label") or "未命名请求"
-        if elapsed is not None:
-            label_groups.setdefault(label, []).append(elapsed)
-            slow_samples.append({"label": label, "elapsed_ms": elapsed, "response_code": code, "success": str(item.get("success", "")).lower() == "true"})
-        try:
-            started_values.append(float(item.get("timeStamp") or 0))
-        except Exception:
-            pass
-        if str(item.get("success", "")).lower() != "true":
-            failed_labels.append(f"{item.get('label') or '未命名请求'}({code})")
-    duration_seconds = 0
-    if started_values:
-        duration_seconds = max((max(started_values) - min(started_values)) / 1000, 0.001)
-    by_label = []
-    for label, values in label_groups.items():
-        by_label.append({
-            "label": label,
-            "samples": len(values),
-            "average_ms": round(statistics.mean(values), 2) if values else 0,
-            "min_ms": round(min(values), 2) if values else 0,
-            "max_ms": round(max(values), 2) if values else 0,
-            "p90_ms": _percentile(values, 90),
-            "p95_ms": _percentile(values, 95),
-        })
-    by_label.sort(key=lambda item: item["max_ms"], reverse=True)
-    average_ms = round(sum(elapsed_values) / len(elapsed_values), 2) if elapsed_values else 0
-    p95_ms = _percentile(elapsed_values, 95)
-    stddev_ms = round(statistics.pstdev(elapsed_values), 2) if len(elapsed_values) > 1 else 0
-    tail_note = ""
-    if elapsed_values and average_ms > p95_ms:
-        tail_note = "平均值高于P95，通常表示样本量较小或存在极端慢请求；请优先查看最慢样本和聚合图形报告。"
-    return {
-        "requests": len(samples),
-        "errors": len(errors),
-        "error_rate": round(len(errors) / len(samples) * 100, 2),
-        "response_codes": codes,
-        "failed_labels": failed_labels[:10],
-        "average_ms": average_ms,
-        "min_ms": round(min(elapsed_values), 2) if elapsed_values else 0,
-        "max_ms": round(max(elapsed_values), 2) if elapsed_values else 0,
-        "p50_ms": _percentile(elapsed_values, 50),
-        "p90_ms": _percentile(elapsed_values, 90),
-        "p95_ms": p95_ms,
-        "p99_ms": _percentile(elapsed_values, 99),
-        "stddev_ms": stddev_ms,
-        "throughput_rps": round(len(samples) / duration_seconds, 2) if duration_seconds else 0,
-        "slowest_samples": sorted(slow_samples, key=lambda item: item["elapsed_ms"], reverse=True)[:10],
-        "by_label": by_label[:20],
-        "tail_note": tail_note,
-    }
+def _jmeter_error_category(sample):
+    code = str(sample.get("responseCode") or "UNKNOWN")
+    message = " ".join(str(sample.get(key) or "") for key in ("responseMessage", "failureMessage"))
+    lowered = f"{code} {message}".lower()
+    if code in {"401", "403"}:
+        return "authentication", "鉴权失败"
+    if "connecttimeoutexception" in lowered or "connect timed out" in lowered:
+        return "connect_timeout", "连接超时"
+    if "sockettimeoutexception" in lowered or "read timed out" in lowered:
+        return "read_timeout", "读取超时"
+    if "socketexception" in lowered or "connection reset" in lowered:
+        return "connection_reset", "连接被重置"
+    if code.isdigit() and 500 <= int(code) <= 599:
+        return "http_5xx", "服务端HTTP 5xx"
+    if code.isdigit() and 400 <= int(code) <= 499:
+        return "http_4xx", "客户端或业务HTTP 4xx"
+    if str(sample.get("failureMessage") or "").strip():
+        return "assertion", "断言失败"
+    return "other", "其他失败"
 
 
-def _percentile(values, percentile):
-    numbers = sorted(float(value) for value in values if value is not None)
-    if not numbers:
-        return 0
-    index = (len(numbers) - 1) * percentile / 100
-    lower = math.floor(index)
-    upper = math.ceil(index)
-    if lower == upper:
-        return round(numbers[int(index)], 2)
-    return round(numbers[lower] + (numbers[upper] - numbers[lower]) * (index - lower), 2)
+def _summarize_jmeter_jtl(jtl_path, warmup_samples_per_label=0):
+    return _summarize_jtl_service(jtl_path, warmup_samples_per_label)
 
 
 def _performance_diagnosis(summary, gate=None):
@@ -11415,11 +15008,18 @@ def _performance_diagnosis(summary, gate=None):
     p99 = float(summary.get("p99_ms") or 0)
     max_ms = float(summary.get("max_ms") or 0)
     stddev = float(summary.get("stddev_ms") or 0)
+    error_categories = [item for item in summary.get("error_categories") or [] if isinstance(item, dict)]
     findings = []
     if requests < 30:
         findings.append({"severity": "INFO", "title": "样本量偏少", "detail": f"当前仅 {requests} 个样本，适合冒烟观察，不适合直接形成容量结论。"})
     if errors:
-        findings.append({"severity": "P0", "title": "存在失败采样", "detail": f"失败 {errors} 次，错误率 {error_rate}%。企业评审通常先处理错误率，再讨论响应时间。"})
+        failed_gate_names = {str(item.get("name") or "") for item in gate.get("checks") or [] if not item.get("passed")}
+        severity = "P0" if "错误率" in failed_gate_names else "P1"
+        if error_categories:
+            category_text = "、".join(f"{item.get('label')} {item.get('count')} 次" for item in error_categories[:4])
+            findings.append({"severity": severity, "title": "失败采样已分类", "detail": f"失败 {errors} 次，错误率 {error_rate}%；分类为：{category_text}。"})
+        else:
+            findings.append({"severity": severity, "title": "存在失败采样", "detail": f"失败 {errors} 次，错误率 {error_rate}%。"})
     if median and average > median * 1.25:
         findings.append({"severity": "P1", "title": "平均值被慢请求拉高", "detail": f"平均 {average}ms 明显高于中位数 {median}ms，说明存在尾部慢请求或样本分布不均。"})
     if p95 and p99 and p99 > p95 * 1.4:
@@ -11443,8 +15043,13 @@ def _performance_diagnosis(summary, gate=None):
         })
     bottlenecks.sort(key=lambda item: item["score"], reverse=True)
     gate_status = gate.get("status") or "UNKNOWN"
-    if errors:
-        conclusion = "当前不能给出通过结论：存在失败采样，需先确认是接口错误、断言失败还是脚本配置问题。"
+    failed_gate_names = [str(item.get("name") or "") for item in gate.get("checks") or [] if not item.get("passed")]
+    category_summary = "、".join(f"{item.get('label')} {item.get('count')} 次" for item in error_categories[:3])
+    if errors and gate_status == "FAILED":
+        failed_text = "、".join(failed_gate_names) or "性能门槛"
+        conclusion = f"当前未通过 {failed_text}；失败采样主要为 {category_summary or '未分类错误'}，需结合服务端、网关和测试机网络定位。"
+    elif errors:
+        conclusion = f"当前性能门槛通过，但存在少量失败采样：{category_summary or '未分类错误'}；建议在更高阶梯和稳定性测试中持续观察。"
     elif gate_status == "FAILED":
         conclusion = "接口可用但未达到当前性能准入阈值，需要结合慢接口和尾部延迟继续定位。"
     elif requests < 30:
@@ -11456,6 +15061,7 @@ def _performance_diagnosis(summary, gate=None):
         "sample_grade": "INSUFFICIENT" if requests < 30 else "OBSERVABLE" if requests < 100 else "BASELINE_READY",
         "enterprise_focus": ["错误率", "P95/P99尾部延迟", "慢接口Top", "样本量", "SLA准入", "原始JTL/HTML可追溯"],
         "findings": findings,
+        "error_categories": error_categories,
         "bottlenecks": bottlenecks[:5],
         "slowest_samples": summary.get("slowest_samples", [])[:10],
     }
@@ -11499,6 +15105,15 @@ def _performance_gate(summary, options=None):
         "checks": checks,
         "summary": "性能阈值通过" if not failed else "性能阈值未达标：" + "、".join(item["name"] for item in failed),
     }
+
+
+# Compatibility names now point to the extracted performance service so every
+# JMeter entry uses the same parser, thresholds, and evidence-aware diagnosis.
+_summarize_jmeter_jtl = _summarize_jtl_service
+_percentile = _performance_percentile_service
+_jmeter_thresholds = _performance_thresholds_service
+_performance_gate = _evaluate_performance_gate_service
+_performance_diagnosis = _diagnose_performance_service
 
 
 def _normalize_jmeter_result(result, jtl_path, options=None):
@@ -11584,10 +15199,15 @@ def _auth_gap_diagnostics(cases, results, runtime_context):
     }
 
 
-def _readonly_auth_probe(project, cases, runtime_context):
+def _readonly_auth_probe(project, cases, runtime_context, variant_names=None, timeout=15):
     if not runtime_context.get("ticket") or not runtime_context.get("uid"):
         return {"status": "SKIPPED", "reason": "缺少可探测的 ticket 或 uid", "items": []}
-    protected = [case for case in cases if not _is_login_case(case) and str(case.get("method", "")).upper() == "GET" and _tool_expected_status(case) == 200 and _case_has_runtime_placeholder(case)]
+    protected = [
+        case for case in cases
+        if not _is_login_case(case)
+        and str(case.get("method", "")).upper() == "GET"
+        and _tool_expected_status(case) == 200
+    ]
     if not protected:
         return {"status": "SKIPPED", "reason": "没有可用于只读鉴权探测的 GET 业务用例", "items": []}
     case = protected[0]
@@ -11606,6 +15226,9 @@ def _readonly_auth_probe(project, cases, runtime_context):
     ]
     if runtime_context.get("sn"):
         variants.append(("query_ticket_with_sn", {"ticket": runtime_context["ticket"]}, {"sn": runtime_context["sn"]}))
+    if variant_names:
+        allowed = set(variant_names)
+        variants = [item for item in variants if item[0] in allowed]
     items = []
     for name, extra_params, extra_headers in variants:
         params = {**base_params, **extra_params}
@@ -11616,7 +15239,7 @@ def _readonly_auth_probe(project, cases, runtime_context):
         try:
             req = urllib.request.Request(url, method="GET", headers=probe_headers)
             try:
-                resp = urllib.request.urlopen(req, timeout=15)
+                resp = urllib.request.urlopen(req, timeout=timeout)
                 http_status, raw = resp.status, resp.read(100000)
             except urllib.error.HTTPError as exc:
                 http_status, raw = exc.code, exc.read(100000)
@@ -11642,9 +15265,77 @@ def _readonly_auth_probe(project, cases, runtime_context):
     return {"status": "FAILED", "summary": "常见 ticket 放置方式均未通过，优先补齐 sn/签名规则或重新抓取该业务接口完整请求。", "case_title": case.get("title", ""), "items": items}
 
 
-def _run_command_capture(command, cwd, timeout=180, env=None):
+def _run_command_capture(
+    command,
+    cwd,
+    timeout=180,
+    env=None,
+    *,
+    should_cancel=None,
+    on_progress=None,
+):
     started = time.perf_counter()
     try:
+        if should_cancel is not None or on_progress is not None:
+            process = subprocess.Popen(
+                command,
+                cwd=str(cwd),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                env=env,
+            )
+
+            def stop_process():
+                if process.poll() is not None:
+                    return
+                if os.name == "nt":
+                    subprocess.run(
+                        ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                        capture_output=True,
+                        text=True,
+                        timeout=15,
+                    )
+                else:
+                    process.terminate()
+
+            while True:
+                elapsed = time.perf_counter() - started
+                if should_cancel is not None and bool(should_cancel()):
+                    stop_process()
+                    stdout, stderr = process.communicate(timeout=20)
+                    return {
+                        "status": "CANCELLED",
+                        "exit_code": process.returncode,
+                        "duration_ms": int(elapsed * 1000),
+                        "stdout": (stdout or "")[-8000:],
+                        "stderr": ((stderr or "") + "\n用户已停止后台性能任务。")[-8000:],
+                    }
+                if elapsed > timeout:
+                    stop_process()
+                    stdout, stderr = process.communicate(timeout=20)
+                    return {
+                        "status": "FAILED",
+                        "exit_code": None,
+                        "duration_ms": int(elapsed * 1000),
+                        "stdout": (stdout or "")[-8000:],
+                        "stderr": ((stderr or "") + "\n执行超时，平台已终止外部工具进程。")[-8000:],
+                    }
+                try:
+                    stdout, stderr = process.communicate(timeout=1)
+                    return {
+                        "status": "PASSED" if process.returncode == 0 else "FAILED",
+                        "exit_code": process.returncode,
+                        "duration_ms": int((time.perf_counter() - started) * 1000),
+                        "stdout": (stdout or "")[-8000:],
+                        "stderr": (stderr or "")[-8000:],
+                    }
+                except subprocess.TimeoutExpired:
+                    if on_progress is not None:
+                        on_progress({"elapsed_seconds": round(elapsed, 1), "timeout_seconds": timeout})
+                    continue
         completed = subprocess.run(
             command,
             cwd=str(cwd),
@@ -11756,7 +15447,7 @@ def _toolchain_blocked_report(project_id, project, runtime_context, options, rea
 
 
 def _missing_required_login_context(project_id, runtime_context):
-    source_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' ORDER BY created_at", (project_id,))
+    source_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY created_at", (project_id,))
     protected = [case for case in source_cases if not _is_login_case(case) and _tool_expected_status(case) == 200 and _case_has_runtime_placeholder(case)]
     if not protected:
         return []
@@ -11844,37 +15535,30 @@ def run_enterprise_toolchain(project_id, options=None):
     if options.get("run_jmeter", True) is False:
         results.append({"tool": "JMeter", "status": "SKIPPED", "reason": "本次执行参数选择跳过 JMeter", "artifact": "jmeter-plan.jmx", "duration_ms": 0, "exit_code": None, "stdout": "", "stderr": ""})
     else:
-        jmeter = _jmeter_command()
-        if Path(jmeter).exists() or shutil.which(str(jmeter)):
-            jmx_text = (asset_dir / "jmeter-plan.jmx").read_text(encoding="utf-8")
-            if "HTTPSamplerProxy" not in jmx_text:
-                results.append(_tool_result_blocked("JMeter", "当前没有无需凭证且适合性能冒烟的只读接口；请补齐可复用凭证后生成性能资产。", "jmeter-plan.jmx"))
-            else:
-                jtl = run_dir / "jmeter-result.jtl"
-                html_dir = run_dir / "jmeter-html"
-                command = [
-                    str(jmeter),
-                    "-n",
-                    "-t",
-                    str(asset_dir / "jmeter-plan.jmx"),
-                    "-l",
-                    str(jtl),
-                    "-e",
-                    "-o",
-                    str(html_dir),
-                    "-Jjmeter.save.saveservice.url=false",
-                    "-Jjmeter.save.saveservice.response_data=false",
-                    "-Jjmeter.save.saveservice.requestHeaders=false",
-                    "-Jjmeter.save.saveservice.responseHeaders=false",
-                ]
-                for key, value in runtime_pairs:
-                    command.append(f"-J{key}={value}")
-                result = _sanitize_tool_result(_run_command_capture(command, ROOT, int(options.get("jmeter_timeout", 180)), runtime_env), runtime_context)
-                result = _normalize_jmeter_result(result, jtl, options)
-                result.update({"tool": "JMeter", "artifact": "jmeter-plan.jmx", "jtl": str(jtl) if jtl.is_file() else "", "html_report": str(html_dir / "index.html") if (html_dir / "index.html").is_file() else ""})
-                results.append(result)
-        else:
-            results.append(_tool_result_blocked("JMeter", "本机未找到 JMeter；请配置 AUTOTEST_JMETER。", "jmeter-plan.jmx"))
+        try:
+            workflow_path = asset_dir / "jmeter-mcp-workflow.json"
+            mcp_output = run_dir / "jmeter-mcp"
+            mcp_run = _execute_jmeter_mcp_workflow(
+                workflow_path,
+                mcp_output,
+                runtime_context,
+                timeout_seconds=int(options.get("jmeter_timeout", 180)),
+            )
+            jtl = Path(mcp_run["jtl_path"])
+            result = _sanitize_tool_result(mcp_run, runtime_context)
+            result = _normalize_jmeter_result(result, jtl, options)
+            result.update({
+                "tool": "JMeter",
+                "engine": JMETER_MCP_ENGINE,
+                "artifact": "jmeter-plan.jmx",
+                "workflow": str(workflow_path),
+                "jtl": str(jtl) if jtl.is_file() else "",
+                "html_report": mcp_run["html_path"] if Path(mcp_run["html_path"]).is_file() else "",
+                "mcp_analysis": mcp_run["analysis_path"] if Path(mcp_run["analysis_path"]).is_file() else "",
+            })
+            results.append(result)
+        except Exception as exc:
+            results.append(_tool_result_blocked("JMeter", f"JMeter MCP执行失败：{_redact_runtime_text(str(exc))}", "jmeter-plan.jmx"))
 
     if options.get("run_pytest", True) is False:
         results.append({"tool": "pytest", "status": "SKIPPED", "reason": "本次执行参数选择跳过 pytest", "artifact": "pytest_api_cases.py", "duration_ms": 0, "exit_code": None, "stdout": "", "stderr": ""})
@@ -11888,7 +15572,7 @@ def run_enterprise_toolchain(project_id, options=None):
         else:
             results.append(_tool_result_blocked("pytest", "当前环境未安装 pytest；可在 Python 环境安装 pytest。", "pytest_api_cases.py"))
 
-    source_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' ORDER BY created_at", (project_id,))
+    source_cases = rows("SELECT * FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY created_at", (project_id,))
     diagnosis = {"auth": _auth_gap_diagnostics(source_cases, results, runtime_context)}
     if diagnosis["auth"].get("items"):
         diagnosis["auth_probe"] = _readonly_auth_probe(project, source_cases, runtime_context)
@@ -12126,7 +15810,7 @@ def generate_requirement_workflow(requirement_id):
     if not links: raise ValueError("请先选择至少一个关联接口")
     wid=uid("wf"); risk="high" if any(x["risk_level"]=="high" for x in links) else "medium"
     execute("INSERT INTO workflows VALUES (?,?,?,?,?,?,?,?,?)",(wid,req["project_id"],"需求流程："+req["title"],"需求驱动",req["description"],req["priority"],risk,"ready",now()))
-    cases=rows("SELECT * FROM test_cases WHERE project_id=? AND title LIKE '%：正常请求'",(req["project_id"],)); title_map={(x["method"],x["title"].removesuffix("：正常请求")):x["id"] for x in cases}
+    cases=rows("SELECT * FROM test_cases WHERE project_id=? AND title LIKE '%：正常请求' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'",(req["project_id"],)); title_map={(x["method"],x["title"].removesuffix("：正常请求")):x["id"] for x in cases}
     values=[]
     for i,x in enumerate(links,1):
         phase="setup" if i==1 else "verify" if i==len(links) else "action"
@@ -12588,6 +16272,10 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_01",
         "thread_group": "工资交易流程A：创建后申请人取消",
         "order_var": "flow_a_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+            {"role": "applicant", "action": "取消订单", "method": "POST", "path": "/userserv/salary/trade/order/cancel", "consumes": ["salary_order_no"]},
+        ],
         "steps": ["申请人读取额度", "申请人创建订单", "提取 orderNo/orderId", "申请人取消订单", "校验订单状态 50"],
         "assertions": ["创建接口 code=200", "orderNo 不为空", "取消后状态为已取消", "订单日志存在创建和取消记录"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_order_log"],
@@ -12602,6 +16290,10 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_02",
         "thread_group": "工资交易流程B：创建后代理拒绝",
         "order_var": "flow_b_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+            {"role": "proxy", "action": "拒绝订单", "method": "POST", "path": "/userserv/salary/trade/agent/order/reject", "consumes": ["salary_order_no"]},
+        ],
         "steps": ["申请人创建订单", "代理查询待处理订单", "代理拒绝订单", "校验订单状态为拒绝/关闭"],
         "assertions": ["代理侧能查到该订单", "拒绝接口 code=200", "拒绝后申请人无进行中订单"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_order_log"],
@@ -12616,6 +16308,12 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_03",
         "thread_group": "工资交易流程C：完整成交",
         "order_var": "flow_c_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+            {"role": "proxy", "action": "接受订单", "method": "POST", "path": "/userserv/salary/trade/agent/order/accept", "consumes": ["salary_order_no"]},
+            {"role": "proxy", "action": "标记已转账", "method": "POST", "path": "/userserv/salary/trade/agent/order/paid", "consumes": ["salary_order_no"]},
+            {"role": "applicant", "action": "确认收款", "method": "POST", "path": "/userserv/salary/trade/order/confirm", "consumes": ["salary_order_no"]},
+        ],
         "steps": ["申请人创建订单", "代理接受", "代理标记已转账", "申请人确认收款", "校验交易完成"],
         "assertions": ["状态按 10 -> 20 -> 30 -> 40 流转", "完成后金额释放/扣减符合需求", "日志链路完整"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_order_log"],
@@ -12630,6 +16328,13 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_04",
         "thread_group": "工资交易流程D：投诉失败",
         "order_var": "flow_d_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+            {"role": "proxy", "action": "接受订单", "method": "POST", "path": "/userserv/salary/trade/agent/order/accept", "consumes": ["salary_order_no"]},
+            {"role": "proxy", "action": "标记已转账", "method": "POST", "path": "/userserv/salary/trade/agent/order/paid", "consumes": ["salary_order_no"]},
+            {"role": "applicant", "action": "提交投诉", "method": "POST", "path": "/userserv/salary/trade/order/appeal", "consumes": ["salary_order_no"]},
+        ],
+        "transaction_blocker": "缺少运营处理投诉失败的可执行接口或测试环境触发入口。",
         "steps": ["申请人创建订单", "代理接受", "代理标记已转账", "申请人投诉", "运营处理投诉失败", "校验最终状态"],
         "assertions": ["投诉记录写入", "投诉失败后订单结果符合需求", "证据记录可追溯"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_evidence", "anchor_salary_trade_order_log"],
@@ -12644,6 +16349,13 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_05",
         "thread_group": "工资交易流程E：投诉成功",
         "order_var": "flow_e_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+            {"role": "proxy", "action": "接受订单", "method": "POST", "path": "/userserv/salary/trade/agent/order/accept", "consumes": ["salary_order_no"]},
+            {"role": "proxy", "action": "标记已转账", "method": "POST", "path": "/userserv/salary/trade/agent/order/paid", "consumes": ["salary_order_no"]},
+            {"role": "applicant", "action": "提交投诉", "method": "POST", "path": "/userserv/salary/trade/order/appeal", "consumes": ["salary_order_no"]},
+        ],
+        "transaction_blocker": "缺少运营处理投诉成功的可执行接口或测试环境触发入口。",
         "steps": ["申请人创建订单", "代理接受", "代理标记已转账", "申请人投诉", "运营处理投诉成功", "校验退款/关闭"],
         "assertions": ["投诉记录写入", "投诉成功后资金处理符合需求", "订单日志记录运营动作"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_evidence", "anchor_salary_trade_order_log"],
@@ -12658,6 +16370,9 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_06",
         "thread_group": "工资交易流程F：待接单超时",
         "order_var": "flow_f_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+        ],
         "steps": ["申请人创建订单", "等待或模拟过期时间", "触发/查询过期结果", "校验订单关闭"],
         "assertions": ["过期前状态保持待处理", "过期后状态符合需求", "资金原路返回"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_order_log"],
@@ -12673,6 +16388,10 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_07",
         "thread_group": "工资交易流程G：已接受未转账超时",
         "order_var": "flow_g_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+            {"role": "proxy", "action": "接受订单", "method": "POST", "path": "/userserv/salary/trade/agent/order/accept", "consumes": ["salary_order_no"]},
+        ],
         "steps": ["申请人创建订单", "代理接受", "等待或模拟12小时", "校验订单取消和资金返回"],
         "assertions": ["接受后状态正确", "超时任务执行后订单关闭", "申请人工资/冻结金额恢复"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_order_log"],
@@ -12688,6 +16407,11 @@ SALARY_TRADE_CASE_FLOWS = [
         "account_slot": "applicant_08",
         "thread_group": "工资交易流程H：已转账未确认超时完成",
         "order_var": "flow_h_order_no",
+        "transaction_steps": [
+            {"role": "applicant", "action": "创建订单", "method": "POST", "path": "/userserv/salary/trade/order/create", "produces": ["salary_order_no"]},
+            {"role": "proxy", "action": "接受订单", "method": "POST", "path": "/userserv/salary/trade/agent/order/accept", "consumes": ["salary_order_no"]},
+            {"role": "proxy", "action": "标记已转账", "method": "POST", "path": "/userserv/salary/trade/agent/order/paid", "consumes": ["salary_order_no"]},
+        ],
         "steps": ["申请人创建订单", "代理接受", "代理标记已转账", "等待或模拟24小时", "校验订单自动完成"],
         "assertions": ["已转账状态正确", "超时后订单完成", "日志记录自动完成来源"],
         "data_evidence": ["anchor_salary_trade_order", "anchor_salary_trade_order_log"],
@@ -12698,7 +16422,7 @@ SALARY_TRADE_CASE_FLOWS = [
 
 
 def salary_trade_case_to_jmeter_model(project_id):
-    cases = rows("SELECT * FROM test_cases WHERE project_id=? ORDER BY priority,created_at", (project_id,))
+    cases = rows("SELECT * FROM test_cases WHERE project_id=? AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY priority,created_at", (project_id,))
     salary_cases = [
         item for item in cases
         if any(word in str(item.get("title") or item.get("requirement_ref") or item.get("steps") or "") for word in ("工资", "代理", "交易", "订单", "投诉", "结算"))
@@ -12898,6 +16622,28 @@ def _jmeter_property_path(path):
     return str(Path(path)).replace("\\", "/")
 
 
+def _portable_jmeter_default(path):
+    return "${__P(project_root,.)}/" + _portable_project_path(path)
+
+
+def _normalize_portable_jmeter_paths(text, result_relative_path="reports/latest/salary-trade-result.jtl"):
+    project_root_property = "${__P(project_root,.)}"
+    result_property = "${__P(jmeter_result_jtl,${__P(project_root,.)}/" + result_relative_path + ")}"
+    for root_value in sorted({str(ROOT), str(ROOT).replace("\\", "/")}, key=len, reverse=True):
+        text = text.replace(root_value, project_root_property)
+    text = re.sub(
+        r"\$\{__P\(salary_result_jtl,[A-Za-z]:[/\\][^})]*?\.jtl\)\}",
+        "${__P(salary_result_jtl,${__P(project_root,.)}/" + result_relative_path + ")}",
+        text,
+    )
+    text = re.sub(
+        r"[A-Za-z]:[/\\][^<>'\"\r\n]*?\.jtl",
+        result_property,
+        text,
+    )
+    return text
+
+
 def _normalize_jmeter_empty_script_filenames(text):
     """JMeter treats whitespace-only JSR223 filenames as real script paths."""
     return re.sub(r'<stringProp name="filename">\s+</stringProp>', '<stringProp name="filename"></stringProp>', text)
@@ -13009,8 +16755,8 @@ def _inject_jmeter_platform_callback(text):
     if closing not in text:
         return text
     callback = f"""      <PostThreadGroup guiclass=\"PostThreadGroupGui\" testclass=\"PostThreadGroup\" testname=\"{marker}\" enabled=\"true\">
-        <intProp name=\"ThreadGroup.num_threads\">1</intProp>
-        <intProp name=\"ThreadGroup.ramp_time\">1</intProp>
+        <stringProp name=\"ThreadGroup.num_threads\">1</stringProp>
+        <stringProp name=\"ThreadGroup.ramp_time\">1</stringProp>
         <boolProp name=\"ThreadGroup.same_user_on_next_iteration\">true</boolProp>
         <stringProp name=\"ThreadGroup.on_sample_error\">continue</stringProp>
         <elementProp name=\"ThreadGroup.main_controller\" elementType=\"LoopController\" guiclass=\"LoopControlPanel\" testclass=\"LoopController\">
@@ -13093,38 +16839,45 @@ def generate_salary_trade_jmeter_from_cases(project_id):
         or str(ROOT / "reports" / "latest" / "salary-trade-result.jtl")
     )
     _write_salary_trade_flow_slots_csv(flow_slots_csv)
-    default_applicant_csv = _jmeter_property_path(applicant_csv)
-    default_account_csv = _jmeter_property_path(account_csv)
-    default_flow_slots_csv = _jmeter_property_path(flow_slots_csv)
-    default_proxy_csv = _jmeter_property_path(proxy_csv)
+    default_applicant_csv = _portable_jmeter_default(applicant_csv)
+    default_account_csv = _portable_jmeter_default(account_csv)
+    default_flow_slots_csv = _portable_jmeter_default(flow_slots_csv)
+    default_proxy_csv = _portable_jmeter_default(proxy_csv)
     text = _set_salary_trade_applicant_csv_property(text, "${__P(salary_applicants_csv," + default_applicant_csv + ")}")
     text = _inject_salary_trade_proxy_csv_resolution(text, default_proxy_csv)
     text = _inject_jmeter_platform_callback(text)
-    default_result_jtl = _jmeter_property_path(result_jtl)
+    default_result_jtl = _portable_jmeter_default(result_jtl)
     text = text.replace(str(result_jtl), "${__P(salary_result_jtl," + default_result_jtl + ")}")
+    text = _normalize_portable_jmeter_paths(text)
     text = _normalize_jmeter_empty_script_filenames(text)
     write_result = _write_jmx_preserving_manual_edits(target, text)
+    yaml_config = environment_config_status(project_id)
+    yaml_config["env_file"] = _portable_project_path(yaml_config.get("env_file") or CONFIG_DIR / "env.test.yaml")
+    yaml_tools = yaml_config.setdefault("tools", {})
+    yaml_tools["jmeter_home"] = "${AUTOTEST_JMETER_HOME}"
+    yaml_tools["jmeter_command"] = "${AUTOTEST_JMETER}"
+    yaml_tools["jmeter_engine"] = JMETER_MCP_ENGINE
     manifest = {
         "generated_at": now(),
         "project_id": project_id,
         "requirement": model["requirement"],
         "source": "test_cases_to_jmeter_model",
-        "skill": str(SKILL_DIR / "jmeter-script-generation" / "SKILL.md"),
+        "skill": _portable_project_path(SKILL_DIR / "jmeter-script-generation" / "SKILL.md"),
         "account_model": {
-            "path": model["artifacts"]["account_model"],
+            "path": _portable_project_path(model["artifacts"]["account_model"]),
             "status": "READY" if Path(model["artifacts"]["account_model"]).is_file() else "MISSING",
             "rule": "JMeter生成必须先读取需求包 account_model.yaml，再决定单账号、多角色、多流程槽位、CSV、DB/Redis证据和阻断规则。",
         },
-        "yaml_config": environment_config_status(project_id),
+        "yaml_config": yaml_config,
         "csv_contract": model["csv_contract"],
-        "jmx_path": str(target),
-        "launcher": model["artifacts"]["launcher"],
-        "runtime_parameters": model["artifacts"]["runtime_parameters"],
+        "jmx_path": _portable_project_path(target),
+        "launcher": _portable_project_path(model["artifacts"]["launcher"]),
+        "runtime_parameters": _portable_project_path(model["artifacts"]["runtime_parameters"]),
         "csv_files": {
-            "accounts": str(account_csv),
-            "applicants": str(applicant_csv),
-            "flow_slots": str(flow_slots_csv),
-            "proxies": str(proxy_csv),
+            "accounts": _portable_project_path(account_csv),
+            "applicants": _portable_project_path(applicant_csv),
+            "flow_slots": _portable_project_path(flow_slots_csv),
+            "proxies": _portable_project_path(proxy_csv),
         },
         "jmeter_property_defaults": {
             "salary_accounts_csv": default_account_csv,
@@ -13172,13 +16925,13 @@ def generate_salary_trade_jmeter_from_cases(project_id):
         "- account_model.yaml：每个需求包自己的账号规则，JMeter生成前必须先读取它。",
         "",
         "## 生成产物",
-        f"- JMX：{target}",
-        f"- Manifest：{manifest_path}",
-        f"- 账号模型：{model['artifacts']['account_model']}",
-        f"- 账号CSV：{account_csv}",
-        f"- 申请人CSV：{applicant_csv}",
-        f"- 流程槽位CSV：{flow_slots_csv}",
-        f"- Skill：{SKILL_DIR / 'jmeter-script-generation' / 'SKILL.md'}",
+        f"- JMX：{_portable_project_path(target)}",
+        f"- Manifest：{_portable_project_path(manifest_path)}",
+        f"- 账号模型：{_portable_project_path(model['artifacts']['account_model'])}",
+        f"- 账号CSV：{_portable_project_path(account_csv)}",
+        f"- 申请人CSV：{_portable_project_path(applicant_csv)}",
+        f"- 流程槽位CSV：{_portable_project_path(flow_slots_csv)}",
+        f"- Skill：{_portable_project_path(SKILL_DIR / 'jmeter-script-generation' / 'SKILL.md')}",
     ])
     summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     runtime_doc = outputs / "salary-trade-runtime-parameters.md"
@@ -13193,7 +16946,9 @@ def generate_salary_trade_jmeter_from_cases(project_id):
         "",
         "## 启动示例",
         "```powershell",
-        f"& \"{_jmeter_command()}\" -t \"{target}\" -Jsalary_applicants_csv=\"{applicant_csv}\" -Jsalary_accounts_csv=\"{account_csv}\" -Jsalary_flow_slots_csv=\"{flow_slots_csv}\"",
+        "$projectRoot = Split-Path -Parent $PSScriptRoot",
+        "$jmeter = $env:AUTOTEST_JMETER",
+        "& $jmeter -t (Join-Path $projectRoot 'outputs/salary-trade-case-driven.jmx') -Jproject_root=$projectRoot",
         "```",
         "",
         "## 规则",
@@ -15309,6 +19064,8 @@ def execute_case(case_id, overrides=None, context=None):
     case = row("SELECT c.*, p.base_url FROM test_cases c JOIN projects p ON p.id=c.project_id WHERE c.id=?", (case_id,))
     if not case:
         raise ValueError("用例不存在")
+    if str(case.get("lifecycle_status") or "ACTIVE").upper() != "ACTIVE":
+        raise ValueError(f"只有 ACTIVE 用例可以执行，当前状态为 {case.get('lifecycle_status') or 'DRAFT'}")
     overrides = overrides or {}; context = context or _runtime_context(case["project_id"], {})
     if os.getenv("AUTOTEST_QUERY_TICKET"): context.setdefault("ticket",os.environ["AUTOTEST_QUERY_TICKET"])
     if os.getenv("AUTOTEST_LOGIN_PASSWORD_ENCRYPTED"): context.setdefault("login_password_encrypted",os.environ["AUTOTEST_LOGIN_PASSWORD_ENCRYPTED"])
@@ -15397,7 +19154,7 @@ def execute_case(case_id, overrides=None, context=None):
 def resolve_executable_case(project_id, method, path):
     """Resolve a runnable case by API identity instead of project-specific row ids."""
     normalized=str(path or "").split("?",1)[0]
-    candidates=rows("SELECT * FROM test_cases WHERE project_id=? AND UPPER(method)=? AND path<>'' ORDER BY CASE WHEN status='ready' THEN 0 ELSE 1 END, created_at",(project_id,str(method).upper()))
+    candidates=rows("SELECT * FROM test_cases WHERE project_id=? AND UPPER(method)=? AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE' ORDER BY CASE WHEN status='ready' THEN 0 ELSE 1 END, created_at",(project_id,str(method).upper()))
     matched=[item for item in candidates if str(item.get("path") or "").split("?",1)[0]==normalized]
     negative=re.compile(r"缺失|无效|过期|非法|不一致|越权|异常|空data|字段缺失",re.I)
     def score(item):
@@ -15508,7 +19265,7 @@ def run_business_chain_full_test(project_id, performance_requests=20, runtime=No
     ordered=sorted(durations)
     percentile=lambda p: ordered[min(len(ordered)-1,max(0,int(len(ordered)*p)-1))]
     performance={"requests":len(durations),"success":success,"failed":len(durations)-success,"success_rate":round(success/len(durations)*100,2),"average_ms":round(statistics.mean(durations),2),"p50_ms":percentile(.50),"p95_ms":percentile(.95),"min_ms":min(durations),"max_ms":max(durations),"errors":perf_errors[:10],"engine":"Python快速冒烟"}
-    jmeter=run_jmeter_wealth(ticket,login_uid,runtime.get("jmeter_threads",2),runtime.get("jmeter_loops",5),runtime.get("jmeter_rampup",2)) if runtime.get("run_jmeter",True) else {"status":"SKIPPED","engine":"JMeter"}
+    jmeter=run_jmeter_wealth(project_id,ticket,login_uid,runtime.get("jmeter_threads",2),runtime.get("jmeter_loops",5),runtime.get("jmeter_rampup",2),wealth_case) if runtime.get("run_jmeter",True) else {"status":"SKIPPED","engine":JMETER_MCP_ENGINE}
     flow_trace.append({"order":6,"name":"JMeter正式性能测试","status":jmeter.get("status"),"inputs":{"ticket":"复用步骤1内存变量","uid":login_uid,"threads":jmeter.get("threads"),"loops":jmeter.get("loops")},"assertions":{"error_rate_zero":jmeter.get("error_rate")==0,"http_codes":jmeter.get("response_codes",{})},"failure_category":"none" if jmeter.get("status")=="PASSED" else "performance_or_authentication"})
     perf_actual=f"真实请求{performance['requests']}次，成功率{performance['success_rate']}%，平均{performance['average_ms']}ms，P50={performance['p50_ms']}ms，P95={performance['p95_ms']}ms，最大{performance['max_ms']}ms；性能阈值尚未确认"
     execute("UPDATE test_cases SET execution_status='BLOCKED',actual_result=?,run_count=COALESCE(run_count,0)+1,last_run_at=? WHERE project_id=? AND title='财富接口响应性能'",(perf_actual,now(),project_id))
@@ -15636,6 +19393,8 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/health": return self.send_json({"ok": True, "time": now(), "build": BUILD_ID, "frontend_build": BUILD_ID, "backend": "python-stdlib"})
             if path == "/api/system/storage-policy": return self.send_json(platform_storage_policy())
             if path == "/api/projects": return self.send_json(rows("SELECT * FROM projects ORDER BY updated_at DESC"))
+            m = re.fullmatch(r"/api/cases/([^/]+)/lifecycle-history", path)
+            if m: return self.send_json(test_case_lifecycle_history(m.group(1)))
             m = re.fullmatch(r"/api/projects/([^/]+)/reports", path)
             if m: return self.send_json(list_generated_reports(m.group(1)))
             m = re.fullmatch(r"/api/projects/([^/]+)/test-accounts", path)
@@ -15884,6 +19643,8 @@ class Handler(BaseHTTPRequestHandler):
             if m: return self.send_json(requirement_resource_preflight(m.group(1), m.group(2)))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/execution-plan", path)
             if m: return self.send_json(generate_requirement_execution_plan(m.group(1), m.group(2), self.body()))
+            m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/regression-selection", path)
+            if m: return self.send_json(generate_requirement_regression_selection(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/newman/run", path)
             if m: return self.send_json(run_requirement_package_newman(m.group(1), m.group(2), self.body()))
             m = re.fullmatch(r"/api/projects/([^/]+)/requirement-packages/([^/]+)/pytest/run", path)
@@ -15937,9 +19698,9 @@ class Handler(BaseHTTPRequestHandler):
                     runtime=self.body()
                     result=run_business_chain_full_test(project_id,int(runtime.get("performance_requests",20)),runtime)
                     total=row("SELECT COUNT(*) n FROM test_cases WHERE project_id=?",(project_id,))["n"]
-                    executable=row("SELECT COUNT(*) n FROM test_cases WHERE project_id=? AND method<>'' AND path<>''",(project_id,))["n"]
+                    executable=row("SELECT COUNT(*) n FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'",(project_id,))["n"]
                     return self.send_json({"total_cases":total,"executable":executable,"not_executed":max(0,total-executable),"primary_flow":"凭证复用/真实登录 → 内存变量传递 → 财富接口 → 业务校验 → 性能测试 → 报告","full_test":result})
-                cases = rows("SELECT id FROM test_cases WHERE project_id=? AND method<>'' AND path<>''", (project_id,))
+                cases = rows("SELECT id FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'", (project_id,))
                 results = [execute_case(x["id"]) for x in cases]
                 total=row("SELECT COUNT(*) n FROM test_cases WHERE project_id=?",(project_id,))["n"]
                 return self.send_json({"total_cases":total,"executable":len(results),"not_executed":total-len(results),"results":results})
@@ -15964,6 +19725,10 @@ class Handler(BaseHTTPRequestHandler):
             m = re.fullmatch(r"/api/projects/([^/]+)", path)
             if m:
                 execute("UPDATE projects SET name=?,description=?,base_url=?,updated_at=? WHERE id=?", (x.get("name", ""), x.get("description", ""), x.get("base_url", ""), now(), m.group(1))); return self.send_json({"ok": True})
+            m = re.fullmatch(r"/api/cases/([^/]+)/lifecycle", path)
+            if m: return self.send_json(set_test_case_lifecycle(m.group(1), x.get("lifecycle_status"), x.get("note", ""), x.get("actor", "workbench")))
+            m = re.fullmatch(r"/api/projects/([^/]+)/cases/lifecycle/bulk", path)
+            if m: return self.send_json(bulk_set_test_case_lifecycle(m.group(1), x.get("case_ids") or [], x.get("lifecycle_status"), x.get("note", ""), x.get("actor", "workbench")))
             m = re.fullmatch(r"/api/cases/([^/]+)", path)
             if m:
                 fields = ["title","method","path","headers","payload","expected_status","expected_contains","priority","status","steps","expected"]

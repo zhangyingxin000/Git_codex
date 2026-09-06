@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "name": "Soulfree测试服 - wealth-level",
+  "metadata": {
+    "project_id": "prj_e3515817c4",
+    "package_id": "wealth-level",
+    "source": "existing maintained JMX imported through jmeter-mcp-server",
+    "generation_engine": "jmeter-mcp-server@0.3.1",
+    "compatibility_mode": "mcp_import"
+  },
+  "source_jmx": "requirements/wealth-level/outputs/jmeter/性能基线.jmx",
+  "thresholds": {
+    "max_error_rate_pct": 1.0,
+    "max_p95_ms": 2000
+  }
+}

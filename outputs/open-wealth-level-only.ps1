@@ -5,17 +5,19 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$ProjectRoot = "C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI"
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $Jmx = Join-Path $ProjectRoot "outputs\wealth-level-only.jmx"
-$JMeter = "D:\apache-jmeter-5.6.3\bin\jmeter.bat"
-$JMeterHome = "D:\apache-jmeter-5.6.3\bin"
+$JMeter = [string]$env:AUTOTEST_JMETER
+if ([string]::IsNullOrWhiteSpace($JMeter) -and $env:AUTOTEST_JMETER_HOME) { $JMeter = Join-Path $env:AUTOTEST_JMETER_HOME "bin\jmeter.bat" }
+if ([string]::IsNullOrWhiteSpace($JMeter)) { $JMeter = (Get-Command jmeter.bat,jmeter -ErrorAction SilentlyContinue | Select-Object -First 1).Source }
+$JMeterHome = if ($JMeter) { Split-Path -Parent $JMeter } else { "" }
 $RuntimeProperties = Join-Path $ProjectRoot "work\wealth-level-runtime.properties"
 
 if (!(Test-Path -LiteralPath $Jmx)) {
     throw "Wealth level JMX not found: $Jmx"
 }
-if (!(Test-Path -LiteralPath $JMeter)) {
-    throw "JMeter launcher not found: $JMeter"
+if (!$JMeter -or !(Test-Path -LiteralPath $JMeter)) {
+    throw "JMeter launcher not found. Set AUTOTEST_JMETER or AUTOTEST_JMETER_HOME."
 }
 
 $PropertyLines = @(
@@ -51,4 +53,4 @@ Write-Host "JMX: $Jmx"
 Write-Host "Runtime properties: $RuntimeProperties"
 Write-Host "Ticket provided: $(-not [string]::IsNullOrWhiteSpace($Ticket))"
 
-Start-Process -FilePath $JMeter -ArgumentList @("-q", $RuntimeProperties, "-t", $Jmx) -WorkingDirectory $JMeterHome
+Start-Process -FilePath $JMeter -ArgumentList @("-q", $RuntimeProperties, "-Jproject_root=$ProjectRoot", "-t", $Jmx) -WorkingDirectory $JMeterHome

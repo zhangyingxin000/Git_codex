@@ -5,24 +5,24 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$ProjectRoot = "C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI"
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $Jmx = Join-Path $ProjectRoot "outputs\performance-baseline-with-salary-thread.jmx"
-$ResultDir = "D:\apache-jmeter-5.6.3\jmx\20260826"
-$JMeter = "D:\apache-jmeter-5.6.3\bin\jmeter.bat"
-$JMeterHome = "D:\apache-jmeter-5.6.3\bin"
+$ResultDir = Join-Path $ProjectRoot "reports\latest"
+$JMeter = [string]$env:AUTOTEST_JMETER
+if ([string]::IsNullOrWhiteSpace($JMeter) -and $env:AUTOTEST_JMETER_HOME) { $JMeter = Join-Path $env:AUTOTEST_JMETER_HOME "bin\jmeter.bat" }
+if ([string]::IsNullOrWhiteSpace($JMeter)) { $JMeter = (Get-Command jmeter.bat,jmeter -ErrorAction SilentlyContinue | Select-Object -First 1).Source }
+$JMeterHome = if ($JMeter) { Split-Path -Parent $JMeter } else { "" }
 $RuntimeExporter = Join-Path $ProjectRoot "work\export_jmeter_runtime.py"
 $RuntimeProperties = Join-Path $ProjectRoot "work\jmeter-runtime.properties"
-$Python = "C:\Users\DELL\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
-if (!(Test-Path -LiteralPath $Python)) {
-    $Python = "python"
-}
+$Python = if ($env:AUTOTEST_PYTHON) { $env:AUTOTEST_PYTHON } else { "python" }
 
 if (!(Test-Path -LiteralPath $Jmx)) {
     throw "Generated JMX not found: $Jmx"
 }
-if (!(Test-Path -LiteralPath $JMeter)) {
-    throw "JMeter launcher not found: $JMeter"
+if (!$JMeter -or !(Test-Path -LiteralPath $JMeter)) {
+    throw "JMeter launcher not found. Set AUTOTEST_JMETER or AUTOTEST_JMETER_HOME."
 }
+New-Item -ItemType Directory -Force -Path $ResultDir | Out-Null
 if (!(Test-Path -LiteralPath $RuntimeExporter)) {
     throw "Runtime exporter not found: $RuntimeExporter"
 }
@@ -66,7 +66,7 @@ if (![string]::IsNullOrWhiteSpace($ProxyTicket)) {
 }
 $PropertyLines | Set-Content -LiteralPath $RuntimeProperties -Encoding ASCII
 
-$Args = @("-q", $RuntimeProperties, "-t", $Jmx)
+$Args = @("-q", $RuntimeProperties, "-Jproject_root=$ProjectRoot", "-t", $Jmx)
 
 Write-Host "Runtime ticket loaded from local credential store."
 if (![string]::IsNullOrWhiteSpace($Ticket)) {

@@ -13,6 +13,12 @@
     return namespace.services.api.request(`/api/tasks/${encodeURIComponent(taskId)}`);
   }
 
+  async function cancel(taskId) {
+    return namespace.services.api.request(`/api/tasks/${encodeURIComponent(taskId)}/cancel`, {
+      method: "POST",
+    });
+  }
+
   async function wait(taskId, options = {}) {
     const interval = options.interval || 800;
     const timeout = options.timeout || 120000;
@@ -20,11 +26,11 @@
     while (Date.now() - started < timeout) {
       const task = await get(taskId);
       options.onProgress?.(task);
-      if (["PASSED", "FAILED", "INTERRUPTED"].includes(task.status)) return task;
+      if (["PASSED", "FAILED", "CANCELLED", "INTERRUPTED"].includes(task.status)) return task;
       await new Promise(resolve => setTimeout(resolve, interval));
     }
     throw new Error("后台任务等待超时，可在执行中心继续查看任务状态");
   }
 
-  namespace.services.tasks = {submit, get, wait};
+  namespace.services.tasks = {submit, get, cancel, wait};
 })(window);

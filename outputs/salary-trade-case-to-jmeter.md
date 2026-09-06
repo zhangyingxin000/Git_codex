@@ -23,10 +23,10 @@
 - account_model.yaml：每个需求包自己的账号规则，JMeter生成前必须先读取它。
 
 ## 生成产物
-- JMX：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\outputs\salary-trade-case-driven.jmx
-- Manifest：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\outputs\salary-trade-case-jmeter-manifest.json
-- 账号模型：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\requirements\salary-trade\account_model.yaml
-- 账号CSV：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-accounts.csv
-- 申请人CSV：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-applicants.csv
-- 流程槽位CSV：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-flow-slots.csv
-- Skill：C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\skills\jmeter-script-generation\SKILL.md
+- JMX：outputs/salary-trade-case-driven.jmx
+- Manifest：outputs/salary-trade-case-jmeter-manifest.json
+- 账号模型：requirements/salary-trade/account_model.yaml
+- 账号CSV：data/salary-trade-accounts.csv
+- 申请人CSV：data/salary-trade-applicants.csv
+- 流程槽位CSV：data/salary-trade-flow-slots.csv
+- Skill：skills/jmeter-script-generation/SKILL.md

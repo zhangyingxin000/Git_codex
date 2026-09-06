@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 from quality_hub_backend.services.api_case_design import (
     generate_api_case_design,
@@ -56,7 +57,7 @@ def test_schema_generator_covers_equivalence_boundaries_security_and_concurrency
     assert any("remark SQL注入字符" in title for title in titles)
     assert any("缺失认证凭证" in title for title in titles)
     assert any("重复提交与幂等性" in title for title in titles)
-    assert any("同一业务数据并发提交" in title for title in titles)
+    assert any("同一资源并发请求" in title for title in titles)
     assert any("缺失整个请求体" in title for title in titles)
     assert any("Content-Type与请求体不匹配" in title for title in titles)
     assert any("使用不支持的HTTP方法" in title for title in titles)
@@ -65,6 +66,30 @@ def test_schema_generator_covers_equivalence_boundaries_security_and_concurrency
     assert any("tags minItems-1" in title for title in titles)
     assert not any("缺失必填字段 body.callbackEmail" in title for title in titles)
     assert not any("缺失必填字段 body.tags" in title for title in titles)
+    assert payload["schema_version"] == "2.0"
+    assert payload["quality_gate"]["status"] == "PASS"
+    assert payload["summary"]["coverage_weights"] == {"normal": 40.0, "exception": 40.0, "boundary": 20.0}
+    assert payload["execution_order"]
+    assert all(re.fullmatch(r"TC_[A-Z0-9_]+_\d{3}_(normal|exception|boundary)", case["case_id"]) for case in payload["cases"])
+
+
+def test_v2_contract_infers_string_boundaries_and_covers_mandatory_exceptions() -> None:
+    payload = generate_api_case_design(SPEC, "orders")
+    cases = payload["cases"]
+    actions = {case["request_mutation"]["action"] for case in cases}
+
+    assert {
+        "empty_request", "type_confusion", "oversized_payload", "sql_injection",
+        "xss_injection", "unicode_null", "path_traversal", "oversized_id",
+        "repeat_same_request", "concurrent_same_request", "timeout_simulation",
+    } <= actions
+    inferred = [case for case in cases if case["inferred"]]
+    assert any("callbackEmail minLength-1" in case["title"] for case in inferred)
+    assert any("callbackEmail maxLength+1" in case["title"] for case in inferred)
+    assert all(case["need_review"] for case in inferred)
+    assert all({"status", "protocol", "schema", "business_logic", "performance"} <= set(case["assertions"]) for case in cases)
+    assert all(case["cleanup"]["action"] != "none" for case in cases if case["method"] in {"POST", "PUT", "PATCH", "DELETE"})
+    assert sum("exploratory" in case["tags"] for case in cases) == int(len(cases) * 0.2)
 
 
 def test_schema_generator_writes_reviewable_outputs(tmp_path: Path) -> None:
@@ -72,5 +97,7 @@ def test_schema_generator_writes_reviewable_outputs(tmp_path: Path) -> None:
     paths = write_case_design(payload, tmp_path)
 
     assert Path(paths["json"]).is_file()
-    assert Path(paths["markdown"]).read_text(encoding="utf-8").startswith("# Schema驱动接口测试用例")
+    markdown = Path(paths["markdown"]).read_text(encoding="utf-8")
+    assert markdown.startswith("# Schema驱动接口测试用例 v2.0")
+    assert "质量门禁：PASS" in markdown
     assert Path(paths["xlsx"]).read_bytes().startswith(b"PK")

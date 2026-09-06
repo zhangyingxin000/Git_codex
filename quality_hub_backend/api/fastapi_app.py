@@ -50,7 +50,7 @@ def create_app() -> FastAPI:
     legacy.init_db()
     settings = AppSettings.from_environment(legacy.ROOT)
     task_queue = PersistentTaskQueue(settings.task_database, settings.task_workers)
-    dispatcher = TaskDispatcher(legacy)
+    dispatcher = TaskDispatcher(legacy, settings)
     api = FastAPI(
         title="AutoTest AI Quality Hub",
         version="0.1.0",
@@ -663,7 +663,7 @@ def create_app() -> FastAPI:
             )
             total = legacy.row("SELECT COUNT(*) n FROM test_cases WHERE project_id=?", (project_id,))["n"]
             executable = legacy.row(
-                "SELECT COUNT(*) n FROM test_cases WHERE project_id=? AND method<>'' AND path<>''",
+                "SELECT COUNT(*) n FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'",
                 (project_id,),
             )["n"]
             return {
@@ -674,7 +674,7 @@ def create_app() -> FastAPI:
                 "full_test": result,
             }
         cases = legacy.rows(
-            "SELECT id FROM test_cases WHERE project_id=? AND method<>'' AND path<>''",
+            "SELECT id FROM test_cases WHERE project_id=? AND method<>'' AND path<>'' AND COALESCE(lifecycle_status,'ACTIVE')='ACTIVE'",
             (project_id,),
         )
         results = [legacy.execute_case(item["id"]) for item in cases]
@@ -729,6 +729,29 @@ def create_app() -> FastAPI:
             (*values, case_id),
         )
         return {"ok": True}
+
+    @api.put("/api/cases/{case_id}/lifecycle", tags=["Assets"], summary="更新测试用例生命周期")
+    def update_case_lifecycle(case_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.set_test_case_lifecycle(
+            case_id,
+            payload.get("lifecycle_status"),
+            payload.get("note", ""),
+            payload.get("actor", "workbench"),
+        )
+
+    @api.get("/api/cases/{case_id}/lifecycle-history", tags=["Assets"], summary="测试用例生命周期历史")
+    def case_lifecycle_history(case_id: str) -> dict[str, Any]:
+        return legacy.test_case_lifecycle_history(case_id)
+
+    @api.put("/api/projects/{project_id}/cases/lifecycle/bulk", tags=["Assets"], summary="批量审批测试用例生命周期")
+    def bulk_case_lifecycle(project_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+        return legacy.bulk_set_test_case_lifecycle(
+            project_id,
+            payload.get("case_ids") or [],
+            payload.get("lifecycle_status"),
+            payload.get("note", ""),
+            payload.get("actor", "workbench"),
+        )
 
     @api.put("/api/jobs/{job_id}", tags=["Execution"], summary="更新调度任务")
     def update_job(job_id: str, payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, bool]:

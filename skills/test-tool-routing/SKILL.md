@@ -16,7 +16,7 @@ Do not split one business requirement into unrelated Newman, JMeter, and pytest 
 The platform is the orchestration hub. Newman, JMeter, pytest, and manual review remain separate execution methods with different responsibilities:
 
 - Newman runs simple API regression and smoke checks.
-- JMeter runs complex workflows, multi-account state machines, loops, concurrency, and performance.
+- JMeter has two independent modes: business-scenario execution for complex workflows and performance execution for load models. Never combine both purposes in one plan or report.
 - pytest runs deep verification after execution, especially HTTP plus DB/Redis evidence analysis.
 - Manual review is used for long waits, backend operations, irreversible actions, or missing runnable data.
 
@@ -29,7 +29,9 @@ Do not route by HTTP method alone. A `POST` read-style endpoint can still be New
 For each scenario, produce tool tasks:
 
 - Add `newman` when the scenario has stateless read APIs, authentication smoke, simple contract checks, or reusable preflight calls.
-- Add `jmeter` when the scenario needs ordered steps, extracted variables, role switching, multi-account data, state transitions, loops, concurrency, or performance metrics.
+- Add `jmeter_scenario` when the requirement needs ordered steps, extracted variables, role switching, multi-account data, state transitions or complex loops.
+- Add `jmeter_performance` when the objective is baseline, stepped load, stability, concurrency capacity or stress testing.
+- A requirement may use both modes, but they must generate separate JMX files, run records and reports.
 - Add `pytest` when the scenario needs post-run DB/Redis evidence checks, generated report replay, or deep assertions across HTTP and storage.
 - Add `manual` when the scenario needs operations staff, background jobs, 12/24 hour waiting, irreversible data changes, or unavailable runnable data.
 

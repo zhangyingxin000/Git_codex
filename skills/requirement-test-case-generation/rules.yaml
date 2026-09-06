@@ -49,6 +49,14 @@ quality_statuses:
   - NEEDS_EVIDENCE_REVIEW
   - MANUAL_ONLY
 
+lifecycle_statuses:
+  default_for_new: DRAFT
+  executable: ACTIVE
+  values:
+    - DRAFT
+    - ACTIVE
+    - DEPRECATED
+
 source_rules:
   infer_accounts_from_cases: true
   default_account_mode: single_account

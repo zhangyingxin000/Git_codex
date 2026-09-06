@@ -1,0 +1,34 @@
+{
+  "$schema": "../../tools/jmeter-mcp/workflow.schema.json",
+  "schema_version": "1.0",
+  "name": "Quality Hub MCP health POC",
+  "thread_groups": [
+    {
+      "name": "Read-only health check",
+      "num_threads": 2,
+      "ramp_time_seconds": 1,
+      "loops": 3,
+      "samplers": [
+        {
+          "name": "GET platform health",
+          "method": "GET",
+          "url": "http://127.0.0.1:8765/api/health",
+          "assertions": {
+            "status": 200,
+            "max_duration_ms": 1000,
+            "json": [
+              {
+                "json_path": "$.ok",
+                "expected_value": "true"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "thresholds": {
+    "max_error_rate_pct": 0,
+    "max_p95_ms": 1000
+  }
+}

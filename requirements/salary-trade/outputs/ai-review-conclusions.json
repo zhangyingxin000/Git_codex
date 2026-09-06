@@ -1,0 +1,1034 @@
+{
+  "schema_version": "1.0",
+  "report_type": "REQUIREMENT_PACKAGE_AI_REVIEW_MEMORY",
+  "package_id": "salary-trade",
+  "updated_at": "2026-09-05T01:02:47+08:00",
+  "latest": {
+    "run_id": "run-20260905-010239-c3b4ba",
+    "status": "READY_WITH_WARNINGS",
+    "created_at": "2026-09-05T01:02:47+08:00",
+    "conclusion": "有待确认项，但不阻断继续演示。",
+    "summary": {
+      "package_status": "READY",
+      "tool_assets": 10,
+      "package_reports": 1,
+      "related_reports": 0,
+      "p0": 0,
+      "p1": 6,
+      "http_runs": 0,
+      "http_failed": 0,
+      "pytest_scenarios": 0,
+      "pytest_scenarios_failed": 0,
+      "pytest_scenarios_blocked": 0,
+      "root_cause_categories": {
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      }
+    },
+    "root_cause_categories": {
+      "data_evidence": 3,
+      "manual_or_timing": 2,
+      "test_data": 1
+    },
+    "next_actions": [
+      "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+      "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+      "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+      "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+    ],
+    "findings": [
+      {
+        "level": "P1",
+        "category": "data_evidence",
+        "title": "结构化用例仍有证据缺口",
+        "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+      },
+      {
+        "level": "P1",
+        "category": "manual_or_timing",
+        "title": "存在人工或长等待用例",
+        "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+      },
+      {
+        "level": "P1",
+        "category": "test_data",
+        "title": "生成前数据准备检查未完全通过",
+        "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      },
+      {
+        "level": "P1",
+        "category": "manual_or_timing",
+        "title": "生成前数据准备检查未完全通过",
+        "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+      },
+      {
+        "level": "P1",
+        "category": "data_evidence",
+        "title": "生成前数据准备检查未完全通过",
+        "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+      },
+      {
+        "level": "P1",
+        "category": "data_evidence",
+        "title": "JMeter目标用例存在证据待补",
+        "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+      }
+    ]
+  },
+  "history": [
+    {
+      "run_id": "run-20260905-010239-c3b4ba",
+      "status": "READY_WITH_WARNINGS",
+      "created_at": "2026-09-05T01:02:47+08:00",
+      "conclusion": "有待确认项，但不阻断继续演示。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 1,
+        "related_reports": 0,
+        "p0": 0,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      ],
+      "findings": [
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260905-005850-f40bff",
+      "status": "READY_WITH_WARNINGS",
+      "created_at": "2026-09-05T00:59:00+08:00",
+      "conclusion": "有待确认项，但不阻断继续演示。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 2,
+        "related_reports": 0,
+        "p0": 0,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      ],
+      "findings": [
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260905-005401-0e8bcb",
+      "status": "FAILED",
+      "created_at": "2026-09-05T00:54:32+08:00",
+      "conclusion": "存在阻断失败，先处理P0。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 3,
+        "related_reports": 0,
+        "p0": 2,
+        "p1": 11,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 5,
+        "pytest_scenarios_failed": 1,
+        "pytest_scenarios_blocked": 4,
+        "root_cause_categories": {
+          "unknown": 1,
+          "data_evidence": 8,
+          "business_assertion": 1,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "unknown": 1,
+        "data_evidence": 8,
+        "business_assertion": 1,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拿失败用例的接口响应、订单状态和需求状态机一起核对，确认是断言口径还是后端业务逻辑。"
+      ],
+      "findings": [
+        {
+          "level": "P0",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "pytest场景证据复盘未通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P0",
+          "category": "data_evidence",
+          "title": "pytest场景证据复盘未通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "pytest场景证据复盘未通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "pytest场景证据复盘未通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "pytest场景证据复盘未通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "business_assertion",
+          "title": "需求包执行未通过",
+          "recommendation": "拿失败用例的接口响应、订单状态和需求状态机一起核对，确认是断言口径还是后端业务逻辑。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260905-003749-64b16e",
+      "status": "READY_WITH_WARNINGS",
+      "created_at": "2026-09-05T00:38:10+08:00",
+      "conclusion": "有待确认项，但不阻断继续演示。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 2,
+        "related_reports": 0,
+        "p0": 0,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      ],
+      "findings": [
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260905-003737-127f49",
+      "status": "READY_WITH_WARNINGS",
+      "created_at": "2026-09-05T00:37:58+08:00",
+      "conclusion": "有待确认项，但不阻断继续演示。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 2,
+        "related_reports": 0,
+        "p0": 0,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      ],
+      "findings": [
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260905-003213-fbee8d",
+      "status": "READY_WITH_WARNINGS",
+      "created_at": "2026-09-05T00:32:22+08:00",
+      "conclusion": "有待确认项，但不阻断继续演示。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 2,
+        "related_reports": 0,
+        "p0": 0,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      ],
+      "findings": [
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260904-223839-b3fc0e",
+      "status": "READY_WITH_WARNINGS",
+      "created_at": "2026-09-04T22:42:02+08:00",
+      "conclusion": "有待确认项，但不阻断继续演示。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 5,
+        "related_reports": 0,
+        "p0": 0,
+        "p1": 7,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "unknown": 1,
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "unknown": 1,
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      ],
+      "findings": [
+        {
+          "level": "P1",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260904-223355-28e9e9",
+      "status": "READY_WITH_WARNINGS",
+      "created_at": "2026-09-04T22:34:24+08:00",
+      "conclusion": "有待确认项，但不阻断继续演示。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 2,
+        "related_reports": 0,
+        "p0": 0,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。",
+        "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。",
+        "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+      ],
+      "findings": [
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260904-222507-4f2b69",
+      "status": "FAILED",
+      "created_at": "2026-09-04T22:25:48+08:00",
+      "conclusion": "存在阻断失败，先处理P0。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 4,
+        "related_reports": 0,
+        "p0": 12,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "unknown": 2,
+          "authentication": 9,
+          "request_contract": 1,
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "unknown": 2,
+        "authentication": 9,
+        "request_contract": 1,
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先用最小读接口验证 applicant/proxy ticket 与 uid 归属，确认公共参数完整。",
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。",
+        "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+      ],
+      "findings": [
+        {
+          "level": "P0",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "request_contract",
+          "title": "外部工具执行失败",
+          "recommendation": "核对接口文档的必填、类型、枚举、uid/ticket匹配和请求体格式。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "结构化用例仍有证据缺口",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "存在人工或长等待用例",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "test_data",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "先处理数据准备检查：申请人处理中订单、代理白名单、国家币种匹配和代理登录态。"
+        },
+        {
+          "level": "P1",
+          "category": "manual_or_timing",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "拆成人工验证清单或准备测试环境时间加速方案，不要把长等待流程误判成脚本失败。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "生成前数据准备检查未完全通过",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        },
+        {
+          "level": "P1",
+          "category": "data_evidence",
+          "title": "JMeter目标用例存在证据待补",
+          "recommendation": "检查 evidence_rules.yaml、DB表字段、Redis Key和运行变量是否能定位到同一个业务对象。"
+        }
+      ]
+    },
+    {
+      "run_id": "run-20260902-194100-0935f9",
+      "status": "FAILED",
+      "created_at": "2026-09-04T21:43:02+08:00",
+      "conclusion": "存在阻断失败，先处理P0。",
+      "summary": {
+        "package_status": "READY",
+        "tool_assets": 10,
+        "package_reports": 10,
+        "related_reports": 0,
+        "p0": 25,
+        "p1": 6,
+        "http_runs": 0,
+        "http_failed": 0,
+        "pytest_scenarios": 0,
+        "pytest_scenarios_failed": 0,
+        "pytest_scenarios_blocked": 0,
+        "root_cause_categories": {
+          "unknown": 5,
+          "authentication": 18,
+          "request_contract": 2,
+          "data_evidence": 3,
+          "manual_or_timing": 2,
+          "test_data": 1
+        }
+      },
+      "root_cause_categories": {
+        "unknown": 5,
+        "authentication": 18,
+        "request_contract": 2,
+        "data_evidence": 3,
+        "manual_or_timing": 2,
+        "test_data": 1
+      },
+      "next_actions": [
+        "先用最小读接口验证 applicant/proxy ticket 与 uid 归属，确认公共参数完整。",
+        "先处理数据准备阻断，再运行 Newman/JMeter；否则容易继续出现401、50017或代理匹配失败。",
+        "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。",
+        "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+      ],
+      "findings": [
+        {
+          "level": "P0",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "request_contract",
+          "title": "外部工具执行失败",
+          "recommendation": "核对接口文档的必填、类型、枚举、uid/ticket匹配和请求体格式。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P0",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P0",
+          "category": "unknown",
+          "title": "需求包执行未通过",
+          "recommendation": "补齐请求、响应、JTL采样和DB/Redis证据后再复盘。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        },
+        {
+          "level": "P0",
+          "category": "authentication",
+          "title": "外部工具执行失败",
+          "recommendation": "先确认账号来源、ticket归属、公共请求参数和登录态刷新链路，再复跑最小接口。"
+        }
+      ]
+    }
+  ]
+}

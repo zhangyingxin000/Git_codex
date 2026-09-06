@@ -3,7 +3,7 @@
   "project_id": "prj_e3515817c4",
   "package_id": "wealth-level",
   "generated_at": "2026-09-03T15:09:48+08:00",
-  "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\rules.yaml",
+  "source": "skills/jmeter-script-generation/rules.yaml",
   "contract": {
     "schema_version": "1.0",
     "skill": "jmeter-script-generation",

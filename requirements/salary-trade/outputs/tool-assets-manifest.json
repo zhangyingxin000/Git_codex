@@ -3,10 +3,10 @@
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
   "package_name": "工资代理快速结算",
-  "generated_at": "2026-09-02T18:50:02+08:00",
+  "generated_at": "2026-09-05T00:37:52+08:00",
   "status": "READY",
   "account_model": {
-    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
+    "path": "requirements/salary-trade/account_model.yaml",
     "mode": "multi_flow_slots",
     "csv_required": true,
     "roles": [
@@ -17,55 +17,68 @@
     "rule": "先由需求包 account_model.yaml 决定账号模式，再生成 Newman/JMeter/pytest 资产。"
   },
   "jmeter_skill_contract": {
-    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-skill-contract.json",
-    "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\rules.yaml",
-    "rule_count": 29,
+    "path": "requirements/salary-trade/outputs/jmeter/jmeter-skill-contract.json",
+    "source": "skills/jmeter-script-generation/rules.yaml",
+    "rule_count": 36,
     "principle": "测试用例决定要测什么，JMeter Skill 决定如何稳定生成线程组、请求、CSV、断言、监听器和报告。"
   },
   "pytest_evidence_skill_contract": {
-    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest-evidence-skill-contract.json",
-    "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md",
+    "path": "requirements/salary-trade/outputs/pytest/pytest-evidence-skill-contract.json",
+    "source": "skills/pytest-evidence-review/SKILL.md",
     "input_count": 8,
     "principle": "pytest Skill 决定如何把HTTP、JMeter/Newman结果、DB/Redis证据和运行变量收敛成可复核JSON。"
   },
   "generated": [
     {
       "tool": "Account Model",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml"
+      "path": "requirements/salary-trade/account_model.yaml"
+    },
+    {
+      "tool": "API Test Case Design",
+      "path": "requirements/salary-trade/outputs/api-test-cases/api-test-cases.json",
+      "status": "READY_WITH_REVIEW",
+      "cases": 2368,
+      "skill_contract": "requirements/salary-trade/outputs/api-test-cases/api-test-case-skill-contract.json"
+    },
+    {
+      "tool": "Interface Test Newman",
+      "path": "requirements/salary-trade/outputs/interface-tests/newman/api-test-collection.json",
+      "status": "READY",
+      "cases": 2056,
+      "manifest": "requirements/salary-trade/outputs/interface-tests/newman/api-test-execution-manifest.json"
     },
     {
       "tool": "JMeter Skill Contract",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-skill-contract.json",
-      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\rules.yaml"
+      "path": "requirements/salary-trade/outputs/jmeter/jmeter-skill-contract.json",
+      "source": "skills/jmeter-script-generation/rules.yaml"
     },
     {
       "tool": "pytest Evidence Skill Contract",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest-evidence-skill-contract.json",
-      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md"
+      "path": "requirements/salary-trade/outputs/pytest/pytest-evidence-skill-contract.json",
+      "source": "skills/pytest-evidence-review/SKILL.md"
     },
     {
       "tool": "Newman",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\newman\\postman-collection.json"
+      "path": "requirements/salary-trade/outputs/newman/postman-collection.json"
     },
     {
       "tool": "pytest",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\pytest\\pytest_api_cases.py"
+      "path": "requirements/salary-trade/outputs/pytest/pytest_api_cases.py"
     },
     {
       "tool": "JMeter",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\jmeter-plan.jmx"
-    },
-    {
-      "tool": "JMeter",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\salary-trade-case-driven.jmx",
-      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-driven.jmx"
-    },
-    {
-      "tool": "JMeter Manifest",
-      "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\outputs\\jmeter\\salary-trade-case-jmeter-manifest.json",
-      "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-jmeter-manifest.json"
+      "path": "requirements/salary-trade/outputs/jmeter/jmeter-plan.jmx",
+      "workflow": "requirements/salary-trade/outputs/jmeter/jmeter-mcp-workflow.json",
+      "engine": "jmeter-mcp-server@0.3.1",
+      "mode": "mcp_import"
     }
   ],
   "warnings": [],
-  "rule": "同一需求包独立生成 Newman、JMeter、pytest 资产；报告也按需求包回收。"
+  "rule": "同一需求包独立生成 Newman、JMeter、pytest 资产；报告也按需求包回收。",
+  "jmeter_engine": {
+    "name": "jmeter-mcp-server@0.3.1",
+    "mode": "single_gateway",
+    "workflow": "requirements/salary-trade/outputs/jmeter/jmeter-mcp-workflow.json",
+    "principle": "平台保留需求解析和场景编排，JMX生成与非GUI执行统一交给JMeter MCP。"
+  }
 }

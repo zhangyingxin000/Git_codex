@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autotest-ai.local/schemas/jmeter-mcp-execution-2.0.json",
+  "title": "AutoTest AI JMeter MCP execution manifest",
+  "type": "object",
+  "required": ["schema_version", "name", "source_jmx"],
+  "properties": {
+    "schema_version": { "const": "2.0" },
+    "name": { "type": "string", "minLength": 1 },
+    "metadata": { "type": "object" },
+    "source_jmx": { "type": "string", "minLength": 1 },
+    "root_csv_data_sets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["filename"],
+        "properties": {
+          "name": { "type": "string" },
+          "filename": { "type": "string" },
+          "variable_names": { "type": "string" },
+          "delimiter": { "type": "string" },
+          "ignore_first_line": { "type": "boolean" },
+          "recycle": { "type": "boolean" },
+          "stop_thread": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "max_error_rate_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "max_p95_ms": { "type": "number", "minimum": 1 },
+        "max_p99_ms": { "type": "number", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "auto_stop": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "sample_interval_seconds": { "type": "number", "minimum": 1 },
+        "grace_period_seconds": { "type": "number", "minimum": 0 },
+        "min_samples": { "type": "integer", "minimum": 1 },
+        "latency_consecutive_windows": { "type": "integer", "minimum": 2 },
+        "error_consecutive_windows": { "type": "integer", "minimum": 1 },
+        "warmup_samples_per_label": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "transaction_mode": { "type": "string" },
+    "throughput_semantics": { "type": "string" }
+  },
+  "additionalProperties": false
+}

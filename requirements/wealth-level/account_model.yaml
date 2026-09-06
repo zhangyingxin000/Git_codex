@@ -1,9 +1,9 @@
 schema_version: '1.1'
 package_id: wealth-level
 package_name: 财富等级
-generated_at: '2026-09-03T15:09:48+08:00'
+generated_at: '2026-09-04T23:15:11+08:00'
 source:
-  skill: C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\skills\account-model-generation\SKILL.md
+  skill: skills/account-model-generation/SKILL.md
   decision_basis: 需求包测试用例、接口参数、业务角色、账号互斥和数据证据规则
 mode: single_account
 csv_required: false

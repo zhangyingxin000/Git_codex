@@ -1,0 +1,484 @@
+{
+  "schema_version": "1.0",
+  "report_type": "API_TEST_CASE_EXECUTION_ASSET",
+  "package_id": "wealth-level",
+  "summary": {
+    "source_cases": 70,
+    "compiled_newman_cases": 59,
+    "skipped_cases": 11,
+    "required_runtime_variables": []
+  },
+  "mapping": [
+    {
+      "case_id": "TC_WEALTH_LEVEL_001_normal",
+      "collection_item": "[TC_WEALTH_LEVEL_001_normal] 获取财富等级经验及等级权益：有效等价类正常请求",
+      "dimension": "功能",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_002_normal",
+      "collection_item": "[TC_WEALTH_LEVEL_002_normal] 获取财富等级经验及等级权益：响应状态与Schema契约",
+      "dimension": "响应契约",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_003_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_003_exception] 获取财富等级经验及等级权益：使用不支持的HTTP方法",
+      "dimension": "异常处理",
+      "method": "POST",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_004_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_004_exception] 获取财富等级经验及等级权益：缺失必填字段 query.ticket",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_005_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_005_exception] 获取财富等级经验及等级权益：query.ticket 非法null",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_006_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_006_boundary] 获取财富等级经验及等级权益：query.ticket 空值边界",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_007_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_007_exception] 获取财富等级经验及等级权益：query.ticket 类型错误",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_008_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_008_boundary] 获取财富等级经验及等级权益：query.ticket minLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_009_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_009_boundary] 获取财富等级经验及等级权益：query.ticket minLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_010_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_010_boundary] 获取财富等级经验及等级权益：query.ticket minLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_011_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_011_boundary] 获取财富等级经验及等级权益：query.ticket maxLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_012_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_012_boundary] 获取财富等级经验及等级权益：query.ticket maxLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_013_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_013_boundary] 获取财富等级经验及等级权益：query.ticket maxLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_014_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_014_exception] 获取财富等级经验及等级权益：缺失必填字段 query.uid",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_015_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_015_exception] 获取财富等级经验及等级权益：query.uid 非法null",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_016_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_016_boundary] 获取财富等级经验及等级权益：query.uid 空值边界",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_017_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_017_exception] 获取财富等级经验及等级权益：query.uid 类型错误",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_018_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_018_boundary] 获取财富等级经验及等级权益：query.uid minLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_019_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_019_boundary] 获取财富等级经验及等级权益：query.uid minLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_020_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_020_boundary] 获取财富等级经验及等级权益：query.uid minLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_021_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_021_boundary] 获取财富等级经验及等级权益：query.uid maxLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_022_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_022_boundary] 获取财富等级经验及等级权益：query.uid maxLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_023_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_023_boundary] 获取财富等级经验及等级权益：query.uid maxLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_026_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_026_boundary] 获取财富等级经验及等级权益：query.language 空值边界",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_027_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_027_exception] 获取财富等级经验及等级权益：query.language 类型错误",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_028_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_028_boundary] 获取财富等级经验及等级权益：query.language minLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_029_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_029_boundary] 获取财富等级经验及等级权益：query.language minLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_030_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_030_boundary] 获取财富等级经验及等级权益：query.language minLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_031_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_031_boundary] 获取财富等级经验及等级权益：query.language maxLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_032_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_032_boundary] 获取财富等级经验及等级权益：query.language maxLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_033_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_033_boundary] 获取财富等级经验及等级权益：query.language maxLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_034_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_034_boundary] 获取财富等级经验及等级权益：query.systemLanguage 空值边界",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_035_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_035_exception] 获取财富等级经验及等级权益：query.systemLanguage 类型错误",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_036_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_036_boundary] 获取财富等级经验及等级权益：query.systemLanguage minLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_037_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_037_boundary] 获取财富等级经验及等级权益：query.systemLanguage minLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_038_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_038_boundary] 获取财富等级经验及等级权益：query.systemLanguage minLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_039_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_039_boundary] 获取财富等级经验及等级权益：query.systemLanguage maxLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_040_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_040_boundary] 获取财富等级经验及等级权益：query.systemLanguage maxLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_041_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_041_boundary] 获取财富等级经验及等级权益：query.systemLanguage maxLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_042_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_042_boundary] 获取财富等级经验及等级权益：query.appVersion 空值边界",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_043_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_043_exception] 获取财富等级经验及等级权益：query.appVersion 类型错误",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_044_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_044_boundary] 获取财富等级经验及等级权益：query.appVersion minLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_045_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_045_boundary] 获取财富等级经验及等级权益：query.appVersion minLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_046_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_046_boundary] 获取财富等级经验及等级权益：query.appVersion minLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_047_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_047_boundary] 获取财富等级经验及等级权益：query.appVersion maxLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_048_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_048_boundary] 获取财富等级经验及等级权益：query.appVersion maxLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_049_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_049_boundary] 获取财富等级经验及等级权益：query.appVersion maxLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_050_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_050_boundary] 获取财富等级经验及等级权益：query.deviceType 空值边界",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_051_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_051_exception] 获取财富等级经验及等级权益：query.deviceType 类型错误",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_052_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_052_boundary] 获取财富等级经验及等级权益：query.deviceType minLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_053_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_053_boundary] 获取财富等级经验及等级权益：query.deviceType minLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_054_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_054_boundary] 获取财富等级经验及等级权益：query.deviceType minLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_055_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_055_boundary] 获取财富等级经验及等级权益：query.deviceType maxLength-1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_056_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_056_boundary] 获取财富等级经验及等级权益：query.deviceType maxLength",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_057_boundary",
+      "collection_item": "[TC_WEALTH_LEVEL_057_boundary] 获取财富等级经验及等级权益：query.deviceType maxLength+1",
+      "dimension": "边界值",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_058_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_058_exception] 获取财富等级经验及等级权益：空请求或空参数",
+      "dimension": "异常处理",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_059_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_059_exception] 获取财富等级经验及等级权益：通用类型混淆",
+      "dimension": "参数校验",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_067_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_067_exception] 获取财富等级经验及等级权益：缺失认证凭证",
+      "dimension": "认证授权",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_068_exception",
+      "collection_item": "[TC_WEALTH_LEVEL_068_exception] 获取财富等级经验及等级权益：无效或伪造认证凭证",
+      "dimension": "认证授权",
+      "method": "GET",
+      "path": "/level/exeperience/v2/get"
+    }
+  ],
+  "skipped": [
+    {
+      "case_id": "TC_WEALTH_LEVEL_024_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_025_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_060_boundary",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_061_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_062_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_063_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_064_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_065_boundary",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_066_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_069_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "pytest"
+    },
+    {
+      "case_id": "TC_WEALTH_LEVEL_070_exception",
+      "reason": "REVIEW_REQUIRED",
+      "recommended_tool": "JMeter"
+    }
+  ],
+  "collection_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\interface-tests\\newman\\api-test-collection.json"
+}

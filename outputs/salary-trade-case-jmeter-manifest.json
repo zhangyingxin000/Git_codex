@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-09-02T18:50:02+08:00",
+  "generated_at": "2026-09-05T00:37:51+08:00",
   "project_id": "prj_e3515817c4",
   "requirement": "工资代理快速结算",
   "source": "test_cases_to_jmeter_model",
-  "skill": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\jmeter-script-generation\\SKILL.md",
+  "skill": "skills/jmeter-script-generation/SKILL.md",
   "account_model": {
-    "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\salary-trade\\account_model.yaml",
+    "path": "requirements/salary-trade/account_model.yaml",
     "status": "READY",
     "rule": "JMeter生成必须先读取需求包 account_model.yaml，再决定单账号、多角色、多流程槽位、CSV、DB/Redis证据和阻断规则。"
   },
   "yaml_config": {
     "status": "READY",
-    "build": "20260902.a69fd081",
+    "build": "20260904.caf78210",
     "env_name": "test",
     "env_file": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\config\\env.test.yaml",
     "yaml_backend": "PyYAML",
@@ -21,8 +21,8 @@
       "base_url": "https://test2westarlive.gzxchate.com"
     },
     "tools": {
-      "jmeter_home": "D:/apache-jmeter-5.6.3",
-      "jmeter_command": "D:\\apache-jmeter-5.6.3\\bin\\jmeter.bat",
+      "jmeter_home": "${AUTOTEST_JMETER_HOME}",
+      "jmeter_command": "D:\\apache-jmeter-5.6.3\\bin\\jmeter.BAT",
       "newman_enabled": true
     },
     "data_sources": {
@@ -75,26 +75,30 @@
     "account_csv": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-accounts.csv",
     "applicant_csv": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
     "flow_slots_csv": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-flow-slots.csv",
+    "proxy_csv": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-proxies.csv",
     "jmeter_properties": [
       "salary_accounts_csv",
       "salary_applicants_csv",
+      "salary_proxies_csv",
       "salary_flow_slots_csv",
       "salary_result_jtl"
     ]
   },
-  "jmx_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-case-driven.jmx",
-  "launcher": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\open-salary-trade-state-machine.ps1",
-  "runtime_parameters": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\outputs\\salary-trade-runtime-parameters.md",
+  "jmx_path": "outputs/salary-trade-case-driven.jmx",
+  "launcher": "outputs/open-salary-trade-state-machine.ps1",
+  "runtime_parameters": "outputs/salary-trade-runtime-parameters.md",
   "csv_files": {
-    "accounts": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-accounts.csv",
-    "applicants": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-applicants.csv",
-    "flow_slots": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\data\\salary-trade-flow-slots.csv"
+    "accounts": "data/salary-trade-accounts.csv",
+    "applicants": "data/salary-trade-applicants.csv",
+    "flow_slots": "data/salary-trade-flow-slots.csv",
+    "proxies": "data/salary-trade-proxies.csv"
   },
   "jmeter_property_defaults": {
-    "salary_accounts_csv": "C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-accounts.csv",
-    "salary_applicants_csv": "C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-applicants.csv",
-    "salary_flow_slots_csv": "C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-flow-slots.csv",
-    "salary_result_jtl": "D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl"
+    "salary_accounts_csv": "${__P(project_root,.)}/data/salary-trade-accounts.csv",
+    "salary_applicants_csv": "${__P(project_root,.)}/data/salary-trade-applicants.csv",
+    "salary_proxies_csv": "${__P(project_root,.)}/data/salary-trade-proxies.csv",
+    "salary_flow_slots_csv": "${__P(project_root,.)}/data/salary-trade-flow-slots.csv",
+    "salary_result_jtl": "${__P(project_root,.)}/reports/latest/salary-trade-result.jtl"
   },
   "preserve_policy": {
     "mode": "patch_existing_jmx",

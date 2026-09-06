@@ -8,7 +8,9 @@
 
 ## 启动示例
 ```powershell
-& "D:\apache-jmeter-5.6.3\bin\jmeter.bat" -t "C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\outputs\salary-trade-case-driven.jmx" -Jsalary_applicants_csv="C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-applicants.csv" -Jsalary_accounts_csv="C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-accounts.csv" -Jsalary_flow_slots_csv="C:\Users\DELL\Documents\Codex\2026-08-19\new-chat\outputs\AutoTest-AI\data\salary-trade-flow-slots.csv"
+$projectRoot = Split-Path -Parent $PSScriptRoot
+$jmeter = $env:AUTOTEST_JMETER
+& $jmeter -t (Join-Path $projectRoot 'outputs/salary-trade-case-driven.jmx') -Jproject_root=$projectRoot
 ```
 
 ## 规则

@@ -73,9 +73,6 @@ if ($LASTEXITCODE -ne 0) {
   exit 1
 }
 
-if ([string]::IsNullOrWhiteSpace($env:AUTOTEST_ALLOW_MUTATIONS)) {
-  $env:AUTOTEST_ALLOW_MUTATIONS = "false"
-}
 if ([string]::IsNullOrWhiteSpace($env:AUTOTEST_ALLOW_HIGH_RISK)) {
   $env:AUTOTEST_ALLOW_HIGH_RISK = "false"
 }

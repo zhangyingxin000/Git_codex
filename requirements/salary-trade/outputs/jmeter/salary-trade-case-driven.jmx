@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="工资代理快速结算-用例驱动流程版">
       <stringProp name="TestPlan.comments">由 AutoTest AI 生成；GUI 用于审阅维护，非 GUI 执行用于报告归档。</stringProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
-        <collectionProp name="Arguments.arguments"/>
+        <collectionProp name="Arguments.arguments" />
       </elementProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
@@ -211,11 +211,11 @@
           </elementProp>
         </collectionProp>
       </Arguments>
-      <hashTree/>
-      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="工资交易账号数据集：申请人CSV" enabled="true">
+      <hashTree />
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="工资交易账号数据集：申请人CSV">
         <stringProp name="delimiter">,</stringProp>
         <stringProp name="fileEncoding">UTF-8</stringProp>
-        <stringProp name="filename">${__P(salary_applicants_csv,C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-applicants.csv)}</stringProp>
+        <stringProp name="filename">${__P(salary_applicants_csv,${__P(project_root,.)}/data/salary-trade-applicants.csv)}</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
         <boolProp name="quotedData">true</boolProp>
         <boolProp name="recycle">false</boolProp>
@@ -223,30 +223,30 @@
         <boolProp name="stopThread">true</boolProp>
         <stringProp name="variableNames">applicant_uid,applicant_ticket,countryCode,currency,salaryAmount,bankReceiverName,swiftCode,bankName,bankAccount,bankReceiverAddress,bankReceiverPhone</stringProp>
       </CSVDataSet>
-      <hashTree/>
+      <hashTree />
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
         <intProp name="HTTPSampler.connect_timeout">10000</intProp>
         <intProp name="HTTPSampler.response_timeout">30000</intProp>
         <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
         <stringProp name="HTTPSampler.protocol">https</stringProp>
         <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-          <collectionProp name="Arguments.arguments"/>
+          <collectionProp name="Arguments.arguments" />
         </elementProp>
         <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
       </ConfigTestElement>
-      <hashTree/>
+      <hashTree />
       <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie 管理器" enabled="true">
-        <collectionProp name="CookieManager.cookies"/>
+        <collectionProp name="CookieManager.cookies" />
         <boolProp name="CookieManager.clearEachIteration">false</boolProp>
         <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
       </CookieManager>
-      <hashTree/>
+      <hashTree />
       <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache 管理器" enabled="true">
         <boolProp name="clearEachIteration">false</boolProp>
         <boolProp name="useExpires">true</boolProp>
         <boolProp name="CacheManager.controlledByThread">false</boolProp>
       </CacheManager>
-      <hashTree/>
+      <hashTree />
       <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="工资交易公共移动端 Headers" enabled="true">
         <collectionProp name="HeaderManager.headers">
           <elementProp name="t" elementType="Header">
@@ -263,7 +263,7 @@
           </elementProp>
         </collectionProp>
       </HeaderManager>
-      <hashTree/>
+      <hashTree />
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="运行凭证自检（申请人ticket/代理ticket）" enabled="true">
         <stringProp name="TestPlan.comments">启动后先运行这里，确认 JMeter 已经读取申请人 ticket 和代理 ticket。</stringProp>
         <intProp name="ThreadGroup.num_threads">1</intProp>
@@ -279,9 +279,9 @@
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="检查 JMeter 运行凭证是否注入" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -293,17 +293,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -385,69 +385,69 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))
-SampleResult.setResponseData((&apos;凭证自检通过：申请人ticket长度=&apos; + vars.get(&apos;applicant_ticket&apos;).length() + &apos;，代理ticket长度=&apos; + vars.get(&apos;proxy_ticket&apos;).length()).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))
+SampleResult.setResponseData(('凭证自检通过：申请人ticket长度=' + vars.get('applicant_ticket').length() + '，代理ticket长度=' + vars.get('proxy_ticket').length()).getBytes('UTF-8'))</stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="filename"></stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程A：创建 -&gt; 申请人取消（10 -&gt; 50）" enabled="true">
         <stringProp name="TestPlan.comments">状态机流程版：本线程组订单变量独立为 flow_a_order_no / flow_a_order_id，避免多流程并行时串单。</stringProp>
@@ -464,9 +464,9 @@ SampleResult.setResponseData((&apos;凭证自检通过：申请人ticket长度=&
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -478,17 +478,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -570,68 +570,68 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))</stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="filename"></stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人创建工资交易订单：期望状态10" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -659,7 +659,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：期望状态10 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -669,52 +669,52 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：期望状态10 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人创建工资交易订单：期望状态10 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取新建订单号与状态" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">flow_a_order_no;salary_order_status</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.orderNo;$.data.status</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;NOT_FOUND</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="同步工资订单号" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="script">def orderNo = vars.get(&apos;flow_a_order_no&apos;)
+            <stringProp name="script">def orderNo = vars.get('flow_a_order_no')
 if (!orderNo) {
-    throw new IllegalStateException(&apos;创建订单未返回 orderNo，后续状态流转无法执行&apos;)
+    throw new IllegalStateException('创建订单未返回 orderNo，后续状态流转无法执行')
 }
-props.put(&apos;flow_a_order_no&apos;, orderNo)
-vars.put(&apos;flow_a_order_id&apos;, orderNo)
-props.put(&apos;flow_a_order_id&apos;, orderNo)</stringProp>
+props.put('flow_a_order_no', orderNo)
+vars.put('flow_a_order_id', orderNo)
+props.put('flow_a_order_id', orderNo)</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="创建订单：断言订单状态 10" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;10&apos;) {
-    throw new IllegalStateException(&apos;创建订单 状态不符合预期：期望 10，实际 &apos; + status)
+if (String.valueOf(status) != '10') {
+    throw new IllegalStateException('创建订单 状态不符合预期：期望 10，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('创建订单 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人取消待处理订单：期望状态50" enabled="false">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -743,7 +743,7 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人取消待处理订单：期望状态50 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -753,17 +753,17 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人取消待处理订单：期望状态50 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人取消待处理订单：期望状态50 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="取消后申请人订单详情：核对状态50" enabled="false">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -774,7 +774,7 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -787,31 +787,31 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 取消后申请人订单详情：核对状态50 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">取消后申请人订单详情：核对状态50 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="取消后订单详情：断言订单状态 50" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;50&apos;) {
-    throw new IllegalStateException(&apos;取消后订单详情 状态不符合预期：期望 50，实际 &apos; + status)
+if (String.valueOf(status) != '50') {
+    throw new IllegalStateException('取消后订单详情 状态不符合预期：期望 50，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;取消后订单详情 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('取消后订单详情 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="取消后订单流转日志：核对有创建和取消记录" enabled="false">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -822,7 +822,7 @@ SampleResult.setResponseData((&apos;取消后订单详情 状态断言通过：&
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -835,17 +835,17 @@ SampleResult.setResponseData((&apos;取消后订单详情 状态断言通过：&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 取消后订单流转日志：核对有创建和取消记录 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">取消后订单流转日志：核对有创建和取消记录 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程C：创建 -&gt; 代理接受 -&gt; 代理已转账 -&gt; 申请人确认 -&gt; 完成（10 -&gt; 20 -&gt; 30 -&gt; 40）" enabled="true">
@@ -863,9 +863,9 @@ SampleResult.setResponseData((&apos;取消后订单详情 状态断言通过：&
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -877,17 +877,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -969,68 +969,68 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))</stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="filename"></stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人创建工资交易订单：主流程" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1058,7 +1058,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：主流程 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1068,52 +1068,52 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：主流程 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人创建工资交易订单：主流程 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取新建订单号与状态" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">flow_c_order_no;salary_order_status</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.orderNo;$.data.status</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">;</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="同步工资订单号" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="script">def orderNo = vars.get(&apos;flow_c_order_no&apos;)
+            <stringProp name="script">def orderNo = vars.get('flow_c_order_no')
 if (!orderNo) {
-    throw new IllegalStateException(&apos;创建订单未返回 orderNo，后续状态流转无法执行&apos;)
+    throw new IllegalStateException('创建订单未返回 orderNo，后续状态流转无法执行')
 }
-props.put(&apos;flow_c_order_no&apos;, orderNo)
-vars.put(&apos;flow_c_order_id&apos;, orderNo)
-props.put(&apos;flow_c_order_id&apos;, orderNo)</stringProp>
+props.put('flow_c_order_no', orderNo)
+vars.put('flow_c_order_id', orderNo)
+props.put('flow_c_order_id', orderNo)</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="创建订单：断言订单状态 10" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;10&apos;) {
-    throw new IllegalStateException(&apos;创建订单 状态不符合预期：期望 10，实际 &apos; + status)
+if (String.valueOf(status) != '10') {
+    throw new IllegalStateException('创建订单 状态不符合预期：期望 10，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('创建订单 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理接受待处理订单：期望状态20" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1142,7 +1142,7 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受待处理订单：期望状态20 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1152,31 +1152,31 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受待处理订单：期望状态20 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理接受待处理订单：期望状态20 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理接单：断言订单状态 20" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;20&apos;) {
-    throw new IllegalStateException(&apos;代理接单 状态不符合预期：期望 20，实际 &apos; + status)
+if (String.valueOf(status) != '20') {
+    throw new IllegalStateException('代理接单 状态不符合预期：期望 20，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('代理接单 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理标记已完成线下转账：期望状态30" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1205,7 +1205,7 @@ SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理标记已完成线下转账：期望状态30 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1215,31 +1215,31 @@ SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理标记已完成线下转账：期望状态30 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理标记已完成线下转账：期望状态30 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理付款：断言订单状态 30" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;30&apos;) {
-    throw new IllegalStateException(&apos;代理付款 状态不符合预期：期望 30，实际 &apos; + status)
+if (String.valueOf(status) != '30') {
+    throw new IllegalStateException('代理付款 状态不符合预期：期望 30，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('代理付款 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人确认到账：期望状态40" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1268,7 +1268,7 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人确认到账：期望状态40 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1278,31 +1278,31 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人确认到账：期望状态40 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人确认到账：期望状态40 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="申请人确认到账：断言订单状态 40" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;40&apos;) {
-    throw new IllegalStateException(&apos;申请人确认到账 状态不符合预期：期望 40，实际 &apos; + status)
+if (String.valueOf(status) != '40') {
+    throw new IllegalStateException('申请人确认到账 状态不符合预期：期望 40，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;申请人确认到账 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('申请人确认到账 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="完成后申请人订单详情：核对状态40" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1313,7 +1313,7 @@ SampleResult.setResponseData((&apos;申请人确认到账 状态断言通过：&
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -1326,31 +1326,31 @@ SampleResult.setResponseData((&apos;申请人确认到账 状态断言通过：&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 完成后申请人订单详情：核对状态40 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">完成后申请人订单详情：核对状态40 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="完成后申请人详情：断言订单状态 40" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;40&apos;) {
-    throw new IllegalStateException(&apos;完成后申请人详情 状态不符合预期：期望 40，实际 &apos; + status)
+if (String.valueOf(status) != '40') {
+    throw new IllegalStateException('完成后申请人详情 状态不符合预期：期望 40，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;完成后申请人详情 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('完成后申请人详情 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="完成后订单流转日志：核对创建接单付款确认" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1361,7 +1361,7 @@ SampleResult.setResponseData((&apos;完成后申请人详情 状态断言通过�
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -1374,17 +1374,17 @@ SampleResult.setResponseData((&apos;完成后申请人详情 状态断言通过�
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 完成后订单流转日志：核对创建接单付款确认 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">完成后订单流转日志：核对创建接单付款确认 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="完成后订单凭证列表：核对付款凭证" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1395,7 +1395,7 @@ SampleResult.setResponseData((&apos;完成后申请人详情 状态断言通过�
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -1408,17 +1408,17 @@ SampleResult.setResponseData((&apos;完成后申请人详情 状态断言通过�
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 完成后订单凭证列表：核对付款凭证 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">完成后订单凭证列表：核对付款凭证 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程D：创建 -&gt; 接单 -&gt; 已转账 -&gt; 申请人投诉 -&gt; 投诉处理失败（需运营接口补齐）" enabled="false">
@@ -1436,9 +1436,9 @@ SampleResult.setResponseData((&apos;完成后申请人详情 状态断言通过�
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -1450,17 +1450,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -1542,68 +1542,68 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))</stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="filename"></stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人创建工资交易订单：投诉流" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1631,7 +1631,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：投诉流 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1641,52 +1641,52 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：投诉流 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人创建工资交易订单：投诉流 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取新建订单号与状态" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">flow_d_order_no;salary_order_status</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.orderNo;$.data.status</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">;</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="同步工资订单号" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="script">def orderNo = vars.get(&apos;flow_d_order_no&apos;)
+            <stringProp name="script">def orderNo = vars.get('flow_d_order_no')
 if (!orderNo) {
-    throw new IllegalStateException(&apos;创建订单未返回 orderNo，后续状态流转无法执行&apos;)
+    throw new IllegalStateException('创建订单未返回 orderNo，后续状态流转无法执行')
 }
-props.put(&apos;flow_d_order_no&apos;, orderNo)
-vars.put(&apos;flow_d_order_id&apos;, orderNo)
-props.put(&apos;flow_d_order_id&apos;, orderNo)</stringProp>
+props.put('flow_d_order_no', orderNo)
+vars.put('flow_d_order_id', orderNo)
+props.put('flow_d_order_id', orderNo)</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="创建订单：断言订单状态 10" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;10&apos;) {
-    throw new IllegalStateException(&apos;创建订单 状态不符合预期：期望 10，实际 &apos; + status)
+if (String.valueOf(status) != '10') {
+    throw new IllegalStateException('创建订单 状态不符合预期：期望 10，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('创建订单 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理接受待处理订单：投诉流" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1715,7 +1715,7 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受待处理订单：投诉流 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1725,31 +1725,31 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受待处理订单：投诉流 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理接受待处理订单：投诉流 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理接单：断言订单状态 20" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;20&apos;) {
-    throw new IllegalStateException(&apos;代理接单 状态不符合预期：期望 20，实际 &apos; + status)
+if (String.valueOf(status) != '20') {
+    throw new IllegalStateException('代理接单 状态不符合预期：期望 20，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('代理接单 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理标记付款：进入待确认收款" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1778,7 +1778,7 @@ SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理标记付款：进入待确认收款 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1788,31 +1788,31 @@ SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理标记付款：进入待确认收款 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理标记付款：进入待确认收款 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理付款：断言订单状态 30" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;30&apos;) {
-    throw new IllegalStateException(&apos;代理付款 状态不符合预期：期望 30，实际 &apos; + status)
+if (String.valueOf(status) != '30') {
+    throw new IllegalStateException('代理付款 状态不符合预期：期望 30，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('代理付款 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人提交投诉：期望状态80" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1841,7 +1841,7 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人提交投诉：期望状态80 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -1851,17 +1851,17 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人提交投诉：期望状态80 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人提交投诉：期望状态80 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="投诉后申请人订单详情：核对状态80" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1872,7 +1872,7 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -1885,31 +1885,31 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 投诉后申请人订单详情：核对状态80 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">投诉后申请人订单详情：核对状态80 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="投诉后申请人详情：断言订单状态 80" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;80&apos;) {
-    throw new IllegalStateException(&apos;投诉后申请人详情 状态不符合预期：期望 80，实际 &apos; + status)
+if (String.valueOf(status) != '80') {
+    throw new IllegalStateException('投诉后申请人详情 状态不符合预期：期望 80，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;投诉后申请人详情 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('投诉后申请人详情 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="投诉后凭证列表：核对投诉凭证" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -1920,7 +1920,7 @@ SampleResult.setResponseData((&apos;投诉后申请人详情 状态断言通过�
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -1933,17 +1933,17 @@ SampleResult.setResponseData((&apos;投诉后申请人详情 状态断言通过�
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 投诉后凭证列表：核对投诉凭证 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">投诉后凭证列表：核对投诉凭证 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程E：创建 -&gt; 接单 -&gt; 已转账 -&gt; 投诉处理成功（需运营接口补齐）" enabled="false">
@@ -1961,9 +1961,9 @@ SampleResult.setResponseData((&apos;投诉后申请人详情 状态断言通过�
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易业务流初始化：账号、金额、收款资料" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -1975,17 +1975,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -2067,68 +2067,68 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))</stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="filename"></stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人创建工资交易订单：代理投诉流" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -2156,7 +2156,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：代理投诉流 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -2166,52 +2166,52 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：代理投诉流 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人创建工资交易订单：代理投诉流 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取新建订单号与状态" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">flow_e_order_no;salary_order_status</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.orderNo;$.data.status</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">;</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="同步工资订单号" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="script">def orderNo = vars.get(&apos;flow_e_order_no&apos;)
+            <stringProp name="script">def orderNo = vars.get('flow_e_order_no')
 if (!orderNo) {
-    throw new IllegalStateException(&apos;创建订单未返回 orderNo，后续状态流转无法执行&apos;)
+    throw new IllegalStateException('创建订单未返回 orderNo，后续状态流转无法执行')
 }
-props.put(&apos;flow_e_order_no&apos;, orderNo)
-vars.put(&apos;flow_e_order_id&apos;, orderNo)
-props.put(&apos;flow_e_order_id&apos;, orderNo)</stringProp>
+props.put('flow_e_order_no', orderNo)
+vars.put('flow_e_order_id', orderNo)
+props.put('flow_e_order_id', orderNo)</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="创建订单：断言订单状态 10" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;10&apos;) {
-    throw new IllegalStateException(&apos;创建订单 状态不符合预期：期望 10，实际 &apos; + status)
+if (String.valueOf(status) != '10') {
+    throw new IllegalStateException('创建订单 状态不符合预期：期望 10，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('创建订单 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理接受待处理订单：投诉流" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2240,7 +2240,7 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受待处理订单：投诉流 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -2250,31 +2250,31 @@ SampleResult.setResponseData((&apos;创建订单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受待处理订单：投诉流 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理接受待处理订单：投诉流 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理接单：断言订单状态 20" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;20&apos;) {
-    throw new IllegalStateException(&apos;代理接单 状态不符合预期：期望 20，实际 &apos; + status)
+if (String.valueOf(status) != '20') {
+    throw new IllegalStateException('代理接单 状态不符合预期：期望 20，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('代理接单 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理标记付款：进入待确认收款" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2303,7 +2303,7 @@ SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理标记付款：进入待确认收款 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -2313,31 +2313,31 @@ SampleResult.setResponseData((&apos;代理接单 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理标记付款：进入待确认收款 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理标记付款：进入待确认收款 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理付款：断言订单状态 30" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;30&apos;) {
-    throw new IllegalStateException(&apos;代理付款 状态不符合预期：期望 30，实际 &apos; + status)
+if (String.valueOf(status) != '30') {
+    throw new IllegalStateException('代理付款 状态不符合预期：期望 30，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('代理付款 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理提交投诉：期望状态80" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2366,7 +2366,7 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理提交投诉：期望状态80 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -2376,17 +2376,17 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理提交投诉：期望状态80 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理提交投诉：期望状态80 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理投诉后申请人订单详情：核对状态80" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2397,7 +2397,7 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -2410,31 +2410,31 @@ SampleResult.setResponseData((&apos;代理付款 状态断言通过：&apos; + s
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理投诉后申请人订单详情：核对状态80 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理投诉后申请人订单详情：核对状态80 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理投诉后申请人详情：断言订单状态 80" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def status = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(status) != &apos;80&apos;) {
-    throw new IllegalStateException(&apos;代理投诉后申请人详情 状态不符合预期：期望 80，实际 &apos; + status)
+if (String.valueOf(status) != '80') {
+    throw new IllegalStateException('代理投诉后申请人详情 状态不符合预期：期望 80，实际 ' + status)
 }
-SampleResult.setResponseData((&apos;代理投诉后申请人详情 状态断言通过：&apos; + status).getBytes(&apos;UTF-8&apos;))</stringProp>
+SampleResult.setResponseData(('代理投诉后申请人详情 状态断言通过：' + status).getBytes('UTF-8'))</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="投诉后凭证列表：核对投诉凭证" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2445,7 +2445,7 @@ SampleResult.setResponseData((&apos;代理投诉后申请人详情 状态断言�
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -2458,17 +2458,17 @@ SampleResult.setResponseData((&apos;代理投诉后申请人详情 状态断言�
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 投诉后凭证列表：核对投诉凭证 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">投诉后凭证列表：核对投诉凭证 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程B：创建 -&gt; 代理拒绝（10 -&gt; 60）" enabled="false">
@@ -2486,9 +2486,9 @@ SampleResult.setResponseData((&apos;代理投诉后申请人详情 状态断言�
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易公共初始化：双角色与表单参数" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -2500,17 +2500,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -2592,68 +2592,68 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))</stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="filename"></stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人创建工资交易订单：拒绝流" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -2681,7 +2681,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：拒绝流 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -2691,49 +2691,49 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：拒绝流 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人创建工资交易订单：拒绝流 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取 orderNo/status/goldAmount" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">flow_b_order_no;salary_order_status;salary_gold_amount</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.orderNo;$.data.status;$.data.goldAmount</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1;1;1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">;;</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="保存新订单号给后续接口" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="script">def orderNo = vars.get(&apos;flow_b_order_no&apos;)
-if (!orderNo) throw new IllegalStateException(&apos;创建订单未返回 orderNo&apos;)
-props.put(&apos;flow_b_order_no&apos;, orderNo)
-props.put(&apos;flow_b_order_id&apos;, orderNo)
-vars.put(&apos;flow_b_order_id&apos;, orderNo)</stringProp>
+            <stringProp name="script">def orderNo = vars.get('flow_b_order_no')
+if (!orderNo) throw new IllegalStateException('创建订单未返回 orderNo')
+props.put('flow_b_order_no', orderNo)
+props.put('flow_b_order_id', orderNo)
+vars.put('flow_b_order_id', orderNo)</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="创建订单：状态必须为 10" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def value = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(value) != &apos;10&apos;) {
-    throw new IllegalStateException(&apos;创建订单 状态不符合预期：期望 10，实际 &apos; + value)
+if (String.valueOf(value) != '10') {
+    throw new IllegalStateException('创建订单 状态不符合预期：期望 10，实际 ' + value)
 }</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理订单分页：确认可处理订单出现" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2744,7 +2744,7 @@ if (String.valueOf(value) != &apos;10&apos;) {
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -2757,17 +2757,17 @@ if (String.valueOf(value) != &apos;10&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理订单分页：确认可处理订单出现 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理订单分页：确认可处理订单出现 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理拒绝待处理订单：期望状态60" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2796,7 +2796,7 @@ if (String.valueOf(value) != &apos;10&apos;) {
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理拒绝待处理订单：期望状态60 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -2806,17 +2806,17 @@ if (String.valueOf(value) != &apos;10&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理拒绝待处理订单：期望状态60 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理拒绝待处理订单：期望状态60 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="拒绝后申请人订单详情：核对状态60" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2827,7 +2827,7 @@ if (String.valueOf(value) != &apos;10&apos;) {
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -2840,30 +2840,30 @@ if (String.valueOf(value) != &apos;10&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 拒绝后申请人订单详情：核对状态60 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">拒绝后申请人订单详情：核对状态60 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="拒绝后订单详情：状态必须为 60" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def value = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(value) != &apos;60&apos;) {
-    throw new IllegalStateException(&apos;拒绝后订单详情 状态不符合预期：期望 60，实际 &apos; + value)
+if (String.valueOf(value) != '60') {
+    throw new IllegalStateException('拒绝后订单详情 状态不符合预期：期望 60，实际 ' + value)
 }</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="拒绝后订单流转日志：核对创建和拒绝记录" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -2874,7 +2874,7 @@ if (String.valueOf(value) != &apos;60&apos;) {
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -2887,17 +2887,17 @@ if (String.valueOf(value) != &apos;60&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 拒绝后订单流转日志：核对创建和拒绝记录 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">拒绝后订单流转日志：核对创建和拒绝记录 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程I：公告与凭证维护接口（辅助流程）" enabled="true">
@@ -2915,9 +2915,9 @@ if (String.valueOf(value) != &apos;60&apos;) {
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="工资交易公共初始化：双角色与表单参数" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -2929,17 +2929,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -3021,68 +3021,68 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))</stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="filename"></stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理公告编辑页查询" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -3092,7 +3092,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -3105,17 +3105,17 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理公告编辑页查询 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理公告编辑页查询 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理保存交易公告" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3144,7 +3144,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理保存交易公告 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -3154,17 +3154,17 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理保存交易公告 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理保存交易公告 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人创建工资交易订单：凭证流" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3193,7 +3193,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：凭证流 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -3203,49 +3203,49 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人创建工资交易订单：凭证流 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人创建工资交易订单：凭证流 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取 orderNo/status/goldAmount" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">flow_i_order_no;salary_order_status;salary_gold_amount</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.orderNo;$.data.status;$.data.goldAmount</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1;1;1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">;;</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="保存新订单号给后续接口" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="script">def orderNo = vars.get(&apos;flow_i_order_no&apos;)
-if (!orderNo) throw new IllegalStateException(&apos;创建订单未返回 orderNo&apos;)
-props.put(&apos;flow_i_order_no&apos;, orderNo)
-props.put(&apos;flow_i_order_id&apos;, orderNo)
-vars.put(&apos;flow_i_order_id&apos;, orderNo)</stringProp>
+            <stringProp name="script">def orderNo = vars.get('flow_i_order_no')
+if (!orderNo) throw new IllegalStateException('创建订单未返回 orderNo')
+props.put('flow_i_order_no', orderNo)
+props.put('flow_i_order_id', orderNo)
+vars.put('flow_i_order_id', orderNo)</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="创建订单：状态必须为 10" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def value = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(value) != &apos;10&apos;) {
-    throw new IllegalStateException(&apos;创建订单 状态不符合预期：期望 10，实际 &apos; + value)
+if (String.valueOf(value) != '10') {
+    throw new IllegalStateException('创建订单 状态不符合预期：期望 10，实际 ' + value)
 }</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人补充订单凭证" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3274,7 +3274,7 @@ if (String.valueOf(value) != &apos;10&apos;) {
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人补充订单凭证 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -3284,17 +3284,17 @@ if (String.valueOf(value) != &apos;10&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 申请人补充订单凭证 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">申请人补充订单凭证 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理接受订单：进入付款凭证前置" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3323,7 +3323,7 @@ if (String.valueOf(value) != &apos;10&apos;) {
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受订单：进入付款凭证前置 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -3333,30 +3333,30 @@ if (String.valueOf(value) != &apos;10&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理接受订单：进入付款凭证前置 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理接受订单：进入付款凭证前置 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="代理接单：状态必须为 20" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def value = payload?.data?.status ?: payload?.data?.order?.status
-if (String.valueOf(value) != &apos;20&apos;) {
-    throw new IllegalStateException(&apos;代理接单 状态不符合预期：期望 20，实际 &apos; + value)
+if (String.valueOf(value) != '20') {
+    throw new IllegalStateException('代理接单 状态不符合预期：期望 20，实际 ' + value)
 }</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223Sampler>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理补充付款凭证" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3385,7 +3385,7 @@ if (String.valueOf(value) != &apos;20&apos;) {
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理补充付款凭证 HTTP 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
@@ -3395,17 +3395,17 @@ if (String.valueOf(value) != &apos;20&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理补充付款凭证 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">代理补充付款凭证 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="凭证维护后凭证列表" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3416,7 +3416,7 @@ if (String.valueOf(value) != &apos;20&apos;) {
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -3429,17 +3429,17 @@ if (String.valueOf(value) != &apos;20&apos;) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 凭证维护后凭证列表 业务 code=200" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+              <stringProp name="723337899">"code":200</stringProp>
             </collectionProp>
             <stringProp name="Assertion.custom_message">凭证维护后凭证列表 业务 code 不是 200</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="工资交易读接口基准（自动提取订单号）" enabled="true">
@@ -3459,9 +3459,9 @@ if (String.valueOf(value) != &apos;20&apos;) {
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters">           </stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="script">def runtimeFile = new File(&apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/salary-trade-runtime.properties&apos;)
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/salary-trade-runtime.properties')
 def isBlankOrPlaceholder = { value -&gt;
-    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains(&apos;${&apos;)
+    value == null || !String.valueOf(value).trim() || String.valueOf(value).contains('${')
 }
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
@@ -3473,17 +3473,17 @@ if (runtimeFile.exists()) {
         }
     }
 }
-def pick = { key, fallback = &apos;&apos; -&gt;
+def pick = { key, fallback = '' -&gt;
     def value = vars.get(key) ?: props.get(key)
     if (isBlankOrPlaceholder(value)) value = fallback
-    return String.valueOf(value ?: &apos;&apos;).trim()
+    return String.valueOf(value ?: '').trim()
 }
-def applicantTicket = pick(&apos;applicant_ticket&apos;, vars.get(&apos;ticket&apos;) ?: props.get(&apos;ticket&apos;) ?: &apos;&apos;)
+def applicantTicket = pick('applicant_ticket', vars.get('ticket') ?: props.get('ticket') ?: '')
 def proxyTicket = pick(&apos;proxy_ticket&apos;, &apos;&apos;)
 // 工资交易代理CSV动态匹配：按申请人的收款币种筛选代理；同国家优先，没有则回退到所有支持该币种的代理。
 def proxyUid = pick(&apos;proxy_uid&apos;, &apos;&apos;)
 if (isBlankOrPlaceholder(proxyTicket) || isBlankOrPlaceholder(proxyUid)) {
-    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/data/salary-trade-proxies.csv&apos;)
+    def proxyCsvPath = pick(&apos;salary_proxies_csv&apos;, &apos;${__P(project_root,.)}/data/salary-trade-proxies.csv&apos;)
     def proxyCsvFile = new File(proxyCsvPath)
     if (!proxyCsvFile.isFile()) {
         throw new IllegalStateException(&apos;代理CSV不存在：&apos; + proxyCsvPath)
@@ -3565,66 +3565,66 @@ if (isBlankOrPlaceholder(proxyUid)) {
     throw new IllegalStateException(&apos;工资交易未读取到代理 uid：请检查代理CSV&apos;)
 }
 if (isBlankOrPlaceholder(applicantTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到申请人 ticket：请用 open-salary-trade-only.ps1 传入 ApplicantTicket，或用 -Japplicant_ticket 传入')
 }
 if (isBlankOrPlaceholder(proxyTicket)) {
-    throw new IllegalStateException(&apos;工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入&apos;)
+    throw new IllegalStateException('工资交易未读取到代理 ticket：请用 open-salary-trade-only.ps1 传入 ProxyTicket，或用 -Jproxy_ticket 传入')
 }
-vars.put(&apos;applicant_ticket&apos;, applicantTicket)
-vars.put(&apos;proxy_ticket&apos;, proxyTicket)
-props.put(&apos;applicant_ticket&apos;, applicantTicket)
-props.put(&apos;proxy_ticket&apos;, proxyTicket)
-vars.put(&apos;ticket&apos;, applicantTicket)
-props.put(&apos;ticket&apos;, applicantTicket)
+vars.put('applicant_ticket', applicantTicket)
+vars.put('proxy_ticket', proxyTicket)
+props.put('applicant_ticket', applicantTicket)
+props.put('proxy_ticket', proxyTicket)
+vars.put('ticket', applicantTicket)
+props.put('ticket', applicantTicket)
 [
-    applicant_uid:&apos;1454696&apos;,
-    proxy_uid:&apos;&apos;,
-    agent_uid:&apos;&apos;,
-    countryCode:&apos;MA&apos;,
-    currency:&apos;USD&apos;,
-    salaryAmount:&apos;100&apos;,
-    localPayAmount:&apos;0&apos;,
-    exchangeRate:&apos;0&apos;,
-    bankReceiverName:&apos;Sarly&apos;,
-    swiftCode:&apos;SWIFT&apos;,
-    bankName:&apos;EGbank&apos;,
-    bankAccount:&apos;872819994964648929003773773&apos;,
-    bankReceiverAddress:&apos;salary trade autotest address&apos;,
-    bankReceiverPostalCode:&apos;&apos;,
-    bankReceiverPhone:&apos;0845513616949&apos;,
-    bankReceiverEmail:&apos;&apos;,
-    payProofUrls:&apos;https://example.com/pay-proof.jpg&apos;,
-    appealEvidenceUrls:&apos;https://example.com/appeal-proof.jpg&apos;,
-    pageNo:&apos;1&apos;,
-    pageSize:&apos;20&apos;,
-    deviceType:&apos;0&apos;,
-    systemLanguage:&apos;zh&apos;,
-    appVersion:&apos;100.1.5.6&apos;,
-    os:&apos;android&apos;,
-    netType:&apos;2&apos;,
-    channel:&apos;google&apos;,
-    appsflyerId:&apos;1787803900487-1623248308013165548&apos;,
-    language:&apos;ar&apos;,
-    appCode:&apos;100156&apos;,
-    deviceId:&apos;8fcce1f1-5153-3207-9786-0240140a524a&apos;,
-    version:&apos;100.1.5.6&apos;,
-    osVersion:&apos;16&apos;,
-    isVpnConnected:&apos;0&apos;,
-    appid:&apos;soulfree&apos;,
-    model:&apos;SM-A546B&apos;,
-    packageName:&apos;com.soulfree.happiness&apos;,
-    ispType:&apos;4&apos;,
-    organic:&apos;Organic&apos;
+    applicant_uid:'1454696',
+    proxy_uid:'',
+    agent_uid:'',
+    countryCode:'MA',
+    currency:'USD',
+    salaryAmount:'100',
+    localPayAmount:'0',
+    exchangeRate:'0',
+    bankReceiverName:'Sarly',
+    swiftCode:'SWIFT',
+    bankName:'EGbank',
+    bankAccount:'872819994964648929003773773',
+    bankReceiverAddress:'salary trade autotest address',
+    bankReceiverPostalCode:'',
+    bankReceiverPhone:'0845513616949',
+    bankReceiverEmail:'',
+    payProofUrls:'https://example.com/pay-proof.jpg',
+    appealEvidenceUrls:'https://example.com/appeal-proof.jpg',
+    pageNo:'1',
+    pageSize:'20',
+    deviceType:'0',
+    systemLanguage:'zh',
+    appVersion:'100.1.5.6',
+    os:'android',
+    netType:'2',
+    channel:'google',
+    appsflyerId:'1787803900487-1623248308013165548',
+    language:'ar',
+    appCode:'100156',
+    deviceId:'8fcce1f1-5153-3207-9786-0240140a524a',
+    version:'100.1.5.6',
+    osVersion:'16',
+    isVpnConnected:'0',
+    appid:'soulfree',
+    model:'SM-A546B',
+    packageName:'com.soulfree.happiness',
+    ispType:'4',
+    organic:'Organic'
 ].each { k, defaultValue -&gt;
     def value = pick(k, defaultValue)
     vars.put(k, value)
     props.put(k, value)
 }
-vars.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-props.put(&apos;agent_uid&apos;, vars.get(&apos;proxy_uid&apos;))
-SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&apos; + vars.get(&apos;applicant_uid&apos;) + &apos;，代理=&apos; + vars.get(&apos;proxy_uid&apos;)).getBytes(&apos;UTF-8&apos;))</stringProp>
+vars.put('agent_uid', vars.get('proxy_uid'))
+props.put('agent_uid', vars.get('proxy_uid'))
+SampleResult.setResponseData(('工资交易参数同步完成：申请人=' + vars.get('applicant_uid') + '，代理=' + vars.get('proxy_uid')).getBytes('UTF-8'))</stringProp>
         </JSR223Sampler>
-        <hashTree/>
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="工资交易入口开关" enabled="false">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -3634,7 +3634,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -3647,7 +3647,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人可结算额度" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3658,7 +3658,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -3671,7 +3671,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="可选代理列表" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3682,7 +3682,7 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -3695,25 +3695,25 @@ SampleResult.setResponseData((&apos;工资交易参数同步完成：申请人=&
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取可选代理 UID" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">available_agent_uid</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.list[0].uid</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="同步可选代理 UID 到 agent_uid" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="script">def discoveredAgentUid = vars.get(&apos;available_agent_uid&apos;)
+            <stringProp name="script">def discoveredAgentUid = vars.get('available_agent_uid')
 if (discoveredAgentUid) {
-    vars.put(&apos;agent_uid&apos;, discoveredAgentUid)
-    props.put(&apos;agent_uid&apos;, discoveredAgentUid)
+    vars.put('agent_uid', discoveredAgentUid)
+    props.put('agent_uid', discoveredAgentUid)
 }</stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="filename"></stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理交易公告" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3724,7 +3724,7 @@ if (discoveredAgentUid) {
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -3737,7 +3737,7 @@ if (discoveredAgentUid) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人订单列表：提取订单号" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3748,7 +3748,7 @@ if (discoveredAgentUid) {
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -3761,20 +3761,20 @@ if (discoveredAgentUid) {
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="从订单列表提取 orderId/orderNo/id" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters">             </stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
-def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: '{}')
 def found = null
 def visit
 visit = { obj -&gt;
     if (found != null || obj == null) return
     if (obj instanceof Map) {
-        [&apos;orderId&apos;,&apos;orderNo&apos;,&apos;tradeOrderId&apos;,&apos;id&apos;].each { key -&gt;
+        ['orderId','orderNo','tradeOrderId','id'].each { key -&gt;
             if (found == null &amp;&amp; obj[key] != null &amp;&amp; String.valueOf(obj[key]).trim()) found = obj[key]
         }
         obj.values().each { visit(it) }
@@ -3784,15 +3784,15 @@ visit = { obj -&gt;
 }
 visit(payload?.data)
 if (found != null) {
-    vars.put(&apos;salary_order_id&apos;, String.valueOf(found))
-    props.put(&apos;salary_order_id&apos;, String.valueOf(found))
+    vars.put('salary_order_id', String.valueOf(found))
+    props.put('salary_order_id', String.valueOf(found))
 }
-vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : &apos;true&apos;)</stringProp>
+vars.put('salary_order_id_found', found == null ? 'false' : 'true')</stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="存在订单号时执行详情链路" enabled="true">
-          <stringProp name="IfController.condition">${__groovy((vars.get(&apos;salary_order_id&apos;) ?: props.get(&apos;salary_order_id&apos;) ?: &apos;&apos;).trim().length() &gt; 0,)}</stringProp>
+          <stringProp name="IfController.condition">${__groovy((vars.get('salary_order_id') ?: props.get('salary_order_id') ?: '').trim().length() &gt; 0,)}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
@@ -3806,7 +3806,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-              <collectionProp name="Arguments.arguments"/>
+              <collectionProp name="Arguments.arguments" />
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree>
@@ -3819,17 +3819,17 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
-            <hashTree/>
+            <hashTree />
             <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 代理订单列表：查询可处理/已承接订单 业务 code=200" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="723337899">&quot;code&quot;:200</stringProp>
+                <stringProp name="723337899">"code":200</stringProp>
               </collectionProp>
               <stringProp name="Assertion.custom_message">代理订单列表：查询可处理/已承接订单 业务 code 不是 200</stringProp>
               <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">16</intProp>
             </ResponseAssertion>
-            <hashTree/>
+            <hashTree />
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="申请人订单详情" enabled="true">
             <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3840,7 +3840,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-              <collectionProp name="Arguments.arguments"/>
+              <collectionProp name="Arguments.arguments" />
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree>
@@ -3853,7 +3853,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
-            <hashTree/>
+            <hashTree />
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="订单流转日志" enabled="true">
             <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3864,7 +3864,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-              <collectionProp name="Arguments.arguments"/>
+              <collectionProp name="Arguments.arguments" />
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree>
@@ -3877,7 +3877,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
-            <hashTree/>
+            <hashTree />
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="订单凭证列表" enabled="true">
             <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3888,7 +3888,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-              <collectionProp name="Arguments.arguments"/>
+              <collectionProp name="Arguments.arguments" />
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree>
@@ -3901,7 +3901,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
-            <hashTree/>
+            <hashTree />
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="代理侧订单详情" enabled="true">
             <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
@@ -3912,7 +3912,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
-              <collectionProp name="Arguments.arguments"/>
+              <collectionProp name="Arguments.arguments" />
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree>
@@ -3925,7 +3925,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
-            <hashTree/>
+            <hashTree />
           </hashTree>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="true">
@@ -3964,9 +3964,9 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
           </objProp>
           <stringProp name="filename"></stringProp>
         </ResultCollector>
-        <hashTree/>
+        <hashTree />
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -4000,9 +4000,9 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${__P(salary_result_jtl,D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl)}</stringProp>
+        <stringProp name="filename">${__P(salary_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
@@ -4037,9 +4037,9 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${__P(salary_result_jtl,D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl)}</stringProp>
+        <stringProp name="filename">${__P(salary_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
@@ -4074,9 +4074,9 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${__P(salary_result_jtl,D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl)}</stringProp>
+        <stringProp name="filename">${__P(salary_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
@@ -4111,9 +4111,9 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${__P(salary_result_jtl,D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl)}</stringProp>
+        <stringProp name="filename">${__P(salary_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
@@ -4148,9 +4148,9 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${__P(salary_result_jtl,D:/apache-jmeter-5.6.3/jmx/20260826/工资代理结算-result.jtl)}</stringProp>
+        <stringProp name="filename">${__P(salary_result_jtl,${__P(project_root,.)}/reports/latest/salary-trade-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程F：创建 -&gt; 代理不处理 -&gt; 订单过期（10 -&gt; 过期取消）" enabled="false">
         <stringProp name="TestPlan.comments">待接入时间推进/定时任务或测试环境后台处理结果校验；当前先保留为状态机占位，不自动执行。</stringProp>
         <intProp name="ThreadGroup.num_threads">1</intProp>
@@ -4162,7 +4162,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
-      <hashTree/>
+      <hashTree />
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程G：创建 -&gt; 代理接受 -&gt; 代理12小时不转账 -&gt; 过期取消/资金原路返回（10 -&gt; 20 -&gt; 过期退款）" enabled="false">
         <stringProp name="TestPlan.comments">待接入订单过期任务或可控测试时间；需要校验订单表、日志表、资金返还。</stringProp>
         <intProp name="ThreadGroup.num_threads">1</intProp>
@@ -4174,7 +4174,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
-      <hashTree/>
+      <hashTree />
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="流程H：创建 -&gt; 接单 -&gt; 已转账 -&gt; 申请人24小时不确认 -&gt; 自动完成（10 -&gt; 20 -&gt; 30 -&gt; 40）" enabled="false">
         <stringProp name="TestPlan.comments">待接入自动完成任务或可控测试时间；需要校验订单完成状态与日志。</stringProp>
         <intProp name="ThreadGroup.num_threads">1</intProp>
@@ -4186,7 +4186,7 @@ vars.put(&apos;salary_order_id_found&apos;, found == null ? &apos;false&apos; : 
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
-      <hashTree/>
+      <hashTree />
       <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="AutoTest AI：测试结束自动回收JMeter报告" enabled="true">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>

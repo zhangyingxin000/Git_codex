@@ -1,0 +1,2962 @@
+{
+  "schema_version": "1.0",
+  "report_type": "REQUIREMENT_REGRESSION_SELECTION",
+  "status": "READY",
+  "change_scope": {
+    "case_ids": [],
+    "requirements": [],
+    "endpoints": [],
+    "tables": [],
+    "redis_keys": [],
+    "roles": [],
+    "states": [],
+    "keywords": [
+      "等级",
+      "财富"
+    ]
+  },
+  "selection_policy": {
+    "include_related": true,
+    "include_critical": true,
+    "max_cases": 0
+  },
+  "summary": {
+    "source_cases": 195,
+    "selected": 195,
+    "direct": 195,
+    "related": 0,
+    "truncated": false
+  },
+  "selected_cases": [
+    {
+      "case_id": "tc_05d9690ca7",
+      "title": "个人等级区域完整展示",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7775ff7b25",
+      "title": "用户ID与登录账号一致",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_78564c7ba8",
+      "title": "当前等级展示与数据库一致",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_f87a6304a1",
+      "title": "当前经验位于等级区间中间值",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ec3efc314f",
+      "title": "经验等于当前等级起点",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7b99341fb1",
+      "title": "距离下一等级只差1经验",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_92b7e73135",
+      "title": "经验刚好达到升级阈值",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7cf6fc8fd7",
+      "title": "经验超过升级阈值但等级未更新",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ea1e756791",
+      "title": "最高等级100",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_67f4e0ba41",
+      "title": "经验换算规则",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ceeb6ea498",
+      "title": "Level 0展示规则",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ce35ae4ce6",
+      "title": "每个等级段权益数组正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_4527814ef5",
+      "title": "登录UID与财富UID一致",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6b8bca5264",
+      "title": "接口等级与MySQL一致",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_01247bd294",
+      "title": "接口经验与MySQL一致",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_e734064f38",
+      "title": "Redis等级缓存与MySQL一致",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_e7c8f9afd0",
+      "title": "数据库更新但缓存未刷新",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_bf4d12a36f",
+      "title": "缺失Token",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_517ed20f15",
+      "title": "无效Token",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_11663aaefa",
+      "title": "过期Token",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_18be03f23c",
+      "title": "Token UID与参数UID不一致",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_cdf388f130",
+      "title": "真实登录到财富页面",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7e3e7168bf",
+      "title": "送礼增加经验但未升级",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_0d4a18c67c",
+      "title": "送礼触发等级升级",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_0dd34a92db",
+      "title": "财富等级矩阵：Lv.1奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_8acae5f343",
+      "title": "财富等级矩阵：Lv.2奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_08acc16184",
+      "title": "财富等级矩阵：Lv.3奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_1250f7a9a7",
+      "title": "财富等级矩阵：Lv.4奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_8c4d74c230",
+      "title": "财富等级矩阵：Lv.5奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7289cc2110",
+      "title": "财富等级矩阵：Lv.6奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6cd0bae0cc",
+      "title": "财富等级矩阵：Lv.7奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_04d2f14423",
+      "title": "财富等级矩阵：Lv.8奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7f1250c83e",
+      "title": "财富等级矩阵：Lv.9奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b6aa79069b",
+      "title": "财富等级矩阵：Lv.10奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_21749752c9",
+      "title": "财富等级矩阵：Lv.11奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_2b215236ff",
+      "title": "财富等级矩阵：Lv.12奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_995adab6d7",
+      "title": "财富等级矩阵：Lv.13奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a8a0f1b627",
+      "title": "财富等级矩阵：Lv.14奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_8805cfa24b",
+      "title": "财富等级矩阵：Lv.15奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_4e3817f59d",
+      "title": "财富等级矩阵：Lv.16奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ec48033823",
+      "title": "财富等级矩阵：Lv.17奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_2c0e2a2982",
+      "title": "财富等级矩阵：Lv.18奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_45c74a1ed3",
+      "title": "财富等级矩阵：Lv.19奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7740873a2a",
+      "title": "财富等级矩阵：Lv.20奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_9292adc9cc",
+      "title": "财富等级矩阵：Lv.21奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_48466c3093",
+      "title": "财富等级矩阵：Lv.22奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ad4b659b94",
+      "title": "财富等级矩阵：Lv.23奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_c0672b93d8",
+      "title": "财富等级矩阵：Lv.24奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_e3bd3542ce",
+      "title": "财富等级矩阵：Lv.25奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7a1b170e02",
+      "title": "财富等级矩阵：Lv.26奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_847c06db48",
+      "title": "财富等级矩阵：Lv.27奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_d36453700b",
+      "title": "财富等级矩阵：Lv.28奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_3a53c09257",
+      "title": "财富等级矩阵：Lv.29奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_dd511c32c7",
+      "title": "财富等级矩阵：Lv.30奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_cf8ed41463",
+      "title": "财富等级矩阵：Lv.31奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_5fefa76422",
+      "title": "财富等级矩阵：Lv.32奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_93b58e7aee",
+      "title": "财富等级矩阵：Lv.33奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_20b9eb1aae",
+      "title": "财富等级矩阵：Lv.34奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_99a1e6bc76",
+      "title": "财富等级矩阵：Lv.35奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_acdf71de73",
+      "title": "财富等级矩阵：Lv.36奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_d2d85b736c",
+      "title": "财富等级矩阵：Lv.37奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_4abe6a9f26",
+      "title": "财富等级矩阵：Lv.38奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_94844c26bb",
+      "title": "财富等级矩阵：Lv.39奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_edb08aaf9f",
+      "title": "财富等级矩阵：Lv.40奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_53e93c2c9b",
+      "title": "财富等级矩阵：Lv.41奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7ad077e9d5",
+      "title": "财富等级矩阵：Lv.42奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_94602c9e74",
+      "title": "财富等级矩阵：Lv.43奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6ec3d15f69",
+      "title": "财富等级矩阵：Lv.44奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b87eeef97c",
+      "title": "财富等级矩阵：Lv.45奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_dcb2ca8da9",
+      "title": "财富等级矩阵：Lv.46奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_1a60e14a6e",
+      "title": "财富等级矩阵：Lv.47奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_d2a4823971",
+      "title": "财富等级矩阵：Lv.48奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_c56ec05f23",
+      "title": "财富等级矩阵：Lv.49奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6740325d44",
+      "title": "财富等级矩阵：Lv.50奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_300c860f82",
+      "title": "财富等级矩阵：Lv.51奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_e0d06e309d",
+      "title": "财富等级矩阵：Lv.52奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_1963e6eeed",
+      "title": "财富等级矩阵：Lv.53奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a21692df17",
+      "title": "财富等级矩阵：Lv.54奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_baf9767def",
+      "title": "财富等级矩阵：Lv.55奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_45d32f59b4",
+      "title": "财富等级矩阵：Lv.56奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_fa6c5f744d",
+      "title": "财富等级矩阵：Lv.57奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_cb547a2cd6",
+      "title": "财富等级矩阵：Lv.58奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7c1d78389c",
+      "title": "财富等级矩阵：Lv.59奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_0f398daaae",
+      "title": "财富等级矩阵：Lv.60奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a33fdf1e1b",
+      "title": "财富等级矩阵：Lv.61奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_136c9a89b3",
+      "title": "财富等级矩阵：Lv.62奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b120828e55",
+      "title": "财富等级矩阵：Lv.63奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_d3c2d1c340",
+      "title": "财富等级矩阵：Lv.64奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ce5cbcade0",
+      "title": "财富等级矩阵：Lv.65奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_52f8951c67",
+      "title": "财富等级矩阵：Lv.66奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_8a825362c0",
+      "title": "财富等级矩阵：Lv.67奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7894394b0e",
+      "title": "财富等级矩阵：Lv.68奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_9703c5cf2c",
+      "title": "财富等级矩阵：Lv.69奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_3a9257602b",
+      "title": "财富等级矩阵：Lv.70奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_f5471c19eb",
+      "title": "财富等级矩阵：Lv.71奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_78d906207e",
+      "title": "财富等级矩阵：Lv.72奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_c4ace41f43",
+      "title": "财富等级矩阵：Lv.73奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_d4d3ce52da",
+      "title": "财富等级矩阵：Lv.74奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_77182cc125",
+      "title": "财富等级矩阵：Lv.75奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_d8535556b7",
+      "title": "财富等级矩阵：Lv.76奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_bed4aae435",
+      "title": "财富等级矩阵：Lv.77奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_2004d0ab76",
+      "title": "财富等级矩阵：Lv.78奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_9a881d3eea",
+      "title": "财富等级矩阵：Lv.79奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6217b03c02",
+      "title": "财富等级矩阵：Lv.80奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_32ed4c50fc",
+      "title": "财富等级矩阵：Lv.81奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_f68fb8332b",
+      "title": "财富等级矩阵：Lv.82奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7de1252871",
+      "title": "财富等级矩阵：Lv.83奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_84a17d394d",
+      "title": "财富等级矩阵：Lv.84奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_c54568a734",
+      "title": "财富等级矩阵：Lv.85奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_3e3bf3d20c",
+      "title": "财富等级矩阵：Lv.86奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_9544be84ec",
+      "title": "财富等级矩阵：Lv.87奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_fdc05ecc2a",
+      "title": "财富等级矩阵：Lv.88奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_e3b40ed636",
+      "title": "财富等级矩阵：Lv.89奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7a4cf946c0",
+      "title": "财富等级矩阵：Lv.90奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_545d3f5a16",
+      "title": "财富等级矩阵：Lv.91奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_e5da2caf38",
+      "title": "财富等级矩阵：Lv.92奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_84e25ea4bc",
+      "title": "财富等级矩阵：Lv.93奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_25cd90014b",
+      "title": "财富等级矩阵：Lv.94奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_775600d33a",
+      "title": "财富等级矩阵：Lv.95奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_3ed43ddded",
+      "title": "财富等级矩阵：Lv.96奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_98a5b3b2f4",
+      "title": "财富等级矩阵：Lv.97奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7c8350cd18",
+      "title": "财富等级矩阵：Lv.98奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_0fbdd21045",
+      "title": "财富等级矩阵：Lv.99奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_40f9877ffa",
+      "title": "财富等级矩阵：Lv.100奖励明细正确",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a6b23aefe9",
+      "title": "财富等级矩阵：Lv.9→Lv.10跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_42a2a434d0",
+      "title": "财富等级矩阵：Lv.10→Lv.9跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b4f46309a0",
+      "title": "财富等级矩阵：Lv.19→Lv.20跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_67d3d215c3",
+      "title": "财富等级矩阵：Lv.20→Lv.19跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_03117e1ea3",
+      "title": "财富等级矩阵：Lv.29→Lv.30跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7a45abfb23",
+      "title": "财富等级矩阵：Lv.30→Lv.29跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_9b6270d018",
+      "title": "财富等级矩阵：Lv.39→Lv.40跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_f5072ba7b1",
+      "title": "财富等级矩阵：Lv.40→Lv.39跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a4055c89db",
+      "title": "财富等级矩阵：Lv.49→Lv.50跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_f5a0551e87",
+      "title": "财富等级矩阵：Lv.50→Lv.49跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_8f26871e83",
+      "title": "财富等级矩阵：Lv.59→Lv.60跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_f0ad5bf017",
+      "title": "财富等级矩阵：Lv.60→Lv.59跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_0a84389425",
+      "title": "财富等级矩阵：Lv.69→Lv.70跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_139bb92ed9",
+      "title": "财富等级矩阵：Lv.70→Lv.69跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b2465be7bf",
+      "title": "财富等级矩阵：Lv.79→Lv.80跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_030f383de5",
+      "title": "财富等级矩阵：Lv.80→Lv.79跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_50897114b1",
+      "title": "财富等级矩阵：Lv.89→Lv.90跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b216b48ddd",
+      "title": "财富等级矩阵：Lv.90→Lv.89跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_780389228f",
+      "title": "财富等级矩阵：Lv.99→Lv.100跨段升级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_57d8c81fe9",
+      "title": "财富等级矩阵：Lv.100→Lv.99跨段降级联动",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_5c37f55c75",
+      "title": "财富等级矩阵：Lv.1个人信息与定位边界",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_439dfecde7",
+      "title": "财富等级矩阵：Lv.100个人信息与定位边界",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_08201fc35e",
+      "title": "缺失UID参数",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "SCRIPT_GENERATION_READY",
+      "recommended_tool": "newman"
+    },
+    {
+      "case_id": "tc_2370c6482c",
+      "title": "非法UID类型",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "GET",
+      "path": "/level/exeperience/v2/get",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "SCRIPT_GENERATION_READY",
+      "recommended_tool": "newman"
+    },
+    {
+      "case_id": "tc_89aa5650e3",
+      "title": "查询当前用户钱包余额：正常请求",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "GET",
+      "path": "/purse/query?deviceType={{deviceType}}&systemLanguage={{systemLanguage}}&appVersion={{appVersion}}&os={{os}}&language={{language}}&appCode={{appCode}}&appid={{appid}}&version={{version}}&channel={{channel}}&ticket={{ticket}}&uid={{uid}}",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "SCRIPT_GENERATION_READY",
+      "recommended_tool": "newman"
+    },
+    {
+      "case_id": "tc_473504bd41",
+      "title": "查询送礼账单记录：正常请求",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "GET",
+      "path": "/billrecord/get?deviceType={{deviceType}}&systemLanguage={{systemLanguage}}&appVersion={{appVersion}}&os={{os}}&language={{language}}&appCode={{appCode}}&appid={{appid}}&version={{version}}&channel={{channel}}&ticket={{ticket}}&uid={{uid}}&date={{current_time_ms}}&netType={{netType}}&appsflyerId={{appsflyerId}}&deviceId={{deviceId}}&osVersion={{osVersion}}&isVpnConnected={{isVpnConnected}}&model={{model}}&packageName={{packageName}}&ispType={{ispType}}&organic={{organic}}&pageNo=1&pageSize=50&type=1",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "SCRIPT_GENERATION_READY",
+      "recommended_tool": "newman"
+    },
+    {
+      "case_id": "tc_d439db777f",
+      "title": "登录后查询真实财富等级",
+      "priority": "P0",
+      "scenario_id": null,
+      "method": "GET",
+      "path": "/level/exeperience/v2/get?deviceType=0&systemLanguage=zh&appVersion=100.1.5.4&os=android&ticket={{ticket}}&language=en&appCode=100154&uid={{uid}}&appid=soulfree",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "SCRIPT_GENERATION_READY",
+      "recommended_tool": "newman"
+    },
+    {
+      "case_id": "tc_597bec9dd5",
+      "title": "超长昵称展示",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_0b7c3b0812",
+      "title": "当前勋章与等级对应",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ec58fc412b",
+      "title": "个人区域接口失败",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_cd1786c4e7",
+      "title": "最低等级经验",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_8abaa0f0c4",
+      "title": "经验为0",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a6615698b4",
+      "title": "经验为负数",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_030bc3252c",
+      "title": "经验超出最大配置",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_71a7e1ffa6",
+      "title": "升级所需经验文案",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_c176a8d236",
+      "title": "进度条比例计算",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b374f6d931",
+      "title": "大经验值显示精度",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_96dd2f08c8",
+      "title": "连续升级多个等级",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a2b3790f6a",
+      "title": "默认定位当前等级段",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_904f976a97",
+      "title": "等级段从低到高可完整浏览",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_dfc287f60c",
+      "title": "相邻等级段切换",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6fe633d70c",
+      "title": "快速连续切换等级段",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_60d78ca2c9",
+      "title": "等级段边界9到10",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a38b45922e",
+      "title": "等级段边界99到100",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_46e920eeee",
+      "title": "未解锁区间状态",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_9975c5a0a9",
+      "title": "已解锁区间状态",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_5082221ae5",
+      "title": "当前区间状态",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_803a7e7121",
+      "title": "列表滚动到末端",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_dfed7fb743",
+      "title": "列表刷新后保持位置",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6c822846bc",
+      "title": "等级勋章权益",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a96aa87ac8",
+      "title": "进场特效权益",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_9694282eaf",
+      "title": "房间图片消息权益",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_92e5a5dea3",
+      "title": "等级礼物权益",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_929a8c0f2e",
+      "title": "聊天气泡权益",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_6d45cb278a",
+      "title": "特殊ID权益",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ca1b7b6748",
+      "title": "权益重复配置",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ce20fd1be3",
+      "title": "从高等级段回到当前等级",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_7bd3ecd254",
+      "title": "从低等级段回到当前等级",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_30d34d0008",
+      "title": "已在当前等级段点击My Level",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_b15e34123b",
+      "title": "等级升级后My Level回位",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a43ccc45ad",
+      "title": "列表未加载完成时点击My Level",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_fcc99f8ee8",
+      "title": "接口失败时点击My Level",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_2f95ee777e",
+      "title": "最高等级My Level",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_a76f014a7d",
+      "title": "最低等级My Level",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_2f415ba578",
+      "title": "打开权益预览弹窗",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ccdc41befd",
+      "title": "重复请求数据稳定",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_ce429b0f24",
+      "title": "重新登录后数据一致",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_4864d26b85",
+      "title": "财富接口响应性能",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_5e5c8f6ac3",
+      "title": "大量权益资源加载",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_8862f0efdd",
+      "title": "升级后浏览新权益并回位",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    },
+    {
+      "case_id": "tc_50bfe8a80e",
+      "title": "Token过期后恢复财富页面",
+      "priority": "P1",
+      "scenario_id": null,
+      "method": "",
+      "path": "",
+      "selection_type": "DIRECT",
+      "reasons": [
+        "命中业务关键词：财富",
+        "命中业务关键词：等级"
+      ],
+      "automation_readiness": "MANUAL_ONLY",
+      "recommended_tool": "manual"
+    }
+  ],
+  "project_id": "prj_e3515817c4",
+  "package_id": "wealth-level",
+  "package_name": "财富等级",
+  "generated_at": "2026-09-04T18:31:16+08:00",
+  "source_cases_path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\requirements\\wealth-level\\outputs\\structured-test-cases.json"
+}

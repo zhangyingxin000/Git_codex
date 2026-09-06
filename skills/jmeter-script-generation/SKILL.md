@@ -11,6 +11,45 @@ metadata:
 
 Generate enterprise-recognized Apache JMeter plans from requirement packages and test cases. The workbench is only the orchestration hub; JMeter remains the execution and maintenance tool.
 
+## Generation Engine
+
+Use the Skill as both the decision and constrained JMX generation layer. The Skill may use the installed `jmeter-generator` implementation or the platform template engine, but it must obey this contract before any MCP call.
+
+- The Skill parses requirement cases, OpenAPI and the selected performance Profile, then produces the canonical `jmeter-plan.jmx`.
+- The deterministic gate validates the generated or maintained JMX and may perform one format-only correction pass. It must never change thread groups, requests, assertions, load settings or business order.
+- `mcp` is the single non-GUI execution gateway. It imports an approved JMX, executes it, generates JTL/HTML artifacts and returns execution metadata. It does not construct business samplers or rewrite the plan.
+- Record the generation Skill, gate report, original/corrected hashes, MCP package version and execution workflow in the generated manifest.
+- Credentialed plans use declared account CSV files or an ephemeral runtime CSV. Never persist raw uid/ticket/token values in JMX, JTL, HTML, MCP workspace metadata or platform reports.
+- The platform owns requirement parsing, preflight, report retention, performance baselines, evidence recovery, threshold decisions and AI review; MCP owns JMX import, execution and artifact collection only.
+
+## Execution Modes
+
+JMeter is one execution engine with two strictly separated testing purposes.
+
+### Business Scenario Mode
+
+Use `jmeter_scenario` for complex requirement scenarios involving ordered API calls, multiple roles/accounts, extracted variables, state transitions, retries, branches and long business chains.
+
+- The primary result is scenario correctness, not capacity.
+- Assertions focus on step order, business status, role ownership, variable continuity and DB/Redis evidence.
+- Use one thread per account slot unless the scenario explicitly tests concurrent business behavior.
+- Output to `outputs/jmeter/scenario/` and archive reports under the scenario report category.
+
+### Performance Mode
+
+Use `jmeter_performance` only when the test objective is performance or capacity:
+
+- `baseline`: one user or one thread, stable repetitions, establishes response-time and throughput baseline.
+- `load`: gradually increases concurrency/load, finds the maximum load that still satisfies thresholds.
+- `spike`: applies a rapid load increase and observes degradation and recovery.
+- `soak`: normal target load for a long duration, from hours to days/weeks, observes error rate, tail latency and resource degradation.
+- `concurrency`: simultaneous requests or users, validates contention, locks, duplicate writes and capacity behavior.
+- `stress`: continues beyond expected capacity, identifies the failure point, degradation pattern and recovery behavior.
+
+Performance reports must include response time, P50/P90/P95/P99, TPS/QPS or throughput, concurrent users, error rate, response codes, load stage, threshold result and the capacity inflection point when available. Output to `outputs/jmeter/performance/` and archive reports under the performance report category.
+
+Never put business-scenario correctness and performance conclusions into the same JMX thread group or the same report conclusion. The same API chain may be used as a workload model, but it must be copied into a separate performance plan with an explicit profile.
+
 ## Input Contract
 
 Each generated script must be traceable to one requirement package and one test scenario. Required input fields:
@@ -74,10 +113,13 @@ Never put real passwords, long-lived tickets or production secrets in YAML. If a
 
 Generate independent thread groups by requirement flow. Do not mix unrelated requirements in the same thread group.
 
-- smoke: 1 thread, 1 loop, low risk, used for connectivity and authentication.
-- baseline: configurable threads and loops, used for stable baseline metrics.
-- step_load: multiple stages with increasing threads, used to observe capacity changes.
-- stability: longer duration with fixed target concurrency, used to observe error rate and tail latency.
+- scenario_smoke: 1 thread, 1 loop, used only to prove a complex business flow can execute correctly.
+- baseline: 1 user/thread with stable repetitions, used to establish single-user metrics.
+- load: multiple stages with increasing users/threads, used to find the threshold-compliant maximum load.
+- spike: rapid increase and decrease, used to observe burst handling and recovery.
+- soak: long duration with normal target load, used to observe error rate, resource leakage and tail-latency drift.
+- concurrency: synchronized users/requests, used to observe contention, locking and duplicate processing.
+- stress: load beyond expected capacity, used to locate failure and recovery points.
 
 Each thread group must include:
 
@@ -149,7 +191,7 @@ Workflow samplers must also have:
 
 ## Listeners And Reports
 
-Generated GUI plans should include:
+Debug-only GUI plans may include:
 
 - View Results Tree
 - Summary Report
@@ -157,7 +199,7 @@ Generated GUI plans should include:
 - Graph Results or response-time graph listener
 - Simple Data Writer to JTL
 
-Generated non-GUI plans should include:
+Generated non-GUI plans must disable heavy GUI listeners and include:
 
 - JTL output path
 - HTML report generation path
@@ -180,6 +222,15 @@ Every JMeter execution report must recover:
 - response code distribution
 
 AI replay analysis must judge the result by SLA or configured threshold, not by visual charts alone.
+
+## Baseline Contract
+
+- Every run context contains separate `performance.baseline` and `performance.comparison` states.
+- The first eligible result is `candidate`, never automatically `active`.
+- Only a manually approved run becomes an `active` baseline and receives report-retention protection.
+- Comparisons require the same environment, Profile and target fingerprint.
+- Comparison outcomes are `not_compared`, `pass`, `improved` or `regressed`.
+- AI analysis must include the baseline comparison and must not claim an application, DB, cache or network root cause from JTL alone.
 
 ## DB And Redis Evidence
 

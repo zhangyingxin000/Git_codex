@@ -28,6 +28,7 @@ Each case must contain:
   "scenario_type": "main_flow|alternate_flow|exception_flow|business_boundary",
   "design_technique": "scenario_analysis|state_transition|decision_table|equivalence_partition|boundary_value|pairwise|error_guessing",
   "priority": "P0|P1|P2|P3",
+  "lifecycle_status": "DRAFT|ACTIVE|DEPRECATED",
   "actors": ["applicant", "agent"],
   "account_slots": ["applicant_01", "agent_matched"],
   "preconditions": [],
@@ -74,6 +75,7 @@ Each case must contain:
 - `resource_requirements` describes needs and source constraints, not secrets.
 - `evidence_rule_ids` contains only confirmed rules. Unconfirmed mappings belong in candidate output.
 - `recommended_tools` is routing advice. It does not split ownership of the requirement package.
+- Newly generated cases start as `DRAFT`. Only `ACTIVE` cases enter normal regression and execution; `DEPRECATED` cases remain traceable and can be restored.
 - Existing platform fields may be retained for backward compatibility, but they must not contradict this contract.
 
 ## Companion Candidate Outputs

@@ -1,78 +1,54 @@
 ---
 name: api-test-case-generation
-description: Generate traceable API test case designs from OpenAPI or captured interface schemas using equivalence partitioning, boundary value analysis, authentication, reliability, concurrency, and isolated security scenarios.
+description: Generate interface-level test case designs from REST, gRPC, GraphQL, WebSocket, or file-stream API definitions. Use for protocol, parameter, schema, business-rule, data, and per-request SLA validation; do not use for end-to-end requirement scenarios or capacity/performance plans.
 metadata:
-  short-description: Schema-driven API test case design
+  short-description: Strict interface test case design
 ---
 
-# API Test Case Generation
+# Interface Test Case Generation
 
-Use this skill when a requirement package needs interface test cases generated or refreshed from OpenAPI, Swagger, Apifox export, HAR-derived schemas, or maintained API metadata.
+Generate reviewable interface test cases before any Newman, pytest, JMeter, Apifox, or other execution script is created.
 
-## Scope Boundary
+## Scope
 
-This Skill generates **interface test cases**, not requirement/business test cases.
+- Input: API documentation, OpenAPI/Swagger/Apifox export, `.proto`, GraphQL schema/query, WebSocket contract, file-stream contract, captured examples, and optional business/data rules.
+- Output: interface test case design only.
+- Exclude: end-to-end requirement flows, multi-role state machines, load profiles, capacity conclusions, and long-duration performance plans.
+- Keep interface cases in `outputs/api-test-cases/`; never overwrite `outputs/structured-test-cases.*`.
 
-- Interface test cases validate one API's request contract, response contract, equivalence partitions, boundaries, authentication, exception behavior, idempotency, concurrency and security behavior.
-- Requirement test cases validate end-to-end business scenarios, state transitions, multiple roles/accounts, cross-interface sequencing and business evidence.
-- Keep the outputs separate. Interface cases belong in `outputs/api-test-cases/`; requirement cases belong in `outputs/structured-test-cases.*`.
-- Interface cases may be referenced by a business scenario, but must never replace or overwrite the requirement test case.
+## Required Workflow
 
-## Required Inputs
+1. Detect the protocol from the input.
+2. Extract fields, locations, types, required flags, formats, lengths, enums, examples, response schemas, business rules, dependencies, callbacks, and optional DB checks.
+3. Build the dependency graph before generating cases. Mark cycles and recommend a Mock boundary.
+4. Generate normal, exception, and boundary scenarios with coverage weights `40:40:20`.
+5. Apply the deterministic data construction rules and record every inferred constraint.
+6. Build all five assertion layers: protocol, structure, business, optional data, and per-request SLA.
+7. Add cleanup for every create/mutation case.
+8. Run the quality gate before writing JSON, Markdown, or Excel.
+9. Only after review, compile cases into tool-specific scripts while preserving `case_id`.
 
-- The selected requirement package and its business requirement.
-- The latest interface schema or captured request example.
-- Parameter location, required flag, type, format, enum, pattern, minimum, maximum, minLength and maxLength when available.
-- Authentication and role context from the package account model.
-- Business assertions and DB/Redis evidence rules when the requirement defines them.
+Read [references/generation-standard.md](references/generation-standard.md) for coverage, data construction, mandatory exceptions, protocol recognition, and special handling. Read [references/case-contract.md](references/case-contract.md) whenever generating or validating the JSON output. Machine-readable defaults are in `rules.yaml`.
 
-Do not invent constraints that are absent from both the schema and requirement. Missing constraints must be reported as design gaps.
+## Non-Negotiable Rules
 
-## Generation Contract
+- Every case must contain every field required by the case contract.
+- The coverage summary must report normal/exception/boundary counts and weights. Weight totals must be exactly `40/40/20`; mandatory exception cases may be more numerous without changing their total 40% weight.
+- Missing constraints may be inferred only from configured defaults and must set `inferred: true` with the inferred source recorded.
+- Enum values must come from `allowed_values`/Schema. Never invent enums.
+- Do not use only `code == 0` or HTTP 200 as the assertion.
+- Validate response headers, required response fields/types/formats, array length or pagination totals when applicable.
+- Security, 1MB payload, mutation, callback, concurrency, and timeout cases are design assets until the target test environment and authorization pass preflight.
+- A 500 ms assertion is a per-request interface SLA default, not a performance-capacity conclusion. Formal baseline/load/stability/concurrency/stress testing belongs to the performance plan.
+- If DB connection metadata or `sql_check` is absent, do not invent SQL. Mark the data assertion as skipped and request the test datasource once through the requirement package resource manifest.
 
-Generate a valid baseline case for every operation, then derive field-level cases:
+## Execution Handoff
 
-1. Required fields: missing value and empty/null boundaries where applicable.
-2. Types: valid type and one invalid type class.
-3. Enums: every declared valid value and one value outside the enum.
-4. Numeric boundaries: `min-1`, `min`, `min+1`, `max-1`, `max`, `max+1` when limits exist.
-5. Length boundaries: `minLength-1`, `minLength`, `minLength+1`, `maxLength-1`, `maxLength`, `maxLength+1`.
-6. Formats and patterns: valid example when provided and invalid format/pattern input.
-7. Authentication: missing, invalid, expired and role/UID mismatch when identity context supports them.
-8. Mutation APIs: duplicate submission, idempotency and concurrent submission.
-9. JSON bodies: malformed JSON and missing required body fields.
-10. Security strings: SQL injection and XSS candidates, always marked for isolated test environments and human confirmation.
-11. Protocol contract: unsupported HTTP method, missing required request body, mismatched Content-Type and malformed JSON.
-12. Response contract: HTTP status, business code, required response fields, types, enums and sensitive-field leakage.
+Compile reviewed cases by protocol and tool:
 
-Read [references/case-contract.md](references/case-contract.md) when producing or reviewing the output structure. Machine-readable defaults are in `rules.yaml`.
+- REST normal/negative/ordinary boundaries: Newman or Apifox CLI.
+- Deep business expressions, DB checks, security analysis, protocol adapters: pytest.
+- WebSocket or gRPC specialized clients when available.
+- Concurrency candidates: separate JMeter performance or scenario plans, never the ordinary interface report.
 
-## Tool Routing
-
-- Newman or Apifox CLI: normal classes, required fields, types, enums, ordinary boundaries and authentication smoke cases.
-- pytest: complex combinations, business assertions, authorization, idempotency, DB/Redis evidence and security result analysis.
-- JMeter: concurrent submission, repeated requests and performance-related interface scenarios.
-
-The same case may map to more than one tool, but keep one primary recommended tool and record secondary mappings separately.
-
-## Safety
-
-- SQL injection, XSS, path traversal, oversized payloads and destructive mutation cases must not run against production.
-- Mark security and mutation-concurrency cases `REVIEW_REQUIRED` unless the selected environment explicitly permits them.
-- Never include real passwords, tickets or tokens in generated public assets.
-- A generated case is a design asset until its required data, identity, environment and assertions pass preflight.
-
-## Required Output
-
-Each case must contain:
-
-- case ID and operation ID
-- interface name, method and path
-- test dimension and design technique
-- valid/invalid equivalence partition
-- field-level request mutation
-- preconditions, steps and expected result
-- priority, recommended tool and automation status
-- security execution policy
-
-Write package-local JSON, Markdown and Excel outputs. Include summary counts by interface, dimension, tool and review status. Every subsequent Newman, pytest or JMeter generation should consume or reference this case design instead of silently creating unrelated cases.
+Before execution, resolve variables from dependency outputs, package CSV files, resource manifests, saved runtime parameters, and allowed data sources. Block unresolved variables instead of sending placeholder text. Write results back by `case_id` and keep interface, business-scenario, and performance reports separate.

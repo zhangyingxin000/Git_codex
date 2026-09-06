@@ -320,7 +320,7 @@ vars.put('workflow_expected_gift_count','10')</stringProp>
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
-          <stringProp name="script">def runtimeFile = new File('C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/jmeter-runtime.properties')
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/jmeter-runtime.properties')
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
     runtimeFile.withInputStream { runtimeProps.load(it) }
@@ -657,7 +657,7 @@ SampleResult.setResponseData(('财富等级需求闭环通过：送礼次数=' +
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
-          <stringProp name="script">def runtimeFile = new File('C:/Users/DELL/Documents/Codex/2026-08-19/new-chat/outputs/AutoTest-AI/work/jmeter-runtime.properties')
+          <stringProp name="script">def runtimeFile = new File('${__P(project_root,.)}/work/jmeter-runtime.properties')
 if (runtimeFile.exists()) {
     def runtimeProps = new Properties()
     runtimeFile.withInputStream { runtimeProps.load(it) }
@@ -828,7 +828,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\财富等级-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree />
       <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
@@ -865,7 +865,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\财富等级-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree />
       <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
@@ -902,7 +902,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\财富等级-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree />
       <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true">
@@ -939,7 +939,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\财富等级-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree />
       <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果">
@@ -976,7 +976,7 @@ if (loginUid) {
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\财富等级-result.jtl</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
       </ResultCollector>
       <hashTree />
     </hashTree>

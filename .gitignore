@@ -4,10 +4,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+.pytest-*/
+.pytest_tmp*/
 .test-tmp/
 .pytest-local-tmp/
 .pytest-run-*/
 *.egg-info/
+node_modules/
+.npm-cache/
 
 # Local databases and credentials
 autotest_ai.db
@@ -33,6 +37,7 @@ reports/
 requirements/*/runs/
 work/
 backups/
+tools/jmeter-mcp/artifacts/
 requirements/*/outputs/corrections/
 requirements/*/outputs/schema-upgrade-backups/
 *.log

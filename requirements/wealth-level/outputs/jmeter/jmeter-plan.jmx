@@ -1,93 +1,972 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
-  <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Soulfree测试服 性能基线" enabled="true">
-      <stringProp name="TestPlan.comments">由 AutoTest AI 生成；GUI 用于审阅维护，非 GUI 执行用于报告归档。</stringProp>
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
-      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
-      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments"><collectionProp name="Arguments.arguments"/></elementProp>
-    </TestPlan>
-    <hashTree>
-      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="运行变量" enabled="true">
-        <collectionProp name="Arguments.arguments"><elementProp name="appCode" elementType="Argument"><stringProp name="Argument.name">appCode</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appVersion" elementType="Argument"><stringProp name="Argument.name">appVersion</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appid" elementType="Argument"><stringProp name="Argument.name">appid</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appsflyerId" elementType="Argument"><stringProp name="Argument.name">appsflyerId</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="channel" elementType="Argument"><stringProp name="Argument.name">channel</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="deviceId" elementType="Argument"><stringProp name="Argument.name">deviceId</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="deviceType" elementType="Argument"><stringProp name="Argument.name">deviceType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="gift_count" elementType="Argument"><stringProp name="Argument.name">gift_count</stringProp><stringProp name="Argument.value">1</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="isVpnConnected" elementType="Argument"><stringProp name="Argument.name">isVpnConnected</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="ispType" elementType="Argument"><stringProp name="Argument.name">ispType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="language" elementType="Argument"><stringProp name="Argument.name">language</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="login_password_encrypted" elementType="Argument"><stringProp name="Argument.name">login_password_encrypted</stringProp><stringProp name="Argument.value">${__P(login_password_encrypted,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="model" elementType="Argument"><stringProp name="Argument.name">model</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="netType" elementType="Argument"><stringProp name="Argument.name">netType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="organic" elementType="Argument"><stringProp name="Argument.name">organic</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="os" elementType="Argument"><stringProp name="Argument.name">os</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="osVersion" elementType="Argument"><stringProp name="Argument.name">osVersion</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="packageName" elementType="Argument"><stringProp name="Argument.name">packageName</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="pageNo" elementType="Argument"><stringProp name="Argument.name">pageNo</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="pageSize" elementType="Argument"><stringProp name="Argument.name">pageSize</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="sn" elementType="Argument"><stringProp name="Argument.name">sn</stringProp><stringProp name="Argument.value">${__P(sn,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="systemLanguage" elementType="Argument"><stringProp name="Argument.name">systemLanguage</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="t" elementType="Argument"><stringProp name="Argument.name">t</stringProp><stringProp name="Argument.value">${__P(t,${__time(,)})}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="ticket" elementType="Argument"><stringProp name="Argument.name">ticket</stringProp><stringProp name="Argument.value">${__P(ticket,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="type" elementType="Argument"><stringProp name="Argument.name">type</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="uid" elementType="Argument"><stringProp name="Argument.name">uid</stringProp><stringProp name="Argument.value">${__P(uid,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="version" elementType="Argument"><stringProp name="Argument.name">version</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp></collectionProp>
-      </Arguments>
-      <hashTree/>
-      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
-        <stringProp name="HTTPSampler.protocol">https</stringProp>
-        <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
-        <stringProp name="HTTPSampler.port"></stringProp>
-        <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
-        <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
-        <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"/></elementProp>
-      </ConfigTestElement>
-      <hashTree/>
-      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie 管理器" enabled="true">
-        <collectionProp name="CookieManager.cookies"/>
-        <boolProp name="CookieManager.clearEachIteration">false</boolProp>
-        <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
-      </CookieManager>
-      <hashTree/>
-      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache 管理器" enabled="true">
-        <boolProp name="clearEachIteration">false</boolProp>
-        <boolProp name="useExpires">true</boolProp>
-      </CacheManager>
-      <hashTree/>
-      
-      
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="接口性能冒烟" enabled="true">
-        <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">1</intProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">false</boolProp><stringProp name="LoopController.loops">1</stringProp></elementProp>
-        <boolProp name="ThreadGroup.scheduler">false</boolProp>
-      </ThreadGroup>
-      <hashTree>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取登录身份上下文" enabled="true">
-          <stringProp name="cacheKey">autotest-load-auth-context</stringProp>
-          <stringProp name="filename"></stringProp>
-          <stringProp name="parameters"></stringProp>
-          <stringProp name="script">def token = props.get('ticket') ?: vars.get('ticket') ?: '${__P(ticket,)}'
-if (!token) {
-    throw new IllegalStateException('未取得 ticket：请在平台先完成一次真实登录，或填写登录加密密码后重新打开 JMeter 工作台')
+<hashTree>
+<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Soulfree测试服 性能基线" enabled="true">
+<stringProp name="TestPlan.comments"></stringProp>
+<boolProp name="TestPlan.functional_mode">false</boolProp>
+<boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+<boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+<elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="TestPlan.user_define_classpath"></stringProp>
+</TestPlan>
+<hashTree>
+<Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="运行变量" enabled="true">
+<collectionProp name="Arguments.arguments">
+<elementProp name="appCode" elementType="Argument">
+<stringProp name="Argument.name">appCode</stringProp>
+<stringProp name="Argument.value">100154</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="appVersion" elementType="Argument">
+<stringProp name="Argument.name">appVersion</stringProp>
+<stringProp name="Argument.value">100.1.5.4</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="appid" elementType="Argument">
+<stringProp name="Argument.name">appid</stringProp>
+<stringProp name="Argument.value">soulfree</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="appsflyerId" elementType="Argument">
+<stringProp name="Argument.name">appsflyerId</stringProp>
+<stringProp name="Argument.value">1787628595990-5267637366511328587</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="channel" elementType="Argument">
+<stringProp name="Argument.name">channel</stringProp>
+<stringProp name="Argument.value">google</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="credential_uid" elementType="Argument">
+<stringProp name="Argument.name">credential_uid</stringProp>
+<stringProp name="Argument.value">1454694</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="current_time_ms" elementType="Argument">
+<stringProp name="Argument.name">current_time_ms</stringProp>
+<stringProp name="Argument.value">1787726343013</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="deviceId" elementType="Argument">
+<stringProp name="Argument.name">deviceId</stringProp>
+<stringProp name="Argument.value">8fcce1f1-5153-3207-9786-0240140a524a</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="deviceType" elementType="Argument">
+<stringProp name="Argument.name">deviceType</stringProp>
+<stringProp name="Argument.value">0</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="isVpnConnected" elementType="Argument">
+<stringProp name="Argument.name">isVpnConnected</stringProp>
+<stringProp name="Argument.value">0</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="ispType" elementType="Argument">
+<stringProp name="Argument.name">ispType</stringProp>
+<stringProp name="Argument.value">4</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="language" elementType="Argument">
+<stringProp name="Argument.name">language</stringProp>
+<stringProp name="Argument.value">en</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="login_password_encrypted" elementType="Argument">
+<stringProp name="Argument.name">login_password_encrypted</stringProp>
+<stringProp name="Argument.value">a123456</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="model" elementType="Argument">
+<stringProp name="Argument.name">model</stringProp>
+<stringProp name="Argument.value">SM-A546B</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="netType" elementType="Argument">
+<stringProp name="Argument.name">netType</stringProp>
+<stringProp name="Argument.value">2</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="organic" elementType="Argument">
+<stringProp name="Argument.name">organic</stringProp>
+<stringProp name="Argument.value">Organic</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="os" elementType="Argument">
+<stringProp name="Argument.name">os</stringProp>
+<stringProp name="Argument.value">android</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="osVersion" elementType="Argument">
+<stringProp name="Argument.name">osVersion</stringProp>
+<stringProp name="Argument.value">16</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="packageName" elementType="Argument">
+<stringProp name="Argument.name">packageName</stringProp>
+<stringProp name="Argument.value">com.soulfree.happiness</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="pageNo" elementType="Argument">
+<stringProp name="Argument.name">pageNo</stringProp>
+<stringProp name="Argument.value">1</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="pageSize" elementType="Argument">
+<stringProp name="Argument.name">pageSize</stringProp>
+<stringProp name="Argument.value">50</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="receiver_uid" elementType="Argument">
+<stringProp name="Argument.name">receiver_uid</stringProp>
+<stringProp name="Argument.value">1454779</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="requested_uid" elementType="Argument">
+<stringProp name="Argument.name">requested_uid</stringProp>
+<stringProp name="Argument.value">1454428</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="room_uid" elementType="Argument">
+<stringProp name="Argument.name">room_uid</stringProp>
+<stringProp name="Argument.value">1454428</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="sn" elementType="Argument">
+<stringProp name="Argument.name">sn</stringProp>
+<stringProp name="Argument.value">${__P(sn,)}</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="systemLanguage" elementType="Argument">
+<stringProp name="Argument.name">systemLanguage</stringProp>
+<stringProp name="Argument.value">zh</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="t" elementType="Argument">
+<stringProp name="Argument.name">t</stringProp>
+<stringProp name="Argument.value">${__P(t,${__time(,)})}</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="ticket" elementType="Argument">
+<stringProp name="Argument.name">ticket</stringProp>
+<stringProp name="Argument.value">${__P(ticket,)}</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="type" elementType="Argument">
+<stringProp name="Argument.name">type</stringProp>
+<stringProp name="Argument.value">1</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="uid" elementType="Argument">
+<stringProp name="Argument.name">uid</stringProp>
+<stringProp name="Argument.value">${__P(uid,)}</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="uids" elementType="Argument">
+<stringProp name="Argument.name">uids</stringProp>
+<stringProp name="Argument.value">1454779,1454694,1454428</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="uids_1" elementType="Argument">
+<stringProp name="Argument.name">uids_1</stringProp>
+<stringProp name="Argument.value">1454779</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="uids_2" elementType="Argument">
+<stringProp name="Argument.name">uids_2</stringProp>
+<stringProp name="Argument.value">1454694</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="uids_3" elementType="Argument">
+<stringProp name="Argument.name">uids_3</stringProp>
+<stringProp name="Argument.value">1454428</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+<elementProp name="version" elementType="Argument">
+<stringProp name="Argument.name">version</stringProp>
+<stringProp name="Argument.value">100.1.5.4</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+</collectionProp>
+</Arguments>
+<hashTree>
+
+</hashTree>
+<ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.connect_timeout"></stringProp>
+<stringProp name="HTTPSampler.response_timeout"></stringProp>
+<stringProp name="HTTPSampler.protocol">https</stringProp>
+<stringProp name="HTTPSampler.contentEncoding"></stringProp>
+<stringProp name="HTTPSampler.path"></stringProp>
+<stringProp name="HTTPSampler.concurrentPool">4</stringProp>
+</ConfigTestElement>
+<hashTree>
+
+</hashTree>
+<CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie 管理器" enabled="true">
+<collectionProp name="CookieManager.cookies"/>
+<boolProp name="CookieManager.clearEachIteration">false</boolProp>
+<stringProp name="CookieManager.policy">standard</stringProp>
+<stringProp name="CookieManager.implementation">org.apache.jmeter.protocol.http.control.HC4CookieHandler</stringProp>
+</CookieManager>
+<hashTree>
+
+</hashTree>
+<CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache 管理器" enabled="true"><boolProp name="clearEachIteration">false</boolProp><boolProp name="useExpires">true</boolProp><boolProp name="CacheManager.controlledByThread">false</boolProp></CacheManager>
+<hashTree>
+
+</hashTree>
+<SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="登录鉴权前置" enabled="false">
+<stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+<elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+<boolProp name="LoopController.continue_forever">false</boolProp>
+<intProp name="LoopController.loops">1</intProp>
+</elementProp>
+<stringProp name="ThreadGroup.num_threads">1</stringProp>
+<stringProp name="ThreadGroup.ramp_time">0</stringProp>
+<boolProp name="ThreadGroup.scheduler">false</boolProp>
+<stringProp name="ThreadGroup.duration"></stringProp>
+<stringProp name="ThreadGroup.delay"></stringProp>
+<boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+</SetupThreadGroup>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="登录接口：提取 access_token" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments">
+<elementProp name="" elementType="HTTPArgument">
+<boolProp name="HTTPArgument.always_encode">false</boolProp>
+<stringProp name="Argument.value">deviceType=0&amp;systemLanguage=zh&amp;shortId=30010025&amp;appVersion=100.1.5.4&amp;os=android&amp;netType=2&amp;channel=google&amp;language=en&amp;appCode=100154&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;version=100.1.5.4&amp;password=${__P(login_password_encrypted)}&amp;osVersion=16&amp;isVpnConnected=0&amp;appid=soulfree&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;ispType=4&amp;organic=Organic</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+</collectionProp>
+</elementProp>
+<stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol">https</stringProp>
+<stringProp name="HTTPSampler.path">/userserv/id/login</stringProp>
+<stringProp name="HTTPSampler.method">POST</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="登录 Headers" enabled="true">
+<collectionProp name="HeaderManager.headers">
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">Content-Type</stringProp>
+<stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+</elementProp>
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">t</stringProp>
+<stringProp name="Header.value">${__P(t,${__time(,)})}</stringProp>
+</elementProp>
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">sn</stringProp>
+<stringProp name="Header.value">${__P(sn)}</stringProp>
+</elementProp>
+</collectionProp>
+</HeaderManager>
+<hashTree>
+
+</hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取 access_token 与 uid" enabled="true"><stringProp name="JSONPostProcessor.referenceNames">access_token;login_uid</stringProp><stringProp name="JSONPostProcessor.jsonPathExprs">$.data.access_token;$.data.uid</stringProp><stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp><stringProp name="JSONPostProcessor.defaultValues">;</stringProp></JSONPostProcessor>
+<hashTree>
+
+</hashTree>
+<JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="同步 ticket 到业务线程组" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">def token = vars.get(&apos;access_token&apos;)
+if (token) {
+    props.put(&apos;ticket&apos;, token)
+    vars.put(&apos;ticket&apos;, token)
 }
-vars.put('ticket', token)
-def loginUid = props.get('uid') ?: vars.get('uid') ?: '${__P(uid,)}'
+def loginUid = vars.get(&apos;login_uid&apos;)
 if (loginUid) {
-    vars.put('uid', loginUid)
-}</stringProp>
-          <stringProp name="scriptLanguage">groovy</stringProp>
-        </JSR223PreProcessor>
-        <hashTree/>
-        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="请求间隔" enabled="true">
-          <stringProp name="ConstantTimer.delay">300</stringProp>
-        </ConstantTimer>
-        <hashTree/>
-        
-      </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
-      </ResultCollector>
-      <hashTree/>
-      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
-      </ResultCollector>
-      <hashTree/>
-      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
-      </ResultCollector>
-      <hashTree/>
-      <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
-      </ResultCollector>
-      <hashTree/>
-      <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">D:\apache-jmeter-5.6.3\jmx\20260826\性能基线-result.jtl</stringProp>
-      </ResultCollector>
-      <hashTree/>
-    </hashTree>
-  </hashTree>
+    props.put(&apos;uid&apos;, loginUid)
+    vars.put(&apos;uid&apos;, loginUid)
+}</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PostProcessor>
+<hashTree>
+
+</hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言登录成功" enabled="true">
+<collectionProp name="Asserion.test_strings">
+<stringProp name="1">200</stringProp>
+</collectionProp>
+<stringProp name="Assertion.custom_message"></stringProp>
+<stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+<boolProp name="Assertion.assume_success">false</boolProp>
+<intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree>
+
+</hashTree>
+</hashTree>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="财富等级需求闭环（登录-钱包-送礼-财富-账单）" enabled="true">
+<stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+<elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+<boolProp name="LoopController.continue_forever">false</boolProp>
+<intProp name="LoopController.loops">1</intProp>
+</elementProp>
+<stringProp name="ThreadGroup.num_threads">1</stringProp>
+<stringProp name="ThreadGroup.ramp_time">0</stringProp>
+<boolProp name="ThreadGroup.scheduler">false</boolProp>
+<stringProp name="ThreadGroup.duration"></stringProp>
+<stringProp name="ThreadGroup.delay"></stringProp>
+<boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+</ThreadGroup>
+<hashTree>
+<JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="闭环初始化：清空本次消费累计" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">props.put(&apos;gift_total_consume&apos;,&apos;0&apos;)
+props.put(&apos;gift_success_count&apos;,&apos;0&apos;)
+props.put(&apos;gift_consume_values&apos;,&apos;&apos;)
+props.put(&apos;gift_bill_match_count&apos;,&apos;0&apos;)
+vars.put(&apos;workflow_expected_gift_count&apos;,&apos;10&apos;)</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223Sampler>
+<hashTree>
+
+</hashTree>
+<JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取登录身份上下文" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">def token = props.get(&apos;ticket&apos;) ?: vars.get(&apos;ticket&apos;) ?: &apos;${__P(ticket,)}&apos;
+if (!token) {
+    throw new IllegalStateException(&apos;未取得 ticket：请先通过平台传入登录密码打开 JMeter，或复用平台已保存 ticket&apos;)
+}
+vars.put(&apos;ticket&apos;, token)
+def loginUid = props.get(&apos;uid&apos;) ?: vars.get(&apos;uid&apos;) ?: &apos;${__P(uid,)}&apos;
+if (loginUid) {
+    vars.put(&apos;uid&apos;, loginUid)
+}</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PreProcessor>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="前置查询财富等级快照" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain"></stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol"></stringProp>
+<stringProp name="HTTPSampler.path">/level/exeperience/v2/get?deviceType=${deviceType}&amp;systemLanguage=${systemLanguage}&amp;appVersion=${appVersion}&amp;os=${os}&amp;ticket=${ticket}&amp;netType=${netType}&amp;channel=${channel}&amp;appsflyerId=${appsflyerId}&amp;language=${language}&amp;appCode=${appCode}&amp;deviceId=${deviceId}&amp;version=${version}&amp;osVersion=${osVersion}&amp;isVpnConnected=${isVpnConnected}&amp;appid=${appid}&amp;model=${model}&amp;packageName=${packageName}&amp;ispType=${ispType}&amp;organic=${organic}&amp;uid=${uid}</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取送礼前财富等级与经验（停用，改由JSR223稳态解析）" enabled="false"><stringProp name="JSONPostProcessor.referenceNames">wealth_before_level;wealth_before_exp</stringProp><stringProp name="JSONPostProcessor.jsonPathExprs">$.data.myExperLevelInfo.currentLevel;$.data.myExperLevelInfo.currentExperValue</stringProp><stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp><stringProp name="JSONPostProcessor.defaultValues">;</stringProp></JSONPostProcessor>
+<hashTree>
+
+</hashTree>
+<JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="解析送礼前财富快照" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">import groovy.json.JsonSlurper
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def info = payload?.data?.myExperLevelInfo
+if (!(info instanceof Map)) {
+    throw new IllegalStateException(&apos;前置财富接口响应缺少 data.myExperLevelInfo&apos;)
+}
+def level = info.currentLevel
+def exp = info.currentExperValue
+if (!(level instanceof Number) || !(exp instanceof Number)) {
+    throw new IllegalStateException(&apos;前置财富接口未返回有效等级/经验：level=&apos; + level + &apos;, exp=&apos; + exp)
+}
+vars.put(&apos;wealth_before_level&apos;, String.valueOf(level.longValue()))
+vars.put(&apos;wealth_before_exp&apos;, String.valueOf(exp.longValue()))
+props.put(&apos;wealth_before_level&apos;, String.valueOf(level.longValue()))
+props.put(&apos;wealth_before_exp&apos;, String.valueOf(exp.longValue()))</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PostProcessor>
+<hashTree>
+
+</hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言前置财富查询成功" enabled="true">
+<collectionProp name="Asserion.test_strings">
+<stringProp name="1">200</stringProp>
+</collectionProp>
+<stringProp name="Assertion.custom_message"></stringProp>
+<stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+<boolProp name="Assertion.assume_success">false</boolProp>
+<intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="前置查询钱包余额快照" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain"></stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol"></stringProp>
+<stringProp name="HTTPSampler.path">/purse/query?deviceType=${deviceType}&amp;systemLanguage=${systemLanguage}&amp;appVersion=${appVersion}&amp;os=${os}&amp;ticket=${ticket}&amp;netType=${netType}&amp;channel=${channel}&amp;appsflyerId=${appsflyerId}&amp;language=${language}&amp;appCode=${appCode}&amp;deviceId=${deviceId}&amp;version=${version}&amp;osVersion=${osVersion}&amp;isVpnConnected=${isVpnConnected}&amp;appid=${appid}&amp;model=${model}&amp;packageName=${packageName}&amp;ispType=${ispType}&amp;organic=${organic}&amp;uid=${uid}&amp;CacheBuild-Control=no-cache</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取送礼前Gold余额" enabled="true"><stringProp name="JSONPostProcessor.referenceNames">wallet_before_gold</stringProp><stringProp name="JSONPostProcessor.jsonPathExprs">$.data.goldNum</stringProp><stringProp name="JSONPostProcessor.match_numbers">1</stringProp></JSONPostProcessor>
+<hashTree>
+
+</hashTree>
+<JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="解析送礼前钱包快照" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">import groovy.json.JsonSlurper
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def gold = payload?.data?.goldNum
+if (!(gold instanceof Number)) {
+    throw new IllegalStateException(&apos;前置钱包接口未返回有效 goldNum：&apos; + gold)
+}
+vars.put(&apos;wallet_before_gold&apos;, String.valueOf(gold.longValue()))
+props.put(&apos;wallet_before_gold&apos;, String.valueOf(gold.longValue()))</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PostProcessor>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="真实送礼循环：运行几次就产生几次财富经验变化" enabled="true">
+<boolProp name="LoopController.continue_forever">false</boolProp>
+<intProp name="LoopController.loops">10</intProp>
+</LoopController>
+<hashTree>
+<ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="送礼间隔" enabled="true">
+<stringProp name="ConstantTimer.delay">300</stringProp>
+</ConstantTimer>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="真实送礼：驱动财富经验变化" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments">
+<elementProp name="" elementType="HTTPArgument">
+<boolProp name="HTTPArgument.always_encode">false</boolProp>
+<stringProp name="Argument.value">deviceType=${deviceType}&amp;systemLanguage=${systemLanguage}&amp;appVersion=${appVersion}&amp;os=${os}&amp;ticket=${ticket}&amp;netType=${netType}&amp;channel=${channel}&amp;appsflyerId=${appsflyerId}&amp;language=${language}&amp;appCode=${appCode}&amp;deviceId=${deviceId}&amp;version=${version}&amp;osVersion=${osVersion}&amp;isVpnConnected=${isVpnConnected}&amp;appid=${appid}&amp;model=${model}&amp;packageName=${packageName}&amp;ispType=${ispType}&amp;organic=${organic}&amp;uid=${uid}&amp;roomUid=${uid}&amp;giftId=1057&amp;targetUids=1454779&amp;giftNum=1</stringProp>
+<stringProp name="Argument.metadata">=</stringProp>
+</elementProp>
+</collectionProp>
+</elementProp>
+<stringProp name="HTTPSampler.domain"></stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol"></stringProp>
+<stringProp name="HTTPSampler.path">/gift/purse/room/sendMulti</stringProp>
+<stringProp name="HTTPSampler.method">POST</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="送礼 Headers" enabled="true">
+<collectionProp name="HeaderManager.headers">
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">Content-Type</stringProp>
+<stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+</elementProp>
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">User-Agent</stringProp>
+<stringProp name="Header.value">okhttp/4.12.0</stringProp>
+</elementProp>
+</collectionProp>
+</HeaderManager>
+<hashTree>
+
+</hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取本次送礼消费Gold" enabled="true"><stringProp name="JSONPostProcessor.referenceNames">gift_last_consume</stringProp><stringProp name="JSONPostProcessor.jsonPathExprs">$.data.consumeGold</stringProp><stringProp name="JSONPostProcessor.match_numbers">1</stringProp><stringProp name="JSONPostProcessor.defaultValues">0</stringProp></JSONPostProcessor>
+<hashTree>
+
+</hashTree>
+<JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="累计本线程组送礼消费" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">Long readLong(String name, String raw) {
+    if (raw == null || !(raw.trim() ==~ /-?\d+/)) {
+        throw new IllegalStateException(name + &apos; 不是有效整数：&apos; + raw)
+    }
+    return raw.toLong()
+}
+def last = readLong(&apos;consumeGold&apos;, vars.get(&apos;gift_last_consume&apos;) ?: &apos;0&apos;)
+def total = readLong(&apos;gift_total_consume&apos;, props.get(&apos;gift_total_consume&apos;) ?: &apos;0&apos;)
+if (last &lt;= 0) {
+    throw new IllegalStateException(&apos;送礼接口未返回有效 consumeGold&apos;)
+}
+props.put(&apos;gift_total_consume&apos;, String.valueOf(total + last))
+props.put(&apos;gift_success_count&apos;, String.valueOf(readLong(&apos;gift_success_count&apos;, props.get(&apos;gift_success_count&apos;) ?: &apos;0&apos;) + 1))
+def values = props.get(&apos;gift_consume_values&apos;) ?: &apos;&apos;
+props.put(&apos;gift_consume_values&apos;, values ? values + &apos;,&apos; + last : String.valueOf(last))</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PostProcessor>
+<hashTree>
+
+</hashTree>
+</hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="后置查询钱包余额快照" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain"></stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol"></stringProp>
+<stringProp name="HTTPSampler.path">/purse/query?deviceType=${deviceType}&amp;systemLanguage=${systemLanguage}&amp;appVersion=${appVersion}&amp;os=${os}&amp;ticket=${ticket}&amp;netType=${netType}&amp;channel=${channel}&amp;appsflyerId=${appsflyerId}&amp;language=${language}&amp;appCode=${appCode}&amp;deviceId=${deviceId}&amp;version=${version}&amp;osVersion=${osVersion}&amp;isVpnConnected=${isVpnConnected}&amp;appid=${appid}&amp;model=${model}&amp;packageName=${packageName}&amp;ispType=${ispType}&amp;organic=${organic}&amp;uid=${uid}&amp;CacheBuild-Control=no-cache</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取送礼后Gold余额" enabled="true"><stringProp name="JSONPostProcessor.referenceNames">wallet_after_gold</stringProp><stringProp name="JSONPostProcessor.jsonPathExprs">$.data.goldNum</stringProp><stringProp name="JSONPostProcessor.match_numbers">1</stringProp></JSONPostProcessor>
+<hashTree>
+
+</hashTree>
+<JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="解析送礼后钱包快照" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">import groovy.json.JsonSlurper
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def gold = payload?.data?.goldNum
+if (!(gold instanceof Number)) {
+    throw new IllegalStateException(&apos;后置钱包接口未返回有效 goldNum：&apos; + gold)
+}
+vars.put(&apos;wallet_after_gold&apos;, String.valueOf(gold.longValue()))
+props.put(&apos;wallet_after_gold&apos;, String.valueOf(gold.longValue()))</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PostProcessor>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="后置查询财富等级快照" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain"></stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol"></stringProp>
+<stringProp name="HTTPSampler.path">/level/exeperience/v2/get?deviceType=${deviceType}&amp;systemLanguage=${systemLanguage}&amp;appVersion=${appVersion}&amp;os=${os}&amp;ticket=${ticket}&amp;netType=${netType}&amp;channel=${channel}&amp;appsflyerId=${appsflyerId}&amp;language=${language}&amp;appCode=${appCode}&amp;deviceId=${deviceId}&amp;version=${version}&amp;osVersion=${osVersion}&amp;isVpnConnected=${isVpnConnected}&amp;appid=${appid}&amp;model=${model}&amp;packageName=${packageName}&amp;ispType=${ispType}&amp;organic=${organic}&amp;uid=${uid}</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="提取送礼后财富等级与经验（停用，改由JSR223稳态解析）" enabled="false"><stringProp name="JSONPostProcessor.referenceNames">wealth_after_level;wealth_after_exp</stringProp><stringProp name="JSONPostProcessor.jsonPathExprs">$.data.myExperLevelInfo.currentLevel;$.data.myExperLevelInfo.currentExperValue</stringProp><stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp><stringProp name="JSONPostProcessor.defaultValues">;</stringProp></JSONPostProcessor>
+<hashTree>
+
+</hashTree>
+<JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="解析送礼后财富快照" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">import groovy.json.JsonSlurper
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def info = payload?.data?.myExperLevelInfo
+if (!(info instanceof Map)) {
+    throw new IllegalStateException(&apos;后置财富接口响应缺少 data.myExperLevelInfo&apos;)
+}
+def level = info.currentLevel
+def exp = info.currentExperValue
+if (!(level instanceof Number) || !(exp instanceof Number)) {
+    throw new IllegalStateException(&apos;后置财富接口未返回有效等级/经验：level=&apos; + level + &apos;, exp=&apos; + exp)
+}
+vars.put(&apos;wealth_after_level&apos;, String.valueOf(level.longValue()))
+vars.put(&apos;wealth_after_exp&apos;, String.valueOf(exp.longValue()))
+props.put(&apos;wealth_after_level&apos;, String.valueOf(level.longValue()))
+props.put(&apos;wealth_after_exp&apos;, String.valueOf(exp.longValue()))</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PostProcessor>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="后置查询送礼账单" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain"></stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol"></stringProp>
+<stringProp name="HTTPSampler.path">/billrecord/get?deviceType=${deviceType}&amp;systemLanguage=${systemLanguage}&amp;appVersion=${appVersion}&amp;os=${os}&amp;ticket=${ticket}&amp;netType=${netType}&amp;channel=${channel}&amp;appsflyerId=${appsflyerId}&amp;language=${language}&amp;appCode=${appCode}&amp;deviceId=${deviceId}&amp;version=${version}&amp;osVersion=${osVersion}&amp;isVpnConnected=${isVpnConnected}&amp;appid=${appid}&amp;model=${model}&amp;packageName=${packageName}&amp;ispType=${ispType}&amp;organic=${organic}&amp;uid=${uid}&amp;date=${__time(,)}&amp;pageSize=50&amp;type=1&amp;pageNo=1</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="解析账单记录匹配本次送礼" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">import groovy.json.JsonSlurper
+def payload = new JsonSlurper().parseText(prev.getResponseDataAsString() ?: &apos;{}&apos;)
+def billList = payload?.data?.billList
+def expectedConsumes = (props.get(&apos;gift_consume_values&apos;) ?: &apos;&apos;).split(&apos;,&apos;).findAll { it }.collect { it as long }
+def matched = 0
+if (billList instanceof List) {
+    billList.each { dayGroup -&gt;
+        if (dayGroup instanceof Map) {
+            dayGroup.values().each { records -&gt;
+                if (records instanceof List) {
+                    records.each { record -&gt;
+                        def gold = record?.goldNum
+                        def giftNum = record?.giftNum
+                        if (gold instanceof Number &amp;&amp; giftNum == 1 &amp;&amp; expectedConsumes.contains(gold.longValue())) {
+                            matched++
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+props.put(&apos;gift_bill_match_count&apos;, String.valueOf(matched))</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PostProcessor>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="闭环断言：经验增量、钱包扣款、账单可追溯" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">Long readRequiredLong(String name, String raw) {
+    def text = raw == null ? &apos;&apos; : raw.trim()
+    if (!(text ==~ /-?\d+/)) {
+        throw new IllegalStateException(&apos;闭环失败：缺少或无法解析long整数 &apos; + name + &apos;，实际值=&apos; + raw)
+    }
+    return text.toLong()
+}
+def beforeExp = readRequiredLong(&apos;送礼前财富经验 wealth_before_exp&apos;, vars.get(&apos;wealth_before_exp&apos;) ?: props.get(&apos;wealth_before_exp&apos;))
+def afterExp = readRequiredLong(&apos;送礼后财富经验 wealth_after_exp&apos;, vars.get(&apos;wealth_after_exp&apos;) ?: props.get(&apos;wealth_after_exp&apos;))
+def beforeGold = readRequiredLong(&apos;送礼前Gold余额 wallet_before_gold&apos;, vars.get(&apos;wallet_before_gold&apos;) ?: props.get(&apos;wallet_before_gold&apos;))
+def afterGold = readRequiredLong(&apos;送礼后Gold余额 wallet_after_gold&apos;, vars.get(&apos;wallet_after_gold&apos;) ?: props.get(&apos;wallet_after_gold&apos;))
+def consume = readRequiredLong(&apos;真实送礼消费累计 gift_total_consume&apos;, props.get(&apos;gift_total_consume&apos;))
+def expectedGiftCount = readRequiredLong(&apos;期望送礼次数 workflow_expected_gift_count&apos;, vars.get(&apos;workflow_expected_gift_count&apos;))
+def giftSuccessCount = readRequiredLong(&apos;实际送礼成功次数 gift_success_count&apos;, props.get(&apos;gift_success_count&apos;))
+def billMatchCount = readRequiredLong(&apos;账单匹配数量 gift_bill_match_count&apos;, props.get(&apos;gift_bill_match_count&apos;))
+def expDelta = afterExp - beforeExp
+def walletDelta = beforeGold - afterGold
+if (consume &lt;= 0) {
+    throw new IllegalStateException(&apos;闭环失败：真实送礼消费累计为0&apos;)
+}
+if (giftSuccessCount != expectedGiftCount) {
+    throw new IllegalStateException(&apos;闭环失败：期望送礼 &apos; + expectedGiftCount + &apos; 次，实际成功 &apos; + giftSuccessCount + &apos; 次&apos;)
+}
+if (expDelta != consume) {
+    throw new IllegalStateException(&apos;闭环失败：财富经验增量 &apos; + expDelta + &apos; 不等于送礼消费 &apos; + consume)
+}
+if (walletDelta != consume) {
+    throw new IllegalStateException(&apos;闭环失败：钱包扣款 &apos; + walletDelta + &apos; 不等于送礼消费 &apos; + consume)
+}
+if (billMatchCount &lt; expectedGiftCount) {
+    throw new IllegalStateException(&apos;闭环失败：账单匹配记录 &apos; + billMatchCount + &apos; 条，小于送礼次数 &apos; + expectedGiftCount)
+}
+SampleResult.setResponseData((&apos;财富等级需求闭环通过：送礼次数=&apos; + giftSuccessCount + &apos;, 消费=&apos; + consume + &apos;, 经验增量=&apos; + expDelta + &apos;, 钱包扣款=&apos; + walletDelta + &apos;, 账单匹配=&apos; + billMatchCount).getBytes(&apos;UTF-8&apos;))</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223Sampler>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="接口性能冒烟" enabled="true">
+<stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+<elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+<boolProp name="LoopController.continue_forever">false</boolProp>
+<intProp name="LoopController.loops">3</intProp>
+</elementProp>
+<stringProp name="ThreadGroup.num_threads">1</stringProp>
+<stringProp name="ThreadGroup.ramp_time">0</stringProp>
+<boolProp name="ThreadGroup.scheduler">false</boolProp>
+<stringProp name="ThreadGroup.duration"></stringProp>
+<stringProp name="ThreadGroup.delay"></stringProp>
+<boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+</ThreadGroup>
+<hashTree>
+<JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取登录身份上下文" enabled="true"><stringProp name="cacheKey">true</stringProp><stringProp name="filename"></stringProp><stringProp name="parameters"></stringProp><stringProp name="script">def token = props.get(&apos;ticket&apos;) ?: vars.get(&apos;ticket&apos;) ?: &apos;${__P(ticket,)}&apos;
+if (!token) {
+    throw new IllegalStateException(&apos;未取得 ticket：请在平台先完成一次真实登录，或填写登录加密密码后重新打开 JMeter 工作台&apos;)
+}
+vars.put(&apos;ticket&apos;, token)
+def loginUid = props.get(&apos;uid&apos;) ?: vars.get(&apos;uid&apos;) ?: &apos;${__P(uid,)}&apos;
+if (loginUid) {
+    vars.put(&apos;uid&apos;, loginUid)
+}</stringProp><stringProp name="scriptLanguage">groovy</stringProp></JSR223PreProcessor>
+<hashTree>
+
+</hashTree>
+<ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="请求间隔" enabled="true">
+<stringProp name="ConstantTimer.delay">300</stringProp>
+</ConstantTimer>
+<hashTree>
+
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询当前用户钱包余额：正常请求" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol">https</stringProp>
+<stringProp name="HTTPSampler.path">/purse/query?deviceType=0&amp;systemLanguage=zh&amp;appVersion=100.1.5.4&amp;os=android&amp;language=en&amp;appCode=100154&amp;appid=soulfree&amp;version=100.1.5.4&amp;channel=google&amp;ticket=${ticket}&amp;uid=${uid}&amp;appsflyerId=1787628595990-5267637366511328587&amp;netType=2&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;isVpnConnected=0&amp;organic=Organic&amp;ispType=4&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;osVersion=16</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true">
+<collectionProp name="HeaderManager.headers">
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">t</stringProp>
+<stringProp name="Header.value">1787646699900</stringProp>
+</elementProp>
+</collectionProp>
+</HeaderManager>
+<hashTree>
+
+</hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
+<collectionProp name="Asserion.test_strings">
+<stringProp name="1">200</stringProp>
+</collectionProp>
+<stringProp name="Assertion.custom_message"></stringProp>
+<stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+<boolProp name="Assertion.assume_success">false</boolProp>
+<intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询送礼账单记录：正常请求" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol">https</stringProp>
+<stringProp name="HTTPSampler.path">/billrecord/get?deviceType=0&amp;systemLanguage=zh&amp;appVersion=100.1.5.4&amp;os=android&amp;language=en&amp;appCode=100154&amp;appid=soulfree&amp;version=100.1.5.4&amp;channel=google&amp;ticket=${ticket}&amp;uid=${uid}&amp;date=1787726343013&amp;netType=2&amp;appsflyerId=1787628595990-5267637366511328587&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;osVersion=16&amp;isVpnConnected=0&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;ispType=4&amp;organic=Organic&amp;pageNo=1&amp;pageSize=50&amp;type=1</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true">
+<collectionProp name="HeaderManager.headers">
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">t</stringProp>
+<stringProp name="Header.value">1787646699900</stringProp>
+</elementProp>
+</collectionProp>
+</HeaderManager>
+<hashTree>
+
+</hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
+<collectionProp name="Asserion.test_strings">
+<stringProp name="1">200</stringProp>
+</collectionProp>
+<stringProp name="Assertion.custom_message"></stringProp>
+<stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+<boolProp name="Assertion.assume_success">false</boolProp>
+<intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree>
+
+</hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="登录后查询真实财富等级" enabled="true">
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+<collectionProp name="Arguments.arguments"/>
+</elementProp>
+<stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
+<stringProp name="HTTPSampler.port"></stringProp>
+<stringProp name="HTTPSampler.protocol">https</stringProp>
+<stringProp name="HTTPSampler.path">/level/exeperience/v2/get?deviceType=0&amp;systemLanguage=zh&amp;appVersion=100.1.5.4&amp;os=android&amp;ticket=${ticket}&amp;language=en&amp;appCode=100154&amp;uid=${uid}&amp;appid=soulfree&amp;appsflyerId=1787628595990-5267637366511328587&amp;channel=google&amp;netType=2&amp;version=100.1.5.4&amp;model=SM-A546B&amp;packageName=com.soulfree.happiness&amp;isVpnConnected=0&amp;organic=Organic&amp;ispType=4&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;osVersion=16</stringProp>
+<stringProp name="HTTPSampler.method">GET</stringProp>
+<boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+<boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+<boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+<boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+<boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true">
+<collectionProp name="HeaderManager.headers">
+<elementProp name="" elementType="Header">
+<stringProp name="Header.name">t</stringProp>
+<stringProp name="Header.value">1787646699900</stringProp>
+</elementProp>
+</collectionProp>
+</HeaderManager>
+<hashTree>
+
+</hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
+<collectionProp name="Asserion.test_strings">
+<stringProp name="1">200</stringProp>
+</collectionProp>
+<stringProp name="Assertion.custom_message"></stringProp>
+<stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+<boolProp name="Assertion.assume_success">false</boolProp>
+<intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree>
+
+</hashTree>
+</hashTree>
+</hashTree>
+<ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="true">
+<boolProp name="ResultCollector.error_logging">false</boolProp>
+<objProp>
+<name>saveConfig</name>
+<value class="SampleSaveConfiguration">
+<time>true</time>
+<latency>true</latency>
+<timestamp>true</timestamp>
+<success>true</success>
+<label>true</label>
+<code>true</code>
+<message>false</message>
+<threadName>true</threadName>
+<dataType>false</dataType>
+<encoding>false</encoding>
+<assertions>false</assertions>
+<subresults>false</subresults>
+<responseData>false</responseData>
+<samplerData>false</samplerData>
+<xml>false</xml>
+<fieldNames>true</fieldNames>
+<responseHeaders>false</responseHeaders>
+<requestHeaders>false</requestHeaders>
+<responseDataOnError>false</responseDataOnError>
+<saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+<assertionsResultsToSave>0</assertionsResultsToSave>
+<bytes>true</bytes>
+<sentBytes>true</sentBytes>
+<url>true</url>
+<threadCounts>true</threadCounts>
+<sampleCount>true</sampleCount>
+<idleTime>true</idleTime>
+<connectTime>true</connectTime>
+</value>
+</objProp>
+<stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
+</ResultCollector>
+<hashTree>
+
+</hashTree>
+<ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+<boolProp name="ResultCollector.error_logging">false</boolProp>
+<objProp>
+<name>saveConfig</name>
+<value class="SampleSaveConfiguration">
+<time>true</time>
+<latency>true</latency>
+<timestamp>true</timestamp>
+<success>true</success>
+<label>true</label>
+<code>true</code>
+<message>true</message>
+<threadName>true</threadName>
+<dataType>true</dataType>
+<encoding>false</encoding>
+<assertions>true</assertions>
+<subresults>true</subresults>
+<responseData>false</responseData>
+<samplerData>false</samplerData>
+<xml>false</xml>
+<fieldNames>true</fieldNames>
+<responseHeaders>false</responseHeaders>
+<requestHeaders>false</requestHeaders>
+<responseDataOnError>false</responseDataOnError>
+<saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+<assertionsResultsToSave>0</assertionsResultsToSave>
+<bytes>true</bytes>
+<sentBytes>true</sentBytes>
+<url>true</url>
+<threadCounts>true</threadCounts>
+<idleTime>true</idleTime>
+<connectTime>true</connectTime>
+</value>
+</objProp>
+<stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
+</ResultCollector>
+<hashTree>
+
+</hashTree>
+<ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
+<boolProp name="ResultCollector.error_logging">false</boolProp>
+<objProp>
+<name>saveConfig</name>
+<value class="SampleSaveConfiguration">
+<time>true</time>
+<latency>true</latency>
+<timestamp>true</timestamp>
+<success>true</success>
+<label>true</label>
+<code>true</code>
+<message>true</message>
+<threadName>true</threadName>
+<dataType>true</dataType>
+<encoding>false</encoding>
+<assertions>true</assertions>
+<subresults>true</subresults>
+<responseData>false</responseData>
+<samplerData>false</samplerData>
+<xml>false</xml>
+<fieldNames>true</fieldNames>
+<responseHeaders>false</responseHeaders>
+<requestHeaders>false</requestHeaders>
+<responseDataOnError>false</responseDataOnError>
+<saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+<assertionsResultsToSave>0</assertionsResultsToSave>
+<bytes>true</bytes>
+<sentBytes>true</sentBytes>
+<url>true</url>
+<threadCounts>true</threadCounts>
+<idleTime>true</idleTime>
+<connectTime>true</connectTime>
+</value>
+</objProp>
+<stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp>
+</ResultCollector>
+<hashTree>
+
+</hashTree>
+<ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="true"><boolProp name="ResultCollector.error_logging">false</boolProp><objProp><name>saveConfig</name><value class="SampleSaveConfiguration"><time>true</time><latency>true</latency><timestamp>true</timestamp><success>true</success><label>true</label><code>true</code><message>true</message><threadName>true</threadName><dataType>true</dataType><encoding>false</encoding><assertions>true</assertions><subresults>true</subresults><responseData>false</responseData><samplerData>false</samplerData><xml>false</xml><fieldNames>true</fieldNames><responseHeaders>false</responseHeaders><requestHeaders>false</requestHeaders><responseDataOnError>false</responseDataOnError><saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage><assertionsResultsToSave>0</assertionsResultsToSave><bytes>true</bytes><sentBytes>true</sentBytes><url>true</url><threadCounts>true</threadCounts><idleTime>true</idleTime><connectTime>true</connectTime></value></objProp><stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp></ResultCollector>
+<hashTree>
+
+</hashTree>
+<ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="true"><boolProp name="ResultCollector.error_logging">false</boolProp><objProp><name>saveConfig</name><value class="SampleSaveConfiguration"><time>true</time><latency>true</latency><timestamp>true</timestamp><success>true</success><label>true</label><code>true</code><message>true</message><threadName>true</threadName><dataType>true</dataType><encoding>false</encoding><assertions>true</assertions><subresults>true</subresults><responseData>false</responseData><samplerData>false</samplerData><xml>false</xml><fieldNames>true</fieldNames><responseHeaders>false</responseHeaders><requestHeaders>false</requestHeaders><responseDataOnError>false</responseDataOnError><saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage><assertionsResultsToSave>0</assertionsResultsToSave><bytes>true</bytes><sentBytes>true</sentBytes><url>true</url><threadCounts>true</threadCounts><idleTime>true</idleTime><connectTime>true</connectTime></value></objProp><stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/wealth-level-result.jtl)}</stringProp></ResultCollector>
+<hashTree>
+
+</hashTree>
+<ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
+<boolProp name="ResultCollector.error_logging">false</boolProp>
+<objProp>
+<name>saveConfig</name>
+<value class="SampleSaveConfiguration">
+<time>true</time>
+<latency>true</latency>
+<timestamp>true</timestamp>
+<success>true</success>
+<label>true</label>
+<code>true</code>
+<message>true</message>
+<threadName>true</threadName>
+<dataType>true</dataType>
+<encoding>false</encoding>
+<assertions>true</assertions>
+<subresults>true</subresults>
+<responseData>false</responseData>
+<samplerData>false</samplerData>
+<xml>false</xml>
+<fieldNames>true</fieldNames>
+<responseHeaders>false</responseHeaders>
+<requestHeaders>false</requestHeaders>
+<responseDataOnError>false</responseDataOnError>
+<saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+<assertionsResultsToSave>0</assertionsResultsToSave>
+<bytes>true</bytes>
+<sentBytes>true</sentBytes>
+<url>true</url>
+<threadCounts>true</threadCounts>
+<idleTime>true</idleTime>
+<connectTime>true</connectTime>
+</value>
+</objProp>
+<stringProp name="filename"></stringProp>
+</ResultCollector>
+<hashTree>
+
+</hashTree>
+</hashTree>
+</hashTree>
 </jmeterTestPlan>

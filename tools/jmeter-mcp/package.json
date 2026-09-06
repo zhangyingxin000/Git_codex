@@ -1,0 +1,14 @@
+{
+  "name": "autotest-ai-jmeter-mcp-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "node apply-compatibility-patch.mjs",
+    "poc": "node bridge.mjs --workflow ../../examples/jmeter-mcp/health-workflow.json --output-dir ../../reports/jmeter-mcp-poc --self-test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "jmeter-mcp-server": "0.3.1"
+  }
+}

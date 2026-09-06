@@ -2,11 +2,12 @@
   "schema_version": "1.1",
   "project_id": "prj_e3515817c4",
   "package_id": "salary-trade",
-  "generated_at": "2026-09-02T18:50:02+08:00",
+  "generated_at": "2026-09-05T00:37:50+08:00",
   "source": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md",
   "contract": {
     "path": "C:\\Users\\DELL\\Documents\\Codex\\2026-08-19\\new-chat\\outputs\\AutoTest-AI\\skills\\pytest-evidence-review\\SKILL.md",
     "skill": "pytest-evidence-review",
+    "available": true,
     "purpose": "从需求包场景计划、运行变量、HTTP结果和DB/Redis证据规则生成pytest深度复核资产",
     "inputs": [
       "manifest.json",

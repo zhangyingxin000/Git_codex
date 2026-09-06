@@ -42,11 +42,20 @@
   const apiTestCases = (projectId, packageId, payload = {}) => (
     jsonRequest(`${packagePath(projectId, packageId)}/api-test-cases`, "POST", payload)
   );
+  const compileInterfaceTests = (projectId, packageId, payload = {}) => (
+    jsonRequest(`${packagePath(projectId, packageId)}/interface-tests/compile`, "POST", payload)
+  );
+  const runInterfaceTests = (projectId, packageId, payload = {}) => (
+    jsonRequest(`${packagePath(projectId, packageId)}/interface-tests/newman/run`, "POST", payload)
+  );
   const createRun = (projectId, packageId, payload) => (
     jsonRequest(`${packagePath(projectId, packageId)}/runs`, "POST", payload)
   );
   const reportIndex = (projectId, packageId) => (
     request(`${packagePath(projectId, packageId)}/report-index`)
+  );
+  const performanceOptions = (projectId, packageId) => (
+    request(`${packagePath(projectId, packageId)}/performance-options`)
   );
   const runTool = (projectId, packageId, tool, payload) => (
     jsonRequest(`${packagePath(projectId, packageId)}/${tool}/run`, "POST", payload)
@@ -64,9 +73,12 @@
     resourcePreflight,
     executionPlan,
     apiTestCases,
+    compileInterfaceTests,
+    runInterfaceTests,
     toolAssets,
     createRun,
     reportIndex,
+    performanceOptions,
     runNewman: (projectId, packageId, payload) => runTool(projectId, packageId, "newman", payload),
     runPytest: (projectId, packageId, payload) => runTool(projectId, packageId, "pytest", payload),
     runPipeline: (projectId, packageId, payload) => runTool(projectId, packageId, "pipeline", payload),

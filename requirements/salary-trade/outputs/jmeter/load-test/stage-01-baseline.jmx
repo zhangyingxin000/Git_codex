@@ -5,109 +5,701 @@
       <stringProp name="TestPlan.comments">由 AutoTest AI 生成；GUI 用于审阅维护，非 GUI 执行用于报告归档。</stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
-      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments"><collectionProp name="Arguments.arguments"/></elementProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments" />
+      </elementProp>
     </TestPlan>
     <hashTree>
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Platform execution result writer" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <stringProp name="filename" />
+      </ResultCollector>
+      <hashTree />
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="运行变量" enabled="true">
-        <collectionProp name="Arguments.arguments"><elementProp name="appCode" elementType="Argument"><stringProp name="Argument.name">appCode</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appVersion" elementType="Argument"><stringProp name="Argument.name">appVersion</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appid" elementType="Argument"><stringProp name="Argument.name">appid</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="appsflyerId" elementType="Argument"><stringProp name="Argument.name">appsflyerId</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="channel" elementType="Argument"><stringProp name="Argument.name">channel</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="deviceId" elementType="Argument"><stringProp name="Argument.name">deviceId</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="deviceType" elementType="Argument"><stringProp name="Argument.name">deviceType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="gift_count" elementType="Argument"><stringProp name="Argument.name">gift_count</stringProp><stringProp name="Argument.value">1</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="isVpnConnected" elementType="Argument"><stringProp name="Argument.name">isVpnConnected</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="ispType" elementType="Argument"><stringProp name="Argument.name">ispType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="language" elementType="Argument"><stringProp name="Argument.name">language</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="login_password_encrypted" elementType="Argument"><stringProp name="Argument.name">login_password_encrypted</stringProp><stringProp name="Argument.value">${__P(login_password_encrypted,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="model" elementType="Argument"><stringProp name="Argument.name">model</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="netType" elementType="Argument"><stringProp name="Argument.name">netType</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="organic" elementType="Argument"><stringProp name="Argument.name">organic</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="os" elementType="Argument"><stringProp name="Argument.name">os</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="osVersion" elementType="Argument"><stringProp name="Argument.name">osVersion</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="packageName" elementType="Argument"><stringProp name="Argument.name">packageName</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="pageNo" elementType="Argument"><stringProp name="Argument.name">pageNo</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="pageSize" elementType="Argument"><stringProp name="Argument.name">pageSize</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="sn" elementType="Argument"><stringProp name="Argument.name">sn</stringProp><stringProp name="Argument.value">${__P(sn,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="systemLanguage" elementType="Argument"><stringProp name="Argument.name">systemLanguage</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="t" elementType="Argument"><stringProp name="Argument.name">t</stringProp><stringProp name="Argument.value">${__P(t,${__time(,)})}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="ticket" elementType="Argument"><stringProp name="Argument.name">ticket</stringProp><stringProp name="Argument.value">${__P(ticket,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="type" elementType="Argument"><stringProp name="Argument.name">type</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="uid" elementType="Argument"><stringProp name="Argument.name">uid</stringProp><stringProp name="Argument.value">${__P(uid,)}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp><elementProp name="version" elementType="Argument"><stringProp name="Argument.name">version</stringProp><stringProp name="Argument.value"></stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp></collectionProp>
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="account_source" elementType="Argument">
+            <stringProp name="Argument.name">account_source</stringProp>
+            <stringProp name="Argument.value">data/salary-trade-applicants.csv</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="agentUid" elementType="Argument">
+            <stringProp name="Argument.name">agentUid</stringProp>
+            <stringProp name="Argument.value">1454342</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="anchorTicket" elementType="Argument">
+            <stringProp name="Argument.name">anchorTicket</stringProp>
+            <stringProp name="Argument.value" />
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="anchorUid" elementType="Argument">
+            <stringProp name="Argument.name">anchorUid</stringProp>
+            <stringProp name="Argument.value">1454696</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="appCode" elementType="Argument">
+            <stringProp name="Argument.name">appCode</stringProp>
+            <stringProp name="Argument.value">100156</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="appVersion" elementType="Argument">
+            <stringProp name="Argument.name">appVersion</stringProp>
+            <stringProp name="Argument.value">100.1.5.6</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="appid" elementType="Argument">
+            <stringProp name="Argument.name">appid</stringProp>
+            <stringProp name="Argument.value">soulfree</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_applicant_uid" elementType="Argument">
+            <stringProp name="Argument.name">applicant_applicant_uid</stringProp>
+            <stringProp name="Argument.value">1454696</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_bankAccount" elementType="Argument">
+            <stringProp name="Argument.name">applicant_bankAccount</stringProp>
+            <stringProp name="Argument.value">872819994964648929003773773</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_bankName" elementType="Argument">
+            <stringProp name="Argument.name">applicant_bankName</stringProp>
+            <stringProp name="Argument.value">EGbank</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_bankReceiverAddress" elementType="Argument">
+            <stringProp name="Argument.name">applicant_bankReceiverAddress</stringProp>
+            <stringProp name="Argument.value">salary trade autotest address</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_bankReceiverName" elementType="Argument">
+            <stringProp name="Argument.name">applicant_bankReceiverName</stringProp>
+            <stringProp name="Argument.value">Sarly</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_bankReceiverPhone" elementType="Argument">
+            <stringProp name="Argument.name">applicant_bankReceiverPhone</stringProp>
+            <stringProp name="Argument.value">0845513616949</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_countryCode" elementType="Argument">
+            <stringProp name="Argument.name">applicant_countryCode</stringProp>
+            <stringProp name="Argument.value">MA</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_currency" elementType="Argument">
+            <stringProp name="Argument.name">applicant_currency</stringProp>
+            <stringProp name="Argument.value">USD</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_salaryAmount" elementType="Argument">
+            <stringProp name="Argument.name">applicant_salaryAmount</stringProp>
+            <stringProp name="Argument.value">100</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_source" elementType="Argument">
+            <stringProp name="Argument.name">applicant_source</stringProp>
+            <stringProp name="Argument.value">data/salary-trade-applicants.csv</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_swiftCode" elementType="Argument">
+            <stringProp name="Argument.name">applicant_swiftCode</stringProp>
+            <stringProp name="Argument.value">SWIFT</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_ticket" elementType="Argument">
+            <stringProp name="Argument.name">applicant_ticket</stringProp>
+            <stringProp name="Argument.value" />
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="applicant_uid" elementType="Argument">
+            <stringProp name="Argument.name">applicant_uid</stringProp>
+            <stringProp name="Argument.value">1454696</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="appsflyerId" elementType="Argument">
+            <stringProp name="Argument.name">appsflyerId</stringProp>
+            <stringProp name="Argument.value">1787889409378-5852177650651460260</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="bankAccount" elementType="Argument">
+            <stringProp name="Argument.name">bankAccount</stringProp>
+            <stringProp name="Argument.value">872819994964648929003773773</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="bankName" elementType="Argument">
+            <stringProp name="Argument.name">bankName</stringProp>
+            <stringProp name="Argument.value">EGbank</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="bankReceiverAddress" elementType="Argument">
+            <stringProp name="Argument.name">bankReceiverAddress</stringProp>
+            <stringProp name="Argument.value">salary trade autotest address</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="bankReceiverName" elementType="Argument">
+            <stringProp name="Argument.name">bankReceiverName</stringProp>
+            <stringProp name="Argument.value">Sarly</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="bankReceiverPhone" elementType="Argument">
+            <stringProp name="Argument.name">bankReceiverPhone</stringProp>
+            <stringProp name="Argument.value">0845513616949</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="channel" elementType="Argument">
+            <stringProp name="Argument.name">channel</stringProp>
+            <stringProp name="Argument.value">google</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="countryCode" elementType="Argument">
+            <stringProp name="Argument.name">countryCode</stringProp>
+            <stringProp name="Argument.value">MA</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="country_code" elementType="Argument">
+            <stringProp name="Argument.name">country_code</stringProp>
+            <stringProp name="Argument.value">MA</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="credential_uid" elementType="Argument">
+            <stringProp name="Argument.name">credential_uid</stringProp>
+            <stringProp name="Argument.value">1454694</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="currency" elementType="Argument">
+            <stringProp name="Argument.name">currency</stringProp>
+            <stringProp name="Argument.value">USD</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="current_time_ms" elementType="Argument">
+            <stringProp name="Argument.name">current_time_ms</stringProp>
+            <stringProp name="Argument.value">1788695769399</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="deviceId" elementType="Argument">
+            <stringProp name="Argument.name">deviceId</stringProp>
+            <stringProp name="Argument.value">8fcce1f1-5153-3207-9786-0240140a524a</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="deviceType" elementType="Argument">
+            <stringProp name="Argument.name">deviceType</stringProp>
+            <stringProp name="Argument.value">0</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="enabled" elementType="Argument">
+            <stringProp name="Argument.name">enabled</stringProp>
+            <stringProp name="Argument.value">true</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="gift_count" elementType="Argument">
+            <stringProp name="Argument.name">gift_count</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="isVpnConnected" elementType="Argument">
+            <stringProp name="Argument.name">isVpnConnected</stringProp>
+            <stringProp name="Argument.value">0</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="ispType" elementType="Argument">
+            <stringProp name="Argument.name">ispType</stringProp>
+            <stringProp name="Argument.value">4</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="language" elementType="Argument">
+            <stringProp name="Argument.name">language</stringProp>
+            <stringProp name="Argument.value">en</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="login_password_encrypted" elementType="Argument">
+            <stringProp name="Argument.name">login_password_encrypted</stringProp>
+            <stringProp name="Argument.value">${__P(login_password_encrypted,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="model" elementType="Argument">
+            <stringProp name="Argument.name">model</stringProp>
+            <stringProp name="Argument.value">SM-A546B</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="netType" elementType="Argument">
+            <stringProp name="Argument.name">netType</stringProp>
+            <stringProp name="Argument.value">2</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="organic" elementType="Argument">
+            <stringProp name="Argument.name">organic</stringProp>
+            <stringProp name="Argument.value">Organic</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="os" elementType="Argument">
+            <stringProp name="Argument.name">os</stringProp>
+            <stringProp name="Argument.value">android</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="osVersion" elementType="Argument">
+            <stringProp name="Argument.name">osVersion</stringProp>
+            <stringProp name="Argument.value">16</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="packageName" elementType="Argument">
+            <stringProp name="Argument.name">packageName</stringProp>
+            <stringProp name="Argument.value">com.soulfree.happiness</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="pageNo" elementType="Argument">
+            <stringProp name="Argument.name">pageNo</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="pageSize" elementType="Argument">
+            <stringProp name="Argument.name">pageSize</stringProp>
+            <stringProp name="Argument.value">50</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxyUid" elementType="Argument">
+            <stringProp name="Argument.name">proxyUid</stringProp>
+            <stringProp name="Argument.value">1454342</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_countryCode" elementType="Argument">
+            <stringProp name="Argument.name">proxy_countryCode</stringProp>
+            <stringProp name="Argument.value">SA</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_currency" elementType="Argument">
+            <stringProp name="Argument.name">proxy_currency</stringProp>
+            <stringProp name="Argument.value">USD</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_enabled" elementType="Argument">
+            <stringProp name="Argument.name">proxy_enabled</stringProp>
+            <stringProp name="Argument.value">true</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_proxy_uid" elementType="Argument">
+            <stringProp name="Argument.name">proxy_proxy_uid</stringProp>
+            <stringProp name="Argument.value">1454342</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_remark" elementType="Argument">
+            <stringProp name="Argument.name">proxy_remark</stringProp>
+            <stringProp name="Argument.value">ticket_ready</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_source" elementType="Argument">
+            <stringProp name="Argument.name">proxy_source</stringProp>
+            <stringProp name="Argument.value">csv_anchor_salary_trade_agent_whitelist</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_status" elementType="Argument">
+            <stringProp name="Argument.name">proxy_status</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_supportCurrencies" elementType="Argument">
+            <stringProp name="Argument.name">proxy_supportCurrencies</stringProp>
+            <stringProp name="Argument.value">SAR,USD</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxy_uid" elementType="Argument">
+            <stringProp name="Argument.name">proxy_uid</stringProp>
+            <stringProp name="Argument.value">1454342</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="receiveAccountType" elementType="Argument">
+            <stringProp name="Argument.name">receiveAccountType</stringProp>
+            <stringProp name="Argument.value">bank</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="receiver_uid" elementType="Argument">
+            <stringProp name="Argument.name">receiver_uid</stringProp>
+            <stringProp name="Argument.value">1454779</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="remark" elementType="Argument">
+            <stringProp name="Argument.name">remark</stringProp>
+            <stringProp name="Argument.value">ticket_ready</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="requested_uid" elementType="Argument">
+            <stringProp name="Argument.name">requested_uid</stringProp>
+            <stringProp name="Argument.value">1454428</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="room_uid" elementType="Argument">
+            <stringProp name="Argument.name">room_uid</stringProp>
+            <stringProp name="Argument.value">1454428</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="salaryAmount" elementType="Argument">
+            <stringProp name="Argument.name">salaryAmount</stringProp>
+            <stringProp name="Argument.value">100</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sn" elementType="Argument">
+            <stringProp name="Argument.name">sn</stringProp>
+            <stringProp name="Argument.value">${__P(sn,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="status" elementType="Argument">
+            <stringProp name="Argument.name">status</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="supportCurrencies" elementType="Argument">
+            <stringProp name="Argument.name">supportCurrencies</stringProp>
+            <stringProp name="Argument.value">SAR,USD</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="swiftCode" elementType="Argument">
+            <stringProp name="Argument.name">swiftCode</stringProp>
+            <stringProp name="Argument.value">SWIFT</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="systemLanguage" elementType="Argument">
+            <stringProp name="Argument.name">systemLanguage</stringProp>
+            <stringProp name="Argument.value">zh</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="t" elementType="Argument">
+            <stringProp name="Argument.name">t</stringProp>
+            <stringProp name="Argument.value">${__P(t,${__time(,)})}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="ticket" elementType="Argument">
+            <stringProp name="Argument.name">ticket</stringProp>
+            <stringProp name="Argument.value">${__P(ticket,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="type" elementType="Argument">
+            <stringProp name="Argument.name">type</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="uid" elementType="Argument">
+            <stringProp name="Argument.name">uid</stringProp>
+            <stringProp name="Argument.value">${__P(uid,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="uids" elementType="Argument">
+            <stringProp name="Argument.name">uids</stringProp>
+            <stringProp name="Argument.value">1454779,1454694,1454428</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="uids_1" elementType="Argument">
+            <stringProp name="Argument.name">uids_1</stringProp>
+            <stringProp name="Argument.value">1454779</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="uids_2" elementType="Argument">
+            <stringProp name="Argument.name">uids_2</stringProp>
+            <stringProp name="Argument.value">1454694</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="uids_3" elementType="Argument">
+            <stringProp name="Argument.name">uids_3</stringProp>
+            <stringProp name="Argument.value">1454428</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="version" elementType="Argument">
+            <stringProp name="Argument.name">version</stringProp>
+            <stringProp name="Argument.value">100.1.5.6</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
       </Arguments>
-      <hashTree/>
+      <hashTree />
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP 请求默认值" enabled="true">
         <stringProp name="HTTPSampler.protocol">https</stringProp>
         <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
-        <stringProp name="HTTPSampler.port"></stringProp>
+        <stringProp name="HTTPSampler.port" />
         <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
         <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
-        <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"/></elementProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+          <collectionProp name="Arguments.arguments" />
+        </elementProp>
       </ConfigTestElement>
-      <hashTree/>
+      <hashTree />
       <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie 管理器" enabled="true">
-        <collectionProp name="CookieManager.cookies"/>
+        <collectionProp name="CookieManager.cookies" />
         <boolProp name="CookieManager.clearEachIteration">false</boolProp>
         <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
       </CookieManager>
-      <hashTree/>
+      <hashTree />
       <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache 管理器" enabled="true">
         <boolProp name="clearEachIteration">false</boolProp>
         <boolProp name="useExpires">true</boolProp>
       </CacheManager>
-      <hashTree/>
-      
-      
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="接口性能冒烟" enabled="true">
-        <intProp name="ThreadGroup.num_threads">2</intProp>
-        <intProp name="ThreadGroup.ramp_time">30</intProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController"><boolProp name="LoopController.continue_forever">true</boolProp><stringProp name="LoopController.loops">-1</stringProp></elementProp>
-        <boolProp name="ThreadGroup.scheduler">true</boolProp><stringProp name="ThreadGroup.duration">180</stringProp><stringProp name="ThreadGroup.delay">0</stringProp>
+      <hashTree />
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="baseline 性能执行" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">-1</stringProp>
+        </elementProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.duration">20</stringProp>
+        <stringProp name="ThreadGroup.delay">0</stringProp>
       </ThreadGroup>
       <hashTree>
         <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="读取登录身份上下文" enabled="true">
           <stringProp name="cacheKey">autotest-load-auth-context</stringProp>
-          <stringProp name="filename"></stringProp>
-          <stringProp name="parameters"></stringProp>
-          <stringProp name="script">def token = props.get('ticket') ?: vars.get('ticket') ?: '${__P(ticket,)}'
+          <stringProp name="filename" />
+          <stringProp name="parameters" />
+          <stringProp name="script">def accountColumns = ["account_source", "anchorTicket", "anchorUid", "applicant_source", "applicant_ticket", "applicant_uid", "bankAccount", "bankName", "bankReceiverAddress", "bankReceiverName", "bankReceiverPhone", "countryCode", "country_code", "currency", "receiveAccountType", "salaryAmount", "swiftCode", "ticket", "uid"]
+def accountReusePolicy = 'strict_unique'
+def encodedRows = System.getenv('AUTOTEST_JMETER_RUNTIME_ROWS_B64')
+if (!encodedRows) {
+    throw new IllegalStateException('未取得JMeter进程级运行数据：请先通过性能账号池预检')
+}
+def decodedJson = new String(
+    java.util.Base64.decoder.decode(encodedRows),
+    java.nio.charset.StandardCharsets.UTF_8
+)
+def runtimeRows = new groovy.json.JsonSlurper().parseText(decodedJson)
+if (!(runtimeRows instanceof java.util.List) || runtimeRows.isEmpty()) {
+    throw new IllegalStateException('JMeter进程级运行数据为空')
+}
+def clearPinnedAccount = { -&gt;
+    String.valueOf(vars.get('__performance_account_columns') ?: '').split(',').each { name -&gt;
+        if (!name) return
+        vars.remove(name)
+        vars.remove('__performance_account_' + name)
+    }
+}
+def bindAccountRow = { int rowIndex, int rotationCount -&gt;
+    def runtimeRow = runtimeRows[rowIndex]
+    if (!(runtimeRow instanceof java.util.Map)) {
+        throw new IllegalStateException('JMeter进程级运行数据行格式错误')
+    }
+    clearPinnedAccount()
+    def pinnedColumns = []
+    runtimeRow.each { rawName, rawValue -&gt;
+        def name = String.valueOf(rawName)
+        def value = rawValue == null ? '' : String.valueOf(rawValue)
+        if (name ==~ /[A-Za-z_][A-Za-z0-9_]*/ &amp;&amp; value &amp;&amp; value != '&lt;EOF&gt;') {
+            vars.put('__performance_account_' + name, value)
+            vars.put(name, value)
+            pinnedColumns.add(name)
+        }
+    }
+    vars.put('__performance_account_columns', pinnedColumns.join(','))
+    vars.put('__performance_account_row_index', String.valueOf(rowIndex))
+    vars.put('__performance_account_rotation_count', String.valueOf(rotationCount))
+    vars.put('__performance_account_initialized', 'true')
+}
+if (!vars.get('__performance_account_initialized')) {
+    def initialRowIndex = Math.floorMod(ctx.getThreadNum(), runtimeRows.size())
+    bindAccountRow(initialRowIndex, 0)
+}
+def currentIteration = String.valueOf(vars.getIteration())
+def rotateRequested = vars.get('__performance_account_rotate_requested') == 'true'
+def requestedIteration = String.valueOf(vars.get('__performance_account_rotate_requested_iteration') ?: '')
+if (rotateRequested &amp;&amp; requestedIteration != currentIteration) {
+    def currentIndex = Integer.parseInt(String.valueOf(vars.get('__performance_account_row_index') ?: '0'))
+    def rotationCount = Integer.parseInt(String.valueOf(vars.get('__performance_account_rotation_count') ?: '0'))
+    def nextIndex = accountReusePolicy == 'strict_unique'
+        ? currentIndex + 1
+        : Math.floorMod(currentIndex + 1, runtimeRows.size())
+    def exhausted = accountReusePolicy == 'strict_unique'
+        ? nextIndex &gt;= runtimeRows.size()
+        : rotationCount &gt;= runtimeRows.size() - 1
+    if (exhausted) {
+        def exhaustedUid = vars.get('applicant_uid') ?: vars.get('uid') ?: ''
+        log.error('AUTOTEST_ACCOUNT_POOL_EXHAUSTED thread=' + ctx.getThreadNum()
+            + ' uid=' + String.valueOf(exhaustedUid)
+            + ' attempts=' + String.valueOf(rotationCount))
+        vars.put('__performance_account_pool_exhausted', 'true')
+        ctx.getThread().stop()
+        throw new IllegalStateException('当前线程的性能账号候选已全部鉴权失败')
+    }
+    bindAccountRow(nextIndex, rotationCount + 1)
+    vars.remove('__performance_account_rotate_requested')
+    vars.remove('__performance_account_rotate_requested_iteration')
+    vars.remove('__performance_auth_failure_logged')
+    def rotatedUid = vars.get('applicant_uid') ?: vars.get('uid') ?: ''
+    log.warn('AUTOTEST_ACCOUNT_ROTATED thread=' + ctx.getThreadNum()
+        + ' row=' + String.valueOf(nextIndex)
+        + ' uid=' + String.valueOf(rotatedUid)
+        + ' rotation=' + String.valueOf(rotationCount + 1))
+}
+String.valueOf(vars.get('__performance_account_columns') ?: '').split(',').each { name -&gt;
+    if (!name) return
+    def value = vars.get('__performance_account_' + name)
+    if (value) vars.put(name, value)
+}
+vars.put('t', String.valueOf(System.currentTimeMillis()))
+def token = vars.get('applicant_ticket') ?: vars.get('ticket') ?: props.get('ticket') ?: '${__P(ticket,)}'
 if (!token) {
-    throw new IllegalStateException('未取得 ticket：请在平台先完成一次真实登录，或填写登录加密密码后重新打开 JMeter 工作台')
+    throw new IllegalStateException('未取得申请人ticket：请先通过性能账号池预检')
 }
 vars.put('ticket', token)
-def loginUid = props.get('uid') ?: vars.get('uid') ?: '${__P(uid,)}'
-if (loginUid) {
-    vars.put('uid', loginUid)
+def loginUid = vars.get('applicant_uid') ?: vars.get('uid') ?: props.get('uid') ?: '${__P(uid,)}'
+if (loginUid) vars.put('uid', loginUid)
+if (!vars.get('__performance_auth_context_logged')) {
+    log.info('AUTOTEST_AUTH_CONTEXT uid=' + String.valueOf(loginUid)
+        + ' t=' + String.valueOf(vars.get('t'))
+        + ' ticketLength=' + token.length()
+        + ' ticketSegments=' + token.split('[.]').length)
+    vars.put('__performance_auth_context_logged', 'true')
 }</stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
-        <hashTree/>
+        <hashTree />
         <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="请求间隔" enabled="true">
           <stringProp name="ConstantTimer.delay">300</stringProp>
         </ConstantTimer>
-        <hashTree/>
-        
+        <hashTree />
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="返回工资快速结算创建入口开关：正常请求" enabled="true">
           <stringProp name="HTTPSampler.domain">test2westarlive.gzxchate.com</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
-          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?packageName=com.soulfree.happiness&amp;isVpnConnected=0&amp;version=100.1.5.4&amp;language=en&amp;deviceId=8fcce1f1-5153-3207-9786-0240140a524a&amp;deviceType=0&amp;appVersion=100.1.5.4&amp;model=SM-A546B&amp;os=android&amp;appid=soulfree&amp;channel=google&amp;appCode=100154&amp;ispType=4&amp;systemLanguage=zh&amp;osVersion=16&amp;ticket=***REDACTED***&amp;appsflyerId=1787628595990-5267637366511328587&amp;netType=2&amp;organic=Organic&amp;uid=1454694</stringProp>
+          <stringProp name="HTTPSampler.path">/union/getAnchorApplyRecord?uid=${applicant_uid}&amp;ticket=${applicant_ticket}&amp;deviceType=${deviceType}&amp;systemLanguage=${systemLanguage}&amp;appVersion=${appVersion}&amp;os=${os}&amp;netType=${netType}&amp;channel=${channel}&amp;appsflyerId=${appsflyerId}&amp;language=${language}&amp;appCode=${appCode}&amp;deviceId=${deviceId}&amp;version=${version}&amp;osVersion=${osVersion}&amp;isVpnConnected=${isVpnConnected}&amp;appid=${appid}&amp;model=${model}&amp;packageName=${packageName}&amp;ispType=${ispType}&amp;organic=${organic}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments"><collectionProp name="Arguments.arguments"></collectionProp></elementProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments" />
+          </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true"><collectionProp name="HeaderManager.headers"><elementProp name="t" elementType="Header"><stringProp name="Header.name">t</stringProp><stringProp name="Header.value">1788425417159</stringProp></elementProp></collectionProp></HeaderManager>
-          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="t" elementType="Header">
+                <stringProp name="Header.name">t</stringProp>
+                <stringProp name="Header.value">${__time(,)}</stringProp>
+              </elementProp>
+              <elementProp name="Accept" elementType="Header">
+                <stringProp name="Header.name">Accept</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="断言 HTTP 200" enabled="true">
-            <collectionProp name="Asserion.test_strings"><stringProp name="status">200</stringProp></collectionProp>
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="status">200</stringProp>
+            </collectionProp>
             <stringProp name="Assertion.custom_message">HTTP 状态码不符合预期</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="OpenAPI结构与业务成功断言" enabled="true">
+            <stringProp name="cacheKey">autotest-response-contract-v1</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="script">def contract = new groovy.json.JsonSlurper().parseText(
+    new String(java.util.Base64.decoder.decode('eyJyZXF1aXJlX2pzb24iOmZhbHNlLCJyZXF1aXJlZF9maWVsZHMiOltdLCJmaWVsZF90eXBlcyI6e30sIm5vbl9lbXB0eV9maWVsZHMiOltdLCJidXNpbmVzc19jb2RlX2ZpZWxkIjoiY29kZSIsInN1Y2Nlc3NfY29kZXMiOlswLDIwMCwiMCIsIjIwMCJdLCJtZXNzYWdlX2ZpZWxkIjoibWVzc2FnZSIsInJlcXVpcmVfYnVzaW5lc3NfY29kZSI6ZmFsc2V9'), java.nio.charset.StandardCharsets.UTF_8)
+)
+def failOnce = { message -&gt;
+    if (!AssertionResult.isFailure()) {
+        AssertionResult.setFailure(true)
+        AssertionResult.setFailureMessage(String.valueOf(message))
+    }
+}
+def payload = null
+try {
+    payload = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+} catch (Exception ignored) {
+    if (Boolean.valueOf(String.valueOf(contract.require_json ?: false))) {
+        failOnce('响应不是有效JSON，无法执行OpenAPI结构校验')
+    }
+}
+if (payload instanceof Map) {
+    def codeField = String.valueOf(contract.business_code_field ?: 'code')
+    def allowedCodes = (contract.success_codes instanceof List ? contract.success_codes : []).collect { String.valueOf(it) }
+    if (Boolean.valueOf(String.valueOf(contract.require_business_code ?: false)) &amp;&amp; !payload.containsKey(codeField)) {
+        failOnce('响应缺少必需业务码字段: ' + codeField)
+    } else if (payload.containsKey(codeField) &amp;&amp; !allowedCodes.isEmpty()) {
+        def actualCode = String.valueOf(payload[codeField])
+        if (!allowedCodes.contains(actualCode)) {
+            def messageField = String.valueOf(contract.message_field ?: 'message')
+            failOnce('HTTP成功但业务码失败: ' + actualCode + ', message=' + String.valueOf(payload[messageField] ?: ''))
+        }
+    }
+    (contract.required_fields ?: []).each { field -&gt;
+        def fieldName = String.valueOf(field)
+        if (!payload.containsKey(fieldName) || payload[fieldName] == null) {
+            failOnce('响应缺少OpenAPI必填字段: ' + fieldName)
+        }
+    }
+    def typeMatches = { value, expected -&gt;
+        switch (String.valueOf(expected)) {
+            case 'object': return value instanceof Map
+            case 'array': return value instanceof List
+            case 'string': return value instanceof CharSequence
+            case 'integer': return value instanceof Number &amp;&amp; String.valueOf(value) ==~ /-?\d+/
+            case 'number': return value instanceof Number
+            case 'boolean': return value instanceof Boolean
+            default: return true
+        }
+    }
+    (contract.field_types ?: [:]).each { field, expectedType -&gt;
+        def fieldName = String.valueOf(field)
+        if (payload.containsKey(fieldName) &amp;&amp; payload[fieldName] != null &amp;&amp; !typeMatches(payload[fieldName], expectedType)) {
+            failOnce('响应字段类型不符合OpenAPI: ' + fieldName + ' 应为 ' + String.valueOf(expectedType))
+        }
+    }
+    (contract.non_empty_fields ?: []).each { field -&gt;
+        def fieldName = String.valueOf(field)
+        def value = payload[fieldName]
+        if (value == null || (value instanceof Map &amp;&amp; value.isEmpty()) || (value instanceof List &amp;&amp; value.isEmpty()) || (value instanceof CharSequence &amp;&amp; value.length() == 0)) {
+            failOnce('响应字段不应为空: ' + fieldName)
+        }
+    }
+} else if (payload != null &amp;&amp; !(contract.required_fields ?: []).isEmpty()) {
+    failOnce('响应JSON顶层不是对象，无法校验必填字段')
+}</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Assertion>
+          <hashTree />
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="鉴权失败安全诊断" enabled="true">
+            <stringProp name="cacheKey">autotest-auth-failure-diagnostic</stringProp>
+            <stringProp name="filename" />
+            <stringProp name="parameters" />
+            <stringProp name="script">if (prev.getResponseCode() == '401') {
+    vars.put('__performance_account_rotate_requested', 'true')
+    vars.put('__performance_account_rotate_requested_iteration', String.valueOf(vars.getIteration()))
+}
+if (prev.getResponseCode() == '401' &amp;&amp; !vars.get('__performance_auth_failure_logged')) {
+    def safeUrl = prev.getUrlAsString().replaceAll('(?i)(ticket=)[^&amp;]+', '$1***REDACTED***')
+    def safeHeaders = String.valueOf(prev.getRequestHeaders()).replaceAll('(?i)(Authorization:\s*Bearer\s+)[^\s]+', '$1***REDACTED***')
+    log.warn('AUTOTEST_AUTH_FAILURE url=' + safeUrl + ' requestHeaders=' + safeHeaders)
+    vars.put('__performance_auth_failure_logged', 'true')
+}</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PostProcessor>
+          <hashTree />
         </hashTree>
       </hashTree>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">${__P(load_result_jtl,)}</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/jmeter-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="汇总报告" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">${__P(load_result_jtl,)}</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/jmeter-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">${__P(load_result_jtl,)}</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/jmeter-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="聚合图形报告" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">${__P(load_result_jtl,)}</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/jmeter-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
       <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="图形结果" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <stringProp name="filename">${__P(load_result_jtl,)}</stringProp>
+        <stringProp name="filename">${__P(jmeter_result_jtl,${__P(project_root,.)}/reports/latest/jmeter-result.jtl)}</stringProp>
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
     </hashTree>
   </hashTree>
 </jmeterTestPlan>

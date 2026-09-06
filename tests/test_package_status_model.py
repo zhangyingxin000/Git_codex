@@ -470,6 +470,54 @@ def test_report_index_tracks_latest_report_per_type(monkeypatch, tmp_path):
     assert latest["REQUIREMENT_PACKAGE_PYTEST_EVIDENCE_RUN"]["status"] == "BLOCKED"
 
 
+def test_report_index_writes_package_latest_index(monkeypatch, tmp_path):
+    monkeypatch.setattr(app, "REQUIREMENT_PACKAGE_ROOT", tmp_path.parent)
+    monkeypatch.setattr(app, "requirement_package_by_id", lambda _project, package_id: {
+        "package_id": package_id,
+        "name": "测试需求包",
+        "root": str(tmp_path),
+    })
+    run = app.create_requirement_run_context("project", "pkg", {"run_id": "run-latest"})
+    report_path = write_report(tmp_path, "newman-latest", "REQUIREMENT_PACKAGE_NEWMAN_RUN", "PASSED")
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    payload["run_id"] = run["run_id"]
+    report_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    index = app.requirement_package_report_index("project", "pkg", persist=True)
+    latest_path = tmp_path / "reports" / "latest" / "report-index.json"
+
+    assert latest_path.is_file()
+    assert index["latest_index_path"] == str(latest_path)
+    assert json.loads(latest_path.read_text(encoding="utf-8"))["latest_run_id"] == "run-latest"
+
+
+def test_report_retention_preview_protects_pinned_runs(monkeypatch, tmp_path):
+    monkeypatch.setattr(app, "REQUIREMENT_PACKAGE_ROOT", tmp_path.parent)
+    monkeypatch.setattr(app, "requirement_package_by_id", lambda _project, package_id: {
+        "package_id": package_id,
+        "name": "测试需求包",
+        "root": str(tmp_path),
+    })
+    contexts = []
+    for index in range(12):
+        contexts.append({
+            "run_id": f"run-{index:02d}",
+            "name": f"批次{index}",
+            "status": "PASSED",
+            "created_at": "2020-01-01T00:00:00+00:00",
+            "updated_at": "2020-01-01T00:00:00+00:00",
+            "pinned": index == 11,
+            "tools": {},
+        })
+    monkeypatch.setattr(app, "_run_contexts_from_root", lambda _root: contexts)
+
+    preview = app.requirement_package_report_retention_preview("project", "pkg")
+
+    assert preview["summary"]["cleanup_candidate_runs"] == 1
+    assert preview["candidates"][0]["run_id"] == "run-10"
+    assert all(item["run_id"] != "run-11" for item in preview["candidates"])
+
+
 def test_run_context_groups_reports_without_mixing_batches(monkeypatch, tmp_path):
     monkeypatch.setattr(app, "requirement_package_by_id", lambda _project, package_id: {
         "package_id": package_id,
