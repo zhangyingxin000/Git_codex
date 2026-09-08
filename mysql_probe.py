@@ -15,7 +15,7 @@ def send(sock,b,seq=0): sock.sendall(struct.pack('<I',len(b))[:3]+bytes([seq])+b
 def nul(b,p):
     q=b.index(0,p); return b[p:q],q+1
 def native(password,salt):
-    a=hashlib.sha1(password).digest(); b=hashlib.sha1(a).digest(); c=hashlib.sha1(salt+a and salt+a).digest()
+    a=hashlib.sha1(password).digest(); c=hashlib.sha1(salt+a and salt+a).digest()
     return bytes(x^y for x,y in zip(a,c))
 def caching(password,salt):
     a=hashlib.sha256(password).digest(); b=hashlib.sha256(a).digest(); c=hashlib.sha256(b+salt).digest()
@@ -66,10 +66,10 @@ if r[0]==1 and len(r)>1 and r[1]==3: r=packet(s)
 if r[0] not in (0,): raise RuntimeError('不支持的认证响应: '+r.hex())
 dbq=DATABASE.replace("'","''")
 tables=query(s,"SELECT TABLE_NAME, TABLE_TYPE, COALESCE(TABLE_COMMENT,''), COALESCE(TABLE_ROWS,0) FROM information_schema.TABLES WHERE TABLE_SCHEMA='"+dbq+"' ORDER BY TABLE_NAME")
-columns=query(s,"SELECT TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE,COLUMN_KEY,COALESCE(COLUMN_DEFAULT,''),EXTRA,COALESCE(COLUMN_COMMENT,'') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='"+dbq+"' ORDER BY TABLE_NAME,ORDINAL_POSITION")
+columns=query(s,"SELECT TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE,COLUMN_KEY,COALESCE(COLUMN_DEFAULT,''),EXTRA,COALESCE(COLUMN_COMMENT,'') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='[...]")
 indexes=query(s,"SELECT TABLE_NAME,INDEX_NAME,NON_UNIQUE,SEQ_IN_INDEX,COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA='"+dbq+"' ORDER BY TABLE_NAME,INDEX_NAME,SEQ_IN_INDEX")
-relations=query(s,"SELECT TABLE_NAME,COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME,CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='"+dbq+"' AND REFERENCED_TABLE_NAME IS NOT NULL ORDER BY TABLE_NAME,COLUMN_NAME")
-result={'connected':True,'server':server.decode(),'database':DATABASE,'table_count':len(tables),'column_count':len(columns),'index_count':len(indexes),'relation_count':len(relations),'tables':tables,'columns':columns,'indexes':indexes,'relations':relations}
+relations=query(s,"SELECT TABLE_NAME,COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME,CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='"+dbq+"' AND REFERENCED_T[...]")
+result={'connected':True,'server':server.decode(),'database':DATABASE,'table_count':len(tables),'column_count':len(columns),'index_count':len(indexes),'relation_count':len(relations),'tables':tabl[...]
 import json
 out=os.getenv('AUTOTEST_SCHEMA_OUTPUT')
 if out:
