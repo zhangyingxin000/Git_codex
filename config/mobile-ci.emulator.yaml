@@ -1,0 +1,71 @@
+schema_version: "1.0"
+enabled: true
+server_mode: managed
+server_host: 127.0.0.1
+server_port: 4723
+auto_select_port: true
+base_path: ""
+startup_timeout_seconds: 90
+session_timeout_seconds: 300
+adb_path: ""
+
+device_pool:
+  source: adb
+  mode: all
+  allow_physical: false
+  allow_emulators: true
+  include: []
+  exclude: []
+
+device_preflight:
+  enabled: true
+  enforce: true
+  wake_and_unlock: true
+  min_battery_percent: 0
+  min_data_free_mb: 512
+
+capabilities:
+  platformName: Android
+  appium:automationName: UiAutomator2
+  appium:deviceName: Android Emulator
+  appium:noReset: true
+  appium:forceAppLaunch: true
+  appium:autoGrantPermissions: true
+  appium:newCommandTimeout: 120
+  appium:app: ${AUTOTEST_ANDROID_APP}
+  appium:appWaitActivity: com.inspire.journey.teach.ui.launch.activity.*
+
+checks:
+  expected_package: com.soulfree.happiness
+  launch_timeout_seconds: 20
+  min_page_source_chars: 100
+  capture_screenshot: true
+
+safety:
+  allow_mutations: false
+  allow_high_risk: false
+  allow_network_changes: true
+  allow_system_events: true
+  allow_monkey: false
+
+coverage:
+  project_name: Soulfree Android emulator matrix
+  configured_scope:
+    - Android系统版本与分辨率兼容性
+    - 房间主流程和前后台恢复
+    - 模拟器网络及系统事件能力
+  not_verified:
+    - 厂商ROM兼容性
+    - 真机性能基线
+    - Monkey随机稳定性测试
+
+performance:
+  enabled: false
+  enforce_thresholds: false
+
+page_object_files:
+  - mobile/pages/soulfree.yaml
+
+scenario_files:
+  - mobile/scenarios/soulfree-safe.yaml
+  - mobile/scenarios/android-monkey.yaml

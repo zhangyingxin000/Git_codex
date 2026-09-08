@@ -1,0 +1,72 @@
+schema_version: "1.0"
+enabled: true
+server_mode: external
+server_url: ${AUTOTEST_MOBILE_GRID_URL}
+server_status_url: ${AUTOTEST_MOBILE_GRID_STATUS_URL}
+startup_timeout_seconds: 90
+session_timeout_seconds: 300
+adb_path: ""
+
+# AUTOTEST_MOBILE_DEVICE_INVENTORY overrides inventory with a JSON array at
+# runtime. Each device may add Grid routing capabilities without exposing
+# capability values in the generated summary.
+device_pool:
+  source: inventory
+  mode: all
+  allow_physical: true
+  allow_emulators: true
+  include: []
+  exclude: []
+  inventory: []
+
+# Grid nodes must be able to read this URL or shared container path. A path
+# that exists only in the Jenkins controller workspace is not sufficient.
+capabilities:
+  platformName: Android
+  appium:automationName: UiAutomator2
+  appium:deviceName: Android Grid
+  appium:noReset: true
+  appium:forceAppLaunch: true
+  appium:autoGrantPermissions: true
+  appium:newCommandTimeout: 120
+  appium:app: ${AUTOTEST_ANDROID_GRID_APP}
+  appium:appWaitActivity: com.inspire.journey.teach.ui.launch.activity.*
+
+checks:
+  expected_package: com.soulfree.happiness
+  launch_timeout_seconds: 20
+  min_page_source_chars: 100
+  capture_screenshot: true
+
+# Device-side ADB belongs to the Grid nodes in this mode. ADB-only scenarios
+# and performance collection remain disabled until the runner has ADB network
+# access to those devices.
+device_preflight:
+  enabled: false
+  enforce: false
+
+safety:
+  allow_mutations: false
+  allow_high_risk: false
+  allow_network_changes: false
+  allow_system_events: false
+  allow_monkey: false
+
+coverage:
+  project_name: Soulfree Android Grid
+  configured_scope:
+    - Grid远程会话、APK安装和核心房间流程
+    - Android版本与设备矩阵兼容性
+  not_verified:
+    - Grid节点ADB性能证据
+    - 网络、来电和Monkey等ADB场景
+
+performance:
+  enabled: false
+  enforce_thresholds: false
+
+page_object_files:
+  - mobile/pages/soulfree.yaml
+
+scenario_files:
+  - mobile/scenarios/soulfree-safe.yaml

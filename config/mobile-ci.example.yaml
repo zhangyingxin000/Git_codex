@@ -1,0 +1,95 @@
+schema_version: "1.0"
+enabled: false
+# managed: runner starts a local Appium server; external: runner uses an
+# existing Selenium/Appium Grid and never starts a second Appium process.
+server_mode: managed
+server_host: 127.0.0.1
+server_port: 4723
+auto_select_port: true
+base_path: ""
+# External mode uses these instead of server_host/server_port/base_path.
+server_url: ""
+server_status_url: ""
+startup_timeout_seconds: 60
+session_timeout_seconds: 300
+adb_path: ""
+
+# Copy this file to config/mobile-ci.local.yaml, enable it, then provide either
+# an APK path or an already-installed appPackage/appActivity pair.
+device_pool:
+  # adb: discover locally; inventory: use configured Grid devices;
+  # hybrid: merge both sources by udid.
+  source: adb
+  # first: first matching device; all: every matching real device/emulator;
+  # listed: only devices named in include.
+  mode: first
+  allow_physical: true
+  allow_emulators: true
+  include: []
+  exclude: []
+  inventory: []
+
+capabilities:
+  platformName: Android
+  appium:automationName: UiAutomator2
+  appium:deviceName: Android
+  appium:noReset: true
+  appium:forceAppLaunch: true
+  appium:autoGrantPermissions: true
+  appium:newCommandTimeout: 120
+  appium:app: ${AUTOTEST_ANDROID_APP}
+  # Apps with redirecting splash screens can set a package-scoped wildcard:
+  # appium:appWaitActivity: com.example.app.ui.launch.*
+
+checks:
+  expected_package: ""
+  launch_timeout_seconds: 15
+  min_page_source_chars: 100
+  capture_screenshot: true
+
+# Risky steps remain BLOCKED until they are explicitly allowed in a local config.
+safety:
+  allow_mutations: false
+  allow_high_risk: false
+  allow_network_changes: false
+  allow_system_events: false
+
+# Keep platform capability claims separate from scenarios actually verified for
+# the current app. The report derives actual passed steps from execution data.
+coverage:
+  project_name: Example Android app
+  configured_scope: []
+  not_verified: []
+  reproducible_scenarios: []
+
+# Optional Android-side performance evidence. This is complementary to Android
+# Studio Profiler or PerfDog; one run can show abnormal memory growth but cannot
+# by itself prove a memory leak.
+performance:
+  enabled: false
+  enforce_thresholds: false
+  capture_runtime_logcat: true
+  frame_budget_ms: 16.67
+  memory_lifecycle_cycles: 0
+  lifecycle_settle_seconds: 2
+  startup:
+    measure_cold: true
+    measure_warm: true
+    settle_seconds: 1
+    component: ""
+  thresholds:
+    max_cold_start_ms: 3000
+    max_warm_start_ms: 1500
+    min_fps: 45
+    max_jank_percent: 20
+    max_cpu_percent: 60
+    max_total_pss_kb: 524288
+    max_memory_growth_kb: 51200
+
+# Appium Inspector is used only to discover these locators. The page object file
+# is the maintained source of selectors; scenario files reference page.element.
+page_object_files:
+  - mobile/pages/example-app.yaml
+
+scenario_files:
+  - mobile/scenarios/example-app.yaml

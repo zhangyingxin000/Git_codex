@@ -1,12 +1,20 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any
 
 from quality_hub_backend.demo.salary_trade import run_demo
+from quality_hub_backend.services.mobile_automation import MobileAutomationService
 
 
 class TaskDispatcher:
-    def __init__(self, legacy: Any, settings: Any = None) -> None:
+    def __init__(
+        self,
+        legacy: Any,
+        settings: Any = None,
+        mobile_automation: MobileAutomationService | None = None,
+    ) -> None:
         self.legacy = legacy
         self.allow_mutations = bool(getattr(settings, "allow_mutations", False))
         self._handlers: dict[str, Callable[[dict[str, Any]], Any]] = {
@@ -16,6 +24,12 @@ class TaskDispatcher:
             "requirement_newman": self._requirement_newman,
             "requirement_performance": self._requirement_performance,
         }
+        root = getattr(legacy, "ROOT", None)
+        self.mobile_automation = mobile_automation or (
+            MobileAutomationService(Path(root)) if root is not None else None
+        )
+        if self.mobile_automation is not None:
+            self._handlers["mobile_appium"] = self._mobile_appium
 
     @property
     def task_types(self) -> tuple[str, ...]:
@@ -97,3 +111,8 @@ class TaskDispatcher:
                     "message": "性能门槛或执行状态未通过，后续阶梯已停止。",
                 }
         return {"status": "PASSED", "stages": results, "message": "全部性能阶梯执行完成。"}
+
+    def _mobile_appium(self, payload: dict[str, Any]) -> Any:
+        if self.mobile_automation is None:
+            return {"status": "BLOCKED", "message": "移动端自动化服务尚未初始化。"}
+        return self.mobile_automation.run(payload)

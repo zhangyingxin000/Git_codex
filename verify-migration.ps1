@@ -32,7 +32,7 @@ try {
   if ($LASTEXITCODE -ne 0) { throw "One or more project dependencies are missing." }
 
   Write-Host "Checking application imports..." -ForegroundColor Cyan
-  & $venvPython -m py_compile "app.py" "quality_hub_backend\api\fastapi_app.py" "quality_hub_backend\adapters\jmeter.py" "quality_hub_backend\demo\salary_trade.py"
+  & $venvPython -m py_compile "app.py" "quality_hub_backend\api\fastapi_app.py" "quality_hub_backend\adapters\jmeter_mcp.py" "quality_hub_backend\demo\salary_trade.py"
   if ($LASTEXITCODE -ne 0) { throw "Application import check failed." }
 
   if ($RunTests) {

@@ -108,15 +108,32 @@ cd <AutoTest-AI项目目录>
 
 ```powershell
 .\platform.cmd setup
+.\platform.cmd setup-ci
 .\platform.cmd check
 .\platform.cmd demo
+.\platform.cmd ci
+.\platform.cmd ci-tools -ConfigPath .\config\ci-tools.example.yaml
+.\platform.cmd setup-mobile
+.\platform.cmd mobile-ci -ConfigPath .\config\mobile-ci.example.yaml
 ```
+
+`platform.cmd setup-ci` 会在项目隔离环境中安装 Ruff、detect-secrets、Allure Commandline 和 Appium CLI。`platform.cmd ci` 随后执行代码关键错误检查、秘密值增量扫描、完整 pytest、演示验收，并把 JUnit 转为 Allure HTML；日志、原始结果和 `summary.json` 保存到 `reports/ci/<run_id>/`。
+
+`platform.cmd ci-tools -ConfigPath <配置文件>` 是测试环境 CLI 流水线。它支持 Newman、JMeter，以及企业在 Apifox CI/CD 页面生成的 CLI 命令；只有配置中显式启用的阶段才会运行。Newman JSON/JUnit、JMeter JTL/HTML、控制台日志和批次汇总统一保存在 `reports/ci-tools/<run_id>/`。Jenkins 设置 `AUTOTEST_CI_TOOLS_CONFIG` 后会自动增加该阶段，凭证必须从 Jenkins Credentials 注入环境变量，不能写进 YAML。
+
+`platform.cmd setup-mobile` 在项目 `.appium` 目录安装 UiAutomator2 驱动。Android 真机或模拟器连接后，将 `config/mobile-ci.example.yaml` 另存为被 Git 忽略的 `config/mobile-ci.local.yaml`，启用配置并通过 `AUTOTEST_ANDROID_APP` 提供 APK 路径，即可执行 `platform.cmd mobile-ci -ConfigPath .\config\mobile-ci.local.yaml`。执行器通过 ADB 自动发现真机和已启动的 Android 模拟器；`device_pool.mode` 可选择首台、指定设备或全部设备。每台设备会执行 App 启动、前台包名、页面结构和截图检查，并分别生成设备结果、页面源码、启动截图和 Allure 用例。
+
+移动场景可以使用兼容的单个 `workflow`，也可以使用 `workflows` 按核心业务、异常恢复、UI 逻辑和端侧性能分组。动作支持点击、输入、返回、滑动、截图，元素存在/不存在、文本、属性、启用状态、Activity 和包名断言，以及切后台恢复、终止、重新启动、锁屏和模拟器来电。模拟器还可执行断网重连和弱网 Profile；真机不会自动修改网络或模拟来电。注册、支付、增删改等步骤应标记 `mutates_data`/`risk_level`，在未允许写操作、未提供测试账号或资源时会返回 `BLOCKED`，不会编造数据或误报通过。失败步骤会自动保存截图和当时的页面 XML。
+
+启用 `performance` 后，移动执行器会采集冷启动/热启动时间、PSS 内存、进程 CPU、渲染帧、估算 FPS、帧耗时百分位和卡顿帧比例，并可通过多次终止/恢复采样观察内存增长趋势；运行日志同时扫描 OOM、崩溃和 ANR 信号。结果写入每台设备目录的 `performance.json` 和 `runtime-logcat.txt`，并附加到 Allure。一次自动化运行只能发现异常趋势，正式认定内存泄漏仍应结合 Android Studio Profiler、PerfDog 或研发侧内存分析证据。该链路不依赖 Android Studio 界面或付费设备云；Android Studio 只在创建和启动 AVD 模拟器时使用。Jenkins 设置 `AUTOTEST_MOBILE_CONFIG` 后才会安装移动驱动并执行该阶段。
+
+当前移动CI由ECS上的Jenkins统一触发和展示，本地Windows Agent负责USB真机与Android Studio模拟器执行，并自动上传JUnit、Allure、截图、ADB日志和APK元数据。受控Monkey稳定性任务同样由Jenkins发起，但必须确认隔离测试环境后才会临时放开对应门禁。`config/mobile-ci.grid.yaml`继续保留外部Appium Grid与KVM能力，待未来Linux节点提供Nested Virtualization和`/dev/kvm`后再启用。
 
 ## 工程维护入口
 
 平台已经开始把旧的单文件实现渐进拆分为可维护模块：后端采用 `routes / handlers / services / adapters / repositories / startup / config` 边界，前端按 `services / components / routers` 拆分；长时间执行通过 SQLite 持久化后台任务队列运行。
 
-核心技术栈：Python 3.12+、FastAPI、Uvicorn、Pydantic、SQLAlchemy/Alembic、SQLite、PyYAML、PyMySQL、Redis Client、httpx、pytest，以及外部执行工具 Newman、Apache JMeter、`jmeter-mcp-server`、Apifox CLI 和可选 Allure。浏览器端目前使用原生 HTML/CSS/JavaScript，不需要前端构建步骤。
+核心技术栈：Python 3.12+、FastAPI、Uvicorn、Pydantic、SQLAlchemy/Alembic、SQLite、PyYAML、PyMySQL、Redis Client、httpx、pytest、Ruff、detect-secrets，以及外部执行工具 Newman、Apache JMeter、`jmeter-mcp-server`、Apifox CLI、Allure Commandline、Appium 和 UiAutomator2。浏览器端目前使用原生 HTML/CSS/JavaScript，不需要前端构建步骤。
 
 详细技术选型、模块调用关系、需求包数据流、后台任务状态和工作台收紧方案见 [工程架构说明](docs/engineering-architecture.md)。
 

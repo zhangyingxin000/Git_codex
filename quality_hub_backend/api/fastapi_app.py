@@ -13,9 +13,11 @@ from fastapi.staticfiles import StaticFiles
 
 from ..config import AppSettings
 from ..handlers import TaskDispatcher
+from ..services.mobile_automation import MobileAutomationService
 from ..services.task_queue import PersistentTaskQueue
 from ..startup import application_lifespan
 from .routes import (
+    build_mobile_router,
     build_project_router,
     build_requirement_execution_router,
     build_requirement_report_router,
@@ -50,7 +52,8 @@ def create_app() -> FastAPI:
     legacy.init_db()
     settings = AppSettings.from_environment(legacy.ROOT)
     task_queue = PersistentTaskQueue(settings.task_database, settings.task_workers)
-    dispatcher = TaskDispatcher(legacy, settings)
+    mobile_automation = MobileAutomationService(legacy.ROOT)
+    dispatcher = TaskDispatcher(legacy, settings, mobile_automation)
     api = FastAPI(
         title="AutoTest AI Quality Hub",
         version="0.1.0",
@@ -65,10 +68,12 @@ def create_app() -> FastAPI:
     api.state.settings = settings
     api.state.task_queue = task_queue
     api.state.task_dispatcher = dispatcher
+    api.state.mobile_automation = mobile_automation
     # FastAPI 0.141 wraps include_router() entries in _IncludedRouter. Appending the
     # concrete APIRoutes keeps legacy route introspection and coverage tooling stable.
     api.router.routes.extend(build_system_router(legacy, settings).routes)
     api.router.routes.extend(build_task_router(task_queue, dispatcher).routes)
+    api.router.routes.extend(build_mobile_router(mobile_automation).routes)
     api.router.routes.extend(build_project_router(legacy).routes)
     api.router.routes.extend(build_requirement_execution_router(legacy).routes)
     api.router.routes.extend(build_requirement_report_router(legacy).routes)

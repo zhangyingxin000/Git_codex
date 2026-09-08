@@ -2044,15 +2044,55 @@ const openProjectBeforeBackgroundTasks=openProject;
 openProject=async function(id){
   await openProjectBeforeBackgroundTasks(id);
   try{data.background_tasks=await api('/api/tasks?limit=20')}catch{data.background_tasks=[]}
+  try{data.mobile_catalog=await window.QualityHub.services.mobile.catalog()}catch(error){data.mobile_catalog={status:'BLOCKED',blockers:[error.message],devices:[],scenarios:[],page_objects:[],latest_runs:[]}}
   render()
 };
 
 const renderBeforeBackgroundTasks=render;
 render=function(){
   renderBeforeBackgroundTasks();
-  const panel=window.QualityHub.components.taskPanel.render(data?.background_tasks||[],esc);
-  $('#automation')?.insertAdjacentHTML('afterbegin',panel)
+  const automation=$('#automation');
+  if(!automation)return;
+  const mobilePanel=window.QualityHub.components.mobilePanel.render(data?.mobile_catalog,data?.background_tasks||[],esc);
+  const taskPanel=window.QualityHub.components.taskPanel.render(data?.background_tasks||[],esc);
+  automation.insertAdjacentHTML('afterbegin',mobilePanel);
+  automation.insertAdjacentHTML('afterbegin',taskPanel)
 };
+
+async function refreshMobileCatalog(){
+  try{
+    const configPath=$('#mobileConfigPath')?.value.trim()||'';
+    data.mobile_catalog=await window.QualityHub.services.mobile.catalog(configPath);
+    data.background_tasks=await api('/api/tasks?limit=20');
+    render();
+    toast(data.mobile_catalog.status==='READY'?'移动端设备与场景已刷新':'移动端预检仍有待处理项',data.mobile_catalog.status==='READY'?'success':'warning')
+  }catch(error){toast(error.message,'error')}
+}
+
+async function submitMobileAutomationTask(){
+  const scenarios=$$('input[name="mobileScenario"]:checked').map(item=>item.value);
+  const devices=$$('input[name="mobileDevice"]:checked').map(item=>item.value);
+  const configPath=$('#mobileConfigPath')?.value.trim()||'';
+  const apkPath=$('#mobileApkPath')?.value.trim()||'';
+  if(!scenarios.length)return toast('请至少选择一个移动端场景','warning');
+  if(!devices.length)return toast('请至少选择一台真机或模拟器','warning');
+  try{
+    const task=await window.QualityHub.services.mobile.run({config_path:configPath,apk_path:apkPath,scenarios,devices});
+    data.background_tasks=[task,...(data.background_tasks||[]).filter(item=>item.task_id!==task.task_id)];
+    render();
+    toast(`移动端任务已进入后台：${task.task_id}`,'success');
+    let lastPaint=0;
+    window.QualityHub.services.tasks.wait(task.task_id,{timeout:7200000,interval:1000,onProgress:state=>{
+      data.background_tasks=[state,...(data.background_tasks||[]).filter(item=>item.task_id!==state.task_id)];
+      if(Date.now()-lastPaint>1500||['PASSED','FAILED','CANCELLED','INTERRUPTED'].includes(state.status)){lastPaint=Date.now();render()}
+    }}).then(async state=>{
+      data.mobile_catalog=await window.QualityHub.services.mobile.catalog(configPath);
+      data.background_tasks=await api('/api/tasks?limit=20');
+      render();
+      toast(state.status==='PASSED'?'移动端自动化完成，Allure报告已生成':`移动端任务结束：${state.status}`,state.status==='PASSED'?'success':state.status==='CANCELLED'?'warning':'error')
+    }).catch(error=>toast(error.message,'warning'))
+  }catch(error){toast(error.message,'error')}
+}
 
 async function submitCurrentPackageBackgroundTask(){
   const pkg=currentRequirementPackage(),packageId=requirementPackageId(pkg);

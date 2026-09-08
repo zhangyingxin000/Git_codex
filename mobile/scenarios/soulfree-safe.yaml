@@ -1,0 +1,72 @@
+schema_version: "1.0"
+workflows:
+  - enabled: true
+    id: soulfree-room-smoke
+    name: Soulfree room smoke and recovery
+    category: core-business
+    tags: [smoke, startup, ui, room, recovery, performance, reproducible]
+    steps:
+      - name: Validate repeated startup pages
+        action: assert_startup_pages
+        attempts: 3
+        capture_delay_seconds: 0.3
+        force_stop_settle_seconds: 0.5
+        launch_timeout_seconds: 15
+        min_page_source_chars: 100
+        required_source_contains: com.soulfree.happiness:id/dtv_time
+        require_variation: false
+      - name: Skip startup advertisement when shown
+        action: click_optional
+        target: startup.skip_ad
+        timeout_seconds: 3
+      - name: Wait for retained login state
+        action: wait
+        seconds: 5
+      - name: Open Home from main navigation when shown
+        action: click_optional
+        target: main.home_tab
+        timeout_seconds: 5
+      - name: Enter the first available room when room list is shown
+        action: click_optional
+        target: main.first_room
+        timeout_seconds: 10
+      - name: Wait for room content
+        action: assert_present
+        target: room.container
+        timeout_seconds: 15
+      - name: Verify room ID
+        action: assert_text
+        target: room.room_id
+        contains: "ID:"
+        timeout_seconds: 10
+      - name: Verify Soulfree remains in foreground
+        action: assert_package
+        expected: com.soulfree.happiness
+      - name: Send Soulfree to background
+        action: background
+        seconds: 2
+      - name: Resume Soulfree
+        action: resume
+        wait_seconds: 2
+      - name: Verify room after background recovery
+        action: assert_present
+        target: room.container
+        timeout_seconds: 10
+      - name: Exercise room rendering
+        action: swipe
+        start_x: 540
+        start_y: 1500
+        end_x: 540
+        end_y: 900
+        duration_ms: 400
+        repeat: 3
+        measure_rendering: true
+        frame_budget_ms: 16.67
+      - name: Restart Soulfree without clearing login data
+        action: relaunch
+        wait_seconds: 3
+      - name: Verify package after restart
+        action: assert_package
+        expected: com.soulfree.happiness
+      - name: Capture final page
+        action: screenshot

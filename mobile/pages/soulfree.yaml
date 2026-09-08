@@ -1,0 +1,21 @@
+schema_version: "1.0"
+app: soulfree
+pages:
+  main:
+    home_tab:
+      by: id
+      value: com.soulfree.happiness:id/main_home_tab
+    first_room:
+      by: id
+      value: com.soulfree.happiness:id/rl_room1
+  room:
+    container:
+      by: id
+      value: com.soulfree.happiness:id/room_fragment_host
+    room_id:
+      by: id
+      value: com.soulfree.happiness:id/room_id
+  startup:
+    skip_ad:
+      by: id
+      value: com.soulfree.happiness:id/dtv_time

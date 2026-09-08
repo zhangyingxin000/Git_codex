@@ -9,9 +9,13 @@ __pycache__/
 .test-tmp/
 .pytest-local-tmp/
 .pytest-run-*/
+.ci-tmp/
 *.egg-info/
 node_modules/
 .npm-cache/
+.appium/
+.android-home/
+.ruff_cache/
 
 # Local databases and credentials
 autotest_ai.db
@@ -31,9 +35,12 @@ data/salary-trade-proxies.csv
 data/wealth-level-runtime.csv
 data/redis-wealth-decoded.json
 requirements/*/apifox/cli-profile.yaml
+config/ci-tools.local.yaml
+config/mobile-ci.local.yaml
 
 # Reports, logs, temporary work files
 reports/
+artifacts/mobile-ci/
 requirements/*/runs/
 work/
 backups/

@@ -1,0 +1,119 @@
+schema_version: "1.0"
+workflows:
+  - enabled: false
+    id: example-login-smoke
+    name: Login and home validation
+    category: core-business
+    tags: [smoke, login, ui]
+    steps:
+      - name: Enter login account
+        action: input
+        target: login.account
+        text_env: AUTOTEST_MOBILE_ACCOUNT
+        requires: AUTOTEST_MOBILE_ACCOUNT
+      - name: Enter login password
+        action: input
+        target: login.password
+        text_env: AUTOTEST_MOBILE_PASSWORD
+        requires: AUTOTEST_MOBILE_PASSWORD
+      - name: Submit login
+        action: click
+        target: login.submit
+      - name: Verify home navigation
+        action: assert_activity
+        contains: HomeActivity
+      - name: Verify home content
+        action: assert_present
+        target: home.content
+
+  - enabled: false
+    id: example-ui-validation
+    name: Input validation and UI state
+    category: ui-logic
+    tags: [regression, ui]
+    steps:
+      - name: Verify account input is enabled
+        action: assert_enabled
+        target: login.account
+      - name: Enter invalid account
+        action: input
+        target: login.account
+        text: invalid-value
+      - name: Verify account validation message
+        action: assert_text
+        target: login.account_error
+        contains: Invalid
+      - name: Verify submit is disabled
+        action: assert_disabled
+        target: login.submit
+
+  - enabled: false
+    id: example-order-payment
+    name: Order and sandbox payment
+    category: core-business
+    tags: [regression, order, payment]
+    steps:
+      - name: Create isolated test order
+        action: click
+        target: order.create
+        mutates_data: true
+      - name: Verify order confirmation
+        action: assert_present
+        target: order.confirmation
+      - name: Submit sandbox payment
+        action: click
+        target: order.pay
+        mutates_data: true
+        risk_level: high
+        requires: AUTOTEST_MOBILE_SANDBOX_PAYMENT
+      - name: Verify payment status
+        action: assert_text
+        target: order.payment_status
+        contains: Success
+
+  - enabled: false
+    id: example-network-recovery
+    name: Disconnect, reconnect and weak network
+    category: abnormal-recovery
+    tags: [regression, emulator, network]
+    steps:
+      - name: Disconnect emulator network
+        action: network_off
+        wait_seconds: 2
+      - name: Verify offline message
+        action: assert_present
+        target: common.offline_message
+      - name: Reconnect emulator network
+        action: network_on
+        wait_seconds: 3
+      - name: Apply weak network profile
+        action: network_profile
+        speed: edge
+        delay: gprs
+      - name: Verify app remains usable
+        action: assert_present
+        target: home.content
+      - name: Restore normal network
+        action: network_restore
+
+  - enabled: false
+    id: example-system-interruptions
+    name: Background, lock and incoming call recovery
+    category: abnormal-recovery
+    tags: [regression, emulator, interruption]
+    steps:
+      - name: Send app to background
+        action: background
+        seconds: 3
+      - name: Resume app
+        action: resume
+      - name: Lock and resume device
+        action: lock
+        seconds: 2
+      - name: Simulate incoming call on emulator
+        action: incoming_call
+        seconds: 2
+        auto_end: true
+      - name: Verify app is in foreground
+        action: assert_package
+        expected: com.example.app

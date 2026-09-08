@@ -1,0 +1,6 @@
+# CI-only tools. Runtime dependencies remain locked in requirements.lock.
+charset-normalizer==3.4.6
+detect-secrets==1.5.0
+requests==2.33.1
+ruff==0.16.6
+urllib3==2.6.3

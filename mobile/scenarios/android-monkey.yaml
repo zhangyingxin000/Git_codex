@@ -1,0 +1,19 @@
+schema_version: "1.0"
+workflows:
+  - enabled: false
+    id: android-monkey-stability
+    name: Android Monkey stability
+    category: stability
+    phase: nightly
+    tags: [android, monkey, stability, nightly]
+    steps:
+      - name: Run controlled Monkey events
+        action: adb_monkey
+        mutates_data: true
+        risk_level: high
+        seed: 20260908
+        events: 10000
+        throttle_ms: 200
+        pct_syskeys: 0
+        pct_appswitch: 0
+        timeout_seconds: 3600

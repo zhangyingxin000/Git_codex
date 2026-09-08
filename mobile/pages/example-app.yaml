@@ -1,0 +1,37 @@
+schema_version: "1.0"
+app: example-app
+pages:
+  login:
+    account:
+      by: id
+      value: com.example.app:id/account
+    password:
+      by: id
+      value: com.example.app:id/password
+    submit:
+      by: id
+      value: com.example.app:id/login
+    account_error:
+      by: id
+      value: com.example.app:id/account_error
+  home:
+    content:
+      by: id
+      value: com.example.app:id/home_content
+  order:
+    create:
+      by: id
+      value: com.example.app:id/create_order
+    confirmation:
+      by: id
+      value: com.example.app:id/order_confirmation
+    pay:
+      by: id
+      value: com.example.app:id/pay
+    payment_status:
+      by: id
+      value: com.example.app:id/payment_status
+  common:
+    offline_message:
+      by: id
+      value: com.example.app:id/offline_message

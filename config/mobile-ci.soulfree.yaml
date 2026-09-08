@@ -1,0 +1,96 @@
+schema_version: "1.0"
+enabled: true
+server_mode: managed
+server_host: 127.0.0.1
+server_port: 4723
+auto_select_port: true
+base_path: ""
+startup_timeout_seconds: 60
+session_timeout_seconds: 300
+adb_path: ""
+
+device_pool:
+  source: adb
+  mode: all
+  allow_physical: true
+  allow_emulators: false
+  include: []
+  exclude: []
+
+device_preflight:
+  enabled: true
+  enforce: true
+  wake_and_unlock: true
+  min_battery_percent: 15
+  min_data_free_mb: 512
+
+capabilities:
+  platformName: Android
+  appium:automationName: UiAutomator2
+  appium:deviceName: Android
+  appium:noReset: true
+  appium:forceAppLaunch: true
+  appium:autoGrantPermissions: true
+  appium:newCommandTimeout: 120
+  appium:app: ${AUTOTEST_ANDROID_APP}
+  appium:appWaitActivity: com.inspire.journey.teach.ui.launch.activity.*
+
+checks:
+  expected_package: com.soulfree.happiness
+  launch_timeout_seconds: 15
+  min_page_source_chars: 100
+  capture_screenshot: true
+
+safety:
+  allow_mutations: false
+  allow_high_risk: false
+  allow_network_changes: false
+  allow_system_events: false
+  allow_monkey: false
+
+coverage:
+  project_name: Soulfree
+  configured_scope:
+    - 重复启动、启动广告页断言与页面差异记录
+    - 房间主流程与关键房间页面断言
+    - 前后台恢复与保留登录状态重启
+    - 房间滑动渲染与移动端性能采集
+  not_verified:
+    - 注册流程
+    - 支付流程
+    - 删除等写操作
+    - 断网重连与弱网模拟
+    - 来电、锁屏等模拟器系统中断
+    - Monkey随机稳定性测试
+  reproducible_scenarios:
+    - id: soulfree-startup-and-room-flow
+      name: 启动广告校验、跳过与房间主流程恢复
+      linked_workflow: soulfree-room-smoke
+      status: COVERED_BY_FULL_FLOW
+
+performance:
+  enabled: true
+  enforce_thresholds: false
+  frame_budget_ms: 16.67
+  memory_lifecycle_cycles: 3
+  lifecycle_settle_seconds: 2
+  startup:
+    measure_cold: true
+    measure_warm: true
+    settle_seconds: 1
+    component: ""
+  thresholds:
+    max_cold_start_ms: 3000
+    max_warm_start_ms: 1500
+    min_fps: 45
+    max_jank_percent: 20
+    max_cpu_percent: 60
+    max_total_pss_kb: 524288
+    max_memory_growth_kb: 51200
+
+page_object_files:
+  - mobile/pages/soulfree.yaml
+
+scenario_files:
+  - mobile/scenarios/soulfree-safe.yaml
+  - mobile/scenarios/android-monkey.yaml
